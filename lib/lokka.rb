@@ -54,13 +54,28 @@ module Lokka
   def self.env
     if ENV['LOKKA_ENV'] == 'production' or ENV['RACK_ENV'] == 'production'
       'production'
+    elsif ENV['LOKKA_ENV'] == 'test' or ENV['RACK_ENV'] == 'test'
+      'test'
     else
       'development'
     end
   end
 
+  def self.production?
+    self.env == 'production'
+  end
+
+  def self.development?
+    self.env == 'development'
+  end
+
+  def self.test?
+    self.env == 'test'
+  end
+
   class Database
     def connect
+      DataMapper::Logger.new(STDOUT, :debug) if Lokka.development?
       DataMapper.setup(:default, Lokka.config[Lokka.env]['dsn'])
       self
     end
