@@ -4,6 +4,7 @@ GEM
     abstract (1.0.0)
     activesupport (3.0.0)
     addressable (2.2.4)
+    bluefeather (0.40)
     builder (3.0.0)
     data_objects (0.10.2)
       addressable (~> 2.1)
@@ -90,8 +91,9 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (= 3.0.0)
+  bluefeather (= 0.40)
   builder (= 3.0.0)
-  bundler (~> 1.0.7)
+  bundler (= 1.0.10)
   dm-is-searchable (= 1.0.2)
   dm-is-tree (= 1.0.2)
   dm-migrations (= 1.0.2)

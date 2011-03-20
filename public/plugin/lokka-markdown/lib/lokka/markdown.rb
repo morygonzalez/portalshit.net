@@ -6,7 +6,6 @@ module Lokka
       def body_html
         BlueFeather.parse(attribute_get(:body))
       end
-
     end
   end
 end

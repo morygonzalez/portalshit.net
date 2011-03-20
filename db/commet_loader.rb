@@ -24,15 +24,13 @@ end
 p_forum = YAML.load_file("/Users/hitoshi/Downloads/p_forum.yml")
 p_forum.each do |f|
   @comment = Comment.create(
-    :entry_id => f["refere_id"],
-    :status => f["trash"],
-    :slug => f["id"],
-    :title => f["name"],
-    :body => f["comment"],
-    :type => "Post",
+    :entry_id => f["refer_id"],
+    :status => f["trash"] == 0 ? 1 : 0,
+    :name => f["user_name"],
+    :homepage => f["user_uri"],
+    :body => f['comment'],
     :created_at => f["date"],
-    :updated_at => f["mod"],
-    :frozen_tag_list => f["tag"]
+    :updated_at => f["mod"]
   )
   @comment.save
 end

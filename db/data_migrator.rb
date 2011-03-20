@@ -18,6 +18,7 @@ class Entry
   property :title, String, :length => 255
   property :body, Text
   property :type, String
+  property :draft, Boolean, :default => false
   property :created_at, DateTime
   property :updated_at, DateTime
   property :frozen_tag_list, String
