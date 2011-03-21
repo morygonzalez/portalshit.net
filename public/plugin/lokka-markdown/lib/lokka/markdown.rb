@@ -8,4 +8,7 @@ module Lokka
       end
     end
   end
+
+  module Helpers
+  end
 end
