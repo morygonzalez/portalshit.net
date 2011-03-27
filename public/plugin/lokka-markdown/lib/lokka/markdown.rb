@@ -1,14 +1,11 @@
-require 'bluefeather'
+require 'kramdown'
 
 module Lokka
   module Markdown
-    class Entry
-      def body_html
-        BlueFeather.parse(attribute_get(:body))
+    module Helpers
+      def body_html(str)
+        return Kramdown::Document.new(str).to_html
       end
     end
-  end
-
-  module Helpers
   end
 end
