@@ -22,7 +22,6 @@ gem 'exceptional', '2.0.25'
 gem 'erubis', '2.6.6'
 gem 'activesupport', '3.0.0'
 gem 'kramdown', '0.13.2'
-gem 'shotgun'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
