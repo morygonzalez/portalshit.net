@@ -80,10 +80,6 @@ class Entry
     end
     html + '</ul>'
   end
-
-  def body_html
-    Kramdown::Document.new(attribute_get(:body)).to_html
-  end
 end
 
 def Entry(id_or_slug)

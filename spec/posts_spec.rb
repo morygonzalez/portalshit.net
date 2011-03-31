@@ -14,4 +14,12 @@ describe "Posts" do
       post.edit_link.should eq('/admin/posts/1/edit')
     end
   end
+
+pending  
+  context "markdown" do
+    it "should have body_html" do
+      post = Post.get(1100)
+      post.methods.should Array
+    end
+  end
 end

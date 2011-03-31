@@ -2,10 +2,16 @@ require 'kramdown'
 
 module Lokka
   module Markdown
-    module Helpers
-      def body_html(str)
-        return Kramdown::Document.new(str).to_html
+    def self.registered(app)
+      app.before do
+        @post = Post.new
       end
+    end
+  end
+
+  module Helpers
+    def markdown(str=nil)
+      Kramdown::Document.new(str).to_html
     end
   end
 end
