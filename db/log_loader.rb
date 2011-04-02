@@ -5,7 +5,7 @@ require "rubygems"
 require "yaml"
 require "dm-core"
 
-DataMapper.setup(:default, 'sqlite:///Users/hitoshi/Sites/lokka/db/development.sqlite3')
+DataMapper.setup(:default, "sqlite://#{File.dirname(__FILE__)}/development.sqlite3")
 DataMapper::Logger.new(STDOUT, :debug)
 
 class Entry
