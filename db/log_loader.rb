@@ -5,8 +5,8 @@ require "rubygems"
 require "yaml"
 require "dm-core"
 
+DataMapper::Logger.new($stdout, :debug)
 DataMapper.setup(:default, "sqlite://#{File.dirname(__FILE__)}/development.sqlite3")
-DataMapper::Logger.new(STDOUT, :debug)
 
 class Entry
   include DataMapper::Resource
@@ -24,19 +24,29 @@ class Entry
   property :frozen_tag_list, String
 end
 
-logs = YAML.load_file("/Users/hitoshi/Downloads/portalshit.yml")
-logs.each do |l|
-  @entry = Entry.create(
-    :id => l["id"],
-    :user_id => 1,
-    :category_id => l["category"],
-    :slug => "",
-    :title => l["name"],
-    :body => l["comment"],
-    :type => "Post",
-    :created_at => l["date"],
-    :updated_at => l["mod"],
-    :frozen_tag_list => l["tag"]
-  )
-  @entry.save
+class EntryInsertion
+  def load_entries
+    YAML.load_file("#{File.dirname(__FILE__)}/p_blog_log.yml")
+  end
+  
+  def insert_entries
+    load_entries.each do |l|
+      @entry = Entry.create(
+        :id => l["id"],
+        :user_id => 1,
+        :category_id => l["category"],
+        :slug => "",
+        :title => l["name"],
+        :body => l["comment"],
+        :type => "Post",
+        :created_at => l["date"],
+        :updated_at => l["mod"],
+        :frozen_tag_list => l["tag"]
+      )
+      @entry.save
+    end
+  end
 end
+
+@insertion = EntryInsertion.new
+@insertion.insert_entries
