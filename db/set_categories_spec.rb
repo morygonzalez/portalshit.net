@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 #-*- coding: utf-8 -*-
 
 require "rubygems"
@@ -7,8 +6,9 @@ require File.dirname(__FILE__) + "/set_categories"
 
 describe SetCategory, "SetCategory" do
   subject { SetCategory.new }
-  subject.stub(:load_logs).and_return {
-    <<EOD
+  before {
+    subject.stub(:load_logs).and_return {
+      <<EOD
 -
   id: 2
   name: "チーズと小芋定食"
@@ -21,6 +21,7 @@ describe SetCategory, "SetCategory" do
   draft: 0
   ping_uri: ""
 EOD
+    }
   }
 
   context "load_logs" do

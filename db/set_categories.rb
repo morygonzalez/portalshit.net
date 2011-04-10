@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
 require "rubygems"
@@ -53,7 +52,7 @@ class SetCategory
         :title => v,
         :description => v,
         :type => "",
-        :create_at => Time.now,
+        :created_at => Time.now,
         :updated_at => Time.now,
         :parent_id => nil
       )
@@ -61,3 +60,6 @@ class SetCategory
     end
   end
 end
+
+sc = SetCategory.new
+sc.insert_categories

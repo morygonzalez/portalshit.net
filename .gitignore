@@ -15,3 +15,5 @@
 /.rvmrc
 /Lokka.app
 *.swp
+db/log
+db/*.log
