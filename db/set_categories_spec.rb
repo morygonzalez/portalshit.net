@@ -7,8 +7,8 @@ require File.dirname(__FILE__) + "/set_categories"
 
 describe SetCategory, "SetCategory" do
   subject { SetCategory.new }
-  subject.stub(:load_logs).and_return {
-    <<EOD
+  before {
+    subject.stub(:load_logs).and_return {
 -
   id: 2
   name: "チーズと小芋定食"
@@ -20,7 +20,18 @@ describe SetCategory, "SetCategory" do
   mod: "2009-07-31 16:36:12"
   draft: 0
   ping_uri: ""
-EOD
+-
+  id: 1170
+  name: "WordCamp Fukuoka 2011に行った"
+  href: "http://"
+  category: "WWW"
+  tag: "WordPress"
+  comment: "先週、九州産業大学で行われたWordCamp Fukuoka 2011に行った。仕事でWordPress使う機会はないけど、福岡のWeb業界がどんな感じなのか知りたくて行ってみた。\n\nWordPressは [ゴンゴンの見た映画](http://cinema.portalshit.net/) で使ってて、前職場でもウェブサイトにブログを付けるときによく使った\n\n> WordPress 2.7やMovable Type 4とかもそうですけど、ブログのなかで読者が触れる部分っていうのはここ数年のアップデートの中でもそうそう変化なくて、書き手が触れる部分、書き手にしか見えない部分がえらく進化してます。サーバーにインストールして使うタイプのブログツールでも、外部のフィードを取ってきて管理画面に他サイトの更新状況や人気のプラグインが表示されたりしますし、まるでレンタルブログサービスを利用しているかのようです。いかに書き手を書く気にさせるか、ってのが今日のブログツールの潮流なのかなーって感じました。これ大事なことですよね。\n>\n> <cite>[portal shit! : Twitterのフィードを加工して自サイト内にマイクロブログを作る](http://portalshit.net/article.php?id=982)</cite>\n\nこのように、WordPressは管理系の機能が非常に進化しているように思う。バージョン2.7から、自動アップグレード機能がついて、何も知らん人でもWordPress本体をサーバーにアップロードして、MySQLにデータベース一個つくればそれで使えるようになる。面倒くさいアップグレードとかもボタン一つで完了、さらに世界中のデザイナーがデザインしたWPテンプレートが使える。\n\nWordCamp Fukuoka 2011は \"Publish\" がテーマだったけど、本当に誰もが簡単に \"Publish\" できるようになりつつあると思う。開発者とデザイナーとユーザーがそれWordPressの良いところだと思う。後ろにオープンソースコミュニティが付いている感じ。\n\n一方、かつてはブログツールの代名詞的存在だったMovable Typeは、Six Apartの買収などのいざこざがあり、アメリカの親\n\nなんでMovable Typeがダメになったのか。WordPressと異なり、元々オープンソースじゃなかったのが原因だろう。2007年にオープンソース化されたけど、そのときにはWordPressとの勝負には決着がついていたようMovable Typeは、個人がPublishするためのツールというより、企業のホームページを管理するためのツールを指向していた。公式サイト（[ウェブサイト管理の新標準。Movable Type 5 - Six Apart](http://www.sixapart.jp/movabletype/)）を見れば、右上の目立つ位置に「ご購入はこちら」のボタンが配置してあり、基本的\n\nWordCampの活況とMovableTypeの身売りがあまりにも対照的で、コミュニティのあるなしで、ブログプラットフォームの盛衰が左右されることを実感した。一人で黙々とブログやプログラムを書いていてはダメで、何かしらで外とつながってなきゃいけないのだと思う。"
+  date: "2011-02-27 13:04:03"
+  mod: "2011-02-27 13:04:03"
+  draft: 0
+  ping_uri: "http://"
+    }
   }
 
   context "load_logs" do
