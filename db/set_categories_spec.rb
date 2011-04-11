@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 #-*- coding: utf-8 -*-
 
 require "rubygems"
@@ -9,6 +8,7 @@ describe SetCategory, "SetCategory" do
   subject { SetCategory.new }
   before {
     subject.stub(:load_logs).and_return {
+      <<EOD
 -
   id: 2
   name: "チーズと小芋定食"

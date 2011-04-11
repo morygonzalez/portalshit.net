@@ -5,7 +5,7 @@ require "rubygems"
 require "yaml"
 require "dm-core"
 
-DataMapper::Logger.new($stdout, :debug)
+DataMapper::Logger.new("log_loader.log", :debug)
 DataMapper.setup(:default, "sqlite://#{File.dirname(__FILE__)}/development.sqlite3")
 
 class Entry
