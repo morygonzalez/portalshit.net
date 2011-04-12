@@ -5,7 +5,7 @@ require "yaml"
 require "dm-core"
 
 DataMapper::Logger.new($stdout, :debug)
-DataMapper.setup(:default, "sqlite://#{File.dirname(__FILE__)}/development.sqlite3")
+DataMapper.setup(:default, "sqlite://#{Dir.pwd}/development.sqlite3")
 
 class Category
   include DataMapper::Resource
@@ -38,8 +38,10 @@ class SetCategory
   
   def make_hash(ary)
     hash = Hash.new
-    ary.each do |i, h|
+    i = 1
+    ary.each do |h|
       hash[i] = h
+      i += 1
     end
     return hash
   end
