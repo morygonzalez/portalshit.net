@@ -10,7 +10,7 @@ DataMapper::Logger.new(STDOUT, :debug)
 
 class Comment
   include DataMapper::Resource
-  
+
   property :id, Serial
   property :entry_id, Integer
   property :status, Integer
@@ -25,7 +25,7 @@ class CommentInsertion
   def load_comments
     return YAML.load_file("#{File.dirname(__FILE__)}/p_forum.yml")
   end
-  
+
   def insert_comments
     load_comments.each do |f|
       comment = Comment.create(

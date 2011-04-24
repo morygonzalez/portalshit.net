@@ -17,3 +17,4 @@
 *.swp
 db/log
 db/*.log
+db/*.yml
