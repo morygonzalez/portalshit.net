@@ -5,8 +5,8 @@ require "rubygems"
 require "yaml"
 require "dm-core"
 
-DataMapper.setup(:default, "sqlite://#{Dir.pwd}/development.sqlite3")
 DataMapper::Logger.new(STDOUT, :debug)
+DataMapper.setup(:default, "sqlite://#{Dir.pwd}/development.sqlite3")
 
 class Comment
   include DataMapper::Resource
@@ -23,7 +23,7 @@ end
 
 class CommentInsertion
   def load_comments
-    return YAML.load_file("#{File.dirname(__FILE__)}/p_forum.yml")
+    return YAML.load_file("#{Dir.pwd}/p_forum.yml")
   end
 
   def insert_comments
@@ -41,6 +41,3 @@ class CommentInsertion
     end
   end
 end
-
-insert_comment = CommentInsertion.new
-insert_comment.insert_comments
