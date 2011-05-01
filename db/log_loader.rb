@@ -48,8 +48,7 @@ class EntryInsertion
 
   def set_entry_category_id(entry)
     entry["category"] = "雑談" if entry["category"] == ""
-    @category = Category.all
-    @category.each do |cat|
+    @categories.each do |cat|
       return cat.id if entry["category"] == cat.title
     end
   end

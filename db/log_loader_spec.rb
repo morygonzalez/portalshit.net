@@ -6,6 +6,10 @@ require "rspec"
 require File.dirname(__FILE__) + "/log_loader"
 
 describe EntryInsertion, "p_blog_log" do
+  before(:all) do
+    EntryInsertion.stub(:new).and_return(true)
+  end
+  
   subject { EntryInsertion.new }
 
   context "#load_entries" do
@@ -51,6 +55,7 @@ describe EntryInsertion, "p_blog_log" do
 
   after(:all) do
     Category.all.destroy
+    Category.repository.adapter.execute('update sqlite_sequence set seq=0 where name="categories";')
     Entry.all.destroy
     Entry.repository.adapter.execute('update sqlite_sequence set seq=0 where name="entries";')
   end

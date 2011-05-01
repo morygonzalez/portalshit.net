@@ -4,8 +4,9 @@
 require "rubygems"
 require "yaml"
 require "dm-core"
+require File.dirname(__FILE__) + "/log_loader"
 
-DataMapper::Logger.new(STDOUT, :debug)
+DataMapper::Logger.new(STDOUT, :warn)
 DataMapper.setup(:default, "sqlite://#{Dir.pwd}/development.sqlite3")
 
 class Comment
@@ -21,23 +22,37 @@ class Comment
   property :updated_at, DateTime
 end
 
+DataMapper::Model.raise_on_save_failure = true
+
 class CommentInsertion
+  def initialize
+    get_entries
+  end
+
   def load_comments
-    return YAML.load_file("#{Dir.pwd}/p_forum.yml")
+    YAML.load_file("#{Dir.pwd}/p_forum.yml")
+  end
+
+  def get_entries
+    @entries = Entry.all
+  end
+
+  def set_comment_entry_id(comment)
+    @entries[comment["refer_id"]].slug.to_i
   end
 
   def insert_comments
-    load_comments.each do |f|
-      comment = Comment.create(
-        :entry_id => f["refer_id"],
-        :status => f["trash"] == 0 ? 1 : 0,
-        :name => f["user_name"],
-        :homepage => f["user_uri"],
-        :body => f['comment'],
-        :created_at => f["date"],
-        :updated_at => f["mod"]
+    load_comments.each do |comment|
+      @comment = Comment.create(
+        :entry_id => comment["refer_id"],
+        :status => comment["trash"] == 0 ? 1 : 0,
+        :name => comment["user_name"],
+        :homepage => comment["user_uri"],
+        :body => comment['comment'],
+        :created_at => comment["date"],
+        :updated_at => comment["mod"]
       )
-      comment.save
+      @comment.save
     end
   end
 end

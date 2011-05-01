@@ -5,7 +5,7 @@ require "rubygems"
 require "yaml"
 require "dm-core"
 
-#DataMapper::Logger.new($stdout, :debug)
+DataMapper::Logger.new($stdout, :warn)
 DataMapper.setup(:default, "sqlite://#{Dir.pwd}/development.sqlite3")
 
 class Category
@@ -20,6 +20,8 @@ class Category
   property :updated_at, DateTime
   property :parent_id, Integer
 end
+
+DataMapper::Model.raise_on_save_failure = true
 
 class SetCategory
   def load_logs
