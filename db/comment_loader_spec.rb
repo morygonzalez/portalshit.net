@@ -27,12 +27,13 @@ describe "Comment" do
 
   context "set_comment_entry_id" do
     comment = { "refer_id" => 513 }
-    it "should return entry_id" do
+    it "give up refer_id 513, should return entry_id 821" do
       subject.set_comment_entry_id(comment).should == 821
     end
   end
 
   after(:all) do
     Comment.all.destroy
+    Comment.repository.adapter.execute('update sqlite_sequence set seq=0 where name="comment";')
   end
 end
