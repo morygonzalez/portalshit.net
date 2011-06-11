@@ -43,4 +43,9 @@ describe SetCategory, "SetCategory" do
       subject.insert_categories.should be_true
     end
   end
+
+  after(:all) do
+    Category.all.destroy
+    Category.repository.adapter.execute('update sqlite_sequence set seq=0 where name="categories";')
+  end
 end

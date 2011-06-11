@@ -30,7 +30,6 @@ DataMapper::Model.raise_on_save_failure = true
 class EntryInsertion
   def initialize
     insert_categories
-    get_categories
   end
 
   def load_entries
@@ -43,12 +42,12 @@ class EntryInsertion
   end
 
   def get_categories
-    @categories = Category.all
+    Category.all
   end
 
   def set_entry_category_id(entry)
     entry["category"] = "雑談" if entry["category"] == ""
-    @categories.each do |cat|
+    get_categories.each do |cat|
       return cat.id if entry["category"] == cat.title
     end
   end

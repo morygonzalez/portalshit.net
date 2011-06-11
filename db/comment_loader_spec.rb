@@ -13,22 +13,16 @@ describe "Comment" do
     end
   end
 
+  context "set_comment_entry_id" do
+    comment = { "refer_id" => 1175 }
+    it "give up refer_id 1175, should return entry_id 865" do
+      subject.set_comment_entry_id(comment["refer_id"]).should == 865
+    end
+  end
+
   context "#insert_comments" do
     it "should return true" do
       subject.insert_comments.should be_true
-    end
-  end
-
-  context "#get_entries" do
-    it "should have 862 entries" do
-      subject.get_entries.size.should == 862
-    end
-  end
-
-  context "set_comment_entry_id" do
-    comment = { "refer_id" => 513 }
-    it "give up refer_id 513, should return entry_id 821" do
-      subject.set_comment_entry_id(comment).should == 821
     end
   end
 

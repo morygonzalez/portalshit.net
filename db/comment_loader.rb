@@ -25,34 +25,32 @@ end
 DataMapper::Model.raise_on_save_failure = true
 
 class CommentInsertion
-  def initialize
-    get_entries
-  end
-
   def load_comments
     YAML.load_file("#{Dir.pwd}/p_forum.yml")
   end
 
-  def get_entries
-    @entries = Entry.all
-  end
-
-  def set_comment_entry_id(comment)
-    @entries[comment["refer_id"]].slug.to_i
+  def set_comment_entry_id(refer_id)
+    @entry = Entry.first(:slug => refer_id)
+    return @entry.id.to_i unless @entry.nil?
+    return false
   end
 
   def insert_comments
     load_comments.each do |comment|
-      @comment = Comment.create(
-        :entry_id => comment["refer_id"],
-        :status => comment["trash"] == 0 ? 1 : 0,
-        :name => comment["user_name"],
-        :homepage => comment["user_uri"],
-        :body => comment['comment'],
-        :created_at => comment["date"],
-        :updated_at => comment["mod"]
-      )
-      @comment.save
+      begin
+        @comment = Comment.create(
+          :entry_id => set_comment_entry_id(comment["refer_id"]),
+          :status => comment["trash"] == 0 ? 1 : 0,
+          :name => comment["user_name"],
+          :homepage => comment["user_uri"],
+          :body => comment['comment'],
+          :created_at => comment["date"],
+          :updated_at => comment["mod"]
+        )
+        @comment.save
+      rescue => e
+        next
+      end
     end
   end
 end
