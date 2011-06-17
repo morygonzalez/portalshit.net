@@ -54,7 +54,7 @@ class SetCategory
         :slug => nil,
         :title => v,
         :description => v,
-        :type => "",
+        :type => "Category",
         :created_at => Time.now,
         :updated_at => Time.now,
         :parent_id => nil
