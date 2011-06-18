@@ -23,12 +23,15 @@
         %li.profile= link_to 'Profile', ''
         %li.github= link_to 'Github', 'http://github.com/morygonzalez'
         %li.twitter= link_to 'Twitter', 'http://twitter.com/morygonzalez'
-        -# %li.facebook= link_to 'Facebook', 'http://www.facebook.com/profile.php?id=622586811'
+        %li.facebook= link_to 'Facebook', 'http://www.facebook.com/profile.php?id=622586811'
         %li
           %form#search_form(action="/search/" method="get")
             %input(type="text" name="query")
     - unless index? or entry?
       #bread_crumb= bread_crumb
+    #categories
+      - Category.all.each do |category|
+        = link_to category.title, "/category/#{category.slug}/"
     #content.clearfix
       #main= yield
       #aside
@@ -43,7 +46,7 @@
             %ul
               - Comment.recent.each do |comment|
                 %li= link_to strip_tags(comment.body).truncate(16), comment.link
-                //%li= link_to truncate(strip_tags(comment.body), :length => 16), comment.link
+                -# %li= link_to truncate(strip_tags(comment.body), :length => 16), comment.link
           %dt= t.tags
           %dd
             %ul

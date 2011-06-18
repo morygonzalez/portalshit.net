@@ -51,9 +51,9 @@ class SetCategory
     list_categories.each do |k, v|
       @category = Category.create(
         :id => k,
-        :slug => nil,
+        :slug => v,
         :title => v,
-        :description => v,
+        :description => nil,
         :type => "Category",
         :created_at => Time.now,
         :updated_at => Time.now,
