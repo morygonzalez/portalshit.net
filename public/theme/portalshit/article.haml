@@ -2,10 +2,10 @@
   .header
     %h2.title= link_to post.title, post.link
   .body
-    ~ post.body
+    ~ markdown(post.body)
   .footer
     = post.tags_to_html
     .comment== #{link_to "#{t.comments} (#{post.comments.size})", "#{post.link}#comment_form"}
-    .created_at= l post.created_at.to_time
+    .created_at== #{l post.created_at.to_time} | #{link_to post.category.title, "/category/#{post.category.slug}/"}
     - if logged_in?
       .edit= link_to t.edit, post.edit_link
