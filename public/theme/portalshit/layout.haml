@@ -27,11 +27,11 @@
         %li
           %form#search_form(action="/search/" method="get")
             %input(type="text" name="query")
-    - unless index? or entry?
-      #bread_crumb= bread_crumb
-    #categories
-      - Category.all.each do |category|
-        = link_to category.title, "/category/#{category.slug}/"
+      - unless index? or entry?
+        #bread_crumb= bread_crumb
+      %ul#categories
+        - Category.all.each do |category|
+          %li= link_to category.title, "/category/#{category.slug}/"
     #content.clearfix
       #main= yield
       #aside
