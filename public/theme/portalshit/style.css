@@ -42,7 +42,6 @@ h1 {
 	letter-spacing: 0;
 	margin: 0;
 	margin-top: -8px;
-	padding: 0px 0px 0px 70px;
 	float: left;
 	font: bold 2.8em/62px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
 }
@@ -76,6 +75,12 @@ ul#nav li {
 ul#nav li img {
 	margin: 0px;
 	padding: 0px;
+}
+
+li.profile {
+	padding-left: 24px;
+	height: 28px;
+	background: url("http://a2.twimg.com/profile_images/1237497837/SelfPortrait_mini.png") no-repeat;
 }
 
 li.github {
@@ -149,7 +154,6 @@ blockquote {
 }
 
 #header {
-	background: url("http://www.portalshit.net/images/SelfPortrait_Normal.png") no-repeat;
 	width: 970px;
 	margin: 20px auto 20px;
 	text-align: left;
