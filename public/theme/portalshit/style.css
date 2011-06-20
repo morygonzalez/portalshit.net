@@ -13,20 +13,20 @@ p {
 	margin: 26px 0px;
 }
 
+a {
+	text-decoration: none;
+}
+
 a:link {
-	color: #2844ac;
+	color: #8c0000;
 }
 
 a:visited {
-	color: #2844ac;
+	color: #666;
 }
 
 a:hover {
-	color: #ec189a;
-}
-
-a:hover {
-	color: #ec189a;
+	color: #f60;
 }
 
 img {
@@ -44,6 +44,10 @@ h1 {
 	padding: 0px 0px 0px 70px;
 	float: left;
 	font: bold 2.8em/62px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+}
+
+h1 a:visited {
+	color: #8c0000;
 }
 
 h2 {
@@ -107,10 +111,6 @@ ul#categories li {
 	float: left;
 	margin-right: 8px;
 	padding: 15px 0 0;
-}
-
-ul#categories li a {
-	text-decoration: none;
 }
 
 ul {
