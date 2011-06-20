@@ -58,6 +58,10 @@ h2 {
 	line-height: 115%;
 }
 
+h2, h3, h4, h5, #aside dt {
+	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
 ul#nav {
 	float: right;
 	list-style: none;
