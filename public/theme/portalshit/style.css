@@ -6,7 +6,7 @@ body {
 	color: #fffeff;
 	line-height: 22px;
 	font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
-	background: black url(images/background.jpg) no-repeat;
+	background: black url(images/background.jpg) no-repeat fixed;
 }
 
 p {
@@ -134,13 +134,14 @@ li {
 pre {
 	line-height: 100%;
 	padding: 1.2em 0.6em;
-	background-color: #eeeeee;
+	background-color: #c0c0c0;
 	white-space: -moz-pre-wrap;
 	white-space: -pre-wrap;
 	white-space: -o-pre-wrap;
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	overflow: hidden;
+	color: #424242;
 }
 
 code {
@@ -150,7 +151,8 @@ code {
 blockquote {
 	padding: 1em;
 	margin: 0;
-	background-color: #eeeeee;
+	background-color: #c0c0c0;
+	color: #424242;
 }
 
 #header {
