@@ -157,7 +157,7 @@ blockquote {
 }
 
 #header {
-	width: 1000px;
+	width: 1024px;
 	margin: 20px auto 10px;
 	text-align: left;
 }
@@ -172,7 +172,7 @@ blockquote {
 
 #bread_crumb {
 	margin: 0px auto;
-	width: 1000px;
+	width: 1024px;
 	text-align: left;
 	overflow: hidden;
 	height: 1%;
@@ -199,7 +199,6 @@ blockquote {
 }
 
 #categories {
-	width: 1000px;
 	margin: 0px auto;
 	margin-left: 0px;
 	padding-left: 0px;
@@ -207,18 +206,19 @@ blockquote {
 	overflow: hidden;
 	display: block;
 	list-style-type: none;
-	font-family: "Courier New", Courier, mono;
+	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 }
 
 #categories li {
 	float: left;
-	font-size: 16px;
+	font-size: 15px;
+	text-shadow: #191919 0.1em 0.1em 0.2em;
 	margin-right: 8px;
-	padding: 15px 0 0;
+	padding: 5px 0 15px;
 }
 
 #content {
-	width: 1000px;
+	width: 1024px;
 	height: auto;
 	margin: 0 auto;
 	text-align: left;
@@ -234,7 +234,7 @@ blockquote {
 	margin: 0 auto;
 	text-align: left;
 	padding: 20px 30px;
-	width: 1000px;
+	width: 1024px;
 }
 
 #aside dl {
