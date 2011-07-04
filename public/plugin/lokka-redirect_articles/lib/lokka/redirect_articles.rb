@@ -7,6 +7,10 @@ module Lokka
           redirect "/#{$1}", 301
         end
       end
+
+      app.get %r{/rss/.+} do
+        redirect "/index.atom", 301
+      end
     end
   end
 end
