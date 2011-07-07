@@ -8,8 +8,12 @@ module Lokka
         end
       end
 
-      app.get %r{/rss/.+} do
+      app.get %r{/rss/(recent|2\.0)\.php} do
         redirect "/index.atom", 301
+      end
+
+      app.get %r{/index\.php} do
+        redirect "/", 301
       end
     end
   end
