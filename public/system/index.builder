@@ -16,7 +16,7 @@ xml.feed(:xmlns => 'http://www.w3.org/2005/Atom') do
       xml.published post.created_at.to_s
       xml.updated   post.updated_at.to_s
       xml.link      :type => 'html', :rel => 'alternate', :href => base_url + post.link
-      xml.content   post.body, :type => 'html'
+      xml.content   markdown(post.body), :type => 'html'
       xml.author do
         xml.name post.user.nil? ? '' : post.user.name
       end
