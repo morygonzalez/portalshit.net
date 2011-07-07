@@ -6,21 +6,15 @@ require "rspec"
 require File.dirname(__FILE__) + "/log_loader"
 
 describe EntryInsertion, "p_blog_log" do
-<<<<<<< Updated upstream
   # before(:all) do
   #   EntryInsertion.stub(:new).and_return(true)
   # end
-=======
-  before(:all) do
-    EntryInsertion.stub!(:new).and_return(true)
-  end
->>>>>>> Stashed changes
 
   subject { EntryInsertion.new }
 
   context "#load_entries" do
-    it "should has 866 articles" do
-      subject.load_entries.length.should == 866
+    it "should has 865 articles" do
+      subject.load_entries.length.should == 865
     end
   end
 
@@ -54,8 +48,8 @@ describe EntryInsertion, "p_blog_log" do
   end
 
   context "check inserted entries" do
-    it "should return 866" do
-      Entry.all.length.should == 866
+    it "should return 865" do
+      Entry.all.length.should == 865
     end
   end
 

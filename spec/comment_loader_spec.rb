@@ -16,8 +16,7 @@ describe "Comment" do
   context "set_comment_entry_id" do
     comment = { "refer_id" => 1175 }
     it "give up refer_id 1175, should return entry_id 865" do
-      pending("やんごとなき理由")
-      # subject.set_comment_entry_id(comment["refer_id"]).should == 865
+      subject.set_comment_entry_id(comment["refer_id"]).should == 865
     end
   end
 
@@ -29,6 +28,6 @@ describe "Comment" do
 
   after(:all) do
     Comment.all.destroy
-    Comment.repository.adapter.execute('update sqlite_sequence set seq=0 where name="comments";')
+    Comment.repository.adapter.execute('update sqlite_sequence set seq=0 where name="comment";')
   end
 end
