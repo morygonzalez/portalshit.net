@@ -6,9 +6,15 @@ require "rspec"
 require File.dirname(__FILE__) + "/log_loader"
 
 describe EntryInsertion, "p_blog_log" do
+<<<<<<< Updated upstream
   # before(:all) do
   #   EntryInsertion.stub(:new).and_return(true)
   # end
+=======
+  before(:all) do
+    EntryInsertion.stub!(:new).and_return(true)
+  end
+>>>>>>> Stashed changes
 
   subject { EntryInsertion.new }
 
