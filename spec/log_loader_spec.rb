@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 #-*- conding: utf-8 -*-
 
-require "rubygems"
-require "rspec"
-require File.dirname(__FILE__) + "/log_loader"
+require File.dirname(__FILE__) + "/../db/migrator/log_loader"
 
 describe EntryInsertion, "p_blog_log" do
   # before(:all) do

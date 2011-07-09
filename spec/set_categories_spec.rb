@@ -1,16 +1,10 @@
 #!/usr/bin/env ruby
 #-*- coding: utf-8 -*-
 
-require "rubygems"
-require "rspec"
-require File.dirname(__FILE__) + "/set_categories"
+require File.dirname(__FILE__) + "/../db/migrator/set_categories"
 
 describe SetCategory, "SetCategory" do
   subject { SetCategory.new }
-
-  after(:all) {
-    Category.all.destroy
-  }
 
   context "load_logs" do
     it "ymlを読み込めていること" do
