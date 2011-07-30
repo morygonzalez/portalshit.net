@@ -12,8 +12,9 @@
 /import.rb
 /pkg
 /.rvmrc
+/.powrc
 /Lokka.app
 *.swp
-db/log
-db/*.log
-db/*.yml
+/db/log
+/db/*.log
+/db/*.yml
