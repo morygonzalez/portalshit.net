@@ -4,3 +4,6 @@
 [submodule "public/plugin/lokka-uploaders"]
 	path = public/plugin/lokka-uploaders
 	url = git://github.com/nkmrshn/lokka-uploaders.git
+[submodule "migrator"]
+	path = migrator
+	url = git@github.com:morygonzalez/p_blog_to_lokka.git
