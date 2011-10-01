@@ -6,7 +6,7 @@ module Lokka
       end
 
       def import
-        doc = Nokogiri::XML(@file)
+        doc = Nokogiri::XML(@file.read.gsub(//, ''))
         doc.xpath('/rss/channel',
         'content' => 'http://purl.org/rss/1.0/modules/content/',
         'wp' => 'http://wordpress.org/export/1.1/').each do |channel|
@@ -36,13 +36,20 @@ module Lokka
                 Post
               when 'page'
                 Page
+              when 'attachment'
+                next
               end
+
+            # Skip if a post is in draft mode and the post date is 0000-00-00 00:00:00
+            next if item.xpath('wp:post_date_gmt').text == "0000-00-00 00:00:00"
 
             attrs = {
               :id    => item.xpath('wp:post_id').text.to_i,
               :title => item.xpath('title').text,
               :body  => item.xpath('content:encoded').text,
-              :draft => item.xpath('wp:status').text == 'publish' ? false : true
+              :draft => item.xpath('wp:status').text == 'publish' ? false : true,
+              :created_at => Time.parse(item.xpath('wp:post_date_gmt').text),
+              :updated_at => Time.parse(item.xpath('wp:post_date_gmt').text)
             }
 
             if entry = model.get(attrs[:id])

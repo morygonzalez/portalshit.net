@@ -434,7 +434,7 @@ module Lokka
     # theme
     get '/admin/themes' do
       @themes =
-        Dir.glob("#{settings.theme}/*").map do |f|
+        (Dir.glob("#{settings.theme}/*") - Dir.glob("#{settings.theme}/*[-_]mobile")).map do |f|
           title = f.split('/').last
           s = Dir.glob("#{f}/screenshot.*")
           screenshot = s.empty? ? nil : "/#{s.first.split('/')[-3, 3].join('/')}"
@@ -448,6 +448,25 @@ module Lokka
       site.update(:theme => params[:title])
       flash[:notice] = t.theme_was_successfully_updated
       redirect '/admin/themes'
+    end
+
+    # mobile_theme
+    get '/admin/mobile_themes' do
+      @themes =
+        Dir.glob("#{settings.theme}/*[-_]mobile").map do |f|
+          title = f.split('/').last
+          s = Dir.glob("#{f}/screenshot.*")
+          screenshot = s.empty? ? nil : "/#{s.first.split('/')[-3, 3].join('/')}"
+          OpenStruct.new(:title => title, :screenshot => screenshot)
+        end
+      render_any :'mobile_themes/index'
+    end
+
+    put '/admin/mobile_themes' do
+      site = Site.first
+      site.update(:mobile_theme => params[:title])
+      flash[:notice] = t.theme_was_successfully_updated
+      redirect '/admin/mobile_themes'
     end
 
     # plugin
@@ -493,17 +512,16 @@ module Lokka
       @theme_types << :entries
 
       @posts = Post.published.
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
+      @bread_crumbs = [{:name => t.home, :link => '/'}]
 
       render_detect :index, :entries
     end
 
     get '/index.atom' do
       @posts = Post.published.
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
       content_type 'application/atom+xml', :charset => 'utf-8'
       builder :'system/index'
     end
@@ -515,13 +533,12 @@ module Lokka
 
       @query = params[:query]
       @posts = Post.published.search(@query).
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
 
       @title = "Search by #{@query} - #{@site.title}"
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
-      @bread_crumbs.add(@query)
+      @bread_crumbs = [{:name => t.home, :link => '/'},
+                       {:name => @query }]
 
       render_detect :search, :entries
     end
@@ -535,16 +552,15 @@ module Lokka
       @category = Category.get_by_fuzzy_slug(category_title)
       return 404 if @category.nil?
       @posts = Post.all(:category => @category).published.
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
 
       @title = "#{@category.title} - #{@site.title}"
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
+      @bread_crumbs = [{:name => t.home, :link => '/'}]
       @category.ancestors.each do |cat|
-        @bread_crumbs.add(cat.name, cat.link)
+        @bread_crumbs << {:name => cat.name, :link => cat.link}
       end
-      @bread_crumbs.add(@category.title, @category.link)
+      @bread_crumbs << {:name => @category.title, :link => @category.link}
 
       render_detect :category, :entries
     end
@@ -558,12 +574,11 @@ module Lokka
       return 404 if @tag.nil?
       @posts = Post.all(:id => @tag.taggings.map {|o| o.taggable_id }).
                     published.
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
       @title = "#{@tag.name} - #{@site.title}"
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
-      @bread_crumbs.add(@tag.name, @tag.link)
+      @bread_crumbs = [{:name => t.home, :link => '/'},
+                       {:name => @tag.name, :link => @tag.link}]
 
       render_detect :tag, :entries
     end
@@ -577,14 +592,13 @@ module Lokka
       @posts = Post.all(:created_at.gte => DateTime.new(year, month)).
                     all(:created_at.lt => DateTime.new(year, month) >> 1).
                     published.
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
 
       @title = "#{year}/#{month} - #{@site.title}"
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
-      @bread_crumbs.add("#{year}", "/#{year}/")
-      @bread_crumbs.add("#{year}/#{month}", "/#{year}/#{month}/")
+      @bread_crumbs = [{:name => t.home, :link => '/'},
+                       {:name => "#{year}", :link => "/#{year}/"},
+                       {:name => "#{year}/#{month}", :link => "/#{year}/#{month}/"}]
 
       render_detect :monthly, :entries
     end
@@ -598,13 +612,12 @@ module Lokka
       @posts = Post.all(:created_at.gte => DateTime.new(year)).
                     all(:created_at.lt => DateTime.new(year + 1)).
                     published.
-                    page(params[:page], :per_page => settings.per_page)
+                    page(params[:page], :per_page => settings.per_page, :order => :created_at.desc)
 
       @title = "#{year} - #{@site.title}"
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
-      @bread_crumbs.add("#{year}", "/#{year}/")
+      @bread_crumbs = [{:name => t.home, :link => '/'},
+                       {:name => "#{year}", :link => "/#{year}/"}]
 
       render_detect :yearly, :entries
     end
@@ -622,15 +635,14 @@ module Lokka
 
       @title = "#{@entry.title} - #{@site.title}"
 
-      @bread_crumbs = BreadCrumb.new
-      @bread_crumbs.add(t.home, '/')
+      @bread_crumbs = [{:name => t.home, :link => '/'}]
       if @entry.category
         @entry.category.ancestors.each do |cat|
-          @bread_crumbs.add(cat.name, cat.link)
+          @bread_crumbs << {:name => cat.name, :link => cat.link}
         end
-        @bread_crumbs.add(@entry.category.title, @entry.category.link)
+        @bread_crumbs << {:name => @entry.category.title, :link => @entry.category.link}
       end
-      @bread_crumbs.add(@entry.title, @entry.link)
+      @bread_crumbs << {:name => @entry.title, :link => @entry.link}
 
       render_detect type, :entry
     end
