@@ -1,1 +1,2 @@
+export RACK_ENV=development
 # export RACK_ENV=test
