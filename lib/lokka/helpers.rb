@@ -180,6 +180,17 @@ module Lokka
       html + '</select>'
     end
 
+    def checkbox(object, method, options = {})
+      name = "#{object.class.name.downcase}[#{method}]"
+      id = "#{object.class.name.downcase}_#{method}"
+      checked = object.send(method) ? ' checked="checked"' : ''
+      attrs = ''
+      options.each do |key, value|
+        attrs += %Q( #{key}="#{value}")
+      end
+      %Q(<input type="hidden" name="#{name}" value="false" /><input type="checkbox" id="#{id}" name="#{name}" value="true"#{attrs}#{checked} />)
+    end
+
     def truncate(text, options = {})
       options = {:length => 30, :omission => '...'}.merge(options)
       mb_text = text.mb_chars
@@ -249,11 +260,11 @@ module Lokka
 
       type = @entry.class.name.downcase.to_sym
       @theme_types << type
-      eval "@#{type} = @entry"
+      instance_variable_set("@#{type}", @entry)
 
       @title = @entry.title
 
-      @bread_crumbs = [{:name => t.home, :link => '/'}]
+      @bread_crumbs = [{:name => rt.home, :link => '/'}]
       if @entry.category
         @entry.category.ancestors.each do |cat|
           @bread_crumbs << {:name => cat.name, :link => cat.link}
@@ -262,47 +273,59 @@ module Lokka
       end
       @bread_crumbs << {:name => @entry.title, :link => @entry.link}
 
-      render_detect_with_options [type, :entry], :theme => true 
+      render_detect_with_options [type, :entry], :theme => true
     end
 
     def get_admin_entries(entry_class)
-      name = entry_class.name.downcase
-      entry = params[:draft] == 'true' ? entry_class.unpublished.all : entry_class.all
-      eval "@#{name.pluralize} = entry.page(params[:page], :per_page => settings.admin_per_page)"
-      render_any :"#{name.pluralize}/index"
+      @name = entry_class.name.downcase
+      @entries = params[:draft] == 'true' ? entry_class.unpublished.all : entry_class.all
+      @entries = @entries.page(params[:page], :per_page => settings.admin_per_page)
+      render_any :'entries/index'
+    end
+
+    def get_admin_entry_new(entry_class)
+      @name = entry_class.name.downcase
+      @entry = entry_class.new(:created_at => DateTime.now)
+      @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+      render_any :'entries/new'
+    end
+
+    def get_admin_entry_edit(entry_class, id)
+      @name = entry_class.name.downcase
+      @entry = entry_class.get(id)
+      @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+      render_any :'entries/edit'
     end
 
     def post_admin_entry(entry_class)
-      name = entry_class.name.downcase
-      entry = entry_class.new(params[name])
-      eval "@#{name} = entry"
+      @name = entry_class.name.downcase
+      @entry = entry_class.new(params[@name])
       if params['preview']
-        render_preview entry
+        render_preview @entry
       else
-        entry.user = current_user
-        if entry.save
-          flash[:notice] = eval "t.#{name}_was_successfully_created"
-          redirect_after_edit(entry)
+        @entry.user = current_user
+        if @entry.save
+          flash[:notice] = rt["#{@name}_was_successfully_created"]
+          redirect_after_edit(@entry)
         else
-          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t.not_select])
-          render_any :"#{name.pluralize}/new"
+          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+          render_any :'entries/new'
         end
       end
     end
 
     def put_admin_entry(entry_class, id)
-      name = entry_class.name.downcase
-      entry = entry_class.get(id)
-      eval "@#{name} = entry"
+      @name = entry_class.name.downcase
+      @entry = entry_class.get(id)
       if params['preview']
-        render_preview entry_class.new(params[name])
+        render_preview entry_class.new(params[@name])
       else
-        if entry.update(params[name])
-          flash[:notice] = eval "t.#{name}_was_successfully_updated"
-          redirect_after_edit(entry)
+        if @entry.update(params[@name])
+          flash[:notice] = rt["#{@name}_was_successfully_updated"]
+          redirect_after_edit(@entry)
         else
-          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t.not_select])
-          render_any :'#{name.pluralize}/edit'
+          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+          render_any :'entries/edit'
         end
       end
     end

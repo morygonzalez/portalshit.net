@@ -1,13 +1,12 @@
 source :rubygems
 
 gem 'bundler', '~> 1.0.7'
-gem 'rack', '1.3.4'
+gem 'rack', '1.3.5'
 gem 'rack-flash', '0.1.1'
 gem 'i18n', '0.5.0'
 gem 'sinatra', '1.3.1'
-gem 'sinatra-contrib', '1.3.1'
+gem 'sinatra-contrib', '1.3.1', :require => false
 gem 'sinatra-r18n', '0.4.11'
-gem 'sinatra-content-for', '0.2'
 gem 'dm-core',          '1.2.0'
 gem 'dm-migrations',    '1.2.0'
 gem 'dm-timestamps',    '1.2.0'
@@ -29,6 +28,7 @@ gem 'kramdown', '0.13.2'
 gem 'activesupport', '3.1.1'
 gem 'nokogiri'
 gem 'tux'
+gem 'padrino'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
