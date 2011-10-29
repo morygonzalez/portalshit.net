@@ -8,5 +8,7 @@
 #   postgres://user:pass@host/database
 # heroku:
 #   <%= ENV['DATABASE_URL'] %>
-heroku:
-  sqlite3://<%= root %>/db/development.sqlite3
+development:
+  dsn: sqlite3://<%= root %>/db/development.sqlite3
+production:
+  dsn: sqlite3://<%= root %>/db/development.sqlite3
