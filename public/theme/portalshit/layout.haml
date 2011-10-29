@@ -40,39 +40,39 @@
     #footer
       #aside
         %dl.rcent_entries
-          %dt= t.recent_entries
+          %dt= rt.recent_entries
           %dd
             %ul
               - Post.recent.each do |post|
                 %li= link_to post.title, post.link
         %dl.recent_comments
-          %dt= t.recent_comments
+          %dt= rt.recent_comments
           %dd
             %ul
               - Comment.recent.each do |comment|
                 %li= link_to strip_tags(comment.body).truncate(16), comment.link
                 -# %li= link_to truncate(strip_tags(comment.body), :length => 16), comment.link
         %dl.tags
-          %dt= t.tags
+          %dt= rt.tags
           %dd
             %ul
               - Tag.all.each do |tag|
                 %li= link_to tag.name, tag.link
-          -# %dt= t.archives
+          -# %dt= rt.archives
           -# %dd
           -#   %ul
           -#     - months.each do |m|
           -#       %li= link_to "#{m.year}年#{m.month}月", "/#{m.year}/#{m.month}/"
         %dl.admin
-          %dt= t.admin
+          %dt= rt.admin
           %dd
             %ul
               - if logged_in?
-                %li= link_to t.admin_page, '/admin/'
-                %li= link_to t.new_post, '/admin/posts/new'
-                %li= link_to t.logout, '/admin/logout'
+                %li= link_to rt.admin_page, '/admin/'
+                %li= link_to rt.new_post, '/admin/posts/new'
+                %li= link_to rt.logout, '/admin/logout'
               - else
-                %li= link_to t.login, '/admin/'
+                %li= link_to rt.login, '/admin/'
               %li
       .poweredby
         powered by
