@@ -1,5 +1,6 @@
 .powrc
 config.yml
+/database.yml
 /db/*.sqlite3
 /bundle
 /vendor/bundle
