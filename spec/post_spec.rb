@@ -16,11 +16,28 @@ describe "Posts" do
     end
   end
 
-pending  
-  context "markdown" do
-    it "should have body_html" do
-      post = Post.get(1100)
-      post.methods.should Array
+  context 'markup' do
+    it 'kramdown' do
+      post = Post.get(6)
+      post.body.should_not == post.raw_body
+      post.body.should match('<h1')
+    end
+
+    it 'redcloth' do
+      post = Post.get(7)
+      post.body.should_not == post.raw_body
+      post.body.should match('<h1')
+    end
+    
+    it 'wikicloth' do
+      post = Post.get(8)
+      post.body.should_not == post.raw_body
+      post.body.should match('<h1')
+    end
+
+    it 'default' do
+      post = Post.get(1)
+      post.body.should == post.raw_body
     end
   end
 end

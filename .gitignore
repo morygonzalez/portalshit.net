@@ -1,4 +1,3 @@
-.powrc
 config.yml
 /database.yml
 /db/*.sqlite3
@@ -21,3 +20,5 @@ config.yml
 /db/log
 /db/*.log
 /db/*.yml
+/doc
+/.yardoc

@@ -105,7 +105,7 @@ module Lokka
         end
 
       layout = "#{dir}/layout"
-      path = 
+      path =
         if settings.supported_stylesheet_templates.include?(ext)
           "#{name}"
         else
@@ -122,84 +122,6 @@ module Lokka
 
     def comment_form
       haml :'system/comments/form', :layout => false
-    end
-
-    def image_tag(src, options = {})
-      %Q(<img src="#{src}" />)
-    end
-
-    def link_to(name, url, options = {})
-      attrs = {:href => url}
-      if options[:confirm] and options[:method]
-        attrs[:onclick] = "if(confirm('#{options[:confirm]}')){var f = document.createElement('form');f.style.display = 'none';this.parentNode.appendChild(f);f.method = 'POST';f.action = this.href;var m = document.createElement('input');m.setAttribute('type', 'hidden');m.setAttribute('name', '_method');m.setAttribute('value', '#{options[:method]}');f.appendChild(m);f.submit();};return false"
-      end
-
-      options.delete :confirm
-      options.delete :method
-
-      attrs.update(options)
-
-      str = ''
-      attrs.each do |key, value|
-        str += %Q( #{key.to_s}="#{value}")
-      end
-
-      %Q(<a#{str}>#{name}</a>)
-    end
-
-    def link_to_if(cond, name, url, options = {})
-      cond ? link_to(name, url, options) : name
-    end
-
-    def link_to_unless(cond, name, url, options = {})
-      link_to_if !cond, name, url, options
-    end
-
-    def link_to_current(name, url, options = {})
-      request_path == url ? link_to(name, url, options) : name
-    end
-
-    def link_to_unless_current(name, url, options = {})
-      request_path != url ? link_to(name, url, options) : name
-    end
-
-    def select_field(object, method, values = [], options = {})
-      name = "#{object.class.name.downcase}[#{method}]"
-      v = object.send(method)
-
-      attrs = ''
-      options.each do |key, value|
-        attrs += %Q( #{key}="#{value}")
-      end
-
-      html = %Q(<select name="#{name}"#{attrs}>)
-      values.each do |value|
-        padding = value[0] == v ? ' selected="selected"' : ''
-        html += %Q(<option value="#{value[0]}"#{padding}>#{value[1]}</option>)
-      end
-      html + '</select>'
-    end
-
-    def checkbox(object, method, options = {})
-      name = "#{object.class.name.downcase}[#{method}]"
-      id = "#{object.class.name.downcase}_#{method}"
-      checked = object.send(method) ? ' checked="checked"' : ''
-      attrs = ''
-      options.each do |key, value|
-        attrs += %Q( #{key}="#{value}")
-      end
-      %Q(<input type="hidden" name="#{name}" value="false" /><input type="checkbox" id="#{id}" name="#{name}" value="true"#{attrs}#{checked} />)
-    end
-
-    def truncate(text, options = {})
-      options = {:length => 30, :omission => '...'}.merge(options)
-      mb_text = text.mb_chars
-      max_length = options[:length]
-      mb_text.size > max_length ? mb_text.to_s.first(max_length) + options[:omission] : text
-    end
-
-    def strip_tags(text)
-      text.gsub(/<.+?>/, '')
     end
 
     def months
@@ -238,7 +160,7 @@ module Lokka
       path
     end
 
-    def locale; r18n.locale.code end
+    def locale; I18n.locale end
 
     def redirect_after_edit(entry)
       name = entry.class.name.downcase.pluralize
@@ -250,9 +172,11 @@ module Lokka
     end
 
     def render_preview(entry)
-        @entry = entry
-        @entry.title << ' - Preview'
-        setup_and_render_entry
+      @entry = entry
+      @entry.user = current_user
+      @entry.title << ' - Preview'
+      @entry.updated_at = DateTime.now
+      setup_and_render_entry
     end
 
     def setup_and_render_entry
@@ -264,7 +188,7 @@ module Lokka
 
       @title = @entry.title
 
-      @bread_crumbs = [{:name => rt.home, :link => '/'}]
+      @bread_crumbs = [{:name => t('home'), :link => '/'}]
       if @entry.category
         @entry.category.ancestors.each do |cat|
           @bread_crumbs << {:name => cat.name, :link => cat.link}
@@ -286,14 +210,14 @@ module Lokka
     def get_admin_entry_new(entry_class)
       @name = entry_class.name.downcase
       @entry = entry_class.new(:created_at => DateTime.now)
-      @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+      @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
       render_any :'entries/new'
     end
 
     def get_admin_entry_edit(entry_class, id)
       @name = entry_class.name.downcase
       @entry = entry_class.get(id)
-      @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+      @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
       render_any :'entries/edit'
     end
 
@@ -305,10 +229,10 @@ module Lokka
       else
         @entry.user = current_user
         if @entry.save
-          flash[:notice] = rt["#{@name}_was_successfully_created"]
+          flash[:notice] = t("#{@name}_was_successfully_created")
           redirect_after_edit(@entry)
         else
-          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
           render_any :'entries/new'
         end
       end
@@ -321,13 +245,62 @@ module Lokka
         render_preview entry_class.new(params[@name])
       else
         if @entry.update(params[@name])
-          flash[:notice] = rt["#{@name}_was_successfully_updated"]
+          flash[:notice] = t("#{@name}_was_successfully_updated")
           redirect_after_edit(@entry)
         else
-          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, rt.not_select])
+          @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
           render_any :'entries/edit'
         end
       end
     end
+
+    def delete_admin_entry(entry_class, id)
+      name = entry_class.name.downcase
+      entry = entry_class.get(id)
+      entry.destroy
+      flash[:notice] = t("#{name}_was_successfully_deleted")
+      if entry.draft
+        redirect "/admin/#{name.pluralize}?draft=true"
+      else
+        redirect "/admin/#{name.pluralize}"
+      end
+    end
+
+    ##
+    # Gravatar profile image from email
+    #
+    # @param [String] Email address
+    # @param [Integer] Image size (width and height)
+    # @return [String] Image url
+    #
+    def gravatar_image_url(email = nil, size = nil)
+      url = 'http://www.gravatar.com/avatar/'
+      url += if email
+        Digest::MD5.hexdigest(email)
+      else
+        '0' * 32
+      end
+      size ? "#{url}?size=#{size}" : url
+    end
+
+    class TranslateProxy
+      def initialize(logger)
+        @logger = logger
+      end
+      def method_missing(name, *args)
+        name = name.to_s
+        @logger.warn %|"t.#{name}" translate style is obsolete. use "t('#{name}')".| # FIXME
+        I18n.translate(name)
+      end
+    end
+
+    def translate_compatibly(*args)
+      if args.length == 0
+        TranslateProxy.new(logger)
+      else
+        I18n.translate(*args)
+      end
+    end
+    alias_method :t, :translate_compatibly
   end
 end

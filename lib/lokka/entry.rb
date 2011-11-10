@@ -8,6 +8,7 @@ class Entry
   property :slug, Slug, :length => 255
   property :title, String, :length => 255
   property :body, Text
+  property :markup, String, :length => 255
   property :type, Discriminator
   property :draft, Boolean, :default => false
   property :created_at, DateTime
@@ -27,6 +28,11 @@ class Entry
     self.category_id = nil if category_id === ''
   end
 
+  alias_method :raw_body, :body
+  def body
+    Markup.use_engine(markup || 'html', super)
+  end
+
   def comments
     @comment = Comment.all(:status => Comment::APPROVED, :entry_id => self.id)
   end
@@ -36,6 +42,26 @@ class Entry
     @tag_list = string.to_s.split(',').map { |name|
       name.force_encoding(Encoding.default_external).gsub(reg, '').strip
     }.reject{|x|x.blank?}.uniq.sort
+  end
+
+  def fuzzy_slug
+    slug.blank? ? id : slug
+  end
+
+  def link
+    "/#{fuzzy_slug}"
+  end
+
+  def edit_link
+    "/admin/#{self.class.to_s.tableize}/#{id}/edit"
+  end
+
+  def tags_to_html
+    html = '<ul class="tags">'
+    tags.each do |tag|
+      html += %Q(<li class="tag"><a href="#{tag.link}">#{tag.name}</a></li>)
+    end
+    html + '</ul>'
   end
 
   class << self
@@ -60,49 +86,29 @@ class Entry
       all_without_scope query
     end
     alias_method_chain :all, :scope
-  end
 
-  def self.get_by_fuzzy_slug(str, query = {})
-    query = {:draft => false}.update(query)
-    ret = first({:slug => str}.update(query))
-    ret.blank? ? first({:id => str}.update(query)) : ret
-  end
-
-  def self.search(str)
-    all(:title.like => "%#{str}%") |
-      all(:body.like => "%#{str}%")
-  end
-
-  def self.recent(count = 5)
-    all(:limit => count)
-  end
-
-  def self.published
-    all(:draft => false)
-  end
-
-  def self.unpublished
-    all(:draft => true)
-  end
-
-  def fuzzy_slug
-    slug.blank? ? id : slug
-  end
-
-  def link
-    "/#{fuzzy_slug}"
-  end
-
-  def edit_link
-    "/admin/#{self.class.to_s.tableize}/#{id}/edit"
-  end
-
-  def tags_to_html
-    html = '<ul class="tags">'
-    tags.each do |tag|
-      html += %Q(<li class="tag"><a href="#{tag.link}">#{tag.name}</a></li>)
+    def get_by_fuzzy_slug(str, query = {})
+      query = {:draft => false}.update(query)
+      ret = first({:slug => str}.update(query))
+      ret.blank? ? first({:id => str}.update(query)) : ret
     end
-    html + '</ul>'
+  
+    def search(str)
+      all(:title.like => "%#{str}%") |
+        all(:body.like => "%#{str}%")
+    end
+  
+    def recent(count = 5)
+      all(:limit => count)
+    end
+  
+    def published
+      all(:draft => false)
+    end
+  
+    def unpublished
+      all(:draft => true)
+    end
   end
 end
 
