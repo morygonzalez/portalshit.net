@@ -7,8 +7,8 @@
     = post.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
     - if post.category
-      .created_at== #{post.created_at.to_time} | #{link_to post.category.title, "/category/#{post.category.slug}/"}
+      .created_at== #{l post.created_at, :format => :long} | #{link_to post.category.title, "/category/#{post.category.slug}/"}
     - else
-      .created_at== #{post.created_at.to_time}
+      .created_at== #{l post.created_at, :format => :long}
     - if logged_in?
       .edit= link_to t('edit'), post.edit_link
