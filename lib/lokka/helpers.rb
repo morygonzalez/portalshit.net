@@ -211,6 +211,7 @@ module Lokka
       @name = entry_class.name.downcase
       @entry = entry_class.new(:created_at => DateTime.now)
       @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
+      @field_names = FieldName.all(:order => :name.asc)
       render_any :'entries/new'
     end
 
@@ -218,6 +219,7 @@ module Lokka
       @name = entry_class.name.downcase
       @entry = entry_class.get(id)
       @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
+      @field_names = FieldName.all(:order => :name.asc)
       render_any :'entries/edit'
     end
 
@@ -232,6 +234,7 @@ module Lokka
           flash[:notice] = t("#{@name}_was_successfully_created")
           redirect_after_edit(@entry)
         else
+          @field_names = FieldName.all(:order => :name.asc)
           @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
           render_any :'entries/new'
         end
@@ -302,5 +305,49 @@ module Lokka
       end
     end
     alias_method :t, :translate_compatibly
+
+    def apply_continue_reading(posts)
+      posts.each do |post|
+        class << post
+          alias body short_body
+        end
+      end
+      posts
+    end
+
+    def custom_permalink?
+      Option.permalink_enabled == "true"
+    end
+
+    def custom_permalink_format
+      Option.permalink_format.scan(/(%.+?%[^%]?|.)/).flatten
+    end
+
+    def custom_permalink_parse(path)
+      chars = path.chars.to_a
+      custom_permalink_format().inject({}) do |result, pattern|
+        if pattern.start_with?("%")
+          next_char = pattern[-1]
+          next_char = nil if next_char == '%'
+          name = pattern.match(/^%(.+)%.?$/)[1].to_sym
+          c = nil; (result[name] ||= "") << c until (c = chars.shift) == next_char || c.nil?
+        elsif chars.shift != pattern
+          break nil
+        end
+        result
+      end
+    end
+
+    def custom_permalink_path(param)
+      path = Option.permalink_format
+      param.each do |tag, value|
+        path.gsub!(/%#{Regexp.escape(tag)}%/,value)
+      end
+      path
+    end
+
+    class << self
+      include Lokka::Helpers
+    end
   end
 end

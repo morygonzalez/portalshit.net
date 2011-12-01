@@ -32,6 +32,7 @@ en:
   plugins: Plugins
   settings: Settings
   sites: Site
+  field_names: Field Names
   list: List
   draft: Draft
   new: New
@@ -58,12 +59,14 @@ en:
   listing_themes: Listing Themes
   listing_mobile_themes: Listing Mobile Themes
   listing_plugins: Listing Plugins
+  listing_field_names: Listing Field Names
   new_post: New Post
   new_page: New Page
   new_category: New Category
   new_user: New User
   new_comment: New Comment
   new_snippet: New Snippet
+  new_field_name: New Field Name
   edit_post: Edit Post
   edit_page: Edit Page
   edit_category: Edit Category
@@ -94,6 +97,8 @@ en:
   user_was_successfully_deleted: User was successfully deleted.
   site_was_successfully_updated: Site was successfully updated.
   theme_was_successfully_updated: Theme was successfully updated.
+  field_name_was_successfully_created: Field Name was successfully created.
+  field_name_was_successfully_deleted: Field Name was successfully deleted.
   may_i_change_the_theme: May I change the theme?
   are_you_sure: Are you sure?
   not_select: Not Select
@@ -107,6 +112,19 @@ en:
   no_plugin: No Plugin
   your_name_or_password_is_incorrect: Your username or password is incorrect.
   logged_in_successfully: Logged in successfully.
+  asc: Ascending
+  desc: Descending
+  entry:
+    id: ID
+    slug: Slug
+    title: Title
+    body: Body
+    user: Author
+    category: Category
+    tags: Tags
+    draft: Draft
+    created_at: Created at
+    updated_at: Updated at
   page:
     id: ID
     slug: Slug
@@ -152,6 +170,8 @@ en:
     description: Description
     dashboard: Dashboard
     theme: Theme
+    default_sort: Default sort
+    default_order: Default order
     meta_description: Meta description
     meta_keywords: Meta keywords
     created_at: Created at
@@ -168,6 +188,29 @@ en:
     id: ID
     name: Name
     body: Body
+    created_at: Created at
+    updated_at: Updated at
+  permalink:
+    title: Permalink
+    enable: Enable custom permalink
+    format: Custom permalink format
+    error:
+      no_tags: Format should include more than one tags.
+      tag_unclosed: Some tags is not closed. (Forgetting %?)
+    description: By enabling custom permalink, you can use custom url format as permalink of post. The custom permalink format has some compatibility with Wordpress.
+    tags: Format Tags - These magic characters will be replaced to some.
+    tag:
+      year: The year of post created, 4 digits.
+      month: The month of post created, 2 digits. Also available as %monthnum%, for compatibility with WordPress.
+      day: Day of the month when post created, 2 digits.
+      hour: Hour of the day when post created. 2 digits.
+      minute: Minute of the hour when post created. 2 digits.
+      second: Second of the minute when post created. 2 digits.
+      id: The unique id of the post. Also available as %post_id% for compatibility with WordPress.
+      slug: Slug as you specified to post. Also available as %postname% for compatibility with WordPress.
+  field_name:
+    id: ID
+    name: Name
     created_at: Created at
     updated_at: Updated at
   import: Import
@@ -187,3 +230,4 @@ en:
   comment_approved_successfuly: comment approved successfuly
   comment_moderated_successfuly: comment moderated successfuly
   comment_spam_successfuly: comment marked as spam successfuly
+  continue_reading: Continue reading...

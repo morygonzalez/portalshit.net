@@ -3,3 +3,12 @@ class Tag
     "/tags/#{name}/"
   end
 end
+
+##
+# Retrieving Tag.
+#
+# @param [String] Tag name
+# @return [Tag] Tag instance
+def Tag(name)
+  Tag.first(:name => name)
+end

@@ -27,7 +27,7 @@ end
 desc 'Reset database'
 task 'db:reset' => %w(db:delete db:seed)
 
-desc 'Set database'
+desc 'Set up database'
 task 'db:setup' => %w(db:migrate db:seed)
 
 desc 'Install gems'
@@ -50,6 +50,7 @@ end
 
 desc 'Execute spec seed script'
 task 'db:spec_seed' do
+  puts Lokka.dsn
   DataMapper::Logger.new(STDOUT, :debug)
   DataMapper.logger.set_log STDERR, :debug, "SQL: ", true
   Lokka::Database.new.connect
