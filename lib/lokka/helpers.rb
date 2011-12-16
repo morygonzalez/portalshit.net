@@ -96,7 +96,6 @@ module Lokka
     end
 
     def rendering(ext, name, options = {})
-      locals = options[:locals] ? {:locals => options[:locals]} : {}
       dir =
         if request.path_info =~ %r{^/admin/.*} && !options[:theme]
           'admin'
@@ -116,7 +115,7 @@ module Lokka
         options[:layout] = layout.to_sym if options[:layout].nil?
       end
       if File.exist?("#{settings.views}/#{path}.#{ext}")
-        send(ext.to_sym, path.to_sym, options, locals)
+        send(ext.to_sym, path.to_sym, options)
       end
     end
 
@@ -327,10 +326,11 @@ module Lokka
       chars = path.chars.to_a
       custom_permalink_format().inject({}) do |result, pattern|
         if pattern.start_with?("%")
-          next_char = pattern[-1]
+          next_char = pattern[-1..-1]
           next_char = nil if next_char == '%'
           name = pattern.match(/^%(.+)%.?$/)[1].to_sym
-          c = nil; (result[name] ||= "") << c until (c = chars.shift) == next_char || c.nil?
+          c = nil
+          (result[name] ||= "") << c until (c = chars.shift) == next_char || c.nil?
         elsif chars.shift != pattern
           break nil
         end
@@ -341,13 +341,17 @@ module Lokka
     def custom_permalink_path(param)
       path = Option.permalink_format
       param.each do |tag, value|
-        path.gsub!(/%#{Regexp.escape(tag)}%/,value)
+        path.gsub!(/%#{Regexp.escape(tag.to_s)}%/,value)
       end
       path
     end
 
     class << self
       include Lokka::Helpers
+    end
+
+    def mobile?
+      request.user_agent =~ /iPhone|Android/
     end
   end
 end
