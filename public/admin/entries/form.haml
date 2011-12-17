@@ -25,7 +25,7 @@
   .field
     = f.label :category, :caption => t("#{@name}.category")
     %br/
-    - if Category.count > 1
+    - if Category.count > 0
       = f.select :category_id, :collection => Category.all, :fields => [:title, :id], :include_blank => t('not_select')
     - else
       = t('no_category')
@@ -47,5 +47,5 @@
     %br/
     = f.text_field :created_at
   %p
-    %input(type="submit" value="#{t('preview')}" name="preview")
+    %input(type="submit" value="#{t('preview')}" name="preview" formtarget="_blank")
     %input(type="submit" value="#{label}" name="edit")
