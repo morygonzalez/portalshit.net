@@ -92,12 +92,17 @@ ul#nav {
 		}
 
 		a {
+			padding: 2px 5px;
+			
 			&:link, &:visited {
 				color: #212121;
 			}
 
 			&:hover {
-				color: $base-link;
+				color: #fffeff;
+				background-color: #444439;
+				border-radius: 5px;
+				text-shadow: 0 -1px 1px #222121;
 			}
 		}
 
