@@ -14,6 +14,7 @@ role :app, "49.212.0.51"                          # This may be the same as your
 # role :db,  "your slave db-server here"
 
 set :deploy_to, "/home/morygonzalez/sites/www.portalshit.net"
+set :unicorn_path, "/usr/local/rvm/gems/ruby-1.9.2-p290/bin/unicorn"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -29,7 +30,7 @@ set :deploy_to, "/home/morygonzalez/sites/www.portalshit.net"
 
 namespace :deploy do
   task :start do
-    run "unicorn -c config/unicorn.rb -D -E production"
+    run "#{unicorn_path} -c config/unicorn.rb -D -E production"
   end
 
   task :stop do
