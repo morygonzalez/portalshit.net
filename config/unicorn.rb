@@ -5,7 +5,10 @@
 worker_processes 2
 
 # ソケット
-listen '/tmp/unicorn-lokka.sock'
+listen 'tmp/unicorn-lokka.sock'
+
+# pid
+pid 'tmp/unicorn-lokka.pid'
 
 # ログ
 stderr_path 'log/unicorn.log'
