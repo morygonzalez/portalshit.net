@@ -14,7 +14,8 @@ role :app, "49.212.0.51"                          # This may be the same as your
 # role :db,  "your slave db-server here"
 
 set :deploy_to, "/home/morygonzalez/sites/www.portalshit.net"
-set :unicorn_path, "/usr/local/rvm/gems/ruby-1.9.2-p290/bin/unicorn"
+set :ruby_path, "/usr/local/rvm/gems/ruby-1.9.2-p290/bin"
+set :db_path, "/home/morygonzalez/sites/www.portalshit.net/db/production.sqlite3"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -30,7 +31,7 @@ set :unicorn_path, "/usr/local/rvm/gems/ruby-1.9.2-p290/bin/unicorn"
 
 namespace :deploy do
   task :start do
-    run "#{unicorn_path} -c config/unicorn.rb -D -E production"
+    run "env DATABASE_URL=#{db_path} #{ruby_path}/unicorn -c config/unicorn.rb -D -E production"
   end
 
   task :stop do
@@ -39,5 +40,11 @@ namespace :deploy do
 
   task :restart, :role => :app do
     run "kill -USR2 `cat tmp/unicorn-lokka.pid`"
+  end
+end
+
+namespace :db do
+  task :migrate do
+    run "env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
   end
 end
