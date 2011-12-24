@@ -29,7 +29,7 @@ set :deploy_to, "/home/morygonzalez/sites/www.portalshit.net"
 
 namespace :deploy do
   task :start do
-    run "unicorn -c unicorn.rb -D -E production"
+    run "unicorn -c config/unicorn.rb -D -E production"
   end
 
   task :stop do
