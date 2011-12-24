@@ -31,7 +31,7 @@ set :db_path, "/home/morygonzalez/sites/www.portalshit.net/db/production.sqlite3
 
 namespace :deploy do
   task :start do
-    run "env DATABASE_URL=#{db_path} #{ruby_path}/unicorn -c config/unicorn.rb -D -E production"
+    run "env DATABASE_URL=#{db_path} #{ruby_path}/bundle exec unicorn -c config/unicorn.rb -D -E production"
   end
 
   task :stop do
