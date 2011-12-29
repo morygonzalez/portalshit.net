@@ -8,7 +8,7 @@ worker_processes 2
 listen 'unix:./tmp/unicorn-lokka.sock'
 
 # pid
-pid 'tmp/unicorn-lokka.pid'
+pid 'tmp/pids/unicorn-lokka.pid'
 
 # ログ
 stderr_path 'log/unicorn.log'
