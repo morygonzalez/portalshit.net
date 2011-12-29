@@ -1,3 +1,5 @@
+require "bundler/capistrano"
+
 set :application, "portal shit!"
 set :repository,  "https://github.com/morygonzalez/lokka.git"
 set :branch, "portalshit"
@@ -14,7 +16,7 @@ role :app, "49.212.0.51"                          # This may be the same as your
 # role :db,  "your slave db-server here"
 
 set :deploy_to, "/home/morygonzalez/sites/www.portalshit.net"
-set :ruby_path, "/usr/local/rvm/gems/ruby-1.9.2-p290/bin"
+set :ruby_path, "/home/morygonzalez/.rbenv/shims"
 set :db_path, "/home/morygonzalez/sites/www.portalshit.net/db/production.sqlite3"
 
 # if you're still using the script/reaper helper you will need
@@ -31,6 +33,7 @@ set :db_path, "/home/morygonzalez/sites/www.portalshit.net/db/production.sqlite3
 
 namespace :deploy do
   task :start do
+    # run "env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
     run "env DATABASE_URL=#{db_path} #{ruby_path}/bundle exec unicorn -c config/unicorn.rb -D -E production"
   end
 
@@ -46,5 +49,11 @@ end
 namespace :db do
   task :migrate do
     run "env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
+  end
+end
+
+namespace :check do
+  task :vars do
+    run "which ruby; ruby -v"
   end
 end
