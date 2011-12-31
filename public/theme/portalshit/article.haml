@@ -2,7 +2,7 @@
   .header
     %h2.title= link_to post.title, post.link
   .body
-    ~ markdown(post.body)
+    ~ markdown post.body
   .footer
     = post.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}

@@ -5,7 +5,7 @@ gem 'rack', '1.3.5'
 gem 'rack-flash', '0.1.1'
 gem 'i18n', '0.6.0'
 gem 'sinatra', '1.3.1'
-gem 'sinatra-contrib', '1.3.1', :require => false
+gem 'sinatra-contrib',  '1.3.1', :require => false
 gem 'dm-core',          '1.2.0'
 gem 'dm-migrations',    '1.2.0'
 gem 'dm-timestamps',    '1.2.0'
@@ -32,13 +32,17 @@ gem 'kramdown'
 gem 'RedCloth', '4.2.9'
 gem 'wikicloth'
 gem 'yard-sinatra', '1.0.0'
+gem 'unicorn'
+gem 'capistrano'
+gem 'capistrano_colors'
+gem 'capistrano-ext'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
 group :production do
 end
 
-group :development do 
+group :development do
   gem 'tapp'
 end
 
