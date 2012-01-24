@@ -1,0 +1,23 @@
+.article.section
+  .header
+    %h2.title= link_to @entry.title, @entry.link
+  .body
+    ~ markdown @entry.body
+  .footer
+    = @entry.tags_to_html
+    .comment== #{link_to "#{t('comments')} (#{@entry.comments.size})", "#{@entry.link}#comment_form"}
+    - if @entry.category
+      .created_at== #{l @entry.created_at, :format => :long} | #{link_to @entry.category.title, "/category/#{@entry.category.slug}/"}
+    - else
+      .created_at== #{l @entry.created_at, :format => :long}
+    - if logged_in?
+      .edit= link_to t('edit'), @entry.edit_link
+/ = partial :article, :locals => {:post => @entry}
+%ul.comments
+  - @entry.comments.reverse.each do |comment|
+    %li.comment{:id => "comment-#{comment.id}"}
+      .body= hbr comment.body
+      .footer
+        .name= link_to comment.name, comment.homepage, :unless => comment.homepage.blank?
+        .created_at= l comment.created_at, :format => :long
+= comment_form

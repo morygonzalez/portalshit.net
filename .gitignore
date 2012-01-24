@@ -1,4 +1,5 @@
 config.yml
+/database.yml
 /db/*.sqlite3
 /bundle
 /vendor/bundle
@@ -13,8 +14,13 @@ config.yml
 /import.rb
 /pkg
 /.rvmrc
+/.powrc
 /Lokka.app
+*.swp
+/db/log
+/db/*.log
+/db/*.yml
 /doc
 /.yardoc
-.sass-cache
-database.yml
+plugin_old
+/.sass-cache

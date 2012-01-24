@@ -1,0 +1,14 @@
+.article.section
+  .header
+    %h2.title= link_to post.title, post.link
+  .body
+    ~ markdown post.body
+  .footer
+    = post.tags_to_html
+    .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+    - if post.category
+      .created_at== #{l post.created_at, :format => :long} | #{link_to post.category.title, "/category/#{post.category.slug}/"}
+    - else
+      .created_at== #{l post.created_at, :format => :long}
+    - if logged_in?
+      .edit= link_to t('edit'), post.edit_link

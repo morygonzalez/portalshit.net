@@ -83,6 +83,7 @@ GEM
     expression_parser (0.9.0)
     fastercsv (1.5.4)
     haml (3.1.1)
+    highline (1.6.9)
     http_router (0.10.2)
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
@@ -95,6 +96,7 @@ GEM
       net-ssh (>= 1.99.1)
     net-sftp (2.0.5)
       net-ssh (>= 2.0.9)
+<<<<<<< HEAD
     net-ssh (2.3.0)
     net-ssh-gateway (1.1.0)
       net-ssh (>= 1.99.1)
@@ -115,6 +117,7 @@ GEM
       rack
     rack-test (0.6.1)
       rack (>= 1.0)
+    raindrops (0.8.0)
     rake (0.9.2)
     ripl (0.6.0)
       bond (~> 0.4.0)
@@ -158,6 +161,10 @@ GEM
       ripl-multi_line (>= 0.2.4)
       ripl-rack (>= 0.2.0)
       sinatra (>= 1.2.1)
+    unicorn (4.1.1)
+      kgio (~> 2.4)
+      rack
+      raindrops (~> 0.6)
     url_mount (0.2.1)
       rack
     uuidtools (2.1.2)
@@ -176,6 +183,9 @@ DEPENDENCIES
   activesupport (= 3.1.1)
   builder (= 3.0.0)
   bundler (~> 1.0.7)
+  capistrano
+  capistrano-ext
+  capistrano_colors
   coderay
   data_objects!
   dm-aggregates (= 1.2.0)
@@ -208,5 +218,6 @@ DEPENDENCIES
   slim (= 0.9.2)
   tapp
   tux
+  unicorn
   wikicloth
   yard-sinatra (= 1.0.0)
