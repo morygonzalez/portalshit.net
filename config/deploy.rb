@@ -42,7 +42,7 @@ namespace :deploy do
     run "kill `cat tmp/pids/unicorn-lokka.pid`"
   end
 
-  task :restart, :role => :app do
+  task :restart, :role => :app, :except => { :no_release => true } do
     run "kill -USR2 `cat tmp/pids/unicorn-lokka.pid`"
   end
 end
