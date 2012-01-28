@@ -39,17 +39,17 @@ namespace :deploy do
   end
 
   task :stop do
-    run "kill `cat tmp/pids/unicorn-lokka.pid`"
+    run "cd #{current_path}; kill `cat tmp/pids/unicorn-lokka.pid`"
   end
 
   task :restart, :role => :app, :except => { :no_release => true } do
-    run "kill -USR2 `cat tmp/pids/unicorn-lokka.pid`"
+    run "cd #{current_path}; kill -USR2 `cat tmp/pids/unicorn-lokka.pid`"
   end
 end
 
 namespace :db do
   task :migrate do
-    run "env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
+    run "cd #{current_path}; env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
   end
 end
 
