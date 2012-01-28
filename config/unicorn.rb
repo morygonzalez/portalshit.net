@@ -2,10 +2,10 @@
 worker_processes 2
 
 # ソケット
-listen File.dirname(__FILE__) + '/../tmp/sockets/unicorn-lokka.sock'
+listen 'tmp/sockets/unicorn-lokka.sock'
 
 # pid
-pid File.dirname(__FILE__) + '/../tmp/pids/unicorn-lokka.pid'
+pid 'tmp/pids/unicorn-lokka.pid'
 
 # ログ
 stderr_path 'log/unicorn.log'
