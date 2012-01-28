@@ -1,14 +1,11 @@
-#/usr/bin/env ruby
-#-*- coding: utf-8 -*-
-
 # ワーカーの数
 worker_processes 2
 
 # ソケット
-listen 'unix:./tmp/unicorn-lokka.sock'
+listen File.dirname(__FILE__) + '/../tmp/sockets/unicorn-portalshit.sock'
 
 # pid
-pid 'tmp/pids/unicorn-lokka.pid'
+pid File.dirname(__FILE__) + '/../tmp/pids/unicorn-portalshit.pid'
 
 # ログ
 stderr_path 'log/unicorn.log'
