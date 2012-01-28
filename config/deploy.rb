@@ -1,4 +1,5 @@
 require "bundler/capistrano"
+require "capistrano_colors"
 
 set :application, "portal shit!"
 set :repository,  "https://github.com/morygonzalez/lokka.git"
