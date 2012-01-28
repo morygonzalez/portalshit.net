@@ -39,11 +39,11 @@ namespace :deploy do
   end
 
   task :stop do
-    run "kill `cat tmp/unicorn-lokka.pid`"
+    run "kill `cat tmp/pids/unicorn-lokka.pid`"
   end
 
   task :restart, :role => :app do
-    run "kill -USR2 `cat tmp/unicorn-lokka.pid`"
+    run "kill -USR2 `cat tmp/pids/unicorn-lokka.pid`"
   end
 end
 
