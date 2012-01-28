@@ -35,7 +35,7 @@ set :db_path, "sqlite3://#{deploy_to}/shared/db/production.sqlite3"
 namespace :deploy do
   task :start do
     # run "env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
-    run "cd #{current_path}; env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
+    run "cd #{current_path}; env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
   end
 
   task :stop do
