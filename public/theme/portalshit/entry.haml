@@ -12,6 +12,16 @@
       .created_at== #{l @entry.created_at, :format => :long}
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
+
+  .article-bottom
+    :javascript
+      google_ad_client = "ca-pub-7665673588234323";
+      /* 個別記事下 */
+      google_ad_slot = "2322018454";
+      google_ad_width = 728;
+      google_ad_height = 90;
+    %script(type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
 / = partial :article, :locals => {:post => @entry}
 %ul.comments
   - @entry.comments.reverse.each do |comment|
