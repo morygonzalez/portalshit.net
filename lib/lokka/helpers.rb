@@ -11,6 +11,12 @@ module Lokka
       end
     end
 
+    def base_url
+      default_port = (request.scheme == "http") ? 80 : 443
+      port = (request.port == default_port) ? "" : ":#{request.port.to_s}"
+      "#{request.scheme}://#{request.host}#{port}"
+    end
+
     # h + n2br
     def hbr(str)
       h(str).gsub(/\r\n|\r|\n/, "<br />\n")
@@ -208,7 +214,7 @@ module Lokka
 
     def get_admin_entry_new(entry_class)
       @name = entry_class.name.downcase
-      @entry = entry_class.new(:created_at => DateTime.now)
+      @entry = entry_class.new(:created_at => DateTime.now, :updated_at => DateTime.now)
       @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
       @field_names = FieldName.all(:order => :name.asc)
       render_any :'entries/new'
@@ -251,6 +257,7 @@ module Lokka
           redirect_after_edit(@entry)
         else
           @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
+          @field_names = FieldName.all(:order => :name.asc)
           render_any :'entries/edit'
         end
       end

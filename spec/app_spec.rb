@@ -15,7 +15,7 @@ describe "App" do
 
     it "entries is sort by created_at in descending" do
       get '/'
-      body = last_response.body
+      body = last_response.body 
       (body.index(/Test Post2/) < body.index(/Test Post[^\d]/)).should be_true
     end
 
@@ -92,6 +92,16 @@ describe "App" do
         last_response.should be_redirect
         follow_redirect!
         last_request.url.should match('/2011/01/09/welcome-lokka')
+      end
+
+      it 'returns status code 200 if entry found by custom permalink' do
+        get '/2011/01/09/welcome-lokka'
+        last_response.status.should == 200
+      end
+
+      it 'but returns status code 404 if entry not found' do
+        get '/2011/01/09/welcome-wordpress'
+        last_response.status.should == 404
       end
     end
 
