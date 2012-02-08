@@ -247,6 +247,13 @@ describe "App" do
       end
     end
 
+    context '/admin/comments/spam' do
+      it 'should be ok' do
+        delete '/admin/comments/spam'
+        last_response.should be_ok
+      end
+    end
+
     context '/admin/categories' do
       it 'should show index' do
         get '/admin/categories'
