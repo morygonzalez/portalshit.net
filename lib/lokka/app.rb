@@ -11,7 +11,6 @@ module Lokka
 
     configure do
       enable :method_override, :raise_errors, :static, :sessions
-      disable :logging
       YAML::ENGINE.yamler = 'syck' if YAML.const_defined?(:ENGINE)
       register Padrino::Helpers
       set :app_file, __FILE__
@@ -38,8 +37,8 @@ module Lokka
       Lokka::Database.new.connect
     end
 
-    load 'lokka/app/admin.rb'
-    load 'lokka/app/entries.rb'
+    require 'lokka/app/admin.rb'
+    require 'lokka/app/entries.rb'
 
     not_found do
       if custom_permalink?
