@@ -5,6 +5,9 @@ require 'rubygems'
 require 'sinatra'
 require 'rack/test'
 require 'rspec'
+require 'factory_girl'
+
+require 'factories'
 
 if RUBY_VERSION >= '1.9'
 

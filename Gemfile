@@ -1,6 +1,6 @@
 source :rubygems
 
-gem 'bundler', '~> 1.0.7'
+gem 'bundler'
 gem 'rack', '1.3.6'
 gem 'rack-flash', '0.1.1'
 gem 'i18n', '0.6.0'
@@ -51,6 +51,7 @@ group :test do
   gem 'rack-test', '0.6.1', :require => 'rack/test'
   gem 'rspec', '~> 2.5'
   gem 'simplecov', :require => false if RUBY_VERSION >= '1.9'
+  gem 'factory_girl'
 end
 
 group :mysql do
