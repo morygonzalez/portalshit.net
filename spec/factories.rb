@@ -30,6 +30,25 @@ FactoryGirl.define do
     updated_at update_time
   end
 
+  factory :entry do
+    association :user
+    sequence(:title){|n| "Test Post #{n}" }
+    body "<p>Welcome to Lokka!</p><p><a href=""/admin/"">Admin login</a> (user / password : test / test)</p>"
+    type 'Post'
+    created_at create_time
+    updated_at update_time
+  end
+
+  factory :spam_comment, :class => Comment do
+    association :entry
+    status 2
+    name "spamcoment"
+    email "hoge@hoge.com"
+    body "pharmacy"
+    created_at create_time
+    updated_at update_time
+  end
+
   factory :post_with_slug, :parent => :post do
     slug 'welcome-lokka'
   end

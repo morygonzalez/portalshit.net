@@ -335,8 +335,12 @@ describe "App" do
     end
 
     context '/admin/comments/spam' do
+      before do
+        FactoryGirl.create(:spam_comment)
+      end
+
       it 'should be ok' do
-        delete '/admin/comments/spam'
+        get '/admin/comments/spam'
         last_response.should be_ok
       end
     end
