@@ -107,7 +107,7 @@ FactoryGirl.define do
   end
 
   factory :snippet do
-    name 'Test Snippet'
+    sequence(:name){|n| "Test Snippet#{n}" }
     body 'Text for test snippet.'
     created_at create_time
     updated_at update_time
@@ -141,5 +141,21 @@ FactoryGirl.define do
     association :tag
     tag_context 'tags'
     taggable_type Entry
+  end
+
+  # Comment has no association to entry by default
+  factory :comment do
+    status Comment::APPROVED
+    name 'foobar'
+    email 'foobar@example.com'
+    body 'Test Comment'
+    created_at create_time
+    updated_at update_time
+  end
+
+  factory :field_name do
+    sequence(:name){|n| "Field Name #{n}" }
+    created_at create_time
+    updated_at update_time
   end
 end
