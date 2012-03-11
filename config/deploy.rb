@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 require "bundler/capistrano"
 require "capistrano_colors"
 
@@ -19,6 +20,8 @@ role :app, "49.212.0.51"                          # This may be the same as your
 set :deploy_to, "/home/morygonzalez/sites/deploys"
 set :ruby_path, "/home/morygonzalez/.rbenv/shims"
 set :db_path, "sqlite3://#{deploy_to}/shared/db/production.sqlite3"
+# public が削除されるの対策
+set :normalize_asset_timestamps, false
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -53,8 +56,7 @@ namespace :db do
   end
 end
 
-namespace :check do
-  task :vars do
-    run "which ruby; ruby -v"
-  end
-end
+# desc "git checkout public"
+# task :git_checkout_public do
+#   run "cd #{current_path}; git checkout public"
+# end
