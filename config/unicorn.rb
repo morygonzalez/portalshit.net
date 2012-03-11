@@ -6,7 +6,7 @@ listen '/tmp/unicorn-lokka.sock'
 # listen File.expand_path('tmp/sockets/unicorn-lokka.sock', ENV['LOKKA_ROOT'])
 
 # pid
-listen File.expand_path('tmp/pids/unicorn-lokka.pid', ENV['LOKKA_ROOT'])
+pid File.expand_path('tmp/pids/unicorn-lokka.pid', ENV['LOKKA_ROOT'])
 
 # ログ
 stderr_path 'log/unicorn.log'
