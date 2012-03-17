@@ -6,6 +6,13 @@
     font-size: 90%;
 }
 
+@mixin ipad {
+	@media all and (orientation:portrait) {
+		width: 768px;
+		font-size: 1.1em;
+	}
+}
+
 $base-link: #8c0000;
 
 body {
@@ -172,7 +179,8 @@ blockquote {
 }
 
 #header {
-	width: 1024px;
+	width: 980px;
+	@include ipad;
 	margin: 20px auto 10px;
 	text-align: left;
 
@@ -187,7 +195,8 @@ blockquote {
 
 #bread_crumb {
 	margin: 0px auto;
-	width: 1024px;
+	width: 980px;
+	@include ipad;
 	text-align: left;
 	overflow: hidden;
 	height: 1%;
@@ -233,7 +242,8 @@ blockquote {
 }
 
 #content {
-	width: 1024px;
+	width: 980px;
+	@include ipad;
 	height: auto;
 	margin: 0 auto;
 	text-align: left;
@@ -249,11 +259,12 @@ blockquote {
 	margin: 0 auto;
 	text-align: left;
 	padding: 20px 30px;
-	width: 1024px;
+	width: 980px;
+	@include ipad;
 
     dl {
         display: block;
-        margin: 0em 18px 0em 0em;
+        margin: 0 18px 0 0;
         float: left;
         width: 222px;
 
