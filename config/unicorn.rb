@@ -8,8 +8,8 @@ listen File.expand_path('tmp/sockets/unicorn-lokka.sock', ENV['LOKKA_ROOT'])
 pid File.expand_path('tmp/pids/unicorn-lokka.pid', ENV['LOKKA_ROOT'])
 
 # ログ
-stderr_path 'log/unicorn.log'
-stdout_path 'log/unicorn.log'
+stderr_path File.expand_path('log/unicorn.log', ENV['LOKKA_ROOT'])
+stdout_path File.expand_path('log/unicorn.log', ENV['LOKKA_ROOT'])
 
 # ダウンタイムなくす
 preload_app true
