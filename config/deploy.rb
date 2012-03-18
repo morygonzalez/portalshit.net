@@ -2,7 +2,7 @@
 require "bundler/capistrano"
 require "capistrano_colors"
 
-set :application, "portal shit!"
+set :application, "portalshit"
 set :repository,  "https://github.com/morygonzalez/lokka.git"
 set :branch, "portalshit"
 
@@ -17,7 +17,7 @@ role :app, "49.212.0.51"                          # This may be the same as your
 # role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
 # role :db,  "your slave db-server here"
 
-set :deploy_to, "/home/morygonzalez/sites/deploys"
+set :deploy_to, "/home/morygonzalez/sites/deploys/#{application}"
 set :ruby_path, "/home/morygonzalez/.rbenv/shims"
 set :db_path, "sqlite3://#{deploy_to}/shared/db/production.sqlite3"
 set :normalize_asset_timestamps, false
@@ -36,7 +36,6 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start do
-    # run "env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
     run "cd #{current_path}; env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
   end
 
