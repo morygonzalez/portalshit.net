@@ -1,0 +1,19 @@
+- content_for :head_last do
+  %link{:rel => 'stylesheet', :href => '/plugin/lokka-amazon_associate/views/style.css', :type => 'text/css'}
+%h2 Amazon Associate
+%form{:action => '/admin/plugins/amazon_associate', :method => 'post'}
+  %input{:type => 'hidden', :name => '_method', :value => 'put'}
+  .field
+    %label{:for => 'associate_tag'} Associate Tag
+    %br
+    %input{:type => 'text', :id => 'associate_tag', :name => 'associate_tag', :value => Option.associate_tag}
+  .field
+    %label{:for => 'access_key_id'} Access Key ID
+    %br
+    %input{:type => 'text', :id => 'access_key_id', :name => 'access_key_id', :value => Option.access_key_id}
+  .field
+    %label{:for => 'secret_key'} Secret Key
+    %br
+    %input{:type => 'text', :id => 'secret_key', :name => 'secret_key', :value => Option.secret_key}
+  .field
+    %input{:type => 'submit', :value => t('edit')}
