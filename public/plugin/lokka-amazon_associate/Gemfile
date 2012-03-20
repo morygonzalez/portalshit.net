@@ -1,3 +1,2 @@
-source :rubygems
-
 gem "amazon-ecs"
+gem "rack-cache"
