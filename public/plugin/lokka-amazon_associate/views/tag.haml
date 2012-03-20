@@ -1,0 +1,8 @@
+.amazon
+  .amazon-image
+    = link_to image_tag(@image), @link
+  .amazon-content
+    %ul
+      %li= link_to @title, @link
+      %li= @author
+      %li= @price
