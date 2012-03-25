@@ -26,12 +26,12 @@ module Lokka
     end
 
     def get_item(item_id, *args)
+      args = {:country => :jp, :response_group => 'Medium'} if args.blank?
       Amazon::Ecs.options = {
         :associate_tag => Option.associate_tag,
         :AWS_access_key_id => Option.access_key_id,
         :AWS_secret_key => Option.secret_key
       }
-      args = {:country => :jp, :response_group => 'Medium'} if args.blank?
       Amazon::Ecs.item_lookup(item_id, args)
     end
 
@@ -39,21 +39,13 @@ module Lokka
       @title  = item.doc.css("ItemAttributes Title").first.inner_text
       @link   = item.doc.css("DetailPageURL").first.inner_text
       @image  = item.doc.css("MediumImage URL").first.inner_text
-      @price  = item.doc.css("ListPrice FormattedPrice").first.inner_text
+      @price  = item.doc.css("ListPrice FormattedPrice").first.inner_text rescue nil
       authors = []
       attr    = item.doc.css("ItemAttributes")
-      if attr.css("Creator").present?
-        authors << format_authors(attr.css("Creator"))
-      end
-      if attr.css("Author").present?
-        authors << format_authors(attr.css("Author"))
-      end
-      if attr.css("Director").present?
-        authors << format_authors(attr.css("Director"))
-      end
-      if attr.css("Actor").present?
-        authors << format_authors(attr.css("Actor"))
-      end
+      authors << format_authors(attr.css("Creator")) if attr.css("Creator").present?
+      authors << format_authors(attr.css("Author")) if attr.css("Author").present?
+      authors << format_authors(attr.css("Director")) if attr.css("Director").present?
+      authors << format_authors(attr.css("Actor")) if attr.css("Actor").present?
       @author = authors.join(", ")
 
       haml :'plugin/lokka-amazon_associate/views/tag', :layout => false
