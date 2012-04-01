@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 require 'amazon/ecs'
+require 'nokogiri'
+require 'fileutils'
+require 'digest/md5'
+require 'json'
 
 module Lokka
   module AmazonAssociate
@@ -20,8 +24,11 @@ module Lokka
 
   module Helpers
     def associate_link(entry)
-      entry.gsub(/<!-- ?ISBN=(.+)? -->/m) {
-        format_item get_item($1)
+      entry.gsub(/<!--\sISBN=([0-9A-Z]+?)\s-->/m) {
+        item = get_item($1)
+        # path = Amazon::Ecs.get_path(item)
+        # json = Amazon::Ecs.parse_item(path)
+        format_item(json)
       }
     end
 
@@ -35,30 +42,56 @@ module Lokka
       Amazon::Ecs.item_lookup(item_id, args)
     end
 
-    def format_item(item)
-      @title  = item.doc.css("ItemAttributes Title").first.inner_text
-      @link   = item.doc.css("DetailPageURL").first.inner_text
-      @image  = item.doc.css("MediumImage URL").first.inner_text
-      @price  = item.doc.css("ListPrice FormattedPrice").first.inner_text rescue nil
+    def format_item(json)
+      item = json["ItemLookupResponse"]["Items"]["Item"]
+      attr= item["ItemAttributes"]
+      @title = attr["Title"] rescue nil
+      @link = item["DetailPageURL"] rescue nil
+      @image = item["LargeImage"]["URL"] rescue nil
+      @price = attr["ListPrice"]["FormattedPrice"] rescue nil
       authors = []
-      attr    = item.doc.css("ItemAttributes")
-      authors << format_authors(attr.css("Creator")) if attr.css("Creator").present?
-      authors << format_authors(attr.css("Author")) if attr.css("Author").present?
-      authors << format_authors(attr.css("Director")) if attr.css("Director").present?
-      authors << format_authors(attr.css("Actor")) if attr.css("Actor").present?
+      authors << format_authors(attr["Creator"]) if attr["Creator"]
+      authors << format_authors(attr["Author"]) if attr["Author"]
+      authors << format_authors(attr["Director"]) if attr["Director"]
+      authors << format_authors(attr["Actor"]) if attr["Actor"]
+      authors << format_authors(attr["Artist"]) if attr["Artist"]
       @author = authors.join(", ")
 
       haml :'plugin/lokka-amazon_associate/views/tag', :layout => false
     end
 
     def format_authors(authors)
-      if authors.count > 1
+      if authors.class == Array && authors.size > 1
         authors.inject([]) { |authors, item|
-          authors << item.inner_text
+          authors << item
         }.join(", ")
       else
-        authors.first.inner_text
+        authors
       end
+    end
+  end
+end
+
+module Amazon
+  class Ecs
+    def item_lookup(item_id, args)
+      super
+    end
+
+    def self.get_path(item)
+      dir = File.expand_path("public/plugin/lokka-amazon_associate/tmp")
+      url = Digest::MD5.hexdigest item.doc.css("ItemId").inner_text
+      path = File.join(dir, url.chars.first, url)
+      FileUtils.mkdir_p(File.dirname(path))
+      return path if File.exists?(path)
+      open(path, "w") { |f|
+        f.print Hash.from_xml(item.doc.to_xml).to_json
+      }
+      path
+    end
+
+    def self.parse_item(path)
+      JSON.parse(File.read(path))
     end
   end
 end
