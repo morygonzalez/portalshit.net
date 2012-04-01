@@ -32,6 +32,8 @@ module Lokka
     end
 
     def format_item(json)
+      error = json["ItemLookupResponse"]["Items"]["Request"]["Errors"]["Error"] rescue nil
+      return @error = "#{error["Code"]}: #{error["Message"]}" if error.present?
       item = json["ItemLookupResponse"]["Items"]["Item"]
       attr= item["ItemAttributes"]
       @title = attr["Title"] rescue nil
@@ -65,12 +67,12 @@ module Amazon
   class Ecs
     def self.get_item(item_id, *args)
       args = {:country => :jp, :response_group => 'Medium'} if args.blank?
-      Amazon::Ecs.options = {
+      self.options = {
         :associate_tag => Option.associate_tag,
         :AWS_access_key_id => Option.access_key_id,
         :AWS_secret_key => Option.secret_key
       }
-      Amazon::Ecs.item_lookup(item_id, args)
+      self.item_lookup(item_id, args)
     end
 
     def self.get_path(item_id)
@@ -78,7 +80,7 @@ module Amazon
       url = Digest::MD5.hexdigest item_id
       path = File.join(dir, url.chars.first, url)
       FileUtils.mkdir_p(File.dirname(path))
-      return path if File.exists?(path)
+      return path if File.exists?(path) && File.stat(path).mtime > Time.now.yesterday
       open(path, "w") { |f|
         item = get_item(item_id)
         f.print Hash.from_xml(item.doc.to_xml).to_json

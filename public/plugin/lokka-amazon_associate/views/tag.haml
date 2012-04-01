@@ -1,8 +1,30 @@
+:css
+  .amazon {
+      display: block;
+      overflow: hidden;
+      height: 1%;
+      margin-bottom: 30px;
+  }
+  .amazon-image {
+      float: left;
+  }
+  .amazon-content {
+      margin-left: 20px;
+      float: left;
+      width: 50%;
+  }
+  .amazon-content ul {
+      margin-top: 0;
+  }
+
 .amazon
-  .amazon-image
-    = link_to image_tag(@image), @link
-  .amazon-content
-    %ul
-      %li= link_to @title, @link
-      %li= @author
-      %li= @price
+  -if @error
+    %p.error= @error
+  -else
+    .amazon-image
+      = link_to image_tag(@image), @link
+    .amazon-content
+      %ul
+        %li= link_to @title, @link
+        %li= @author
+        %li= @price
