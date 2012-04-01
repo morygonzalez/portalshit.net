@@ -25,21 +25,10 @@ module Lokka
   module Helpers
     def associate_link(entry)
       entry.gsub(/<!--\sISBN=([0-9A-Z]+?)\s-->/m) {
-        item = get_item($1)
-        # path = Amazon::Ecs.get_path(item)
-        # json = Amazon::Ecs.parse_item(path)
+        item = Amazon::Ecs.get_path($1)
+        json = Amazon::Ecs.parse_item(item)
         format_item(json)
       }
-    end
-
-    def get_item(item_id, *args)
-      args = {:country => :jp, :response_group => 'Medium'} if args.blank?
-      Amazon::Ecs.options = {
-        :associate_tag => Option.associate_tag,
-        :AWS_access_key_id => Option.access_key_id,
-        :AWS_secret_key => Option.secret_key
-      }
-      Amazon::Ecs.item_lookup(item_id, args)
     end
 
     def format_item(json)
@@ -74,17 +63,24 @@ end
 
 module Amazon
   class Ecs
-    def item_lookup(item_id, args)
-      super
+    def self.get_item(item_id, *args)
+      args = {:country => :jp, :response_group => 'Medium'} if args.blank?
+      Amazon::Ecs.options = {
+        :associate_tag => Option.associate_tag,
+        :AWS_access_key_id => Option.access_key_id,
+        :AWS_secret_key => Option.secret_key
+      }
+      Amazon::Ecs.item_lookup(item_id, args)
     end
 
-    def self.get_path(item)
+    def self.get_path(item_id)
       dir = File.expand_path("public/plugin/lokka-amazon_associate/tmp")
-      url = Digest::MD5.hexdigest item.doc.css("ItemId").inner_text
+      url = Digest::MD5.hexdigest item_id
       path = File.join(dir, url.chars.first, url)
       FileUtils.mkdir_p(File.dirname(path))
       return path if File.exists?(path)
       open(path, "w") { |f|
+        item = get_item(item_id)
         f.print Hash.from_xml(item.doc.to_xml).to_json
       }
       path
