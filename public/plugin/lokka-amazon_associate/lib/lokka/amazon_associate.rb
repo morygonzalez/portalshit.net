@@ -36,7 +36,7 @@ module Lokka
       return @error = "#{error["Code"]}: #{error["Message"]}" if error.present?
       item = json["ItemLookupResponse"]["Items"]["Item"]
       attr= item["ItemAttributes"]
-      @title = attr["Title"] rescue nil
+      @title = h! attr["Title"] rescue nil
       @link = item["DetailPageURL"] rescue nil
       @image = item["LargeImage"]["URL"] rescue nil
       @price = attr["ListPrice"]["FormattedPrice"] rescue nil
@@ -46,7 +46,7 @@ module Lokka
       authors << format_authors(attr["Director"]) if attr["Director"]
       authors << format_authors(attr["Actor"]) if attr["Actor"]
       authors << format_authors(attr["Artist"]) if attr["Artist"]
-      @author = authors.join(", ")
+      @author = h! authors.join(", ")
 
       haml :'plugin/lokka-amazon_associate/views/tag', :layout => false
     end
