@@ -46,6 +46,10 @@ namespace :deploy do
   task :restart, :role => :app, :except => { :no_release => true } do
     run "kill -USR2 `cat #{shared_path}/pids/unicorn-lokka.pid`"
   end
+
+  before "deploy:start" do
+    run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets"
+  end
 end
 
 namespace :db do
@@ -59,10 +63,4 @@ task :git_checkout_public do
   run "cd #{current_path}; git checkout public"
 end
 
-desc "create socket symlink"
-task :create_socket_link do
-  run "ln -sf #{shared_path}/sockets #{current_path}/tmp/sockets"
-end
-
-before "deploy:symlink", :create_socket_link
 after "deploy:symlink", :git_checkout_public
