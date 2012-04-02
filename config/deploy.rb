@@ -35,16 +35,16 @@ set :normalize_asset_timestamps, false
 # end
 
 namespace :deploy do
-  task :start do
+  task :start, :roles => :app, :except => { :no_release => true } do
     run "cd #{current_path}; env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
   end
 
-  task :stop do
-    run "cd #{current_path}; kill `cat tmp/pids/unicorn-lokka.pid`"
+  task :stop, :roles => :app, :except => { :no_release => true } do
+    run "kill -KILL `cat #{shared_path}/pids/unicorn-lokka.pid`"
   end
 
   task :restart, :role => :app, :except => { :no_release => true } do
-    run "cd #{current_path}; kill -USR2 `cat tmp/pids/unicorn-lokka.pid`"
+    run "kill -USR2 `cat #{shared_path}/pids/unicorn-lokka.pid`"
   end
 end
 
@@ -59,4 +59,10 @@ task :git_checkout_public do
   run "cd #{current_path}; git checkout public"
 end
 
+desc "create socket symlink"
+task :create_socket_link do
+  run "ln -sf #{shared_path}/sockets #{current_path}/tmp/sockets"
+end
+
+before "deploy:symlink", :create_socket_link
 after "deploy:symlink", :git_checkout_public
