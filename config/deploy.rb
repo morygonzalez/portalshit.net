@@ -47,20 +47,18 @@ namespace :deploy do
     run "kill -USR2 `cat #{shared_path}/pids/unicorn-lokka.pid`"
   end
 
-  before "deploy:start" do
+  task :migrate, :role => :app, :except => { :no_release => true } do
+    run "cd #{current_path}; env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
+  end
+
+  task :git_checkout_public, :role => :app, :except => { :no_release => true } do
+    run "cd #{current_path}; git checkout public"
+  end
+
+  task :socket_symlink, :role => :app, :except => { :no_release => true } do
     run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets"
   end
 end
 
-namespace :db do
-  task :migrate do
-    run "cd #{current_path}; env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
-  end
-end
-
-desc "git checkout public"
-task :git_checkout_public do
-  run "cd #{current_path}; git checkout public"
-end
-
 after "deploy:symlink", :git_checkout_public
+before "deploy:start", :socket_symlink
