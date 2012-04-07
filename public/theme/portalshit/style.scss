@@ -2,6 +2,7 @@
 
 $radius: 12px;
 $base-link: #8c0000;
+$various-bg: #212121;
 
 @mixin footer-common {
     padding: 0;
@@ -115,7 +116,7 @@ ul#nav {
             padding: 2px 5px;
             
             &:link, &:visited {
-                color: #212121;
+                color: $various-bg;
             }
 
             &:hover {
@@ -165,7 +166,7 @@ li {
 pre {
     line-height: 100%;
     padding: 1.2em 0.6em;
-    background-color: #212121;
+    background-color: $various-bg;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
@@ -409,6 +410,16 @@ blockquote {
                 margin-right: 0.4em;
             }
         }
+        
+        dl {
+            dt {
+                margin-top: 10px;
+            }
+            dd {
+                margin-top: 10px;
+                margin-bottom:  20px;
+            }
+        }
     }
     
     .footer {
@@ -641,15 +652,28 @@ h4.comment {
 
 #comment_form {
     margin: 0px 30px;
-    font-size: 90%;
-}
+    
+    input, textarea {
+        background: $various-bg;
+        color: #ffffff;
+        border-width: 1px;
+        border-style: ridge;
+        border-color: #fff;
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+    }
 
-#comment_name {
-}
-
-#comment_body {
-    width: 60%;
-    height: 250px;
+    #comment_name {
+        width: 25%;
+    }
+    #comment_homepage {
+        width: 40%;
+    }
+    #comment_body {
+        width: 60%;
+        height: 250px;
+    }
 }
 
 #search_form input {
@@ -660,10 +684,8 @@ h4.comment {
     color: black;
 }
 
-.zenback {
-    margin: 0px 30px 10px 0px !important;
-}
-
-#zenback_loady {
-    margin: 0px 30px 10px 0px !important;
+#a_flickr_badge_image {
+    a img {
+        padding: 0 5px 5px 0;
+    }
 }
