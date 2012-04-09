@@ -1,3 +1,0 @@
-[submodule "migrator"]
-	path = migrator
-	url = git@github.com:morygonzalez/p_blog_to_lokka.git
