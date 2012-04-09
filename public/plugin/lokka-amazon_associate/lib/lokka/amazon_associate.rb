@@ -24,9 +24,9 @@ module Lokka
 
   module Helpers
     def associate_link(entry)
-      entry.gsub(/<!--\sISBN=([0-9A-Z]+?)\s-->/m) {
-        item = Amazon::Ecs.get_path($1)
-        json = Amazon::Ecs.parse_item(item)
+      entry.gsub(/<!--\s(?:ISBN|ASIN)=([0-9A-Z]+?)\s-->/m) {
+        item = get_path($1)
+        json = parse_item(item)
         format_item(json)
       }
     end
@@ -60,22 +60,18 @@ module Lokka
         authors
       end
     end
-  end
-end
 
-module Amazon
-  class Ecs
-    def self.get_item(item_id, *args)
+    def get_item(item_id, *args)
       args = {:country => :jp, :response_group => 'Medium'} if args.blank?
-      self.options = {
+      Amazon::Ecs.options = {
         :associate_tag => Option.associate_tag,
         :AWS_access_key_id => Option.access_key_id,
         :AWS_secret_key => Option.secret_key
       }
-      self.item_lookup(item_id, args)
+      Amazon::Ecs.item_lookup(item_id, args)
     end
 
-    def self.get_path(item_id)
+    def get_path(item_id)
       dir = File.expand_path("public/plugin/lokka-amazon_associate/tmp")
       url = Digest::MD5.hexdigest item_id
       path = File.join(dir, url.chars.first, url)
@@ -88,7 +84,7 @@ module Amazon
       path
     end
 
-    def self.parse_item(path)
+    def parse_item(path)
       JSON.parse(File.read(path))
     end
   end
