@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-$radius: 12px;
+$radius: 5px;
 $base-link: #8c0000;
 $various-bg: #212121;
 
@@ -114,7 +114,7 @@ ul#nav {
 
         a {
             padding: 2px 5px;
-            
+
             &:link, &:visited {
                 color: $various-bg;
             }
@@ -126,22 +126,22 @@ ul#nav {
                 text-shadow: 0 -1px 1px #222121;
             }
         }
-        
+
         &.profile {
             @include nav-profile;
             background: url("http://a2.twimg.com/profile_images/1237497837/SelfPortrait_mini.png") no-repeat;
         }
-                
+
         &.github {
-            @include nav-profile;		
+            @include nav-profile;
             background: url(images/icons.png) no-repeat -4px -68px;
         }
-        
+
         &.twitter {
             @include nav-profile;
             background: url(images/icons.png) no-repeat -1px -4px;
         }
-        
+
         &.facebook {
             @include nav-profile;
             background: url(images/icons.png) no-repeat -4px -260px;
@@ -164,8 +164,9 @@ li {
 }
 
 pre {
-    line-height: 100%;
-    padding: 1.2em 0.6em;
+    font-size: 13px;
+    line-height: 115%;
+    padding: 1.0em 1.5em;
     background-color: $various-bg;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
@@ -179,7 +180,7 @@ pre {
 }
 
 .gist {
-    text-shadow: none;    
+    text-shadow: none;
 }
 
 code {
@@ -194,12 +195,12 @@ blockquote {
     color: #c7c7c7;
     text-shadow: none;
     @include _border-radius;
-    
+
     & > * {
         margin-left: 2.4em;
         /*margin-right: 2.4em;*/
     }
-    
+
     &::before {
         position: relative;
         top: -0.15em;
@@ -410,7 +411,7 @@ blockquote {
                 margin-right: 0.4em;
             }
         }
-        
+
         dl {
             dt {
                 margin-top: 10px;
@@ -421,7 +422,7 @@ blockquote {
             }
         }
     }
-    
+
     .footer {
         @include footer-common;
 
@@ -506,10 +507,10 @@ label {
         font-weight: bold;
         text-align: left;
     }
-    
+
     &.checkbox {
         font-weight: normal;
-    }	
+    }
 }
 
 input {
@@ -652,7 +653,7 @@ h4.comment {
 
 #comment_form {
     margin: 0px 30px;
-    
+
     input, textarea {
         background: $various-bg;
         color: #ffffff;
@@ -687,5 +688,53 @@ h4.comment {
 #a_flickr_badge_image {
     a img {
         padding: 0 5px 5px 0;
+    }
+}
+
+/* Solarized for Google Code Prettify */
+.prettyprint {
+    color: #839496;
+    background-color: #002b36;
+
+    .pln {
+        color: inherit;
+    }
+
+    .str, .lit, .atv {
+        color: #2aa198;
+    }
+
+    .kwd {
+        color: #268bd2;
+    }
+
+    .com, .dec {
+        color: #586e75;
+        font-style: italic;
+    }
+
+    .typ {
+        color: #b58900;
+    }
+
+    .pun {
+        color: inherit;
+    }
+
+    .opn {
+        color: inherit;
+    }
+
+    .clo {
+        color: inherit;
+    }
+
+    .tag {
+        color: #268bd2;
+        font-weight: bold;
+    }
+
+    .atn {
+        color: inherit;
     }
 }
