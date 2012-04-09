@@ -36,7 +36,7 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
-    run "cd #{current_path}; env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c config/unicorn.rb -D -E production"
+    run "env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c #{current_path}/config/unicorn.rb -D -E production"
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
@@ -48,17 +48,20 @@ namespace :deploy do
   end
 
   task :migrate, :role => :app, :except => { :no_release => true } do
-    run "cd #{current_path}; env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
+    run "env DATABASE_URL=#{db_path} RACK_ENV=production #{ruby_path}/bundle exec rake db:migrate"
   end
 
+  desc "Do git checkout public dir to work app correctly"
   task :git_checkout_public, :role => :app, :except => { :no_release => true } do
-    run "cd #{current_path}; git checkout public"
+    run "git checkout #{current_path}/public"
   end
 
+  desc "Creates sockets symlink"
   task :socket_symlink, :role => :app, :except => { :no_release => true } do
-    run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets"
+    run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets" if File.exists? "#{current_path}/tmp/sockets"
   end
+
+  before :start, :socket_symlink
+  after :symlink, :git_checkout_public
 end
 
-after "deploy:symlink", :git_checkout_public
-before "deploy:start", :socket_symlink
