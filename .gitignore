@@ -6,8 +6,8 @@ config.yml
 /vendor/gem
 /.bundle
 /tmp/*.log
-/tmp/pids/*
-/tmp/sockets/*
+/tmp/pids
+/tmp/sockets
 /log/*.log
 /*.csv
 /coverage
