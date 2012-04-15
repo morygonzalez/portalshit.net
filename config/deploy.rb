@@ -40,11 +40,11 @@ namespace :deploy do
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "kill -KILL `cat #{current_path}/pids/unicorn-lokka.pid`"
+    run "kill -KILL `cat #{current_path}/tmp/pids/unicorn-lokka.pid`"
   end
 
   task :restart, :role => :app, :except => { :no_release => true } do
-    run "kill -USR2 `cat #{current_path}/pids/unicorn-lokka.pid`"
+    run "kill -USR2 `cat #{current_path}/tmp/pids/unicorn-lokka.pid`"
   end
 
   task :migrate, :role => :app, :except => { :no_release => true } do
@@ -53,15 +53,16 @@ namespace :deploy do
 
   desc "Do git checkout public dir to work app correctly"
   task :git_checkout_public, :role => :app, :except => { :no_release => true } do
-    run "git checkout #{current_path}/public"
+    run "cd #{current_path}; git checkout public"
   end
 
   desc "Creates sockets symlink"
   task :socket_symlink, :role => :app, :except => { :no_release => true } do
-    run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets" unless File.exists? "#{current_path}/tmp/sockets"
+    run "cd #{current_path}; ln -s #{shared_path}/sockets tmp/sockets" unless File.exists? "#{current_path}/tmp/sockets"
   end
 
   before "deploy:start", :"deploy:socket_symlink"
+  before "deploy:restart", :"deploy:socket_symlink"
   after "deploy:symlink", :"deploy:git_checkout_public"
 end
 
