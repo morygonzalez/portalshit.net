@@ -409,7 +409,6 @@ module Lokka
         conditions[:created_at.gte] = Time.local(*args)
         day_end = {:hour => 23, :minute => 59, :second => 59}
         day_end.each_pair do |key, value|
-          puts key, value
           args[time_order.index(key)] = value.to_i
         end
         conditions[:created_at.lt] = Time.local(*args)
