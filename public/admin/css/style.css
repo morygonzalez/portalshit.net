@@ -147,7 +147,8 @@ input[type="password"] {
 
 textarea {
 	display:block;
-	width:550px;
+	width:85%;
+	/* width:550px; */
 	height:450px;
 }
 textarea#site_description {
