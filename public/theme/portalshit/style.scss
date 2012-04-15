@@ -387,6 +387,21 @@ blockquote {
         }
     }
 
+    .prevnext {
+        display: block;
+        overflow: hidden;
+        height: 1%;
+
+        .prev {
+            float: left;
+            margin: 15px 0;
+        }
+        .next {
+            float: right;
+            margin: 15px 0;
+        }
+    }
+
     .body {
         text-align: left;
         margin-bottom: 1em;

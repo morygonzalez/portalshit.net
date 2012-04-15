@@ -1,5 +1,12 @@
 .article.section
   .header
+    .prevnext
+      - if @entry.next
+        %span.prev
+          = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link, { :rel => :prev }
+      - if @entry.prev
+        %span.next
+          = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link, { :rel => :next }
     %h2.title= link_to @entry.title, @entry.link
   .body
     ~ associate_link @entry.body
@@ -12,6 +19,11 @@
       .created_at== #{l @entry.created_at, :format => :long}
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
+    .prevnext
+      %span.prev
+        = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link if @entry.next
+      %span.next
+        = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link if @entry.prev
 
   .article-bottom
     :javascript
