@@ -5,7 +5,7 @@ $base-link: #8c0000;
 $various-bg: #212121;
 
 @mixin footer-common {
-    padding: 0;
+    padding: 25px 0 0;
     text-align: right;
     font-size: 90%;
 }
@@ -394,11 +394,11 @@ blockquote {
 
         .prev {
             float: left;
-            margin: 15px 0;
+            margin-bottom: 15px;
         }
         .next {
             float: right;
-            margin: 15px 0;
+            margin-bottom: 15px;
         }
     }
 
@@ -475,7 +475,7 @@ blockquote {
     }
 
     .article-bottom {
-        margin: 30px auto 45px;
+        margin: 45px auto 60px;
         text-align: center;
     }
 
@@ -636,38 +636,47 @@ ul.pager {
 ul.comments {
     list-style: none;
     padding: 0;
+    display: block;
+    overflow: hidden;
+    height: 1%;
 
     .comment {
         margin: 0px 30px 30px 0px;
+        display: block;
+        overflow: hidden;
+        height: 1%;
 
         .body {
+            float: left;
+            width: 70%;
             font-size: 94%;
-            margin-bottom: 0.5em;
+            margin-bottom: 2.5em;
             padding: 0 8px;
         }
 
-        .footer {
-            @include footer-common;
+        .meta {
+            /* @include footer-common; */
+            font-size: 0.85em;
+            padding-left: 10px;
+            margin-right: 20px;
+            width: 23%;
+            float: left;
 
-            .name {
-                display: inline;
-                margin-left: 0.5em;
-            }
-
-            .created_at {
-                display: inline;
-                margin-left: 0.5em;
-            }
+            .gravatar {}
+            .name {}
+            .created_at {}
         }
     }
 }
 
 h4.comment {
-    margin: 0px 30px 0px 0px;
+    display: none;
+    margin: 0 30px 0 0;
 }
 
 #comment_form {
-    margin: 0px 30px;
+    margin: 0 30px 0 26%;
+    width: 70%;
 
     input, textarea {
         background: $various-bg;
@@ -681,13 +690,16 @@ h4.comment {
     }
 
     #comment_name {
-        width: 25%;
+        width: 240px;
+    }
+    #comment_email {
+        width: 240px;
     }
     #comment_homepage {
-        width: 40%;
+        width: 360px;
     }
     #comment_body {
-        width: 60%;
+        width: 480px;
         height: 250px;
     }
 }

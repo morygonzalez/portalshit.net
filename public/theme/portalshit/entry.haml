@@ -1,12 +1,13 @@
 .article.section
   .header
-    .prevnext
-      - if @entry.next
-        %span.prev
-          = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link, { :rel => :prev }
-      - if @entry.prev
-        %span.next
-          = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link, { :rel => :next }
+    - if @entry.type == Post
+      .prevnext
+        - if @entry.next
+          %span.prev
+            = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link, { :rel => :prev }
+        - if @entry.prev
+          %span.next
+            = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link, { :rel => :next }
     %h2.title= link_to @entry.title, @entry.link
   .body
     ~ associate_link @entry.body
@@ -19,11 +20,14 @@
       .created_at== #{l @entry.created_at, :format => :long}
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
-    .prevnext
-      %span.prev
-        = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link if @entry.next
-      %span.next
-        = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link if @entry.prev
+    -# - if @entry.type == Post
+    -#   .prevnext
+    -#     - if @entry.next
+    -#       %span.prev
+    -#         = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link
+    -#     - if @entry.prev
+    -#       %span.next
+    -#         = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link
 
   .article-bottom
     :javascript
@@ -38,8 +42,9 @@
 %ul.comments
   - @entry.comments.reverse.each do |comment|
     %li.comment{:id => "comment-#{comment.id}"}
+      %ul.meta
+        %li.gravatar= image_tag gravatar_image_url comment.email
+        %li.name= link_to comment.name, comment.homepage, :unless => comment.homepage.blank?
+        %li.created_at= l comment.created_at, :format => :long
       .body= hbr comment.body
-      .footer
-        .name= link_to comment.name, comment.homepage, :unless => comment.homepage.blank?
-        .created_at= l comment.created_at, :format => :long
-= comment_form
+= partial 'comment'
