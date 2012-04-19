@@ -17,10 +17,7 @@
     %link(rel="stylesheet" href="#{@theme.path}/style.css" type="text/css")
     %script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript")
     %link(rel="stylesheet" type="text/css" href="#{@theme.path}/google-code-prettify/prettify.css")
-    %script(type="text/javascript" src="#{@theme.path}/script.js")
     %script(type="text/javascript" src="#{@theme.path}/google-code-prettify/prettify.js")
-    :javascript
-      $(function(){ prettyPrint(); });
     = header
   %body
     #header.clearfix
@@ -36,7 +33,7 @@
       - unless index? or entry?
         #bread_crumb= bread_crumb
     #content.clearfix
-      #main= yield
+      #main.hfeed= yield
 
     #footer
       #aside
@@ -79,3 +76,6 @@
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
     = footer
+    %script(type="text/javascript" src="#{@theme.path}/script.js")
+    -# :javascript
+    -#   (function() { init(); });
