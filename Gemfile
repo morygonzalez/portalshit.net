@@ -36,6 +36,7 @@ gem 'unicorn'
 gem 'capistrano'
 gem 'capistrano_colors'
 gem 'capistrano-ext'
+gem 'pry'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
