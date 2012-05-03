@@ -23,7 +23,7 @@ module Lokka
           content_for :header do
             text = ~<<-EOS
             <script type="text/javascript">
-              google_analytics_domain_name  = "#{dn}";
+              google_analytics_domain_name  = `#{dn}`;
               window.google_analytics_uacct = "UA-accountnumber-propertyindex";
             </script>
             EOS
