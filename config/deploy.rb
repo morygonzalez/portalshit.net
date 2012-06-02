@@ -12,8 +12,8 @@ set :scm, :git
 set :user, "morygonzalez"
 set :use_sudo, false
 
-role :web, "49.212.0.51"                          # Your HTTP server, Apache/etc
-role :app, "49.212.0.51"                          # This may be the same as your `Web` server
+role :web, "54.248.96.173"                          # Your HTTP server, Apache/etc
+role :app, "54.248.96.173"                          # This may be the same as your `Web` server
 # role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
 # role :db,  "your slave db-server here"
 
