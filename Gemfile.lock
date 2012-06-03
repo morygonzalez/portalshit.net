@@ -30,6 +30,7 @@ GEM
     amazon-ecs (2.2.4)
       nokogiri (~> 1.4)
       ruby-hmac (~> 0.3)
+    awesome_print (1.0.2)
     backports (2.3.0)
     bcrypt-ruby (3.0.1)
     bond (0.4.1)
@@ -95,6 +96,8 @@ GEM
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
     i18n (0.6.0)
+    im-kayac (0.0.5)
+      json
     json (1.5.4)
     kgio (2.7.2)
     kramdown (0.13.5)
@@ -199,6 +202,7 @@ DEPENDENCIES
   RedCloth (= 4.2.9)
   activesupport (= 3.1.1)
   amazon-ecs
+  awesome_print
   backports (= 2.3.0)
   builder (= 3.0.0)
   bundler
@@ -225,6 +229,7 @@ DEPENDENCIES
   factory_girl (= 2.6.1)
   haml (= 3.1.1)
   i18n (= 0.6.0)
+  im-kayac
   json
   kramdown
   nokogiri (= 1.5.2)

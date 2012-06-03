@@ -47,6 +47,7 @@ end
 
 group :development do
   gem 'tapp', '1.3.0'
+  gem 'awesome_print'
 end
 
 group :test do

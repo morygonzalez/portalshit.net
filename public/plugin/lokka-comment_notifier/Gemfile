@@ -1,0 +1,1 @@
+gem 'im-kayac'
