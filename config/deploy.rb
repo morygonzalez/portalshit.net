@@ -64,5 +64,6 @@ namespace :deploy do
   before "deploy:start", :"deploy:socket_symlink"
   before "deploy:restart", :"deploy:socket_symlink"
   after "deploy:symlink", :"deploy:git_checkout_public"
+  after :deploy, :"deploy:cleanup"
 end
 
