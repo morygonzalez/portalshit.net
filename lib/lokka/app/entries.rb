@@ -21,7 +21,7 @@ module Lokka
                     page(params[:page], :per_page => @site.per_page, :order => @site.default_order_query_operator)
       @posts = apply_continue_reading(@posts)
       content_type 'application/atom+xml', :charset => 'utf-8'
-      builder :'system/index'
+      builder :'lokka/index'
     end
 
     # search
@@ -132,6 +132,8 @@ module Lokka
 
       return 404 if @entry.blank?
       redirect @entry.link if @entry.type == Post && custom_permalink?
+
+      @comment = @entry.comments.new
 
       setup_and_render_entry
     end
