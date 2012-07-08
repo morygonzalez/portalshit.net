@@ -6,7 +6,10 @@ module Lokka
       app.before do
         path = request.env['PATH_INFO']
         if params["comment"] && /^\/admin\/comments/ !~ path
-          message = "#{params["comment"]["name"]}: #{truncate(escape_html(params["comment"]["body"]))}"
+          message =<<-RUBY
+#{@site.title}: #{params["comment"]["name"]} has posted a new comment.
+#{truncate(escape_html(params["comment"]["body"]))}
+          RUBY
           case Option.comment_notify_by
           when 'im.kayac.com'
             if Option.comment_notify_password.present?
@@ -42,10 +45,10 @@ module Lokka
           Option.comment_notify_to = params[:comment_notifier][:notify_to]
           Option.comment_notify_password = params[:comment_notifier][:password]
           Option.comment_notify_sig = params[:comment_notifier][:sig]
-          flash[:notice] = "Updated."
+          flash[:notice] = t("comment_notifier.configuration_was_successfully_updated")
           redirect '/admin/plugins/comment_notifier'
         else
-          flash[:notice] = 'Invalid Value'
+          flash[:notice] = t('comment_notifier.invalid_value')
           haml :"plugin/lokka-comment_notifier/views/index", :layout => :"admin/layout"
         end
       end

@@ -1,0 +1,8 @@
+ja:
+  comment_notifier:
+    notify_by: "Notify By"
+    notify_to: "Notify To"
+    password: "im.kayac.com Password"
+    signature: "im.kayac.com Signature"
+    configuration_was_successfully_updated: "コメント通知設定を更新しました!"
+    invalid_value: "不正な値です!"
