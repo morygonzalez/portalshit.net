@@ -8,7 +8,7 @@
 </div>
   </div>
   <div class="body">
-    <%= markdown @entry.body %>
+    <%= @entry.body %>
   </div>
 <% if logged_in? %>
     <p><a href="<%= @entry.edit_link %>"><%= t('edit') %></a></p>
@@ -30,7 +30,6 @@
           <span class="name"><%= link_to comment.name, comment.homepage, :unless => comment.homepage.blank? %></span>
           <span class="date">
             <%= l comment.created_at, :format => :long %>
-            <%#= l comment.created_at.strftime("%Y/%m/%d %H:%m:%d") %>
           </span>
         </div>
       </li>
