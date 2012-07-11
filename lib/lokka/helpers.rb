@@ -415,7 +415,6 @@ module Lokka
       end
       Entry.first(conditions)
     rescue => e
-      puts e
       nil
     end
 
