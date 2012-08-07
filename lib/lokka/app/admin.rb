@@ -1,11 +1,11 @@
 module Lokka
   class App
     get '/admin/' do
-      render_any :index
+      haml :'admin/index', :layout => :'admin/layout'
     end
 
     get '/admin/login' do
-      render_any :login, :layout => false
+      haml :'admin/login', :layout => false
     end
 
     post '/admin/login' do
@@ -18,17 +18,17 @@ module Lokka
           session[:return_to] = false
           redirect redirect_url
         else
-          redirect '/admin/'
+          redirect to('/admin/')
         end
       else
         @login_failed = true
-        render_any :login, :layout => false
+        haml :'admin/login', :layout => :'admin/layout'
       end
     end
 
     get '/admin/logout' do
       session[:user] = nil
-      redirect '/admin/login'
+      redirect to('/admin/login')
     end
 
     # posts
@@ -51,62 +51,62 @@ module Lokka
     get '/admin/comments' do
       @comments = Comment.all(:order => :created_at.desc).
                     page(params[:page], :per_page => settings.admin_per_page)
-      render_any :'comments/index'
+      haml :'admin/comments/index', :layout => :'admin/layout'
     end
 
     get '/admin/comments/new' do
       @comment = Comment.new(:created_at => DateTime.now)
-      render_any :'comments/new'
+      haml :'admin/comments/new', :layout => :'admin/layout'
     end
 
     post '/admin/comments' do
       @comment = Comment.new(params['comment'])
       if @comment.save
         flash[:notice] = t('comment_was_successfully_created')
-        redirect '/admin/comments'
+        redirect to("/admin/comments/#{@comment.id}/edit")
       else
-        render_any :'comments/new'
+        haml :'admin/comments/new', :layout => :'admin/layout'
       end
     end
 
     get '/admin/comments/:id/edit' do |id|
       @comment = Comment.get(id) or raise Sinatra::NotFound
-      render_any :'comments/edit'
+      haml :'admin/comments/edit', :layout => :'admin/layout'
     end
 
     put '/admin/comments/:id' do |id|
       @comment = Comment.get(id) or raise Sinatra::NotFound
       if @comment.update(params['comment'])
         flash[:notice] = t('comment_was_successfully_updated')
-        redirect '/admin/comments'
+        redirect to("/admin/comments/#{@comment.id}/edit")
       else
-        render_any :'comments/edit'
+        haml :'admin/comments/edit', :layout => :'admin/layout'
       end
     end
 
     delete '/admin/comments/spam' do
       Comment.spam.destroy
       flash[:notice] = t('comment_was_successfully_deleted')
-      redirect '/admin/comments'
+      redirect to('/admin/comments')
     end
 
     delete '/admin/comments/:id' do |id|
       comment = Comment.get(id) or raise Sinatra::NotFound
       comment.destroy
       flash[:notice] = t('comment_was_successfully_deleted')
-      redirect '/admin/comments'
+      redirect to('/admin/comments')
     end
 
     # category
     get '/admin/categories' do
       @categories = Category.all.
                     page(params[:page], :per_page => settings.admin_per_page)
-      render_any :'categories/index'
+      haml :'admin/categories/index', :layout => :'admin/layout'
     end
 
     get '/admin/categories/new' do
       @category = Category.new
-      render_any :'categories/new'
+      haml :'admin/categories/new', :layout => :'admin/layout'
     end
 
     post '/admin/categories' do
@@ -115,15 +115,15 @@ module Lokka
       #@category.user = current_user
       if @category.save
         flash[:notice] = t('category_was_successfully_created')
-        redirect '/admin/categories'
+        redirect to("/admin/categories/#{@category.id}/edit")
       else
-        render_any :'categories/new'
+        haml :'admin/categories/new', :layout => :'admin/layout'
       end
     end
 
     get '/admin/categories/:id/edit' do |id|
       @category = Category.get(id) or raise Sinatra::NotFound
-      render_any :'categories/edit'
+      haml :'admin/categories/edit', :layout => :'admin/layout'
     end
 
     put '/admin/categories/:id' do |id|
@@ -131,9 +131,9 @@ module Lokka
       params['category'].delete('parent_id') if params['category']['parent_id'].blank?
       if @category.update(params['category'])
         flash[:notice] = t('category_was_successfully_updated')
-        redirect '/admin/categories'
+        redirect to("/admin/categories/#{@category.id}/edit")
       else
-        render_any :'categories/edit'
+        haml :'admin/categories/edit', :layout => :'admin/layout'
       end
     end
 
@@ -141,28 +141,28 @@ module Lokka
       category = Category.get(id) or raise Sinatra::NotFound
       category.destroy
       flash[:notice] = t('category_was_successfully_deleted')
-      redirect '/admin/categories'
+      redirect to('/admin/categories')
     end
 
     # tag
     get '/admin/tags' do
       @tags = Tag.all.
                     page(params[:page], :per_page => settings.admin_per_page)
-      render_any :'tags/index'
+      haml :'admin/tags/index', :layout => :'admin/layout'
     end
 
     get '/admin/tags/:id/edit' do |id|
       @tag = Tag.get(id) or raise Sinatra::NotFound
-      render_any :'tags/edit'
+      haml :'admin/tags/edit', :layout => :'admin/layout'
     end
 
     put '/admin/tags/:id' do |id|
       @tag = Tag.get(id) or raise Sinatra::NotFound
       if @tag.update(params['tag'])
         flash[:notice] = t('tag_was_successfully_updated')
-        redirect '/admin/tags'
+        redirect to("/admin/tags/#{@tag.id}/edit")
       else
-        render_any :'tags/edit'
+        haml :'admin/tags/edit', :layout => :'admin/layout'
       end
     end
 
@@ -170,43 +170,43 @@ module Lokka
       tag = Tag.get(id) or raise Sinatra::NotFound
       tag.destroy
       flash[:notice] = t('tag_was_successfully_deleted')
-      redirect '/admin/tags'
+      redirect to('/admin/tags')
     end
 
     # users
     get '/admin/users' do
       @users = User.all(:order => :created_at.desc).
                     page(params[:page], :per_page => settings.admin_per_page)
-      render_any :'users/index'
+      haml :'admin/users/index', :layout => :'admin/layout'
     end
 
     get '/admin/users/new' do
       @user = User.new
-      render_any :'users/new'
+      haml :'admin/users/new', :layout => :'admin/layout'
     end
 
     post '/admin/users' do
       @user = User.new(params['user'])
       if @user.save
         flash[:notice] = t('user_was_successfully_created')
-        redirect '/admin/users'
+        redirect to("/admin/users/#{@user.id}/edit")
       else
-        render_any :'users/new'
+        haml :'admin/users/new', :layout => :'admin/layout'
       end
     end
 
     get '/admin/users/:id/edit' do |id|
       @user = User.get(id) or raise Sinatra::NotFound
-      render_any :'users/edit'
+      haml :'admin/users/edit', :layout => :'admin/layout'
     end
 
     put '/admin/users/:id' do |id|
       @user = User.get(id) or raise Sinatra::NotFound
       if @user.update(params['user'])
         flash[:notice] = t('user_was_successfully_updated')
-        redirect '/admin/users'
+        redirect to("/admin/users/#{@user.id}/edit")
       else
-        render_any :'users/edit'
+        haml :'admin/users/edit', :layout => :'admin/layout'
       end
     end
 
@@ -218,45 +218,45 @@ module Lokka
         target_user.destroy
       end
       flash[:notice] = t('user_was_successfully_deleted')
-      redirect '/admin/users'
+      redirect to('/admin/users')
     end
 
     # snippets
     get '/admin/snippets' do
       @snippets = Snippet.all(:order => :created_at.desc).
                         page(params[:page], :per_page => settings.admin_per_page)
-      render_any :'snippets/index'
+      haml :'admin/snippets/index', :layout => :'admin/layout'
     end
 
     get '/admin/snippets/new' do
       @snippet = Snippet.new(
         :created_at => DateTime.now,
         :updated_at => DateTime.now)
-      render_any :'snippets/new'
+      haml :'admin/snippets/new', :layout => :'admin/layout'
     end
 
     post '/admin/snippets' do
       @snippet = Snippet.new(params['snippet'])
       if @snippet.save
         flash[:notice] = t('snippet_was_successfully_created')
-        redirect '/admin/snippets'
+        redirect to("/admin/snippets/#{@snippet.id}/edit")
       else
-        render_any :'snippets/new'
+        haml :'admin/snippets/new', :layout => :'admin/layout'
       end
     end
 
     get '/admin/snippets/:id/edit' do |id|
       @snippet = Snippet.get(id) or raise Sinatra::NotFound
-      render_any :'snippets/edit'
+      haml :'admin/snippets/edit', :layout => :'admin/layout'
     end
 
     put '/admin/snippets/:id' do |id|
       @snippet = Snippet.get(id) or raise Sinatra::NotFound
       if @snippet.update(params['snippet'])
         flash[:notice] = t('snippet_was_successfully_updated')
-        redirect '/admin/snippets'
+        redirect to("/admin/snippets/#{@snippet.id}/edit")
       else
-        render_any :'snippets/edit'
+        haml :'admin/snippets/edit', :layout => :'admin/layout'
       end
     end
 
@@ -264,7 +264,7 @@ module Lokka
       snippet = Snippet.get(id) or raise Sinatra::NotFound
       snippet.destroy
       flash[:notice] = t('snippet_was_successfully_deleted')
-      redirect '/admin/snippets'
+      redirect to('/admin/snippets')
     end
 
     # theme
@@ -276,14 +276,14 @@ module Lokka
           screenshot = s.empty? ? nil : "/#{s.first.split('/')[-3, 3].join('/')}"
           OpenStruct.new(:title => title, :screenshot => screenshot)
         end
-      render_any :'themes/index'
+      haml :'admin/themes/index', :layout => :'admin/layout'
     end
 
     put '/admin/themes' do
       site = Site.first
       site.update(:theme => params[:title])
       flash[:notice] = t('theme_was_successfully_updated')
-      redirect '/admin/themes'
+      redirect to('/admin/themes')
     end
 
     # mobile_theme
@@ -295,39 +295,39 @@ module Lokka
           screenshot = s.empty? ? nil : "/#{s.first.split('/')[-3, 3].join('/')}"
           OpenStruct.new(:title => title, :screenshot => screenshot)
         end
-      render_any :'mobile_themes/index'
+      haml :'admin/mobile_themes/index', :layout => :'admin/layout'
     end
 
     put '/admin/mobile_themes' do
       site = Site.first
       site.update(:mobile_theme => params[:title])
       flash[:notice] = t('theme_was_successfully_updated')
-      redirect '/admin/mobile_themes'
+      redirect to('/admin/mobile_themes')
     end
 
     # plugin
     get '/admin/plugins' do
-      render_any :'plugins/index'
+      haml :'admin/plugins/index', :layout => :'admin/layout'
     end
 
     # site
     get '/admin/site/edit' do
       @site = Site.first
-      render_any :'site/edit'
+      haml :'admin/site/edit', :layout => :'admin/layout'
     end
 
     put '/admin/site' do
       if Site.first.update(params['site'])
         flash[:notice] = t('site_was_successfully_updated')
-        redirect '/admin/site/edit'
+        redirect to('/admin/site/edit')
       else
-        render_any :'site/edit'
+        haml :'admin/site/edit', :layout => :'admin/layout'
       end
     end
 
     # import
     get '/admin/import' do
-      render_any :import
+      haml :'admin/import', :layout => :'admin/layout'
     end
 
     post '/admin/import' do
@@ -336,9 +336,9 @@ module Lokka
       if file
         Lokka::Importer::WordPress.new(file).import
         flash[:notice] = t('data_was_successfully_imported')
-        redirect '/admin/import'
+        redirect to('/admin/import')
       else
-        render_any :import
+        haml :'admin/import', :layout => :'admin/layout'
       end
     end
 
@@ -346,7 +346,7 @@ module Lokka
     get '/admin/permalink' do
       @enabled = (Option.permalink_enabled == "true")
       @format = Option.permalink_format || ""
-      render_any :permalink
+      haml :'admin/permalink', :layout => :'admin/layout'
     end
 
     put '/admin/permalink' do
@@ -369,30 +369,30 @@ module Lokka
         flash[:permalink_format] = format
       end
 
-      redirect '/admin/permalink'
+      redirect to('/admin/permalink')
     end
 
     # field names
     get '/admin/field_names' do
       @field_names = FieldName.all.
                         page(params[:page], :per_page => settings.admin_per_page, :order => :name.asc)
-      render_any :'field_names/index'
+      haml :'admin/field_names/index', :layout => :'admin/layout'
     end
 
     get '/admin/field_names/new' do
       @field_name = FieldName.new(
         :created_at => DateTime.now,
         :updated_at => DateTime.now)
-      render_any :'field_names/new'
+      haml :'admin/field_names/new', :layout => :'admin/layout'
     end
 
     post '/admin/field_names' do
       @field_name = FieldName.new(params['field_name'])
       if @field_name.save
         flash[:notice] = t('field_name_was_successfully_created')
-        redirect '/admin/field_names'
+        redirect to('/admin/field_names')
       else
-        render_any :'field_names/new'
+        haml :'admin/field_names/new', :layout => :'admin/layout'
       end
     end
 
@@ -400,7 +400,7 @@ module Lokka
       field_name = FieldName.get(id) or raise Sinatra::NotFound
       field_name.destroy
       flash[:notice] = t('field_name_was_successfully_deleted')
-      redirect '/admin/field_names'
+      redirect to('/admin/field_names')
     end
   end
 end

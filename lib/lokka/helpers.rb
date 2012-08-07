@@ -27,7 +27,7 @@ module Lokka
         return true
       else
         session[:return_to] = request.fullpath
-        redirect '/admin/login'
+        redirect to('/admin/login')
         return false
       end
     end
@@ -58,71 +58,6 @@ module Lokka
       end
       html += '</ul>'
       html
-    end
-
-    def render_detect(*names)
-      render_detect_with_options(names)
-    end
-
-    def render_detect_with_options(names, options = {})
-      ret = ''
-      names.each do |name|
-        out = render_any(name, options)
-        unless out.blank?
-          ret = out
-          break
-        end
-      end
-
-      if ret.blank?
-        raise Lokka::NoTemplateError, "Template not found. #{[names.join(', ')]}"
-      else
-        ret
-      end
-    end
-
-
-    def partial(name, options = {})
-      options[:layout] = false
-      render_any(name, options)
-    end
-
-    def render_any(name, options = {})
-      ret = ''
-      templates = settings.supported_templates + settings.supported_stylesheet_templates
-      templates.each do |ext|
-        out = rendering(ext, name, options)
-        out.force_encoding(Encoding.default_external) unless out.nil?
-        unless out.blank?
-          ret = out
-          break
-        end
-      end
-      ret
-    end
-
-    def rendering(ext, name, options = {})
-      dir =
-        if request.path_info =~ %r{^/admin/.*} && !options[:theme]
-          'admin'
-        else
-          "theme/#{@theme.name}"
-        end
-
-      layout = "#{dir}/layout"
-      path =
-        if settings.supported_stylesheet_templates.include?(ext)
-          "#{name}"
-        else
-          "#{dir}/#{name}"
-        end
-
-      if File.exist?("#{settings.views}/#{layout}.#{ext}")
-        options[:layout] = layout.to_sym if options[:layout].nil?
-      end
-      if File.exist?("#{settings.views}/#{path}.#{ext}")
-        send(ext.to_sym, path.to_sym, options)
-      end
     end
 
     def comment_form
@@ -170,9 +105,9 @@ module Lokka
     def redirect_after_edit(entry)
       name = entry.class.name.downcase.pluralize
       if entry.draft
-        redirect "/admin/#{name}?draft=true"
+        redirect to("/admin/#{name}?draft=true")
       else
-        redirect "/admin/#{name}"
+        redirect to("/admin/#{name}/#{entry.id}/edit")
       end
     end
 
@@ -202,14 +137,14 @@ module Lokka
       end
       @bread_crumbs << {:name => @entry.title, :link => @entry.link}
 
-      render_detect_with_options [type, :entry], :theme => true
+      render_detect_with_options [type, :entry]
     end
 
     def get_admin_entries(entry_class)
       @name = entry_class.name.downcase
       @entries = params[:draft] == 'true' ? entry_class.unpublished.all : entry_class.all
       @entries = @entries.page(params[:page], :per_page => settings.admin_per_page)
-      render_any :'entries/index'
+      haml :'admin/entries/index', :layout => :'admin/layout'
     end
 
     def get_admin_entry_new(entry_class)
@@ -217,7 +152,7 @@ module Lokka
       @entry = entry_class.new(:created_at => DateTime.now, :updated_at => DateTime.now)
       @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
       @field_names = FieldName.all(:order => :name.asc)
-      render_any :'entries/new'
+      haml :'admin/entries/new', :layout => :'admin/layout'
     end
 
     def get_admin_entry_edit(entry_class, id)
@@ -225,7 +160,7 @@ module Lokka
       @entry = entry_class.get(id) or raise Sinatra::NotFound
       @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
       @field_names = FieldName.all(:order => :name.asc)
-      render_any :'entries/edit'
+      haml :'admin/entries/edit', :layout => :'admin/layout'
     end
 
     def post_admin_entry(entry_class)
@@ -241,7 +176,7 @@ module Lokka
         else
           @field_names = FieldName.all(:order => :name.asc)
           @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
-          render_any :'entries/new'
+          haml :'admin/entries/new', :layout => :'admin/layout'
         end
       end
     end
@@ -258,7 +193,7 @@ module Lokka
         else
           @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
           @field_names = FieldName.all(:order => :name.asc)
-          render_any :'entries/edit'
+          haml :'admin/entries/edit', :layout => :'admin/layout'
         end
       end
     end
@@ -269,9 +204,9 @@ module Lokka
       entry.destroy
       flash[:notice] = t("#{name}_was_successfully_deleted")
       if entry.draft
-        redirect "/admin/#{name.pluralize}?draft=true"
+        redirect to("/admin/#{name.pluralize}?draft=true")
       else
-        redirect "/admin/#{name.pluralize}"
+        redirect to("/admin/#{name.pluralize}")
       end
     end
 

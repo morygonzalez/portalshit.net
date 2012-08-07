@@ -1,6 +1,6 @@
 %h2= t('edit_user')
-%form(action="/admin/users/#{@user.id}" method="post")
+%form{'action' => url("/admin/users/#{@user.id}"), 'method' => "post"}
   %input(type="hidden" name="_method" value="put")
-  = partial 'users/form'
+  = haml :'admin/users/form', :layout => false
   %p
     %input(type="submit" value="#{t('save')}")
