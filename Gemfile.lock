@@ -18,6 +18,13 @@ GIT
   specs:
     dm-pager (1.1.1)
 
+GIT
+  remote: https://github.com/tmm1/pygments.rb
+  revision: adfd47b4bd8fa3207205bb3834cc5003084c4263
+  specs:
+    pygments.rb (0.2.13)
+      rubypython (~> 0.5.3)
+
 GEM
   remote: http://rubygems.org/
   remote: http://rubygems.org/
@@ -33,6 +40,7 @@ GEM
     awesome_print (1.0.2)
     backports (2.3.0)
     bcrypt-ruby (3.0.1)
+    blankslate (3.1.2)
     bond (0.4.2)
     builder (3.0.0)
     capistrano (2.12.0)
@@ -95,6 +103,7 @@ GEM
     factory_girl (2.6.1)
       activesupport (>= 2.3.9)
     fastercsv (1.5.5)
+    ffi (1.0.11)
     fssm (0.2.9)
     haml (3.1.6)
     highline (1.6.13)
@@ -156,6 +165,9 @@ GEM
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.8.0)
     ruby-hmac (0.4.0)
+    rubypython (0.5.3)
+      blankslate (>= 2.1.2.3)
+      ffi (~> 1.0.7)
     sass (3.1.20)
     simplecov (0.6.4)
       multi_json (~> 1.0)
@@ -244,6 +256,7 @@ DEPENDENCIES
   nokogiri (~> 1.5.2)
   padrino-helpers (= 0.10.5)
   pry
+  pygments.rb!
   rack (~> 1.4.1)
   rack-flash (~> 0.1.2)
   rack-test (= 0.6.1)
