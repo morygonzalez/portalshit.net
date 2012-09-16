@@ -173,7 +173,8 @@ pre {
     white-space: -o-pre-wrap;
     white-space: pre-wrap;
     word-wrap: break-word;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: visible;
     max-width: 900px;
     color: #424242;
     text-shadow: none;
@@ -720,50 +721,8 @@ h4.comment {
     }
 }
 
-/* Solarized for Google Code Prettify */
-.prettyprint {
-    color: #839496;
-    background-color: #002b36;
-
-    .pln {
-        color: inherit;
-    }
-
-    .str, .lit, .atv {
-        color: #2aa198;
-    }
-
-    .kwd {
-        color: #268bd2;
-    }
-
-    .com, .dec {
-        color: #586e75;
-        font-style: italic;
-    }
-
-    .typ {
-        color: #b58900;
-    }
-
-    .pun {
-        color: inherit;
-    }
-
-    .opn {
-        color: inherit;
-    }
-
-    .clo {
-        color: inherit;
-    }
-
-    .tag {
-        color: #268bd2;
-        font-weight: bold;
-    }
-
-    .atn {
-        color: inherit;
-    }
+.highlight pre {
+    color: #888e7e;
+    font-size: 1.03em;
+    font-family: 'Bitstream Vera Sans Mono', 'Courier', monospace;
 }
