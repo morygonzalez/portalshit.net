@@ -1,5 +1,6 @@
 (function() {
   var init = function(node) {
+    /*
     $(node).find(".body > pre").each(function() {
       var self = this;
       $.ajax({
@@ -11,7 +12,6 @@
       });
     });
 
-    /*
     $('.body').each(function() {
 
       var Pygmentize = function(lexar, snippet) {
