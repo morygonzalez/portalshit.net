@@ -56,5 +56,6 @@
 .highlight .bp { color: #f8f8f2 } /* Name.Builtin.Pseudo */
 .highlight .vc { color: #f8f8f2 } /* Name.Variable.Class */
 .highlight .vg { color: #f8f8f2 } /* Name.Variable.Global */
-.highlight .vi { color: #f8f8f2 } /* Name.Variable.Instance */
+.highlight .vi { color: #f08300 } /* Name.Variable.Instance */
+/* .highlight .vi { color: #f8f8f2 } #<{(| Name.Variable.Instance |)}># */
 .highlight .il { color: #ae81ff } /* Literal.Number.Integer.Long */

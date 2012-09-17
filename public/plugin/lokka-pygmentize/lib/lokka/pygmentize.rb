@@ -6,7 +6,7 @@ module Lokka
       app.post '/pygmentize' do
         Pygments.highlight(
           params['snippet'],
-          :lexar => params['lexar'],
+          :lexer => params['lexer'],
           :options => { :encoding => 'utf-8' }
         )
       end

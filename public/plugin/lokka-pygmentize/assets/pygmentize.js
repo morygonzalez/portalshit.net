@@ -2,10 +2,11 @@
   var init = function(node) {
     $(node).find(".body > pre").each(function() {
       var self = this;
+      var lexer = $(this).attr('class');
       $.ajax({
         type: 'POST',
         url: '/pygmentize',
-        data: { snippet: $(self).text(), lexar: '' }
+        data: { snippet: $(self).text(), lexer: lexer }
       }).done(function(data) {
         $(self).replaceWith(data);
       });
