@@ -721,8 +721,12 @@ h4.comment {
     }
 }
 
-.highlight pre {
-    color: #888e7e;
-    font-size: 1.03em;
-    font-family: 'Bitstream Vera Sans Mono', 'Courier', monospace;
+.highlight {
+    @include _border-radius;
+
+    pre {
+        color: #888e7e;
+        border: 1px solid #595857;
+        font-family: 'Menlo', 'Bitstream Vera Sans Mono', 'Courier', monospace;
+    }
 }
