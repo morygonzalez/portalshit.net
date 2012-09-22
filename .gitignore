@@ -5,6 +5,7 @@ config.yml
 /vendor/bundle
 /vendor/gem
 /.bundle
+/tmp/*
 /tmp/*.log
 /tmp/pids
 /tmp/sockets
