@@ -72,7 +72,7 @@ module Lokka
     end
 
     def get_path(item_id)
-      dir = File.expand_path("public/plugin/lokka-amazon_associate/tmp")
+      dir = File.expand_path("tmp")
       url = Digest::MD5.hexdigest item_id
       path = File.join(dir, url.chars.first, url)
       FileUtils.mkdir_p(File.dirname(path))
