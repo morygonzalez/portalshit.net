@@ -80,6 +80,7 @@ module Lokka
       open(path, "w") { |f|
         item = get_item(item_id)
         f.print Hash.from_xml(item.doc.to_xml).to_json
+        sleep 1
       }
       path
     end
