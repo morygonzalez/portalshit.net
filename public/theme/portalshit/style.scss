@@ -511,6 +511,27 @@ blockquote {
             color: #f60;
         }
     }
+
+    dl.tags {
+        ul {
+            li {
+                display: inline;
+                float: left;
+
+                &:before {
+                    content: ", ";
+                }
+
+                &:first-child:before {
+                    content: " ";
+                }
+            }
+        }
+
+        p.more {
+            text-align: right;
+        }
+    }
 }
 
 .icon {

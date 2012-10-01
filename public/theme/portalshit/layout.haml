@@ -55,26 +55,27 @@
             %ul
               - Tag.all.each do |tag|
                 %li= link_to tag.name, tag.link
-          -# %dt= t('archives')
-          -# %dd
-          -#   %ul
-          -#     - months.each do |m|
-          -#       %li= link_to "#{m.year}年#{m.month}月", "/#{m.year}/#{m.month}/"
-        %dl.admin
-          %dt= t('admin')
+        %dl.archives
+          %dt= t('archives')
           %dd
             %ul
-              - if logged_in?
-                %li= link_to t('admin_page'), '/admin/'
-                %li= link_to t('new_post'), '/admin/posts/new'
-                %li= link_to t('logout'), '/admin/logout'
-              - else
-                %li= link_to t('login'), '/admin/'
-              %li
+              - months.each do |m|
+                %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/"
+            %p.more= link_to(t('hoge.more'), 'javascript:void(0)', :id => 'show_more_archive_list')
+            %p.more= link_to(t('hoge.less'), 'javascript:void(0)', :id => 'show_less_archive_list', :style => 'display: none')
+        -# %dl.admin
+        -#   %dt= t('admin')
+        -#   %dd
+        -#     %ul
+        -#       - if logged_in?
+        -#         %li= link_to t('admin_page'), '/admin/'
+        -#         %li= link_to t('new_post'), '/admin/posts/new'
+        -#         %li= link_to t('logout'), '/admin/logout'
+        -#       - else
+        -#         %li= link_to t('login'), '/admin/'
+        -#       %li
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
     = footer
     %script(type="text/javascript" src="#{@theme.path}/script.js")
-    -# :javascript
-    -#   (function() { init(); });

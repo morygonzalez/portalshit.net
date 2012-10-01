@@ -1,4 +1,27 @@
 (function() {
+  var target = $('.archives li').slice(7);
+  target.each(function() {
+    $(this).css("display", "none");
+  })
+
+  $('#show_more_archive_list').click(function() {
+    target.each(function() {
+      $(this).slideDown();
+    })
+
+    $(this).hide();
+    $('#show_less_archive_list').show();
+  })
+
+  $('#show_less_archive_list').click(function() {
+    target.each(function() {
+      $(this).slideUp();
+    })
+
+    $(this).hide();
+    $('#show_more_archive_list').show();
+  })
+
   var init = function(node) {
     /*
     $(node).find(".body > pre").each(function() {

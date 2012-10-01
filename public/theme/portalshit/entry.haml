@@ -20,14 +20,6 @@
       .created_at== #{l @entry.created_at, :format => :long}
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
-    -# - if @entry.type == Post
-    -#   .prevnext
-    -#     - if @entry.next
-    -#       %span.prev
-    -#         = link_to "&lt;&lt; #{@entry.next.title}", @entry.next.link
-    -#     - if @entry.prev
-    -#       %span.next
-    -#         = link_to "#{@entry.prev.title} &gt;&gt;", @entry.prev.link
 
   .article-bottom
     :javascript
