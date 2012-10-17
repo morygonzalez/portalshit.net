@@ -2,7 +2,6 @@
   %ul#categories
     - Category.all.each do |category|
       %li= link_to category.title, "/category/#{category.slug}/"
-  - @posts.each do |post|
-    = partial :article, :locals => {:post => post}
-
+  - @posts.each_with_index do |post, index|
+    = partial :article, :locals => {:post => post, :index => index}
   = @posts.pager.to_html(request.url)
