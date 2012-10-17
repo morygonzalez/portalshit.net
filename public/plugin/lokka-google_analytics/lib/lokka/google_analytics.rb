@@ -20,13 +20,15 @@ module Lokka
           tracker_script += "_gaq.push(['_setDomainName', '.#{dn}']);" unless dn.blank?
           tracker_script += "_gaq.push(['_trackPageview']);(function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src=('https:'==document.location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();</script>"
 
-          content_for :header do
-            text = <<-EOS
-            <script type="text/javascript">
-              google_analytics_domain_name  = "#{dn}";
-              window.google_analytics_uacct = "UA-accountnumber-propertyindex";
-            </script>
-            EOS
+          unless dn.blank?
+            content_for :header do
+              text = <<-EOS
+              <script type="text/javascript">
+                google_analytics_domain_name  = "#{dn}";
+                window.google_analytics_uacct = "UA-accountnumber-propertyindex";
+              </script>
+              EOS
+            end
           end
 
           content_for :footer do
