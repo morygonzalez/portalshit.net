@@ -5,8 +5,8 @@ $(function() {
 
   var switchTextareaAndWysiwyg = (function() {
     var name = $('select[name$="[markup]"] option:selected').val();
-    name = name == 'html' ? 'kramdown' : name;
-    $('select[name$="[markup]"] option[value$="kramdown"]').attr("selected", "selected");
+    name = name == '' ? 'kramdown' : name;
+    $('select[name$="[markup]"] option[value$="' + name + '"]').attr("selected", "selected");
     /* var name = $('select[name$="[markup]"] option:selected').val(); */
     /* name = name == '' ? 'html' : name */
     var html;
