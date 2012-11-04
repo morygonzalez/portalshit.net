@@ -12,6 +12,9 @@ set :scm, :git
 set :user, "morygonzalez"
 set :use_sudo, false
 
+set :db_user, ENV["MYSQL_USER"]
+set :db_password, ENV["MYSQL_PASSWORD"]
+
 role :web, "54.248.96.173"                          # Your HTTP server, Apache/etc
 role :app, "54.248.96.173"                          # This may be the same as your `Web` server
 # role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
@@ -19,7 +22,7 @@ role :app, "54.248.96.173"                          # This may be the same as yo
 
 set :deploy_to, "/home/morygonzalez/sites/deploys/#{application}"
 set :ruby_path, "/home/morygonzalez/.rbenv/shims"
-set :db_path, "sqlite3://#{deploy_to}/shared/db/production.sqlite3"
+set :db_path, "mysql://#{db_user}:#{db_password}localhost/portalshit"
 set :normalize_asset_timestamps, false
 
 # if you're still using the script/reaper helper you will need
