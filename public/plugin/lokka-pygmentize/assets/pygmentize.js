@@ -1,6 +1,6 @@
 (function() {
   var init = function(node) {
-    $(node).find(".body > pre").each(function() {
+    $(node).find(".body > pre, blockquote > pre").each(function() {
       var self = this;
       var lexer = $(this).attr('class');
       $.ajax({
@@ -11,39 +11,6 @@
         $(self).replaceWith(data);
       });
     });
-
-    /*
-    $('.body').each(function() {
-
-      var Pygmentize = function(lexar, snippet) {
-        var result;
-
-        $.ajax({
-          type: 'POST',
-          url: '/pygmentize',
-          async: false,
-          data: {
-            lexar: lexar,
-            snippet: snippet
-          },
-        }).done(function(data) {
-          result = data;
-        });
-
-        return result;
-      }
-
-      var entryBody = $(this).text();
-
-      entryBody = entryBody.replace(/```(.+?)\n([\s\S]*?)```/g,
-        function(whole, lexar, snippet) {
-          return Pygmentize(lexar, snippet);
-        }
-      );
-
-      $(this).html(entryBody);
-    })
-    */
   }
 
   document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
