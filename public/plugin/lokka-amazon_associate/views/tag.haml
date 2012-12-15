@@ -15,6 +15,7 @@
   }
   .amazon-content ul {
       margin-top: 0;
+      list-style: disc;
   }
 
 .amazon
@@ -26,5 +27,5 @@
     .amazon-content
       %ul
         %li= link_to @title, @link
-        %li= @author
+        %li= @author.present? ? @author : @manufacturer
         %li= @price

@@ -7,8 +7,6 @@ $(function() {
     var name = $('select[name$="[markup]"] option:selected').val();
     name = name == '' ? 'kramdown' : name;
     $('select[name$="[markup]"] option[value$="' + name + '"]').attr("selected", "selected");
-    /* var name = $('select[name$="[markup]"] option:selected').val(); */
-    /* name = name == '' ? 'html' : name */
     var html;
     if (name == 'html') {
       // enable wysiwyg

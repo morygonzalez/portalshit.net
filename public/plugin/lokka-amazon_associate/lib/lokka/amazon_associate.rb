@@ -32,6 +32,7 @@ module Lokka
     end
 
     def format_item(json)
+      @title, @link, @image, @price, @author, @manufacturer = *nil
       error = json["ItemLookupResponse"]["Items"]["Request"]["Errors"]["Error"] rescue nil
       return @error = "#{error["Code"]}: #{error["Message"]}" if error.present?
       item = json["ItemLookupResponse"]["Items"]["Item"]
@@ -39,14 +40,15 @@ module Lokka
       @title = h! attr["Title"] rescue nil
       @link = item["DetailPageURL"] rescue nil
       @image = item["LargeImage"]["URL"] rescue nil
-      @price = attr["ListPrice"]["FormattedPrice"] rescue nil
+      @price = item["OfferSummary"]["LowestNewPrice"]["FormattedPrice"] rescue "-"
       authors = []
       authors << format_authors(attr["Creator"]) if attr["Creator"]
       authors << format_authors(attr["Author"]) if attr["Author"]
       authors << format_authors(attr["Director"]) if attr["Director"]
       authors << format_authors(attr["Actor"]) if attr["Actor"]
       authors << format_authors(attr["Artist"]) if attr["Artist"]
-      @author = h! authors.join(", ")
+      @author = h! authors.join(", ") if authors.present?
+      @manufacturer = attr["Manufacturer"]
 
       haml :'plugin/lokka-amazon_associate/views/tag', :layout => false
     end
