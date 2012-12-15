@@ -190,7 +190,7 @@ code {
     text-shadow: 0 0 1px #fbfbfb;
 }
 
-blockquote {
+blockquote:not([class]) {
     padding: 1em 3em 1em;
     margin: 0 0 2em 0;
     background-color: #2c2525;
