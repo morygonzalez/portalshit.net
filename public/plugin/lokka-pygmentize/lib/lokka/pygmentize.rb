@@ -4,6 +4,7 @@ module Lokka
   module Pygmentize
     def self.registered(app)
       app.post '/pygmentize' do
+        return false unless request.referer =~ /#{request.host}/
         Pygments.highlight(
           params['snippet'],
           :lexer => params['lexer'],
