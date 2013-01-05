@@ -61,12 +61,12 @@ namespace :deploy do
 
   desc "Creates sockets symlink"
   task :socket_symlink, :role => :app, :except => { :no_release => true } do
-    run "cd #{current_path}; ln -s #{shared_path}/sockets tmp/sockets" unless File.exists? "#{File.join(current_path, 'tmp', 'sockets')}"
+    run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets" unless File.exists? File.join(current_path, 'tmp', 'sockets')
   end
 
-  before "deploy:start", :"deploy:socket_symlink"
+  before "deploy:start",   :"deploy:socket_symlink"
   before "deploy:restart", :"deploy:socket_symlink"
-  after "deploy:symlink", :"deploy:git_checkout_public"
+  after  "deploy:symlink", :"deploy:git_checkout_public"
   after :deploy, :"deploy:cleanup"
 end
 
