@@ -5,7 +5,7 @@ module Lokka
     def self.registered(app)
       app.before do
         path = request.env['PATH_INFO']
-        if params["comment"] && /^\/admin\/comments/ !~ path
+        if valid_comment?(params["comment"]) && /^\/admin\/comments/ !~ path
           message =<<-RUBY
 #{@site.title}: #{params["comment"]["name"]} has posted a new comment.
 #{truncate(escape_html(params["comment"]["body"]))}
@@ -64,6 +64,10 @@ module Lokka
       end
 
       true
+    end
+
+    def valid_comment?(comment)
+      Comment.new(comment).valid?
     end
   end
 end
