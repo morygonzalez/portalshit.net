@@ -23,6 +23,9 @@
   })
 
   var init = function(node) {
+    // fit image for iPhone
+    /* if (navigator.userAgent.match(/iPad/)) { */
+    /* } */
   }
 
   document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
@@ -36,16 +39,13 @@
 })();
 
 window.onload = function() {
-  // fit image for iPad
-  if (navigator.userAgent.match(/iPad/)) {
-    $('.article img').each(function() {
-      var newWidth    = document.body.offsetWidth - 60;
-      var imageRatio  = this.naturalHeight / this.naturalWidth;
+  $('.article img').each(function() {
+    var newWidth    = document.body.offsetWidth - 60;
+    var imageRatio  = this.naturalHeight / this.naturalWidth;
 
-      if (this.naturalWidth > newWidth) {
-        this.width  = newWidth;
-        this.height = newWidth * imageRatio;
-      }
-    });
-  }
+    if (this.naturalWidth > newWidth) {
+      this.width  = newWidth;
+      this.height = newWidth * imageRatio;
+    }
+  });
 };
