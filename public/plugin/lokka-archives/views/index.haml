@@ -1,0 +1,16 @@
+%ul
+  - months.each do |m|
+    %li
+      == #{m.year}-#{m.month}
+      %ul
+        = @posts.select {|p| p.created_at.strftime('%Y-%m') == "#{m.year}-#{m.month}" }.count
+        - @posts.select {|post| post.created_at.year == m.year && post.created_at.month == m.month }.each do |posts|
+          = posts.count
+          - posts.each do |post|
+            %li= link_to post.title, post.link
+      -# %ul
+      -#   - @posts.each do |post|
+      -#     %li
+      -#       = link_to post.title, post.link
+      -#       = l post.created_at, :format => :long
+      -#       = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
