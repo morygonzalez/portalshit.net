@@ -56,7 +56,7 @@
               - Tag.all.each do |tag|
                 %li= link_to tag.name, tag.link
         %dl.archives
-          %dt= t('archives')
+          %dt= link_to t('archives'), '/archives'
           %dd
             %ul
               - months.each do |m|
