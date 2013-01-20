@@ -1,7 +1,7 @@
 module Lokka
   module Archives
     def self.registered(app)
-      app.get %r{/archives/?(\d{4})} do |year|
+      app.get %r{/archives/?(\d{4})?} do |year|
         @month_posts = posts_group_by_month(year)
         @bread_crumbs = [{:name => t('home'), :link => '/'}]
         @bread_crumbs << {:name => t('archives'), :link => '/archives'}
