@@ -1,4 +1,8 @@
 %ul
+  - year_list.each do |year|
+    %li= link_to year, "/archives/#{year}"
+
+%ul
   - @month_posts.each do |month, posts|
     %li
       == #{month.year}-#{month.month}
