@@ -12,9 +12,12 @@ set :scm, :git
 set :user, "morygonzalez"
 set :use_sudo, false
 
-set :db_user, ENV["MYSQL_USER"]
-set :db_password, ENV["MYSQL_PASSWORD"]
-
+set :db_user do
+  Capistrano::CLI.ui.ask('MySQL User: ')
+end
+set :db_password do
+  Capistrano::CLI.password_prompt('MySQL Password: ')
+end
 role :web, "54.248.96.173"                          # Your HTTP server, Apache/etc
 role :app, "54.248.96.173"                          # This may be the same as your `Web` server
 # role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
@@ -22,7 +25,7 @@ role :app, "54.248.96.173"                          # This may be the same as yo
 
 set :deploy_to, "/home/morygonzalez/sites/deploys/#{application}"
 set :ruby_path, "/home/morygonzalez/.rbenv/shims"
-set :db_path, "mysql://#{db_user}:#{db_password}localhost/portalshit"
+set :db_path, "mysql://#{db_user}:#{db_password}@localhost/portalshit"
 set :normalize_asset_timestamps, false
 
 # if you're still using the script/reaper helper you will need
@@ -64,9 +67,9 @@ namespace :deploy do
     run "ln -s #{shared_path}/sockets #{current_path}/tmp/sockets" unless File.exists? File.join(current_path, 'tmp', 'sockets')
   end
 
-  before "deploy:start",   :"deploy:socket_symlink"
-  before "deploy:restart", :"deploy:socket_symlink"
-  after  "deploy:symlink", :"deploy:git_checkout_public"
+  # before :"deploy:start",   :"deploy:socket_symlink"
+  before :"deploy:restart", :"deploy:socket_symlink"
+  after  :"deploy:create_symlink", :"deploy:git_checkout_public"
   after :deploy, :"deploy:cleanup"
 end
 
