@@ -4,14 +4,14 @@
 
 - if @month_posts.blank?
   .recent-posts
-    %h2 Recent Entries
+    %h2= t('recent_entries')
     %ul
       - Post.recent(10).each do |post|
         %li= link_to post.title, post.link
 
 - else
   .archive-by-month
-    %h2 Archive by Month
+    %h2= t('archives')
     %ul
       - @month_posts.each do |month, posts|
         %li.year
