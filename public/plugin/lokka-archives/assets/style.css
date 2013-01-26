@@ -1,0 +1,15 @@
+.year {
+    list-style: none;
+}
+ul.year-list {
+    display: block;
+    height: 1%;
+    overflow: hidden;
+    padding-left: 0;
+}
+ul.year-list li {
+    float: left;
+    list-style: none;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
