@@ -113,7 +113,7 @@ GEM
       json
     jruby-pageant (1.1.1)
     json (1.5.4)
-    kgio (2.7.4)
+    kgio (2.8.0)
     kramdown (0.14.0)
     method_source (0.8)
     multi_json (1.0.4)
@@ -140,7 +140,7 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.3.1)
-    rack (1.4.1)
+    rack (1.4.4)
     rack-flash (0.1.2)
       rack
     rack-protection (1.2.0)
@@ -200,7 +200,7 @@ GEM
       ripl-multi_line (>= 0.2.4)
       ripl-rack (>= 0.2.0)
       sinatra (>= 1.2.1)
-    unicorn (4.3.1)
+    unicorn (4.5.0)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
