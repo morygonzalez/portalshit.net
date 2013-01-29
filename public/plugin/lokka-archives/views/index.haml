@@ -2,23 +2,15 @@
   - year_list.each do |year|
     %li= link_to year, "/archives/#{year}"
 
-- if @month_posts.blank?
-  .recent-posts
-    %h2= t('recent_entries')
-    %ul
-      - Post.recent(10).each do |post|
-        %li= link_to post.title, post.link
-
-- else
-  .archive-by-month
-    %h2= t('archives')
-    %ul
-      - @month_posts.each do |month, posts|
-        %li.year
-          %h3== #{month.year}-#{month.month}
-          %ul
-            - posts.each do |post|
-              %li
-                = link_to post.title, post.link
-                = l post.created_at, :format => :long
-                = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
+.archive-by-month
+  %h2= t('archives')
+  %ul
+    - @month_posts.each do |month, posts|
+      %li.year
+        %h3== #{month.year}-#{month.month}
+        %ul
+          - posts.each do |post|
+            %li
+              = link_to post.title, post.link
+              = l post.created_at, :format => :long
+              = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
