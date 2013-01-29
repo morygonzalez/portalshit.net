@@ -60,7 +60,8 @@
           %dd
             %ul
               - months.each_with_index do |m, i|
-                %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/" if i < 6
+                - if i < 6
+                  %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/"
             %p.more= link_to(t('hoge.more'), '/archives', :id => 'show_more_archive_list')
             -# %p.more= link_to(t('hoge.less'), 'javascript:void(0)', :id => 'show_less_archive_list', :style => 'display: none')
       .poweredby
