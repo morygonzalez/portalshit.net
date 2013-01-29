@@ -16,13 +16,13 @@ module Lokka
         assets_path = "/plugin/lokka-pygmentize/assets"
 
         content_for :header do
-          text = <<-EOS
+          text = <<-EOS.strip_heredoc
           <link href="#{assets_path}/monokai.css" rel="stylesheet" type="text/css" />
           EOS
         end
 
         content_for :footer do
-          text = <<-EOS
+          text = <<-EOS.strip_heredoc
           <script src="#{assets_path}/pygmentize.js" type="text/javascript"></script>
           EOS
         end
