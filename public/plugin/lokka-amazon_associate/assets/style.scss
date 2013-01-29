@@ -1,0 +1,18 @@
+.amazon {
+  display: block;
+  overflow: hidden;
+  height: 1%;
+  margin-bottom: 30px;
+}
+.amazon-image {
+  float: left;
+}
+.amazon-content {
+  margin-left: 20px;
+  float: left;
+  width: 50%;
+}
+.amazon-content ul {
+  margin-top: 0;
+  list-style: disc;
+}

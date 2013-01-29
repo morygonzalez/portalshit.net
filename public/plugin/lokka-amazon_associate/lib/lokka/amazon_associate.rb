@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 require 'amazon/ecs'
 require 'nokogiri'
 require 'fileutils'
@@ -18,6 +18,15 @@ module Lokka
         Option.secret_key = params['secret_key']
         flash[:notice] = 'Updated.'
         redirect '/admin/plugins/amazon_associate'
+      end
+
+      app.before do
+        assets_path = "/plugin/lokka-amazon_associate/assets"
+        content_for :header do
+          text = <<-EOS.strip_heredoc
+            <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
+          EOS
+        end
       end
     end
   end
