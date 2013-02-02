@@ -5,7 +5,6 @@ module Lokka
     def self.registered(app)
       app.before do
         assets_path = "/plugin/lokka-pygmentize/assets"
-
         content_for :header do
           text = <<-EOS.strip_heredoc
           <link href="#{assets_path}/monokai.css" rel="stylesheet" type="text/css" />
@@ -23,7 +22,7 @@ class Entry
       code = pre.css("code")[0]
       pre.replace Pygments.highlight(
         code.text.rstrip,
-        :lexer   => code[:class],
+        :lexer   => pre[:class].present? ? pre[:class] : nil,
         :options => { :encoding => 'utf-8' }
       )
     end
