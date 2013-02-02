@@ -3,15 +3,6 @@ require 'pygments.rb'
 module Lokka
   module Pygmentize
     def self.registered(app)
-      app.post '/pygmentize' do
-        return false unless request.referer =~ /#{request.host}/
-        Pygments.highlight(
-          params['snippet'],
-          :lexer => params['lexer'],
-          :options => { :encoding => 'utf-8' }
-        )
-      end
-
       app.before do
         assets_path = "/plugin/lokka-pygmentize/assets"
 
@@ -20,13 +11,22 @@ module Lokka
           <link href="#{assets_path}/monokai.css" rel="stylesheet" type="text/css" />
           EOS
         end
-
-        content_for :footer do
-          text = <<-EOS.strip_heredoc
-          <script src="#{assets_path}/pygmentize.js" type="text/javascript"></script>
-          EOS
-        end
       end
     end
+  end
+end
+
+class Entry
+  def body
+    doc  = Nokogiri::HTML(self.long_body)
+    doc.search("//pre").each do |pre|
+      code = pre.css("code")[0]
+      pre.replace Pygments.highlight(
+        code.text.rstrip,
+        :lexer   => code[:class],
+        :options => { :encoding => 'utf-8' }
+      )
+    end
+    doc.to_s
   end
 end
