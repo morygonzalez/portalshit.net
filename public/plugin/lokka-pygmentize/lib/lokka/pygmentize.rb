@@ -31,11 +31,18 @@ class Entry
   def syntax_highlight(body)
     doc = Nokogiri::HTML(body)
     doc.search("//pre").each do |pre|
-      code = pre.css("code")[0]
+      code  = pre.css("code")[0]
+      lexer = if pre[:class].present?
+                pre[:class]
+              elsif code[:class].present?
+                code[:class]
+              else
+                nil
+              end
       begin
         pre.replace Pygments.highlight(
           code.text.rstrip,
-          :lexer   => pre[:class].present? ? pre[:class] : nil,
+          :lexer   => lexer,
           :options => { :encoding => 'utf-8' }
         ) if code
       rescue MentosError
