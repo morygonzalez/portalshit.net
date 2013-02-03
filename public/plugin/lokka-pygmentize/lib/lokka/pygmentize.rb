@@ -34,7 +34,7 @@ class Entry
       code  = pre.css("code")[0]
       lexer = if pre[:class].present?
                 pre[:class]
-              elsif code[:class].present?
+              elsif code.present? && code[:class].present?
                 code[:class]
               else
                 nil
