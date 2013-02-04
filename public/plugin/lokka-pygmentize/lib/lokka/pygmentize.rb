@@ -16,11 +16,11 @@ module Lokka
 end
 
 class Entry
-  alias_method :original_long_body, :body
+  alias_method :original_long_body, :long_body
   def highlighted_long_body
     syntax_highlight(self.original_long_body)
   end
-  alias_method :body, :highlighted_long_body
+  alias_method :long_body, :highlighted_long_body
 
   alias_method :original_short_body, :short_body
   def highlighted_short_body
@@ -29,7 +29,7 @@ class Entry
   alias_method :short_body, :highlighted_short_body
 
   def syntax_highlight(body)
-    doc = Nokogiri::HTML(body)
+    doc = Nokogiri::HTML.fragment(body)
     doc.search("//pre").each do |pre|
       code  = pre.css("code")[0]
       lexer = if pre[:class].present?
