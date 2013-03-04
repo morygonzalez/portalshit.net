@@ -67,14 +67,14 @@ namespace :deploy do
     run "ln -sfn #{shared_path}/sockets #{current_path}/tmp/sockets"
   end
 
+  desc "Create amazon product advertisng api cache files"
   task :amazon_symlink, :role => :app, :except => { :no_release => true } do
     run "ln -sfn #{shared_path}/amazon #{current_path}/tmp/amazon"
   end
 
-  # before :"deploy:start",   :"deploy:socket_symlink"
-  before :"deploy:restart", :"deploy:socket_symlink"
+  before [:"deploy:start", :"deploy:restart"], :"deploy:socket_symlink"
+  before [:"deploy:start", :"deploy:restart"], :"deploy:amazon_symlink"
   after  :"deploy:create_symlink", :"deploy:git_checkout_public"
   after :deploy, :"deploy:cleanup"
-  before :"deploy:restart", :"deploy:amazon_symlink"
 end
 
