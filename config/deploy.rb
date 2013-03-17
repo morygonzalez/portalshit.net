@@ -2,6 +2,10 @@
 require "bundler/capistrano"
 require "capistrano_colors"
 
+set :stages, %w(production staging)
+set :default_stage, "staging"
+require 'capistrano/ext/multistage'
+
 set :application, "portalshit"
 set :repository,  "https://github.com/morygonzalez/lokka.git"
 set :branch, "portalshit"
@@ -12,20 +16,13 @@ set :scm, :git
 set :user, "morygonzalez"
 set :use_sudo, false
 
-set :db_user do
-  Capistrano::CLI.ui.ask('MySQL User: ')
-end
-set :db_password do
-  Capistrano::CLI.password_prompt('MySQL Password: ')
-end
-role :web, "54.248.96.173"                          # Your HTTP server, Apache/etc
-role :app, "54.248.96.173"                          # This may be the same as your `Web` server
+# role :web, "54.248.96.173"                          # Your HTTP server, Apache/etc
+# role :app, "54.248.96.173"                          # This may be the same as your `Web` server
 # role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
 # role :db,  "your slave db-server here"
 
 set :deploy_to, "/home/morygonzalez/sites/deploys/#{application}"
 set :ruby_path, "/home/morygonzalez/.rbenv/shims"
-set :db_path, "mysql://#{db_user}:#{db_password}@localhost/portalshit"
 set :normalize_asset_timestamps, false
 
 # if you're still using the script/reaper helper you will need
@@ -42,6 +39,9 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
+    set :db_user, -> { Capistrano::CLI.ui.ask('MySQL User: ') }
+    set :db_password, -> { Capistrano::CLI.password_prompt('MySQL Password: ') }
+    set :db_path, "mysql://#{db_user}:#{db_password}@localhost/portalshit"
     run "cd #{current_path}; env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c #{current_path}/config/unicorn.rb -D -E production"
   end
 
