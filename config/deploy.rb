@@ -8,12 +8,12 @@ require 'capistrano/ext/multistage'
 
 set :application, "portalshit"
 set :repository,  "https://github.com/morygonzalez/lokka.git"
-set :branch, "portalshit"
+set :branch,      "portalshit"
 
 set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-set :user, "morygonzalez"
+set :user,     "morygonzalez"
 set :use_sudo, false
 
 # role :web, "54.248.96.173"                          # Your HTTP server, Apache/etc
@@ -24,6 +24,8 @@ set :use_sudo, false
 set :deploy_to, "/home/morygonzalez/sites/deploys/#{application}"
 set :ruby_path, "/home/morygonzalez/.rbenv/shims"
 set :normalize_asset_timestamps, false
+
+set :bundle_without, [:development, :test, :postgresql, :sqlite]
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -41,7 +43,7 @@ namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
     set :db_user, -> { Capistrano::CLI.ui.ask('MySQL User: ') }
     set :db_password, -> { Capistrano::CLI.password_prompt('MySQL Password: ') }
-    set :db_path, "mysql://#{db_user}:#{db_password}@localhost/portalshit"
+    set :db_path, "mysql://#{db_user}:#{db_password}@#{db_host}/portalshit"
     run "cd #{current_path}; env LOKKA_ROOT=#{current_path} env DATABASE_URL=#{db_path} bundle exec unicorn -c #{current_path}/config/unicorn.rb -D -E production"
   end
 

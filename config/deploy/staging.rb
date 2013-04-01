@@ -4,4 +4,4 @@ set :domain, '219.94.232.157'
 set :db_host, '54.248.96.173'
 role :web, domain
 role :app, domain
-role :db,  "54.248.96.173"
+role :db,  domain
