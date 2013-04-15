@@ -1,10 +1,10 @@
-require 'rouge'
+require 'pygments.rb'
 
 module Lokka
-  module Rouge
+  module Pygmentize
     def self.registered(app)
       app.before do
-        assets_path = "/plugin/lokka-rouge/assets"
+        assets_path = "/plugin/lokka-pygmentize/assets"
         content_for :header do
           text = <<-EOS.strip_heredoc
           <link href="#{assets_path}/monokai.css" rel="stylesheet" type="text/css" />
@@ -31,19 +31,21 @@ class Entry
   def syntax_highlight(body)
     doc = Nokogiri::HTML.fragment(body)
     doc.css("pre").each do |pre|
-      code     = pre.css("code")[0]
-      language = if pre[:class].present?
-                   pre[:class]
-                 elsif code.present? && code[:class].present?
-                   code[:class]
-                 else
-                   nil
-                 end
+      code  = pre.css("code")[0]
+      lexer = if pre[:class].present?
+                pre[:class]
+              elsif code.present? && code[:class].present?
+                code[:class]
+              else
+                nil
+              end
       begin
-        lexer     = Rouge::Lexer.find_fancy(language, code.text.rstrip)
-        formatter = Rouge::Formatters::HTML.new(:css_class => "highlight #{lexer.tag}")
-        pre.replace(formatter.format(lexer.lex(code.text.rstrip))) if code
-      rescue
+        pre.replace Pygments.highlight(
+          code.text.rstrip,
+          :lexer   => lexer,
+          :options => { :encoding => 'utf-8' }
+        ) if code
+      rescue MentosError
         next
       end
     end
