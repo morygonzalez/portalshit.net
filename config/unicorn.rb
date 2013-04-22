@@ -1,5 +1,5 @@
 # ワーカーの数
-worker_processes 1 # default is 2
+worker_processes 2 # default is 2
 
 # ソケット
 listen File.expand_path('tmp/sockets/unicorn-lokka.sock', ENV['LOKKA_ROOT'])
