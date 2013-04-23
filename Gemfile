@@ -38,9 +38,6 @@ gem 'yard-sinatra', '1.0.0'
 gem 'stringex', '1.3.2'
 gem 'backports', '2.3.0'
 gem 'unicorn'
-gem 'capistrano'
-gem 'capistrano_colors'
-gem 'capistrano-ext'
 gem 'pry'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
@@ -49,6 +46,9 @@ group :production do
 end
 
 group :development do
+  gem 'capistrano'
+  gem 'capistrano_colors'
+  gem 'capistrano-ext'
   gem 'tapp', '1.3.0'
   gem 'awesome_print'
   gem 'dm-sqlite-adapter', '1.2.0'
