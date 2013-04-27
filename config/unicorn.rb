@@ -1,15 +1,17 @@
 # ワーカーの数
 worker_processes 2 # default is 2
 
+LOKKA_ROOT = File.expand_path('../', File.dirname(__FILE__))
+
 # ソケット
-listen File.expand_path('tmp/sockets/unicorn-lokka.sock', ENV['LOKKA_ROOT'])
+listen File.expand_path('tmp/sockets/unicorn-lokka.sock', LOKKA_ROOT)
 
 # pid
-pid File.expand_path('tmp/pids/unicorn-lokka.pid', ENV['LOKKA_ROOT'])
+pid File.expand_path('tmp/pids/unicorn-lokka.pid', LOKKA_ROOT)
 
 # ログ
-stderr_path File.expand_path('log/unicorn.log', ENV['LOKKA_ROOT'])
-stdout_path File.expand_path('log/unicorn.log', ENV['LOKKA_ROOT'])
+stderr_path File.expand_path('log/unicorn.log', LOKKA_ROOT)
+stdout_path File.expand_path('log/unicorn.log', LOKKA_ROOT)
 
 # ダウンタイムなくす
 preload_app true
