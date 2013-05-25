@@ -44,7 +44,7 @@ namespace :deploy do
     set :db_user, -> { Capistrano::CLI.ui.ask('MySQL User: ') }
     set :db_password, -> { Capistrano::CLI.password_prompt('MySQL Password: ') }
     set :db_path, "mysql://#{db_user}:#{db_password}@#{db_host}/portalshit"
-    run "cd #{current_path}; env RACK_ENV=production env DATABASE_URL=#{db_path} bundle exec unicorn -c #{current_path}/config/unicorn.rb -D -E production"
+    run "cd #{current_path}; env RACK_ENV=#{stage} env NEWRELIC_ENABLE=#{stage == 'production' ? true : false} env DATABASE_URL=#{db_path} bundle exec unicorn -c #{current_path}/config/unicorn.rb -D -E production"
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
