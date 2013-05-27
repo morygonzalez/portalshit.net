@@ -5,7 +5,7 @@ describe Lokka::Helpers do
   describe "#associate_link" do
     context "本文中にISBN/ASINタグがあればアフィリエイトリンクに変換する" do
       it "ISBN タグをリンクに変換する" do
-        associate_link("これはテストです。\n\n<!-- ISBN=UNKOSHITAIYO -->\n\n終わり。").should
+        associate_link("これはテストです。\n\n<!-- ISBN=UNKOSHITAIYO -->\n\n終わり。").should match(/amazon-image/)
       end
 
       it "ASIN タグをリンクに変換する" do

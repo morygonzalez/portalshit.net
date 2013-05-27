@@ -2,7 +2,6 @@
 require 'amazon/ecs'
 require 'nokogiri'
 require 'fileutils'
-require 'digest/md5'
 require 'json'
 
 module Lokka
@@ -46,9 +45,9 @@ module Lokka
         error = json["ItemLookupResponse"]["Items"]["Request"]["Errors"]["Error"] rescue nil
         return @error = "#{error["Code"]}: #{error["Message"]}" if error.present?
         item = json["ItemLookupResponse"]["Items"]["Item"]
-        attr= item["ItemAttributes"]
+        attr = item["ItemAttributes"]
         @title = h! attr["Title"] rescue nil
-        @link = item["DetailPageURL"] rescue nil
+        @link  = item["DetailPageURL"] rescue nil
         @image = item["LargeImage"]["URL"] rescue nil
         @price = item["OfferSummary"]["LowestNewPrice"]["FormattedPrice"] rescue "-"
         authors = []
@@ -88,8 +87,7 @@ module Lokka
 
     def get_path(item_id)
       dir = File.expand_path("tmp/amazon")
-      url = Digest::MD5.hexdigest item_id
-      path = File.join(dir, url.chars.first, url)
+      path = File.join(dir, item_id)
       FileUtils.mkdir_p(File.dirname(path))
       return path if File.exists?(path) && File.stat(path).mtime > Time.now.yesterday
       open(path, "w") { |f|
