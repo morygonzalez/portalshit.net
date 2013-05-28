@@ -1,10 +1,10 @@
-%ul.year-list
-  - year_list.each do |year|
-    %li= link_to year, "/archives/#{year}"
+- cache_fragment("archives-#{params[:year]}") do
+  %ul.year-list
+    - year_list.each do |year|
+      %li= link_to year, "/archives/#{year}"
 
-.archive-by-month
-  %h2= t('archives.title')
-  - cache_fragment("archives-#{params[:year]}") do
+  .archive-by-month
+    %h2= t('archives.title')
     %ul
       - @month_posts.each do |month, posts|
         %li.year
