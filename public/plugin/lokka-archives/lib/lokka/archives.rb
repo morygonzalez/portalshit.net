@@ -5,7 +5,7 @@ module Lokka
         posts = Post.all(:created_at => (1.year.ago..Time.now))
         @month_posts = posts_group_by_month(posts)
         @bread_crumbs = [{:name => t('home'), :link => '/'}]
-        @bread_crumbs << {:name => t('archives'), :link => '/archives'}
+        @bread_crumbs << {:name => t('archives.title'), :link => '/archives'}
         haml :"plugin/lokka-archives/views/index", :layout => :"theme/#{@theme.name}/layout"
       end
 
