@@ -13,6 +13,7 @@ module Lokka
       enable :method_override, :raise_errors, :static, :sessions
       YAML::ENGINE.yamler = 'syck' if YAML.const_defined?(:ENGINE)
       register Padrino::Helpers
+      register Sinatra::Cache
       set :app_file, __FILE__
       set :root, File.expand_path('../../..', __FILE__)
       set :public_folder => Proc.new { File.join(root, 'public') }

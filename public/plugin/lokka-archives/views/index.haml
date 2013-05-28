@@ -3,14 +3,15 @@
     %li= link_to year, "/archives/#{year}"
 
 .archive-by-month
-  %h2= t('archives')
-  %ul
-    - @month_posts.each do |month, posts|
-      %li.year
-        %h3== #{month.year}-#{month.month}
-        %ul
-          - posts.each do |post|
-            %li
-              = link_to post.title, post.link
-              = l post.created_at, :format => :long
-              = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
+  %h2= t('archives.title')
+  - cache_fragment("archives-#{params[:year]}") do
+    %ul
+      - @month_posts.each do |month, posts|
+        %li.year
+          %h3== #{month.year}-#{month.month}
+          %ul
+            - posts.each do |post|
+              %li
+                = link_to post.title, post.link
+                = l post.created_at, :format => :long
+                = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
