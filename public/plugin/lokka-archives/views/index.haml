@@ -1,4 +1,4 @@
-- cache_fragment("archives-#{params[:year]}") do
+- cache_fragment("archives-#{params[:year]}", :shared) do
   %ul.year-list
     - year_list.each do |year|
       %li= link_to year, "/archives/#{year}"
