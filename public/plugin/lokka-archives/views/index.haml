@@ -1,7 +1,7 @@
-- cache_fragment("archives-#{params[:year]}", shared: true) do
+- cache_fragment "archives-#{params[:year]}", shared: true do
   %ul.year-list
     - year_list.each do |year|
-      %li= link_to year, "/archives/#{year}"
+      %li= link_to year.to_s, "/archives/#{year}"
 
   .archive-by-month
     %h2= t('archives.title')

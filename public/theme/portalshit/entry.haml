@@ -4,10 +4,10 @@
       .prevnext
         - if @entry.next
           %span.prev
-            = link_to "&lt;&lt; #{truncate(@entry.next.title, :length => 25)}", @entry.next.link, { :rel => :prev, :title => @entry.next.title }
+            = link_to "<< #{truncate(@entry.next.title, :length => 25)}", @entry.next.link, { :rel => :prev, :title => @entry.next.title }
         - if @entry.prev
           %span.next
-            = link_to "#{truncate(@entry.prev.title, :length => 25)} &gt;&gt;", @entry.prev.link, { :rel => :next, :title => @entry.prev.title }
+            = link_to "#{truncate(@entry.prev.title, :length => 25)} >>", @entry.prev.link, { :rel => :next, :title => @entry.prev.title }
     %h2.title= link_to @entry.title, @entry.link
   .body
     ~ associate_link @entry.body
