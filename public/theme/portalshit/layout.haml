@@ -35,7 +35,7 @@
 
     #footer
       #aside
-        - cache_fragment :footer, :shared do
+        - cache_fragment :footer, shared: true do
           %dl.rcent_entries
             %dt= t('recent_entries')
             %dd
