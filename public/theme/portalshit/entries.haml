@@ -5,5 +5,4 @@
         %li= link_to category.title, "/category/#{category.slug}/"
   - @posts.each_with_index do |post, index|
     = partial :article, :locals => {:post => post, :index => index}
-  - cache_fragment('index-pager', shared: true) do
-    = @posts.pager.to_html(request.url)
+  = @posts.pager.to_html(request.url)
