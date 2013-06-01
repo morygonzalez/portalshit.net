@@ -2,7 +2,6 @@ module Lokka
   module Archives
     def self.registered(app)
       app.set :cache_enabled, true
-      app.set :cache_environment, :development
 
       app.get '/archives' do
         posts = Post.all(:created_at => (1.year.ago..Time.now))
