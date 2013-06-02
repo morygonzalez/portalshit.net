@@ -1,4 +1,7 @@
 ja:
+  date:
+    formats:
+      year_month: "%Y年%m月"
   archives:
     title: アーカイブ
     more: すべて表示

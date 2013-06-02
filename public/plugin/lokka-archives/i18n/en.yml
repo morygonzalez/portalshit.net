@@ -1,4 +1,7 @@
 en:
+  date:
+    formats:
+      year_month: "%M, %Y"
   archives:
     title: Archives
     more: More

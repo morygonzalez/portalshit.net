@@ -1,17 +1,16 @@
-- cache_fragment "archives-#{params[:year]}", shared: true do
-  %ul.year-list
-    - year_list.each do |year|
-      %li= link_to year.to_s, "/archives/#{year}"
+%ul.year-list
+  - year_list.each do |year|
+    %li= link_to year.to_s, "/archives/#{year}"
 
-  .archive-by-month
-    %h2= t('archives.title')
-    %ul
-      - @month_posts.each do |month, posts|
-        %li.year
-          %h3== #{month.year}-#{month.month}
-          %ul
-            - posts.each do |post|
-              %li
-                = link_to post.title, post.link
-                = l post.created_at, :format => :long
-                = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
+.archive-by-month
+  %h2= t('archives.title')
+  %ul
+    - @month_posts.each do |datetime, posts|
+      %li.year
+        %h3= l datetime.to_date, format: :year_month
+        %ul
+          - posts.each do |post|
+            %li
+              = link_to post.title, post.link
+              = l post.created_at, :format => :long
+              = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
