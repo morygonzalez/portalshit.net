@@ -10,10 +10,9 @@ $various-bg: #212121;
     font-size: 90%;
 }
 
-@mixin ipad {
-    @media all and (orientation:portrait) {
-        width: 768px;
-        font-size: 1.1em;
+@media all and (orientation:portrait) {
+    #content, #footer {
+        font-size: 140%;
     }
 }
 
@@ -223,7 +222,6 @@ blockquote:not([class]) {
 
 #header {
     width: 980px;
-    @include ipad;
     margin: 20px auto 10px;
     text-align: left;
 
@@ -239,7 +237,6 @@ blockquote:not([class]) {
 #bread_crumb {
     margin: 0px auto;
     width: 980px;
-    @include ipad;
     text-align: left;
     overflow: hidden;
     height: 1%;
@@ -286,7 +283,6 @@ blockquote:not([class]) {
 
 #content {
     width: 980px;
-    @include ipad;
     height: auto;
     margin: 0 auto;
     text-align: left;
@@ -303,7 +299,6 @@ blockquote:not([class]) {
     text-align: left;
     padding: 20px 30px;
     width: 980px;
-    @include ipad;
 
     dl {
         display: block;
@@ -488,7 +483,7 @@ blockquote:not([class]) {
 
 #footer {
     clear: both;
-    width: 100%;
+    width: 980px;
     margin: 20px auto 0;
     text-align: center;
     padding: 1em 0 2em;
@@ -557,7 +552,6 @@ input {
     &.text_field {
         padding: 5px;
         width: 800px;
-        @include ipad;
         border: 1px solid #999999;
     }
 
