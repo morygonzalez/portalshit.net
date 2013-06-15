@@ -12,19 +12,16 @@ module Lokka
           RUBY
           case Option.comment_notify_by
           when 'im.kayac.com'
-            if Option.comment_notify_password.present?
-              opt = {:password => Option.comment_notify_password}
-            elsif Option.comment_notify_sig.present?
-              require 'digest/sha1'
-
-              sig = Digest::SHA1.hexdigest(message + Option.comment_notify_sig)
-              opt = {:sig => sig}
-            else
-              opt = nil
-            end
-
             begin
-              ImKayac.post(Option.comment_notify_to, message, opt)
+              if Option.comment_notify_password.present?
+                ImKayac.to(Option.comment_notify_to).password(Option.comment_notify_password).post(message)
+              elsif Option.comment_notify_sig.present?
+                require 'digest/sha1'
+                signature = Digest::SHA1.hexdigest(message + Option.comment_notify_sig)
+                ImKayac.to(Option.comment_notify_to).secret(signature).post(message)
+              else
+                ImKayac.to(Option.comment_notify_to).post(message)
+              end
             rescue => e
               STDERR.puts e
             end
