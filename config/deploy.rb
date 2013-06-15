@@ -47,7 +47,7 @@ namespace :deploy do
     run <<-EOC
       cd #{current_path};
       env RACK_ENV=#{stage}
-      env NEWRELIC_ENABLE=#{stage == 'production' ? true : false}
+      env NEWRELIC_ENABLE=#{stage.to_s == 'production' ? true : false}
       env DATABASE_URL=#{db_path}
       bundle exec unicorn -c #{current_path}/config/unicorn.rb -D -E production
     EOC
