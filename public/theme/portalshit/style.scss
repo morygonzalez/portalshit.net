@@ -13,6 +13,7 @@ $various-bg: #212121;
 @media all and (orientation:portrait) {
     #content, #footer {
         font-size: 140%;
+        width: 980px;
     }
 }
 
@@ -483,7 +484,8 @@ blockquote:not([class]) {
 
 #footer {
     clear: both;
-    width: 980px;
+    width: 100%;
+    /* width: 980px; */
     margin: 20px auto 0;
     text-align: center;
     padding: 1em 0 2em;
