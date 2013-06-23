@@ -4,6 +4,10 @@ module Lokka
       app.set :cache_enabled, true
 
       app.get '/archives' do
+        cache_path = app.public_dir + '/archives.html'
+        if test(?f, cache_path) && Time.now - test(?M, cache_path) < 15.minutes
+          return File.read(cache_path)
+        end
         @month_posts = Post.all(:created_at => (1.year.ago..Time.now)).
           group_by {|post| post.created_at.beginning_of_month }
         @bread_crumbs = [{:name => t('home'), :link => '/'}]
@@ -12,6 +16,10 @@ module Lokka
       end
 
       app.get '/archives/:year' do |year|
+        cache_path = app.public_dir + "/archives/#{year}.html"
+        if test(?f, cache_path) && Time.now - test(?M, cache_path) < 15.minutes
+          return File.read(cache_path)
+        end
         @month_posts = Post.all(
           :created_at => (
             Time.parse("#{year}-01-01T00:00:00")..Time.parse("#{year}-12-31T23:59:59"))).
