@@ -8,7 +8,8 @@ module Lokka
         if test(?f, cache_path) && Time.now - test(?M, cache_path) < 15.minutes
           return File.read(cache_path)
         end
-        @month_posts = Post.all(:created_at => (1.year.ago..Time.now)).
+        @month_posts = Post.all(
+          :draft => false, :created_at => (1.year.ago..Time.now)).
           group_by {|post| post.created_at.beginning_of_month }
         @bread_crumbs = [{:name => t('home'), :link => '/'}]
         @bread_crumbs << {:name => t('archives.title'), :link => '/archives'}
@@ -21,6 +22,7 @@ module Lokka
           return File.read(cache_path)
         end
         @month_posts = Post.all(
+          :draft => false,
           :created_at => (
             Time.parse("#{year}-01-01T00:00:00")..Time.parse("#{year}-12-31T23:59:59"))).
           group_by {|post| post.created_at.beginning_of_month }
@@ -43,8 +45,8 @@ module Lokka
 
   module Helpers
     def year_list
-      first_year = Post.all.first.created_at.year
-      last_year  = Post.all.last.created_at.year
+      first_year = Post.published.first.created_at.year
+      last_year  = Post.published.last.created_at.year
       years = first_year.downto(last_year)
       link_arr = years.inject([]) {|result, year|
         result << year
