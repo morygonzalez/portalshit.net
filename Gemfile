@@ -41,6 +41,8 @@ gem 'unicorn'
 gem 'pry'
 gem 'newrelic_rpm'
 gem 'sinatra-cache', github: 'morygonzalez/sinatra-cache'
+gem 'coffee-script'
+gem 'therubyracer'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
