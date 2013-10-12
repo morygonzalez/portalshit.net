@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: https://github.com/tmm1/pygments.rb
-  revision: c02c050f865ec786c5c6301ac70513d51ccf6e14
+  revision: e87424cb58dbb23fb25f0ea4814b2d9695802ea2
   specs:
     pygments.rb (0.5.2)
       posix-spawn (~> 0.3.6)
