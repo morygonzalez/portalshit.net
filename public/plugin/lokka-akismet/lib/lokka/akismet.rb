@@ -67,7 +67,7 @@ module Lokka
 			queries << "permalink=#{request.env["REQUEST_URI"]}"
 			queries << "comment_type=comment"
 			queries << "comment_author=#{params[:comment][:name]}"
-			queries << "comment_author_email="
+			queries << "comment_author_email=#{params[:comment][:email]}"
 			queries << "comment_author_url=#{params[:comment][:homepage]}"
 			queries << "comment_content=#{params[:comment][:body]}"
 			queries.map!{|value|
