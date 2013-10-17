@@ -4,7 +4,7 @@ set :domain, '219.94.232.157'
 set :db_host, domain
 role :web, domain
 role :app, domain
-role :db,  domain, :primary => true
+role :db,  'localhost', :primary => true
 
 namespace :deploy do
   desc "Create newrelic symlink"
