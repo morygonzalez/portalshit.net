@@ -32,7 +32,7 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
-    font-size: 15px;
+    font-size: 16px;
     color: #fffeff;
     line-height: 22px;
     text-shadow: -1px -1px -1px #1d1a1a;
@@ -164,7 +164,7 @@ li {
 }
 
 pre {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 115%;
     padding: 1.0em 1.5em;
     background-color: $various-bg;
@@ -222,7 +222,8 @@ blockquote:not([class]) {
 }
 
 #header {
-    width: 980px;
+    width: 90%;
+    max-width: 1000px;
     margin: 20px auto 10px;
     text-align: left;
 
@@ -237,7 +238,8 @@ blockquote:not([class]) {
 
 #bread_crumb {
     margin: 0px auto;
-    width: 980px;
+    width: 90%;
+    max-width: 1000px;
     text-align: left;
     overflow: hidden;
     height: 1%;
@@ -283,7 +285,8 @@ blockquote:not([class]) {
 }
 
 #content {
-    width: 980px;
+    width: 90%;
+    max-width: 1000px;
     height: auto;
     margin: 0 auto;
     text-align: left;
@@ -299,7 +302,8 @@ blockquote:not([class]) {
     margin: 0 auto;
     text-align: left;
     padding: 20px 30px;
-    width: 980px;
+    width: 90%;
+    max-width: 1000px;
 
     dl {
         display: block;
@@ -649,7 +653,7 @@ ul.pager {
 }
 
 .clearfix {
-    display: inline-table;
+    display: block;
 }
 
 ul.comments {
