@@ -1,10 +1,10 @@
 puts "*** Deploying to the \033[1;41m  PRODUCTION  \033[0m servers!"
 
 set :domain, '219.94.232.157'
-set :db_host, domain
+set :db_host, 'localhost'
 role :web, domain
 role :app, domain
-role :db,  'localhost', :primary => true
+role :db,  domain, :primary => true
 
 namespace :deploy do
   desc "Create newrelic symlink"
