@@ -54,11 +54,11 @@ namespace :deploy do
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "kill -KILL `cat #{current_path}/tmp/pids/unicorn-lokka.pid`"
+    run "kill -KILL `cat #{shared_path}/pids/unicorn-lokka.pid`"
   end
 
   task :restart, :role => :app, :except => { :no_release => true } do
-    run "kill -USR2 `cat #{current_path}/tmp/pids/unicorn-lokka.pid`"
+    run "kill -USR2 `cat #{shared_path}/pids/unicorn-lokka.pid`"
   end
 
   task :migrate, :role => :app, :except => { :no_release => true } do
