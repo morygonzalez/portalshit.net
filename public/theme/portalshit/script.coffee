@@ -8,11 +8,15 @@ document.body.addEventListener "AutoPagerize_DOMNodeInserted", (e) ->
 fitImageWidthToScreenWidth = ->
   $('.body img').each ->
     maxWidth    = 900
-    deviceWidth = document.body.offsetWidth - 60
+    deviceWidth = document.body.offsetWidth
+    if window.orientation == 0
+      deviceWidth -= 160
+    else
+      deviceWidth -= 60
     imageRatio  = @naturalHeight / @naturalWidth
     maxWidth    = if deviceWidth > maxWidth then maxWidth else deviceWidth
 
-    if @naturalHeight > maxWidth
+    if @naturalWidth > maxWidth
       @width  = maxWidth
       @height = maxWidth * imageRatio
 
