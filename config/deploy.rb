@@ -7,7 +7,7 @@ set :default_stage, "staging"
 require 'capistrano/ext/multistage'
 
 set :application, "portalshit"
-set :repository,  "https://github.com/morygonzalez/lokka.git"
+set :repository,  "https://github.com/morygonzalez/www.portalshit.net.git"
 set :branch,      "portalshit"
 
 set :scm, :git
