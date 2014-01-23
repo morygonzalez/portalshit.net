@@ -51,8 +51,8 @@ end
 
 group :development do
   gem 'capistrano'
-  gem 'capistrano_colors'
-  gem 'capistrano-ext'
+  gem 'capistrano-rbenv'
+  gem 'capistrano-bundler'
   gem 'awesome_print'
 end
 
