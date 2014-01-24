@@ -4,10 +4,10 @@ worker_processes 2 # default is 2
 LOKKA_ROOT = File.expand_path('../', File.dirname(__FILE__))
 
 # ソケット
-listen File.expand_path('tmp/sockets/unicorn-lokka.sock', LOKKA_ROOT)
+listen File.expand_path('tmp/sockets/unicorn.sock', LOKKA_ROOT)
 
 # pid
-pid File.expand_path('tmp/pids/unicorn-lokka.pid', LOKKA_ROOT)
+pid File.expand_path('tmp/pids/unicorn.pid', LOKKA_ROOT)
 
 # ログ
 stderr_path File.expand_path('log/unicorn.log', LOKKA_ROOT)

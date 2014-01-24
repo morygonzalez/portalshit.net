@@ -53,6 +53,7 @@ group :development do
   gem 'capistrano'
   gem 'capistrano-rbenv'
   gem 'capistrano-bundler'
+  gem 'sshkit', github: 'capistrano/sshkit'
   gem 'awesome_print'
 end
 
