@@ -6,6 +6,7 @@ module Lokka
     include Padrino::Helpers::TranslationHelpers
 
     configure :development do
+      use Rack::MiniProfiler
       register Sinatra::Reloader
     end
 

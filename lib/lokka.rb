@@ -5,6 +5,7 @@ require 'erb'
 require 'ostruct'
 require 'digest/sha1'
 require 'csv'
+require 'rack-mini-profiler'
 
 module Lokka
   class NoTemplateError < StandardError; end
