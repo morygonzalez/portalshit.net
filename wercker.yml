@@ -30,10 +30,10 @@ build:
 
         # Set up DB
         - script:
-          name: Set up db
-          code: |
-            touch db/test.sqlite3
-            RACK_ENV=test bundle exec rake db:setup
+            name: Set up db
+            code: |
+                touch db/test.sqlite3
+                RACK_ENV=test bundle exec rake db:setup
 
         # Add more steps here:
         - script:
