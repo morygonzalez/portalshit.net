@@ -28,6 +28,13 @@ build:
                 echo "from location $(which ruby)"
                 echo -p "gem list: $(gem list)"
 
+        # Set up DB
+        - script:
+          name: Set up db
+          code: |
+            touch db/test.sqlite3
+            RACK_ENV=test bundle exec rake db:setup
+
         # Add more steps here:
         - script:
                name: rspec
