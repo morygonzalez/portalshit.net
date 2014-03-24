@@ -15,7 +15,7 @@ build:
 
         # A step that executes `bundle install` command
         - bundle-install
-
+                
         # A step that prepares the database.yml using the database in services
         # - rails-database-yml
 
@@ -32,10 +32,8 @@ build:
         - script:
             name: Set up db
             code: |
-                [ -f db/test.sqlite3 ] && rm db/test.sqlite3
                 touch db/test.sqlite3
                 RACK_ENV=test bundle exec rake db:setup
-                RACK_ENV=test bundle exec rake db:migrate
 
         # Add more steps here:
         - script:
