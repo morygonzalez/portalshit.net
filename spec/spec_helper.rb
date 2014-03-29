@@ -45,7 +45,8 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
+    # DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each) do
