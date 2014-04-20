@@ -55,6 +55,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'sshkit', github: 'capistrano/sshkit'
   gem 'awesome_print'
+  gem 'rack-mini-profiler'
 end
 
 group :development, :test do
@@ -72,7 +73,6 @@ group :test do
   gem 'simplecov', :require => false if RUBY_VERSION >= '1.9'
   gem 'factory_girl', '2.6.1'
   gem 'database_cleaner', '0.7.1'
-  gem 'rack-mini-profiler'
 end
 
 group :mysql do
