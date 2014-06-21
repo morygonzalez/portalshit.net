@@ -2,7 +2,7 @@
 lock '3.1.0'
 
 set :application, 'portalshit'
-set :repo_url, 'https://github.com/morygonzalez/www.portalshit.net.git'
+set :repo_url, 'https://github.com/morygonzalez/portalshit.net.git'
 
 # Default branch is :master
 ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
