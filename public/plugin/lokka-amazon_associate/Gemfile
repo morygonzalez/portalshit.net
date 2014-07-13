@@ -1,2 +1,2 @@
-gem "amazon-ecs"
-gem "json"
+gem 'amazon-ecs'
+gem 'json'
