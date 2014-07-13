@@ -5,11 +5,6 @@ module Lokka
   class App < Sinatra::Base
     include Padrino::Helpers::TranslationHelpers
 
-    configure :development do
-      use Rack::MiniProfiler
-      register Sinatra::Reloader
-    end
-
     configure do
       enable :method_override, :raise_errors, :static, :sessions
       YAML::ENGINE.yamler = 'syck' if YAML.const_defined?(:ENGINE)
@@ -30,7 +25,7 @@ module Lokka
       set :default_locale, 'en'
       set :haml, :ugly => false, :attr_wrapper => '"'
       supported_stylesheet_templates.each do |style|
-        set style, :style => :expanded
+        set style, :style => :compressed
       end
       ::I18n.load_path += Dir["#{root}/i18n/*.yml"]
       helpers Lokka::Helpers
@@ -41,6 +36,14 @@ module Lokka
       register Sinatra::Flash
       Lokka.load_plugin(self)
       Lokka::Database.new.connect
+    end
+
+    configure :development do
+      use Rack::MiniProfiler
+      register Sinatra::Reloader
+      supported_stylesheet_templates.each do |style|
+        set style, :style => :expanded
+      end
     end
 
     require 'lokka/app/admin.rb'
