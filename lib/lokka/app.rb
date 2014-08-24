@@ -44,6 +44,10 @@ module Lokka
       supported_stylesheet_templates.each do |style|
         set style, :style => :expanded
       end
+      enable :logging
+      file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
+      file.sync = true
+      use Rack::CommonLogger, file
     end
 
     require 'lokka/app/admin.rb'

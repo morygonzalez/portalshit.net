@@ -1,0 +1,6 @@
+en:
+  recaptcha:
+    public_key: Public key
+    private_key: Private key
+    configuration_was_successfully_updated: Configuration was successfully updated
+    invalid_value: Invalid value!

@@ -1,0 +1,5 @@
+ja:
+  recaptcha:
+    public_key: Public key
+    private_key: Private key
+    configuration_was_successfully_updated: Key を更新しました!
