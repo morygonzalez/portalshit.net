@@ -8,13 +8,12 @@ module Lokka
           public_key:  Option.recaptcha_public_key,
           private_key: Option.recaptcha_private_key
         app.helpers Rack::Recaptcha::Helpers
-        return false if request.request_method != 'POST'
-        return false if request.env['PATH_INFO'] =~ /^\/admin\//
 
-        if (params[:recaptcha_response_field].blank? || params[:recaptcha_challenge_field].blank?) ||
-            (params[:recaptcha_response_field].present? && params[:recaptcha_challenge_field].present? && !recaptcha_valid?)
-          halt 402, "You need to pay money to accomplish this action."
-        end
+        return if request.request_method != 'POST'
+        return if request.env['PATH_INFO'] =~ /^\/admin\//
+        return unless Lokka.production?
+
+        halt 402, "You need to pay money to accomplish this action." if !recaptcha_valid?
       end
 
       app.get '/admin/plugins/recaptcha' do
