@@ -2,11 +2,6 @@ module Lokka
   module Recaptcha
     def self.registered(app)
       app.before do
-        app.use Rack::Recaptcha,
-          public_key:  Option.recaptcha_public_key,
-          private_key: Option.recaptcha_private_key
-        app.helpers Rack::Recaptcha::Helpers
-
         return if request.request_method != 'POST'
         return if request.env['PATH_INFO'] =~ /^\/admin\//
         return unless Lokka.production?
