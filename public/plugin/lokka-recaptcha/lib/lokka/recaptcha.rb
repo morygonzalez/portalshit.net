@@ -1,5 +1,3 @@
-require 'rack/recaptcha'
-
 module Lokka
   module Recaptcha
     def self.registered(app)
