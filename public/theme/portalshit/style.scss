@@ -4,6 +4,7 @@
 $radius: 5px;
 $base-link: #8c0000;
 $various-bg: #212121;
+$code-font: Menlo, Consolas, "Courier New", Courier, mono;
 
 @mixin footer-common {
   padding: 25px 0 0;
@@ -167,7 +168,7 @@ li {
 }
 
 pre {
-  font-size: 13px;
+  font-size: 95%;
   line-height: 115%;
   padding: 1.0em 1.5em;
   background-color: $various-bg;
@@ -179,44 +180,23 @@ pre {
   overflow-x: auto;
   overflow-y: visible;
   max-width: 900px;
-  color: #424242;
+  color: #b5b2b2;
   text-shadow: none;
-  @include _border-radius;
-}
-
-.highlight {
-  @include _monokai;
-}
-
-.gist {
-  text-shadow: none;
-  .highlight {
-    @include _border-radius;
-
-    pre {
-      color: #888e7e;
-      border: 1px solid #595857;
-      background-color: #fff;
-      font-family: 'Menlo', 'Bitstream Vera Sans Mono', 'Courier', monospace;
-    }
-  }
-
-  .gist-file {
-    font-size: 13px;
-    line-height: 130%;
-    .gist-data .file-data .line-numbers {
-      padding: 0 .5em;
-      .line-number {
-        line-height: 137%;
-      }
-    }
-    @include _monokai;
-  }
+  font-family: $code-font;
 }
 
 code {
-  font-family: "Courier New", Courier, mono;
+  font-family: $code-font;
   text-shadow: 0 0 1px #fbfbfb;
+}
+
+.body > .highlight, .body > blockquote > .highlight {
+  @include _monokai;
+  @include _border-radius;
+  pre {
+    border: 1px solid #333;
+    @include _border-radius;
+  }
 }
 
 blockquote:not([class]) {
