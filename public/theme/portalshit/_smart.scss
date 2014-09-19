@@ -1,0 +1,67 @@
+@media screen and (max-width:640px) {
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  #header, #content, #footer {
+    width: 95% !important;
+    margin: 0;
+  }
+  #header {
+    margin: 0.5em !important;
+    #nav {
+      margin-top: 1em !important;
+      width: 98%;
+      #search_form {
+        display: none;
+      }
+    }
+  }
+  #content {
+    #main {
+      padding: 0;
+      #categories {
+        display: none;
+      }
+      .article {
+        .header {
+          h2.title {
+            font-size: 1em;
+            a {
+              position: relative;
+              left: -1.5em;
+            }
+          }
+        }
+      }
+    }
+  }
+  #footer {
+    margin: 0 auto;
+    padding: 1em;
+    #aside {
+      padding: 0;
+      dl {
+        margin: 0.25em;
+        dd {
+          display: none;
+        }
+      }
+    }
+  }
+  .year-list {
+    margin-left: 0.5em;
+    padding: 0.5em;
+    li {
+      margin: 0.3em !important;
+      font-size: 0.85em;
+    }
+  }
+  .archive-by-month {
+    h2 { display: none; }
+    ul {
+      list-style: none !important;
+      -webkit-padding-start: 10px;
+    }
+  }
+}

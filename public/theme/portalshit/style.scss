@@ -1,5 +1,6 @@
 @charset "utf-8";
 @import "monokai";
+@import "smart";
 
 $radius: 5px;
 $base-link: #8c0000;
@@ -10,13 +11,6 @@ $code-font: Menlo, Consolas, "Courier New", Courier, mono;
   padding: 25px 0 0;
   text-align: right;
   font-size: 90%;
-}
-
-@media all and (orientation:portrait) {
-  #content, #footer {
-    font-size: 140%;
-    width: 980px;
-  }
 }
 
 @mixin nav-profile {
@@ -98,66 +92,6 @@ h2, h3, h4, h5, #aside dt {
   font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 }
 
-ul#nav {
-  float: right;
-  font-size: 12px;
-  list-style: none;
-  margin-top: 0px;
-  padding: 8px 3px 2px;
-  border-radius: 5px;
-  background: rgba(234,234,234,0.65);
-
-  li {
-    float: left;
-    margin: 0px 7px;
-
-    img {
-      margin: 0px;
-      padding: 0px;
-    }
-
-    a {
-      padding: 2px 5px;
-
-      &:link, &:visited {
-        color: $various-bg;
-      }
-
-      &:hover {
-        color: #fffeff;
-        background-color: #444439;
-        border-radius: 5px;
-        text-shadow: 0 -1px 1px #222121;
-      }
-    }
-
-    &.profile {
-      @include nav-profile;
-      background: url("http://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=24") no-repeat;
-    }
-
-    &.github {
-      @include nav-profile;
-      background: url(images/icons.png) no-repeat -4px -68px;
-    }
-
-    &.twitter {
-      @include nav-profile;
-      background: url(images/icons.png) no-repeat -1px -4px;
-    }
-
-    &.facebook {
-      @include nav-profile;
-      background: url(images/icons.png) no-repeat -4px -260px;
-    }
-
-    form#search_form input {
-      margin-left: 10px;
-      border: solid 1px #999;
-      height: 16px;
-    }
-  }
-}
 
 ul {
   list-style: square;
@@ -242,6 +176,67 @@ blockquote:not([class]) {
 
   a {
     text-decoration: none;
+  }
+
+  ul#nav {
+    float: right;
+    font-size: 12px;
+    list-style: none;
+    margin-top: 0px;
+    padding: 8px 3px 2px;
+    border-radius: 5px;
+    background: rgba(234,234,234,0.65);
+
+    li {
+      float: left;
+      margin: 0px 7px;
+
+      img {
+        margin: 0px;
+        padding: 0px;
+      }
+
+      a {
+        padding: 2px 5px;
+
+        &:link, &:visited {
+          color: $various-bg;
+        }
+
+        &:hover {
+          color: #fffeff;
+          background-color: #444439;
+          border-radius: 5px;
+          text-shadow: 0 -1px 1px #222121;
+        }
+      }
+
+      &.profile {
+        @include nav-profile;
+        background: url("http://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=24") no-repeat;
+      }
+
+      &.github {
+        @include nav-profile;
+        background: url(images/icons.png) no-repeat -4px -68px;
+      }
+
+      &.twitter {
+        @include nav-profile;
+        background: url(images/icons.png) no-repeat -1px -4px;
+      }
+
+      &.facebook {
+        @include nav-profile;
+        background: url(images/icons.png) no-repeat -4px -260px;
+      }
+
+      form#search_form input {
+        margin-left: 10px;
+        border: solid 1px #999;
+        height: 16px;
+      }
+    }
   }
 }
 
@@ -472,6 +467,7 @@ blockquote:not([class]) {
     .created_at {
       display: inline;
       margin-left: 0.5em;
+      color: #666;
     }
 
     .comment {
@@ -498,7 +494,6 @@ blockquote:not([class]) {
 #footer {
   clear: both;
   width: 100%;
-  /* width: 980px; */
   margin: 20px auto 0;
   text-align: center;
   padding: 1em 0 2em;
@@ -744,5 +739,16 @@ h4.comment {
 #a_flickr_badge_image {
   a img {
     padding: 0 5px 5px 0;
+  }
+}
+
+.archive-by-month {
+  ul {
+    list-style: disc;
+  }
+  .created_at {
+    font-size: 0.85em;
+    color: #7d7c7c;
+    text-shadow: 0 -1px #000000;
   }
 }

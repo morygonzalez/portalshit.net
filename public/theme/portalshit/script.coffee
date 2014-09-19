@@ -8,3 +8,8 @@ document.body.addEventListener "AutoPagerize_DOMNodeInserted", (e) ->
 init = (node) ->
 
 window.onload = init()
+
+$ ->
+  if $(window).width() <= 640
+    $('#aside dt').on 'click', ->
+      $(this).siblings('dd').slideToggle()
