@@ -743,11 +743,17 @@ h4.comment {
 }
 
 .archive-by-month {
+  h2 { display: none; }
   ul {
     list-style: disc;
+    -webkit-padding-start: 25px;
+  }
+  .detail-information {
+    font-size: 0.85em;
+    margin-left: 0.5em;
+    display: inline;
   }
   .created_at {
-    font-size: 0.85em;
     color: #7d7c7c;
     text-shadow: 0 -1px #000000;
   }

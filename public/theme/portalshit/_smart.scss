@@ -58,10 +58,14 @@
     }
   }
   .archive-by-month {
-    h2 { display: none; }
     ul {
       list-style: none !important;
       -webkit-padding-start: 10px;
+    }
+    .detail-information {
+      font-size: 0.75em !important;
+      display: block !important;
+      margin-left: 0 !important;
     }
   }
 }
