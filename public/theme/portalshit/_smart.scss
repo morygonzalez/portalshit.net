@@ -36,6 +36,25 @@
       }
     }
   }
+  #comment_form {
+    margin: auto !important;
+    width: 95% !important;
+    padding-bottom: 1.5em;
+
+    $comment_form_width: 75% !important;
+    #comment_name {
+      width: $comment_form_width;
+    }
+    #comment_email {
+      width: $comment_form_width;
+    }
+    #comment_homepage {
+      width: $comment_form_width;
+    }
+    #comment_body {
+      width: 95% !important;
+    }
+  }
   #footer {
     margin: 0 auto;
     padding: 1em;
