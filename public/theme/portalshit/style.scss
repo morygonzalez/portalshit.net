@@ -392,14 +392,13 @@ textarea {
         display: block;
         overflow: hidden;
         height: 1%;
+        margin-bottom: 15px;
 
         .prev {
           float: left;
-          margin-bottom: 15px;
         }
         .next {
           float: right;
-          margin-bottom: 15px;
         }
       }
 
@@ -684,7 +683,9 @@ ul.comments {
 
       .gravatar {}
       .name {}
-      .created_at {}
+      .created_at {
+        font-size: 75%;
+      }
     }
   }
 }
