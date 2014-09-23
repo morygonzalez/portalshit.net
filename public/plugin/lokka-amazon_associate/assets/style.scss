@@ -6,9 +6,10 @@
 }
 .amazon-image {
   float: left;
+  max-width: 50%;
+  height: auto;
 }
 .amazon-content {
-  margin-left: 20px;
   float: left;
   width: 50%;
 }

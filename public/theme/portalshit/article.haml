@@ -1,14 +1,16 @@
 .article.section.autopagerize_page_element.hentry
   .header
     %h2.title= link_to post.title, post.link
+    .meta
+      == #{link_to l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)'), post.link}
+      - if post.category
+        == | @#{link_to post.category.title, "/category/#{post.category.slug}"}
   .body
     ~ associate_link post.body
   .footer
     = post.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
-    .created_at== #{l post.created_at, :format => :long}
-    - if post.category
-      .category==| #{link_to post.category.title, "/category/#{post.category.slug}/"}
+    .created_at== #{l post.created_at, format: :long}
     - if logged_in?
       .edit= link_to t('edit'), post.edit_link
     = partial :advertisement if index == 0

@@ -61,7 +61,7 @@
                 - months.each_with_index do |m, i|
                   - if i < 6
                     %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/"
-              %p.more= link_to(t('archives.more'), '/archives', :id => 'show_more_archive_list')
+              %p.more= link_to(t('archives.more'), '/archives', id: 'show_more_archive_list')
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
