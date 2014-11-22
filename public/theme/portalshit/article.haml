@@ -4,7 +4,7 @@
     .meta
       == #{link_to l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)'), post.link}
       - if post.category
-        == | @#{link_to post.category.title, "/category/#{post.category.slug}"}
+        == | @#{link_to post.category.title, "/category/#{post.category.slug}/"}
   .body
     ~ associate_link post.body
   .footer
