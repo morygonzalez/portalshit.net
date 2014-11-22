@@ -12,7 +12,7 @@
     .meta
       = l(@entry.created_at.to_date, format: '%Y年%m月%d日 (%a)')
       - if @entry.category
-        == | @#{link_to @entry.category.title, "/category/#{@entry.category.slug}"}
+        == | @#{link_to @entry.category.title, "/category/#{@entry.category.slug}/"}
 
   .body
     ~ associate_link @entry.body
