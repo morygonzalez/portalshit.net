@@ -5,28 +5,28 @@
     %ul
       - @comment.errors.each do |error|
         %li= error
-%form{:action => request.path_info, :method => 'post', :id => 'comment_form'}
+%form{action: request.path_info, method: 'post', id: 'comment_form'}
   :javascript
     document.write('<input type="hidden" name="check" value="check" />');
   %p
-    %label{:for => 'comment_name'}= t('comment.name')
+    %label{for: 'comment_name'}= t('comment.name')
     %br
-    %input{:type => 'text', :name => 'comment[name]', :id => 'comment_name'}
+    %input{type: 'text', name: 'comment[name]', id: 'comment_name'}
   %p
-    %label{:for => 'comment_email'}= "Email"
+    %label{for: 'comment_email'}= "Email"
     == (#{t('option')})
     %br
-    %input{:type => 'text', :name => 'comment[email]', :id => 'comment_email'}
+    %input{type: 'text', name: 'comment[email]', id: 'comment_email'}
   %p
-    %label{:for => 'comment_homepage'}= t('comment.homepage')
+    %label{for: 'comment_homepage'}= t('comment.homepage')
     == (#{t('option')})
     %br
-    %input{:type => 'text', :name => 'comment[homepage]', :id => 'comment_homepage'}
+    %input{type: 'text', name: 'comment[homepage]', id: 'comment_homepage'}
   %p
-    %label{:for => 'comment_body'}= t('comment.body')
+    %label{for: 'comment_body'}= t('comment.body')
     %br
-    %textarea{:name => 'comment[body]', :id => 'comment_body'}
+    %textarea{name: 'comment[body]', id: 'comment_body'}
   - if Option.recaptcha_public_key && Option.recaptcha_private_key
     %p
       = recaptcha_tag :challenge, display: { theme: 'red' }
-  %input.button{:type => 'submit', :value => t('post_comment')}
+  %input.button{type: 'submit', value: t('post_comment')}

@@ -1,0 +1,159 @@
+@media screen and (max-width:640px) {
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  #header, #content, #footer {
+    width: 95% !important;
+    margin: 0;
+  }
+  #header {
+    margin: 0.5em !important;
+    #nav {
+      margin-top: 1em !important;
+      width: 98%;
+      #search_form {
+        display: none;
+      }
+    }
+  }
+  #content {
+    #main {
+      padding: 10px 0 !important;
+      #categories {
+        display: none !important;
+      }
+      .article {
+        margin-top: 0.3em;
+        .header {
+          .prevnext {
+            font-size: 85%;
+          }
+          .title {
+            margin-bottom: 1.2em;
+            a {
+              margin-left: 0.2em;
+            }
+            a:before {
+              margin-left: -0.12em;
+              font-size: 300% !important;
+            }
+          }
+        }
+        .body {
+          blockquote {
+            &:before {
+              left: -0.15em;
+              font: 400% Georgia, "Times New Roman", Times, serif;
+            }
+            padding-left: 1em;
+            padding-right: 1em;
+
+            & > * {
+              margin-left: 1.5em;
+            }
+          }
+          h3 {
+            margin-top: 1.25em;
+          }
+          ul {
+            -webkit-padding-start: 1.5em;
+          }
+          code {
+            font-size: 0.8em;
+            word-wrap: break-word;
+          }
+          .amazon-content {
+            width: auto;
+          }
+        }
+        .footer {
+          font-size: 80% !important;
+          padding-top: 0 !important;
+          .tags {
+            -webkit-padding-start: 0 !important;
+            -webkit-margin-before: 0;
+            -webkit-margin-after: 0;
+          }
+          & > * {
+            display: block !important;
+          }
+        }
+      }
+      .comments {
+        margin: auto;
+        .comment {
+          margin: 1em auto;
+          .meta, .body {
+            margin: auto;
+          }
+          .meta {
+            padding-left: 0.5em;
+            width: 30%;
+          }
+          .body {
+            width: 65%;
+            padding: 0 5px 0 3px;
+          }
+        }
+      }
+      .pager {
+        -webkit-padding-start: 0 !important;
+        li {
+          margin: 0.15em;
+        }
+      }
+    }
+  }
+  #comment_form {
+    margin: auto !important;
+    width: 95% !important;
+    padding-bottom: 1.5em;
+
+    $comment_form_width: 75% !important;
+    #comment_name {
+      width: $comment_form_width;
+    }
+    #comment_email {
+      width: $comment_form_width;
+    }
+    #comment_homepage {
+      width: $comment_form_width;
+    }
+    #comment_body {
+      width: 95% !important;
+    }
+  }
+  #footer {
+    margin: 0 auto;
+    padding: 1em;
+    #aside {
+      padding: 0;
+      dl {
+        margin: 0.25em;
+        dd {
+          display: none;
+        }
+      }
+    }
+  }
+  .year-list {
+    margin-left: 0.5em;
+    padding: 0.5em;
+    li {
+      margin: 0.3em !important;
+      font-size: 0.85em;
+    }
+  }
+  .archive-by-month {
+    ul {
+      list-style: disc !important;
+      -webkit-padding-start: 15px !important;
+    }
+    .detail-information {
+      font-size: 0.75em !important;
+      display: block !important;
+      margin-left: 0 !important;
+    }
+  }
+}

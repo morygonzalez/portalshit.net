@@ -12,5 +12,8 @@
           - posts.each do |post|
             %li
               = link_to post.title, post.link
-              = l post.created_at, :format => :long
-              = link_to post.category.title, "/category/#{post.category.slug}/" if post.category
+              %div.detail-information
+                %span.created_at
+                  = l post.created_at, :format => :long
+                %span.category
+                  = link_to post.category.title, "/category/#{post.category.slug}/" if post.category

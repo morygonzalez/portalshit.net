@@ -4,29 +4,34 @@
       .prevnext
         - if @entry.next
           %span.prev
-            = link_to "<< #{truncate(@entry.next.title, :length => 25)}", @entry.next.link, { :rel => :prev, :title => @entry.next.title }
+            = link_to "<< #{truncate(@entry.next.title, length: 25)}", @entry.next.link, rel: :prev, title: @entry.next.title
         - if @entry.prev
           %span.next
-            = link_to "#{truncate(@entry.prev.title, :length => 25)} >>", @entry.prev.link, { :rel => :next, :title => @entry.prev.title }
+            = link_to "#{truncate(@entry.prev.title, length: 25)} >>", @entry.prev.link, rel: :next, title: @entry.prev.title
     %h2.title= link_to @entry.title, @entry.link
+    .meta
+      = l(@entry.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+      - if @entry.category
+        == | @#{link_to @entry.category.title, "/category/#{@entry.category.slug}/"}
+
   .body
     ~ associate_link @entry.body
+
   .footer
     = @entry.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{@entry.comments.size})", "#{@entry.link}#comment_form"}
-    - if @entry.category
-      .created_at== #{l @entry.created_at, :format => :long} | #{link_to @entry.category.title, "/category/#{@entry.category.slug}/"}
-    - else
-      .created_at== #{l @entry.created_at, :format => :long}
+    .created_at== #{l @entry.created_at, format: :long}
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
-    = partial :advertisement
+
+  = partial :advertisement
+
 %ul.comments
   - @entry.comments.reverse.each do |comment|
-    %li.comment{:id => "comment-#{comment.id}"}
+    %li.comment{id: "comment-#{comment.id}"}
       %ul.meta
         %li.gravatar= image_tag gravatar_image_url comment.email
-        %li.name= link_to comment.name, comment.homepage, :unless => comment.homepage.blank?
-        %li.created_at= l comment.created_at, :format => :long
+        %li.name= link_to comment.name, comment.homepage, unless: comment.homepage.blank?
+        %li.created_at= l comment.created_at, format: :long
       .body= hbr comment.body
 = partial 'comment'
