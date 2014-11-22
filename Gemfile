@@ -55,7 +55,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'sshkit', github: 'capistrano/sshkit'
   gem 'awesome_print'
-  gem 'rack-mini-profiler'
+  # gem 'rack-mini-profiler'
 end
 
 group :development, :test do

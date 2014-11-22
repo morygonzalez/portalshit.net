@@ -11,7 +11,7 @@ module Lokka
 
       app.get '/admin/plugins/recaptcha' do
         login_required
-        haml :'plugin/lokka-recaptcha/views/index', :layout => :'admin/layout'
+        haml :'plugin/lokka-recaptcha/views/index', layout: :'admin/layout'
       end
 
       app.put '/admin/plugins/recaptcha' do
