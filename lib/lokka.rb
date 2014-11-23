@@ -5,7 +5,6 @@ require 'erb'
 require 'ostruct'
 require 'digest/sha1'
 require 'csv'
-require 'rack-mini-profiler' unless [ENV['RACK_ENV'], ENV['LOKKA_ENV']].include?('production')
 
 module Lokka
   class NoTemplateError < StandardError; end
@@ -128,6 +127,7 @@ require 'slim'
 require 'coffee-script'
 require 'builder'
 require 'nokogiri'
+require 'rack/recaptcha'
 require 'lokka/database'
 require 'lokka/models/theme'
 require 'lokka/models/user'

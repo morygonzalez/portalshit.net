@@ -1,11 +1,11 @@
 GIT
   remote: git://github.com/capistrano/sshkit.git
-  revision: 52797aeecc07190ca47ec5c3315243cd95b568fd
+  revision: c81abda646243679a8ec9aa83d4a56fcf0d60429
   specs:
-    sshkit (1.3.0)
+    sshkit (1.5.1)
+      colorize
       net-scp (>= 1.1.2)
-      net-ssh
-      term-ansicolor
+      net-ssh (>= 2.8.0)
 
 GIT
   remote: git://github.com/datamapper/dm-core.git
@@ -76,7 +76,7 @@ GEM
     bcrypt-ruby (3.0.1)
     bond (0.4.3)
     builder (3.0.0)
-    capistrano (3.1.0)
+    capistrano (3.2.1)
       i18n
       rake (>= 10.0.0)
       sshkit (~> 1.3)
@@ -92,6 +92,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.6.3)
+    colorize (0.7.3)
     compass (0.12.2)
       chunky_png (~> 1.2)
       fssm (>= 0.2.7)
@@ -161,9 +162,9 @@ GEM
     method_source (0.8.2)
     multi_json (1.0.4)
     multi_xml (0.5.5)
-    net-scp (1.1.2)
+    net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (2.7.0)
+    net-ssh (2.9.1)
     newrelic_rpm (3.7.1.188)
     nokogiri (1.5.11)
     padrino-core (0.11.2)
@@ -184,14 +185,14 @@ GEM
     rack (1.5.2)
     rack-flash (0.1.2)
       rack
-    rack-mini-profiler (0.9.1)
-      rack (>= 1.1.3)
     rack-protection (1.5.2)
       rack
+    rack-recaptcha (0.6.6)
+      json
     rack-test (0.6.1)
       rack (>= 1.0)
     raindrops (0.12.0)
-    rake (10.1.1)
+    rake (10.3.2)
     redcarpet (3.0.0)
     ref (1.0.5)
     ripl (0.7.0)
@@ -240,14 +241,11 @@ GEM
     tapp (1.3.0)
       thor
     temple (0.3.5)
-    term-ansicolor (1.2.2)
-      tins (~> 0.8)
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
     thor (0.17.0)
     tilt (1.3.7)
-    tins (0.13.1)
     tux (0.3.0)
       ripl (>= 0.3.5)
       ripl-multi_line (>= 0.2.4)
@@ -315,7 +313,7 @@ DEPENDENCIES
   pygments.rb!
   rack
   rack-flash (~> 0.1.2)
-  rack-mini-profiler
+  rack-recaptcha
   rack-test (= 0.6.1)
   rake
   redcarpet
