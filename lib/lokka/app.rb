@@ -47,7 +47,6 @@ module Lokka
     end
 
     configure :development do
-      # use Rack::MiniProfiler
       register Sinatra::Reloader
       supported_stylesheet_templates.each do |style|
         set style, :style => :expanded
