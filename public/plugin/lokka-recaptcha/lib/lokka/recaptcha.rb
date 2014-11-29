@@ -1,6 +1,13 @@
 module Lokka
   module Recaptcha
     def self.registered(app)
+      app.configure do
+        use Rack::Recaptcha,
+          public_key:  Option.recaptcha_public_key,
+          private_key: Option.recaptcha_private_key
+        helpers Rack::Recaptcha::Helpers
+      end
+
       app.before do
         return if request.request_method != 'POST'
         return if request.env['PATH_INFO'] =~ /^\/admin\//

@@ -36,10 +36,6 @@ module Lokka
       register Sinatra::Flash
       Lokka.load_plugin(self)
       Lokka::Database.new.connect
-      use Rack::Recaptcha,
-        public_key:  Option.recaptcha_public_key,
-        private_key: Option.recaptcha_private_key
-      helpers Rack::Recaptcha::Helpers
     end
 
     configure :development do
