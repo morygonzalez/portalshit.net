@@ -61,7 +61,7 @@ module Lokka
           }
         when matched.length > 1
           images = matched.each_with_index.each_with_object({}) {|(url, i), _images|
-            return _images if i > 3
+            break _images if i > 3
             _images["twitter:image#{i}"] = url
           }
           {
