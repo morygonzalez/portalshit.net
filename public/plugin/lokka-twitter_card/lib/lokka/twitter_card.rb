@@ -1,49 +1,82 @@
+require 'fastimage'
+
 module Lokka
   module TwitterCard
-    def self.registered(app); end
-  end
-
-  module Helpers
-    def twitter_card(resource)
-      photo_identifier = /写真|photo|foto/
-      case
-      when !resource.instance_of?(Entry) && !resource.instance_of?(Post)
-        <<-EOS.strip_heredoc
-          <meta name="twitter:card" content="summary">
-          <meta name="twitter:site" content="#{@site.title}">
-          <meta name="twitter:creator" content="@#{User.first.name}">
-          <meta name="twitter:title" content="#{@site.title}">
-          <meta name="twitter:description" content="#{@site.meta_description}" />
-          <meta name="twitter:image" content="#{detect_image_from()}" />
-          <meta name="twitter:url" content="#{@request.scheme}://#{@request.host}/" />
-        EOS
-      when resource.category.title =~ photo_identifier
-        <<-EOS.strip_heredoc
-          <meta name="twitter:card" content="summary_large_image">
-          <meta name="twitter:site" content="#{@site.title}">
-          <meta name="twitter:creator" content="@#{resource.user.name}">
-          <meta name="twitter:title" content="#{resource.title}">
-          <meta name="twitter:description" content="#{extract_description_from(resource)}" />
-          <meta name="twitter:image:src" content="#{detect_image_from(resource)}">
-        EOS
-      else
-        <<-EOS.strip_heredoc
-          <meta name="twitter:card" content="summary" />
-          <meta name="twitter:site" content="#{@site.title}">
-          <meta name="twitter:creator" content="@#{resource.user.name}">
-          <meta name="twitter:title" content="#{resource.title}">
-          <meta name="twitter:description" content="#{extract_description_from(resource)}" />
-          <meta name="twitter:image" content="#{detect_image_from(resource)}" />
-          <meta name="twitter:url" content="#{@request.scheme}://#{@request.host}/#{resource.link}" />
-        EOS
+    module RefineHash
+      refine Hash do
+        def to_meta_tags
+          self.each_with_object('') do |(name, content), final|
+            final << "<meta name=\"#{name}\" content=\"#{content}\" />\n"
+          end
+        end
       end
     end
 
-    def detect_image_from(resource=nil)
-      if resource.respond_to?(:body) && resource.body =~ /(https?:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif))/
-        $1
+    using RefineHash
+
+    def self.registered(app)
+      app.before do
+        content_for :header do
+          twitter_card.to_meta_tags
+        end
+      end
+    end
+  end
+
+  module Helpers
+    def twitter_card
+      default = lambda {
+        {
+          "twitter:card"        => "summary",
+          "twitter:site"        => @site.title,
+          "twitter:creator"     => "@#{@entry.user.name}",
+          "twitter:title"       => @entry.title,
+          "twitter:description" => extract_description_from(@entry),
+          "twitter:image"       => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png",
+          "twitter:url"         => "#{@request.scheme}://#{@request.host}/#{@entry.link}"
+        }
+      }
+
+      case
+      when defined?(@entry).nil?
+        {
+          "twitter:card"        => "summary",
+          "twitter:site"        => @site.title,
+          "twitter:creator"     => "@#{User.first.name}",
+          "twitter:title"       => @site.title,
+          "twitter:description" => @site.meta_description,
+          "twitter:image"       => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png",
+          "twitter:url"         => "#{@request.scheme}://#{@request.host}/"
+        }
+      when matched = @entry.body.scan(/https?:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)/)
+        case
+        when matched.length == 1
+          {
+            "twitter:card"        => detect_card_type_from(matched),
+            "twitter:site"        => @site.title,
+            "twitter:creator"     => "@#{@entry.user.name}",
+            "twitter:title"       => "#{@entry.title}",
+            "twitter:description" => extract_description_from(@entry),
+            "twitter:image:src"   => matched[0]
+          }
+        when matched.length > 1
+          images = matched.each_with_index.each_with_object({}) {|(url, i), _images|
+            return _images if i > 3
+            _images["twitter:image#{i}"] = url
+          }
+          {
+            "twitter:card"        => detect_card_type_from(matched),
+            "twitter:site"        => @site.title,
+            "twitter:creator"     => "@#{@entry.user.name}",
+            "twitter:title"       => @entry.title,
+            "twitter:description" => extract_description_from(@entry),
+            "twitter:url"         => "#{@request.scheme}://#{@request.host}/#{@entry.link}",
+          }.merge(images)
+        else
+          default.call
+        end
       else
-        "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png"
+        default.call
       end
     end
 
@@ -51,6 +84,19 @@ module Lokka
       content = strip_tags(entry.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
       content = @site.meta_description if content.blank?
       truncate(content, length: 200)
+    end
+
+    def detect_card_type_from(photos)
+      image = photos.first
+      width, height = FastImage.size(image)
+      if width > 639 || height > 639
+        return 'gallery' if photos.length > 1
+        'summary_large_image'
+      else
+        'summary'
+      end
+    rescue
+      'summary'
     end
   end
 end

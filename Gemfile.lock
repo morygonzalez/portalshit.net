@@ -141,6 +141,8 @@ GEM
     factory_girl (2.6.1)
       activesupport (>= 2.3.9)
     fastercsv (1.5.5)
+    fastimage (1.6.6)
+      addressable (~> 2.3, >= 2.3.5)
     fssm (0.2.10)
     haml (4.0.5)
       tilt
@@ -301,6 +303,7 @@ DEPENDENCIES
   dm-validations (= 1.2.0)
   erubis (~> 2.6.6)
   factory_girl (= 2.6.1)
+  fastimage
   haml (~> 4.0.4)
   i18n (= 0.6.0)
   im-kayac
