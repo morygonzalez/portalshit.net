@@ -22,7 +22,7 @@ require 'capistrano/bundler'
 # require 'capistrano/rails/migrations'
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.1.0'
+set :rbenv_ruby, '2.1.5'
 
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
