@@ -36,6 +36,9 @@ module Lokka
       register Sinatra::Flash
       Lokka.load_plugin(self)
       Lokka::Database.new.connect
+    end
+
+    configure :production do
       use Rack::Recaptcha,
         public_key:  Option.recaptcha_public_key,
         private_key: Option.recaptcha_private_key
@@ -51,6 +54,10 @@ module Lokka
       file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
       file.sync = true
       use Rack::CommonLogger, file
+      use Rack::Recaptcha,
+        public_key:  Option.recaptcha_public_key,
+        private_key: Option.recaptcha_private_key
+      helpers Rack::Recaptcha::Helpers
     end
 
     require 'lokka/app/admin.rb'
