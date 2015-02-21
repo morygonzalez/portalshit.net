@@ -1,5 +1,4 @@
 if RUBY_VERSION >= '1.9'
-
   require 'simplecov'
 
   SimpleCov.start do
@@ -10,7 +9,7 @@ if RUBY_VERSION >= '1.9'
     add_filter "coverage/"
     add_filter "tmp/"
     add_filter "log/"
-  end
+  end if ENV["COVERAGE"]
 end
 
 require File.join(File.dirname(__FILE__), '..', 'init.rb')
