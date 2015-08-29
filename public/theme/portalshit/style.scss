@@ -765,3 +765,22 @@ h4.comment {
     text-shadow: 0 -1px #000000;
   }
 }
+
+table {
+  border: solid 1px #fff;
+  border-collapse: collapse;
+  margin: 1.5em 0 2em;
+  tr {
+    &:nth-child(even) {
+      background-color: rgba(192, 192, 192, 0.15);
+    }
+    th {
+      background-color: rgba(192, 192, 192, 0.3);
+      text-align: center;
+    }
+    th, td {
+      padding: .3em .5em;
+      border: solid 1px #fff;
+    }
+  }
+}
