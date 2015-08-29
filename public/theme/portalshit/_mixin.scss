@@ -1,0 +1,27 @@
+@mixin footer-common {
+  padding: 1.5em 0;
+  text-align: right;
+  font-size: 90%;
+}
+
+@mixin nav-profile {
+  padding-left: 24px;
+  height: 28px;
+}
+
+@mixin _border-radius {
+  border-radius: $radius;
+  -moz-border-radius: $radius;
+  -webkit-border-radius: $radius;
+}
+
+@mixin _meta {
+  font-size: 0.85em;
+  color: $meta-text-color;
+  a {
+    &:link, &:visited {
+      color: $meta-text-color;
+    }
+  }
+}
+
