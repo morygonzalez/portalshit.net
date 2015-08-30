@@ -30,11 +30,8 @@
             %input(type="text" name="query")
       - unless index? or entry?
         #bread_crumb= bread_crumb
+
     #content.clearfix
-      - cache_fragment('index-categories', shared: true) do
-        %ul#categories
-          - Category.all.each do |category|
-            %li= link_to category.title, "/category/#{category.slug}/"
       #main.hfeed= yield
 
     #footer
