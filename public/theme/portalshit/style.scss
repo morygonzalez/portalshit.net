@@ -185,6 +185,25 @@ textarea {
   }
 }
 
+table {
+  border: solid 1px #fff;
+  border-collapse: collapse;
+  margin: 1.5em 0 2em;
+  tr {
+    &:nth-child(even) {
+      background-color: rgba(192, 192, 192, 0.15);
+    }
+    th {
+      background-color: rgba(192, 192, 192, 0.3);
+      text-align: center;
+    }
+    th, td {
+      padding: .3em .5em;
+      border: solid 1px #fff;
+    }
+  }
+}
+
 #header {
   width: 90%;
   max-width: 1000px;
@@ -298,29 +317,29 @@ textarea {
   margin: 0 auto;
   text-align: left;
 
+  #categories {
+    margin: 0px auto;
+    margin-left: 0px;
+    padding-left: 0px;
+    text-align: left;
+    overflow: hidden;
+    display: block;
+    list-style-type: none;
+    font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+
+    li {
+      float: left;
+      font-size: 15px;
+      text-shadow: #191919 0.1em 0.1em 0.2em;
+      margin-right: 8px;
+      padding: 5px 0 15px;
+    }
+  }
+
   #main {
     background-color: rgba(33,33,33,0.80);
     padding: 20px 30px;
     border-radius: 12px;
-
-    #categories {
-      margin: 0px auto;
-      margin-left: 0px;
-      padding-left: 0px;
-      text-align: left;
-      overflow: hidden;
-      display: block;
-      list-style-type: none;
-      font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
-
-      li {
-        float: left;
-        font-size: 15px;
-        text-shadow: #191919 0.1em 0.1em 0.2em;
-        margin-right: 8px;
-        padding: 5px 0 15px;
-      }
-    }
 
     .article {
       margin-bottom: 30px;
@@ -331,7 +350,7 @@ textarea {
           word-wrap: break-word;
           text-align: left;
           padding: 0;
-          margin: .5em auto .8em;
+          margin: 1em auto;
 
           a {
             text-decoration: none;
@@ -731,24 +750,5 @@ h4.comment {
   .created_at {
     color: #7d7c7c;
     text-shadow: 0 -1px #000000;
-  }
-}
-
-table {
-  border: solid 1px #fff;
-  border-collapse: collapse;
-  margin: 1.5em 0 2em;
-  tr {
-    &:nth-child(even) {
-      background-color: rgba(192, 192, 192, 0.15);
-    }
-    th {
-      background-color: rgba(192, 192, 192, 0.3);
-      text-align: center;
-    }
-    th, td {
-      padding: .3em .5em;
-      border: solid 1px #fff;
-    }
   }
 }
