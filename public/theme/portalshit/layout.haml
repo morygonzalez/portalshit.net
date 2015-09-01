@@ -18,6 +18,7 @@
     %link(rel="stylesheet" href="#{@theme.path}/style.css" type="text/css")
     %script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript")
     = header
+    -# %script(data-kz-key="0417c6ef4d22330c" data-kz-namespace="kzs" src="//cdn.kaizenplatform.net/s/04/17c6ef4d22330c.js")
   %body
     #header.clearfix
       %h1= link_to @site.title, '/'
@@ -27,7 +28,7 @@
         %li.twitter= link_to 'Twitter', 'http://twitter.com/morygonzalez'
         %li
           %form#search_form(action="/search/" method="get")
-            %input(type="text" name="query")
+            %input(type="text" name="query" placeholder="Search")
       - unless index? or entry?
         #bread_crumb= bread_crumb
 

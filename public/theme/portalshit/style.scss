@@ -9,7 +9,7 @@ body {
   padding: 0;
   text-align: center;
   font-size: 15px;
-  color: #fffeff;
+  color: $base-font-color;
   line-height: 22px;
   text-shadow: -1px -1px -1px #1d1a1a;
   font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
@@ -55,7 +55,7 @@ h1 {
   font: bold 3em/62px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
 
   a {
-    &:link, &:visited { color: #fffeff; }
+    &:link, &:visited { color: $base-font-color; }
     &:hover { color: $base-link-color; }
   }
 }
@@ -244,7 +244,7 @@ table {
         }
 
         &:hover {
-          color: #fffeff;
+          color: $base-font-color;
           background-color: #444439;
           border-radius: 5px;
           text-shadow: 0 -1px 1px #222121;
@@ -273,9 +273,12 @@ table {
 
       form#search_form input {
         margin-left: 10px;
-        border: solid 1px #999;
+        border: none;
+        border-radius: 3px;
+        padding: 2px 2px 2px 8px;
         height: 16px;
         width: 120px;
+        font-size: 95%;
       }
     }
   }
@@ -333,6 +336,13 @@ table {
       text-shadow: #191919 0.1em 0.1em 0.2em;
       margin-right: 8px;
       padding: 5px 0 15px;
+
+      a.clicked {
+        color: $base-font-color;
+        background: $meta-text-color;
+        border-radius: $radius;
+        padding: 1px 3px;
+      }
     }
   }
 
@@ -510,7 +520,7 @@ table {
       width: 222px;
 
       a:link {
-        color: #fffeff;
+        color: $base-font-color;
       }
 
       &.tags {
@@ -553,7 +563,7 @@ table {
       margin: 0;
       padding: 0;
       list-style-type: none;
-      color: #fffeff;
+      color: $base-font-color;
 
       li {
         margin: 5px 0;
