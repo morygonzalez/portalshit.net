@@ -29,15 +29,21 @@ $ ->
 
     $('#categories li a').on('click', ->
       $articles = $('li.year ul li')
+      $monthTitles = $('li.year h3')
       if $(@).hasClass('clicked')
         $(@).removeClass('clicked')
         $articles.show()
+        $monthTitles.show()
       else
         $('#categories li a').removeClass('clicked')
         $(@).addClass('clicked')
         $articles.hide()
+        $monthTitles.hide()
         categoryName = $(@).data('category-name')
         for element in $('.category a')
           if $(element).text() == categoryName
             $(element).closest('li').show()
+        for elem in $('li.year ul')
+          if $(elem).find('li:visible').length > 0
+            $(elem).find('li:visible').parent().parent().find('h3').show()
     )
