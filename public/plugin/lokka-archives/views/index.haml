@@ -6,7 +6,7 @@
   %h2= t('archives.title')
   %ul
     - @month_posts.each do |datetime, posts|
-      %li.year
+      %li.year-month
         %h3= l datetime.to_date, format: :year_month
         %ul
           - posts.each do |post|
