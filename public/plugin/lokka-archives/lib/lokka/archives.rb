@@ -37,6 +37,7 @@ module Lokka
         content_for :header do
           text = <<-EOS.strip_heredoc
             <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
+            <script src="#{assets_path}/script.js" type="text/javascript"></script>
           EOS
         end
       end
