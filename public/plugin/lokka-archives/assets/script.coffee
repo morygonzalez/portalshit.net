@@ -8,7 +8,7 @@ $ ->
     $('ul.year-list').after(ul)
     for category in categories
       html = """
-      <li><a href="javascript:void(0)" data-category-name="#{category}">#{category}</a></li>
+      <li><a href=\"javascript:void(0)\" data-category-name=\"#{category}\">#{category}</a></li>
       """
       $(html).appendTo(ul)
 

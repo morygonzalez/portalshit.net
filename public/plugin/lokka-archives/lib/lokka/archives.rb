@@ -48,10 +48,7 @@ module Lokka
     def year_list
       first_year = Post.published.first.created_at.year
       last_year  = Post.published.last.created_at.year
-      years = first_year.downto(last_year)
-      link_arr = years.inject([]) {|result, year|
-        result << year
-      }
+      first_year.downto(last_year).to_a
     end
   end
 end
