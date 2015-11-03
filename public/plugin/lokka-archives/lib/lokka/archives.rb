@@ -37,7 +37,10 @@ module Lokka
         content_for :header do
           text = <<-EOS.strip_heredoc
             <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
-            <script src="#{assets_path}/script.js" type="text/javascript"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.js"></script>
+            <script type="text/babel" src="#{assets_path}/script.js"></script>
           EOS
         end
       end
