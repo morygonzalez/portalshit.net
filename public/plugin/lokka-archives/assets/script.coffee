@@ -1,33 +1,73 @@
-$ ->
-  if $('.archive-by-month').length > 0
-    categories = $('.category a').map -> $(@).text()
-    categories = categories.toArray()
-    categories = categories.filter (element, index, self) ->
-      self.indexOf(element) == index
-    ul = $('<ul>', id: 'categories')
-    $('ul.year-list').after(ul)
-    for category in categories
-      html = """
-      <li><a href=\"javascript:void(0)\" data-category-name=\"#{category}\">#{category}</a></li>
-      """
-      $(html).appendTo(ul)
+data = [
+  {
+    year:  2015,
+    month: 10,
+    entries: [
+      { title: 'Foo',  category: '雑談', created_at: '2015/10/02 23:43' },
+      { title: 'Bar',  category: '雑談', created_at: '2015/10/02 23:43' },
+      { title: 'Buzz', category: '雑談', created_at: '2015/10/02 23:43' }
+    ]
+  },
+  {
+    year:  2015,
+    month: 11,
+    entries: [
+      { title: 'Foo',  category: '雑談', created_at: '2015/11/02 23:43' },
+      { title: 'Bar',  category: '雑談', created_at: '2015/11/02 23:43' },
+      { title: 'Buzz', category: '雑談', created_at: '2015/11/02 23:43' }
+    ]
+  }
+]
 
-    $('#categories li a').on('click', ->
-      $articles = $('li.year-month ul li')
-      $yearMonthElement = $('li.year-month')
-      $yearMonthElement.show()
-      if $(@).hasClass('clicked')
-        $(@).removeClass('clicked')
-        $articles.show()
-      else
-        $('#categories li a').removeClass('clicked')
-        $(@).addClass('clicked')
-        $articles.hide()
-        categoryName = $(@).data('category-name')
-        for element in $('.category a')
-          if $(element).text() == categoryName
-            $(element).closest('li').show()
-        for elem in $('li.year-month ul')
-          if $(elem).find('li:visible').length == 0
-            $(elem).parent().hide()
-    )
+Entry = React.createClass(
+  render: ->
+    `(
+      <li className="entry">
+        <a href="#">{this.props.title}</a>
+        <div className="detail-information">
+          <span className="created_at">{this.props.created_at}</span>
+          <span className="category">{this.props.category}</span>
+        </div>
+      </li>
+    )`
+)
+
+EntryList = React.createClass(
+  render: ->
+    entries = this.props.entries.map (entry) ->
+      uniqueKey = "#{entry.title}-#{entry.created_at}"
+      `(
+        <Entry key={uniqueKey} title={entry.title} category={entry.category} created_at={entry.created_at} />
+      )`
+    `(
+      <li>
+        <h3>{this.props.year}年{this.props.month}月</h3>
+        <ul>{entries}</ul>
+      </li>
+    )`
+)
+
+MonthlyBox = React.createClass(
+  render: ->
+    entriesGroupByYearMonth = this.props.data.map (entries) ->
+      uniqueKey = "#{entries.year}-#{entries.month}"
+      `(
+        <EntryList key={uniqueKey} year={entries.year} month={entries.month} entries={entries.entries} />
+      )`
+    `(
+      <ul className="entryList">
+        {entriesGroupByYearMonth}
+      </ul>
+    )`
+)
+
+Archives = React.createClass(
+  render: ->
+    `(
+      <div className="archives">
+        <MonthlyBox data={this.props.data} />
+      </div>
+    )`
+)
+
+ReactDOM.render(`<Archives data={data} />`, document.getElementById('categories-wrapper'))
