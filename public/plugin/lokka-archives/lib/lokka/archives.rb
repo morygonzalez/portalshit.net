@@ -1,3 +1,5 @@
+require 'dm-serializer'
+
 module Lokka
   module Archives
     def self.registered(app)
@@ -8,12 +10,19 @@ module Lokka
         if test(?f, cache_path) && Time.now - test(?M, cache_path) < 15.minutes
           return File.read(cache_path)
         end
-        @month_posts = Post.all(
-          :draft => false, :created_at => (1.year.ago..Time.now)).
+        @month_posts = Post.all(draft: false, created_at: (1.year.ago..Time.now)).
           group_by {|post| post.created_at.beginning_of_month }
         @bread_crumbs = [{:name => t('home'), :link => '/'}]
         @bread_crumbs << {:name => t('archives.title'), :link => '/archives'}
         haml :"plugin/lokka-archives/views/index", :layout => :"theme/#{@theme.name}/layout"
+      end
+
+      app.get '/api/archives' do
+        @month_posts = Post.all(draft: false, created_at: (1.year.ago..Time.now)).
+          group_by {|post| post.created_at.strftime('%Y-%m') }
+
+        content_type :json
+        @month_posts.to_json(methods: [:link, :category])
       end
 
       app.get '/archives/:year' do |year|

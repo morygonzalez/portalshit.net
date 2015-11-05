@@ -1,73 +1,66 @@
-data = [
-  {
-    year:  2015,
-    month: 10,
-    entries: [
-      { title: 'Foo',  category: '雑談', created_at: '2015/10/02 23:43' },
-      { title: 'Bar',  category: '雑談', created_at: '2015/10/02 23:43' },
-      { title: 'Buzz', category: '雑談', created_at: '2015/10/02 23:43' }
-    ]
-  },
-  {
-    year:  2015,
-    month: 11,
-    entries: [
-      { title: 'Foo',  category: '雑談', created_at: '2015/11/02 23:43' },
-      { title: 'Bar',  category: '雑談', created_at: '2015/11/02 23:43' },
-      { title: 'Buzz', category: '雑談', created_at: '2015/11/02 23:43' }
-    ]
-  }
-]
-
-Entry = React.createClass(
+Entry = React.createClass
   render: ->
     `(
       <li className="entry">
-        <a href="#">{this.props.title}</a>
+        <a href={this.props.link}>{this.props.title}</a>
         <div className="detail-information">
           <span className="created_at">{this.props.created_at}</span>
-          <span className="category">{this.props.category}</span>
+          <span className="category"><a href={"/category/" + this.props.category.slug + "/"}>{this.props.category.title}</a></span>
         </div>
       </li>
     )`
-)
 
-EntryList = React.createClass(
+EntryList = React.createClass
   render: ->
     entries = this.props.entries.map (entry) ->
       uniqueKey = "#{entry.title}-#{entry.created_at}"
       `(
-        <Entry key={uniqueKey} title={entry.title} category={entry.category} created_at={entry.created_at} />
+        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
       )`
     `(
-      <li>
-        <h3>{this.props.year}年{this.props.month}月</h3>
-        <ul>{entries}</ul>
+      <li className="entryList year-month">
+        <h3>{this.props.monthYear}</h3>
+        <ul className="entries">{entries}</ul>
       </li>
     )`
-)
 
-MonthlyBox = React.createClass(
+MonthlyBox = React.createClass
   render: ->
-    entriesGroupByYearMonth = this.props.data.map (entries) ->
-      uniqueKey = "#{entries.year}-#{entries.month}"
+    data = this.props.data
+    entriesGroupByYearMonth = Object.keys(data).map (monthYear, index) ->
+      entries = data[monthYear]
       `(
-        <EntryList key={uniqueKey} year={entries.year} month={entries.month} entries={entries.entries} />
+        <EntryList key={monthYear} monthYear={monthYear} entries={entries} />
       )`
     `(
-      <ul className="entryList">
+      <ul className="monthlyBox">
         {entriesGroupByYearMonth}
       </ul>
     )`
-)
 
-Archives = React.createClass(
+Archives = React.createClass
+  loadArchivesFromServer: ->
+    $.ajax
+      url: this.props.url
+      dataType: 'json'
+      cache: false
+      success: (data) =>
+        this.setState data: data
+      error: (xhr, status, err) =>
+        console.error this.props.url, status, err.toString()
+  getInitialState: ->
+    data: []
+  componentDidMount: ->
+    @loadArchivesFromServer()
+    setInterval @loadCommentsFromServer, @props.pollInterval
   render: ->
     `(
-      <div className="archives">
-        <MonthlyBox data={this.props.data} />
+      <div className="archives archive-by-month">
+        <MonthlyBox data={this.state.data} />
       </div>
     )`
-)
 
-ReactDOM.render(`<Archives data={data} />`, document.getElementById('categories-wrapper'))
+ReactDOM.render(
+  `<Archives url="/api/archives" pollInterval={900000} />`,
+  document.getElementById('categories-wrapper')
+)
