@@ -754,11 +754,15 @@ h4.comment {
   }
   .detail-information {
     font-size: 0.85em;
-    margin-left: 0.5em;
+    margin-left: .5em;
     display: inline;
-  }
-  .created_at {
-    color: #7d7c7c;
-    text-shadow: 0 -1px #000000;
+
+    .created_at {
+      color: #7d7c7c;
+      text-shadow: 0 -1px #000000;
+    }
+    .category {
+      padding-left: .5em;
+    }
   }
 }
