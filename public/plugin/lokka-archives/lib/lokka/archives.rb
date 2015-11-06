@@ -1,4 +1,4 @@
-require 'dm-serializer'
+require 'dm-serializer/to_json'
 
 module Lokka
   module Archives
@@ -19,10 +19,15 @@ module Lokka
 
       app.get '/api/archives' do
         @month_posts = Post.all(draft: false, created_at: (1.year.ago..Time.now)).
-          group_by {|post| post.created_at.strftime('%Y-%m') }
+          group_by {|post| post.created_at.strftime('%Y-%1m') }
 
         content_type :json
-        @month_posts.to_json(methods: [:link, :category])
+        fields_to_exclude = %i[body markup type slug user_id category_id updated_at draft frozen_tag_list]
+        methods_to_include = %i[link category]
+        @month_posts.to_json(
+          exclude: fields_to_exclude,
+          methods: methods_to_include
+        )
       end
 
       app.get '/archives/:year' do |year|
@@ -33,12 +38,30 @@ module Lokka
         @month_posts = Post.all(
           :draft => false,
           :created_at => (
-            Time.parse("#{year}-01-01T00:00:00")..Time.parse("#{year}-12-31T23:59:59"))).
-          group_by {|post| post.created_at.beginning_of_month }
+            Time.new(year)..Time.new(year).end_of_year
+          )
+        ).group_by {|post| post.created_at.beginning_of_month }
         @bread_crumbs = [{:name => t('home'), :link => '/'}]
         @bread_crumbs << {:name => t('archives.title'), :link => '/archives'}
         @bread_crumbs << {:name => year, :link => "/archives/#{year}"}
         haml :"plugin/lokka-archives/views/index", :layout => :"theme/#{@theme.name}/layout"
+      end
+
+      app.get '/api/archives/:year' do |year|
+        @month_posts = Post.all(
+          :draft => false,
+          :created_at => (
+            Time.new(year)..Time.new(year).end_of_year
+          )
+        ).group_by {|post| post.created_at.strftime('%Y-%1m') }
+
+        content_type :json
+        fields_to_exclude = %i[body markup type slug user_id category_id updated_at draft frozen_tag_list]
+        methods_to_include = %i[link category]
+        @month_posts.to_json(
+          exclude: fields_to_exclude,
+          methods: methods_to_include
+        )
       end
 
       app.before do
