@@ -1,3 +1,12 @@
+Category = React.createClass
+  render: ->
+    return `(null)` unless this.props.category?
+    `(
+      <span className="category">
+        <a href={"/category/" + this.props.category.slug + "/"}>{this.props.category.title}</a>
+      </span>
+    )`
+
 Entry = React.createClass
   render: ->
     `(
@@ -5,7 +14,7 @@ Entry = React.createClass
         <a href={this.props.link}>{this.props.title}</a>
         <div className="detail-information">
           <span className="created_at">{this.props.created_at}</span>
-          <span className="category"><a href={"/category/" + this.props.category.slug + "/"}>{this.props.category.title}</a></span>
+          <Category category={this.props.category} />
         </div>
       </li>
     )`
@@ -17,9 +26,12 @@ EntryList = React.createClass
       `(
         <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
       )`
+    title = this.props.monthYear.replace(
+      /(\d{4})\-(\d{1,2})/, -> "#{arguments[1]}年#{arguments[2]}月"
+    )
     `(
       <li className="entryList year-month">
-        <h3>{this.props.monthYear}</h3>
+        <h3>{title}</h3>
         <ul className="entries">{entries}</ul>
       </li>
     )`
@@ -60,7 +72,10 @@ Archives = React.createClass
       </div>
     )`
 
+year     = location.href.match(/\d{4}/)
+endPoint = if year? then "/api/archives/#{year[0]}" else "/api/archives"
+
 ReactDOM.render(
-  `<Archives url="/api/archives" pollInterval={900000} />`,
-  document.getElementById('categories-wrapper')
+  `<Archives url={endPoint} pollInterval={900000} />`,
+  document.getElementById('archive-by-month')
 )
