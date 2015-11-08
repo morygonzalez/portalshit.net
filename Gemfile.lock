@@ -1,19 +1,10 @@
 GIT
   remote: git://github.com/capistrano/sshkit.git
-  revision: c81abda646243679a8ec9aa83d4a56fcf0d60429
+  revision: 9fb1e87a56c67fb896b5f7c3363835179b812abe
   specs:
-    sshkit (1.5.1)
-      colorize
+    sshkit (1.7.1)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
-
-GIT
-  remote: git://github.com/datamapper/dm-core.git
-  revision: 7cc4c145329e81d8b373a37694d050aa197c3699
-  branch: release-1.2
-  specs:
-    dm-core (1.2.1)
-      addressable (~> 2.3, >= 2.3.5)
 
 GIT
   remote: git://github.com/datamapper/dm-transactions.git
@@ -22,20 +13,6 @@ GIT
   specs:
     dm-transactions (1.2.0)
       dm-core (~> 1.2.0)
-
-GIT
-  remote: git://github.com/datamapper/do.git
-  revision: d7cb262d89a16eca86f85c10b88613529e1a992b
-  ref: d7cb262d89a1
-  specs:
-    data_objects (0.10.6)
-      addressable (~> 2.1)
-    do_mysql (0.10.6)
-      data_objects (= 0.10.6)
-    do_postgres (0.10.6)
-      data_objects (= 0.10.6)
-    do_sqlite3 (0.10.6)
-      data_objects (= 0.10.6)
 
 GIT
   remote: git://github.com/morygonzalez/sinatra-cache.git
@@ -53,54 +30,60 @@ GIT
 
 GIT
   remote: https://github.com/tmm1/pygments.rb
-  revision: 0ec90cd86c962b009958ec34f3688a2db61ef1ac
+  revision: a21567d28f3fc08cfcdd71048352c7c21ac8b09b
   specs:
-    pygments.rb (0.5.4)
+    pygments.rb (0.6.3)
       posix-spawn (~> 0.3.6)
-      yajl-ruby (~> 1.1.0)
+      yajl-ruby (~> 1.2.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     RedCloth (4.2.9)
     abstract (1.0.0)
-    activesupport (3.1.12)
+    activesupport (3.2.22)
+      i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    addressable (2.3.5)
-    amazon-ecs (2.2.4)
+    addressable (2.3.8)
+    amazon-ecs (2.3.1)
       nokogiri (~> 1.4)
       ruby-hmac (~> 0.3)
     args_parser (0.2.0)
-    awesome_print (1.2.0)
+    awesome_print (1.6.1)
     backports (2.3.0)
-    bcrypt-ruby (3.0.1)
-    bond (0.4.3)
+    bcrypt (3.1.10)
+    bcrypt-ruby (3.1.5)
+      bcrypt (>= 3.1.3)
+    bond (0.5.1)
     builder (3.0.0)
-    capistrano (3.2.1)
+    capistrano (3.4.0)
       i18n
       rake (>= 10.0.0)
       sshkit (~> 1.3)
-    capistrano-bundler (1.1.1)
-      capistrano (~> 3.0)
-      sshkit (>= 1.2.0)
-    capistrano-rbenv (2.0.1)
-      capistrano (~> 3.0)
+    capistrano-bundler (1.1.4)
+      capistrano (~> 3.1)
+      sshkit (~> 1.2)
+    capistrano-rbenv (2.0.3)
+      capistrano (~> 3.1)
       sshkit (~> 1.3)
-    chunky_png (1.2.9)
+    chunky_png (1.3.5)
     coderay (1.0.5)
-    coffee-script (2.2.0)
+    coffee-script (2.4.1)
       coffee-script-source
       execjs
-    coffee-script-source (1.6.3)
-    colorize (0.7.3)
-    compass (0.12.2)
+    coffee-script-source (1.9.1.1)
+    compass (0.12.7)
       chunky_png (~> 1.2)
       fssm (>= 0.2.7)
-      sass (~> 3.1)
+      sass (~> 3.2.19)
+    data_objects (0.10.16)
+      addressable (~> 2.1)
     database_cleaner (0.7.1)
     diff-lcs (1.2.5)
     dm-aggregates (1.2.0)
       dm-core (~> 1.2.0)
+    dm-core (1.2.1)
+      addressable (~> 2.3)
     dm-do-adapter (1.2.0)
       data_objects (~> 0.10.6)
       dm-core (~> 1.2.0)
@@ -116,12 +99,12 @@ GEM
     dm-postgres-adapter (1.2.0)
       dm-do-adapter (~> 1.2.0)
       do_postgres (~> 0.10.6)
-    dm-serializer (1.2.0)
+    dm-serializer (1.2.2)
       dm-core (~> 1.2.0)
-      fastercsv (~> 1.5.4)
-      json (~> 1.5.4)
-      json_pure (~> 1.5.4)
-      multi_json (~> 1.0.3)
+      fastercsv (~> 1.5)
+      json (~> 1.6)
+      json_pure (~> 1.6)
+      multi_json (~> 1.0)
     dm-sqlite-adapter (1.2.0)
       dm-do-adapter (~> 1.2.0)
       do_sqlite3 (~> 0.10.6)
@@ -129,53 +112,58 @@ GEM
       dm-core (~> 1.2.0)
     dm-timestamps (1.2.0)
       dm-core (~> 1.2.0)
-    dm-types (1.2.0)
-      bcrypt-ruby (~> 3.0.0)
+    dm-types (1.2.2)
+      bcrypt-ruby (~> 3.0)
       dm-core (~> 1.2.0)
-      fastercsv (~> 1.5.4)
-      json (~> 1.5.4)
-      multi_json (~> 1.0.3)
-      stringex (~> 1.3.0)
-      uuidtools (~> 2.1.2)
+      fastercsv (~> 1.5)
+      json (~> 1.6)
+      multi_json (~> 1.0)
+      stringex (~> 1.4)
+      uuidtools (~> 2.1)
     dm-validations (1.2.0)
       dm-core (~> 1.2.0)
-    docile (1.1.2)
+    do_mysql (0.10.16)
+      data_objects (= 0.10.16)
+    do_postgres (0.10.16)
+      data_objects (= 0.10.16)
+    do_sqlite3 (0.10.16)
+      data_objects (= 0.10.16)
+    docile (1.1.5)
     erubis (2.6.6)
       abstract (>= 1.0.0)
-    execjs (2.0.2)
+    execjs (2.6.0)
     expression_parser (0.9.0)
     factory_girl (2.6.1)
       activesupport (>= 2.3.9)
     fastercsv (1.5.5)
-    fastimage (1.6.6)
+    fastimage (1.7.0)
       addressable (~> 2.3, >= 2.3.5)
     fssm (0.2.10)
-    haml (4.0.5)
+    haml (4.0.7)
       tilt
-    http_router (0.11.0)
+    http_router (0.11.2)
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
-    httparty (0.11.0)
-      multi_json (~> 1.0)
+    httparty (0.13.7)
+      json (~> 1.8)
       multi_xml (>= 0.5.2)
-    i18n (0.6.0)
+    i18n (0.6.11)
     im-kayac (0.1.2)
       args_parser
       httparty
       json
-    json (1.5.5)
-    json_pure (1.5.5)
-      spruz (~> 0.2.8)
-    kgio (2.8.1)
-    kramdown (1.3.1)
-    libv8 (3.16.14.7)
+    json (1.8.3)
+    json_pure (1.8.3)
+    kgio (2.10.0)
+    kramdown (1.9.0)
+    libv8 (3.16.14.13)
     method_source (0.8.2)
-    multi_json (1.0.4)
+    multi_json (1.11.2)
     multi_xml (0.5.5)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (2.9.1)
-    newrelic_rpm (3.7.1.188)
+    net-ssh (3.0.1)
+    newrelic_rpm (3.14.0.305)
     nokogiri (1.5.11)
     padrino-core (0.11.2)
       activesupport (>= 3.1.0)
@@ -187,26 +175,26 @@ GEM
     padrino-helpers (0.11.2)
       i18n (~> 0.6)
       padrino-core (= 0.11.2)
-    posix-spawn (0.3.8)
-    pry (0.9.12.4)
+    posix-spawn (0.3.11)
+    pry (0.9.12.6)
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
-    rack (1.5.2)
+    rack (1.6.4)
     rack-flash (0.1.2)
       rack
-    rack-protection (1.5.2)
+    rack-protection (1.5.3)
       rack
     rack-recaptcha (0.6.6)
       json
     rack-test (0.6.1)
       rack (>= 1.0)
-    raindrops (0.12.0)
-    rake (10.3.2)
-    redcarpet (3.0.0)
-    ref (1.0.5)
-    ripl (0.7.0)
-      bond (~> 0.4.2)
+    raindrops (0.15.0)
+    rake (10.4.2)
+    redcarpet (3.3.3)
+    ref (2.0.0)
+    ripl (0.7.1)
+      bond (~> 0.5.1)
     ripl-multi_line (0.3.1)
       ripl (>= 0.3.6)
     ripl-rack (0.2.0)
@@ -217,28 +205,28 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
-    rspec-core (2.14.7)
-    rspec-expectations (2.14.4)
+    rspec-core (2.14.8)
+    rspec-expectations (2.14.5)
       diff-lcs (>= 1.1.3, < 2.0)
-    rspec-mocks (2.14.4)
+    rspec-mocks (2.14.6)
     ruby-hmac (0.4.0)
-    sass (3.2.13)
-    simplecov (0.8.2)
+    sass (3.2.19)
+    simplecov (0.10.0)
       docile (~> 1.1.0)
-      multi_json
-      simplecov-html (~> 0.8.0)
-    simplecov-html (0.8.0)
-    sinatra (1.4.4)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
+    sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
-      tilt (~> 1.3, >= 1.3.4)
-    sinatra-contrib (1.4.2)
+      tilt (>= 1.3, < 3)
+    sinatra-contrib (1.4.6)
       backports (>= 2.0)
       multi_json
       rack-protection
       rack-test
       sinatra (~> 1.4.0)
-      tilt (~> 1.3)
+      tilt (>= 1.3, < 3)
     sinatra-flash (0.3.0)
       sinatra (>= 1.0.0)
     sinatra-outputbuffer (0.1.0)
@@ -246,13 +234,12 @@ GEM
     slim (0.9.4)
       temple (~> 0.3.0)
       tilt (~> 1.2)
-    slop (3.4.7)
-    spruz (0.2.13)
-    stringex (1.3.2)
+    slop (3.6.0)
+    stringex (1.5.1)
     tapp (1.3.0)
       thor
     temple (0.3.5)
-    therubyracer (0.12.0)
+    therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
     thor (0.17.0)
@@ -262,18 +249,18 @@ GEM
       ripl-multi_line (>= 0.2.4)
       ripl-rack (>= 0.2.0)
       sinatra (>= 1.2.1)
-    unicorn (4.8.0)
+    unicorn (5.0.0)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
     url_mount (0.2.1)
       rack
-    uuidtools (2.1.4)
+    uuidtools (2.1.5)
     wikicloth (0.7.1)
       builder
       expression_parser
-    yajl-ruby (1.1.0)
-    yard (0.8.7.3)
+    yajl-ruby (1.2.1)
+    yard (0.8.7.6)
     yard-sinatra (1.0.0)
       yard (~> 0.7)
 
@@ -282,7 +269,7 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth (= 4.2.9)
-  activesupport (~> 3.1.1)
+  activesupport (~> 3.2.22)
   amazon-ecs
   awesome_print
   backports (= 2.3.0)
@@ -294,10 +281,10 @@ DEPENDENCIES
   coderay (= 1.0.5)
   coffee-script
   compass (~> 0.12.2)
-  data_objects!
+  data_objects (= 0.10.16)
   database_cleaner (= 0.7.1)
   dm-aggregates (= 1.2.0)
-  dm-core!
+  dm-core (= 1.2.1)
   dm-is-searchable (= 1.2.0)
   dm-is-tree (= 1.2.0)
   dm-migrations (= 1.2.0)
@@ -309,13 +296,13 @@ DEPENDENCIES
   dm-tags (= 1.2.0)
   dm-timestamps (= 1.2.0)
   dm-transactions!
-  dm-types (= 1.2.0)
+  dm-types (= 1.2.2)
   dm-validations (= 1.2.0)
   erubis (~> 2.6.6)
   factory_girl (= 2.6.1)
   fastimage
   haml (~> 4.0.4)
-  i18n (= 0.6.0)
+  i18n (~> 0.6.0)
   im-kayac
   json
   kramdown
@@ -339,7 +326,6 @@ DEPENDENCIES
   sinatra-flash (~> 0.3.0)
   slim (~> 0.9.2)
   sshkit!
-  stringex (= 1.3.2)
   tapp (= 1.3.0)
   therubyracer
   tux
