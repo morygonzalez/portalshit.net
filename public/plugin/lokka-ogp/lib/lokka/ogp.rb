@@ -2,7 +2,41 @@ require 'fastimage'
 
 module Lokka
   module OGP
+    module AddImagesToEntry
+      refine Entry do
+        def images
+          self.body.scan(/https?:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)/)
+        end
+      end
+    end
+
     module Helpers
+      using AddImagesToEntry
+
+      def ogp
+        website = -> {
+          {
+            "og:type"        => "website",
+            "og:url"         => "#{@request.scheme}://#{@request.host}/",
+            "og:title"       => @site.title,
+            "og:description" => @site.meta_description,
+            "og:image"       => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png"
+          }
+        }
+        article = -> {
+          {
+            "og:type"        => "article",
+            "og:url"         => @entry.link,
+            "og:title"       => @entry.title,
+            "og:description" => extract_description_from(@entry),
+            "og:image"       => @entry.images.first
+          }
+        }
+
+        return website.call if defined?(@entry).nil?
+        article.call
+      end
+
       def twitter_card
         default = lambda {
           {
@@ -59,28 +93,6 @@ module Lokka
         end
       end
 
-      def ogp
-        default = -> {
-          {
-            "og:type"  => "website",
-            "og:url"   => "#{@request.scheme}://#{@request.host}/",
-            "og:title" => @site.title,
-            "og:image" => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png"
-          }
-        }
-        article = -> {
-          {
-            "og:type"  => "article",
-            "og:url"   => @entry.link,
-            "og:title" => @entry.title,
-            "og:image" => @entry.images.first
-          }
-        }
-
-        return default.call if defined?(@entry).nil?
-        article.call
-      end
-
       def extract_description_from(entry)
         content = strip_tags(entry.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
         content = @site.meta_description if content.blank?
@@ -122,11 +134,5 @@ module Lokka
         end
       end
     end
-  end
-end
-
-class Entry
-  def images
-    self.body.scan(/https?:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)/)
   end
 end
