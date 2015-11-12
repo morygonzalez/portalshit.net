@@ -70,7 +70,7 @@ module Lokka
           "og:url"         => entry_link,
           "og:title"       => @entry.title,
           "og:description" => extract_description,
-          "og:image"       => @entry.images.first
+          "og:image"       => @entry.images.first || default_image
         }
       end
 
