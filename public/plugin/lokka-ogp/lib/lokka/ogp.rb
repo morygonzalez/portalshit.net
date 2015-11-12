@@ -11,96 +11,144 @@ module Lokka
     end
 
     module Helpers
-      using AddImagesToEntry
-
       def ogp
-        website = -> {
-          {
-            "og:type"        => "website",
-            "og:url"         => "#{@request.scheme}://#{@request.host}/",
-            "og:title"       => @site.title,
-            "og:description" => @site.meta_description,
-            "og:image"       => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png"
-          }
-        }
-        article = -> {
-          {
-            "og:type"        => "article",
-            "og:url"         => @entry.link,
-            "og:title"       => @entry.title,
-            "og:description" => extract_description_from(@entry),
-            "og:image"       => @entry.images.first
-          }
-        }
-
-        return website.call if defined?(@entry).nil?
-        article.call
+        hash = OGPHash.new(entry: @entry, site: @site, request: @request, theme: @theme)
+        hash.generate
       end
 
       def twitter_card
-        default = lambda {
-          {
-            "twitter:card"        => "summary",
-            "twitter:site"        => @site.title,
-            "twitter:creator"     => "@#{@entry.user.name}",
-            "twitter:title"       => @entry.title,
-            "twitter:description" => extract_description_from(@entry),
-            "twitter:image"       => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png",
-            "twitter:url"         => "#{@request.scheme}://#{@request.host}/#{@entry.link}"
-          }
-        }
+        hash = TwitterCardHash.new(entry: @entry, site: @site, request: @request, theme: @theme)
+        hash.generate
+      end
+    end
 
-        case
-        when defined?(@entry).nil?
-          {
-            "twitter:card"        => "summary",
-            "twitter:site"        => @site.title,
-            "twitter:creator"     => "@#{User.first.name}",
-            "twitter:title"       => @site.title,
-            "twitter:description" => @site.meta_description,
-            "twitter:image"       => "#{@request.scheme}://#{@request.host}#{@theme.path}/screenshot.png",
-            "twitter:url"         => "#{@request.scheme}://#{@request.host}/"
-          }
-        when @entry.images.present?
-          case
-          when @entry.images.length == 1
-            {
-              "twitter:card"        => detect_card_type_from(matched),
-              "twitter:site"        => @site.title,
-              "twitter:creator"     => "@#{@entry.user.name}",
-              "twitter:title"       => "#{@entry.title}",
-              "twitter:description" => extract_description_from(@entry),
-              "twitter:image:src"   => @entry.iamges.first
-            }
-          when @entry.images.length > 1
-            images = @entry.images.each_with_index.each_with_object({}) {|(url, i), _images|
-              break _images if i > 3
-              _images["twitter:image#{i}"] = url
-            }
-            {
-              "twitter:card"        => detect_card_type_from(@entry.images),
-              "twitter:site"        => @site.title,
-              "twitter:creator"     => "@#{@entry.user.name}",
-              "twitter:title"       => @entry.title,
-              "twitter:description" => extract_description_from(@entry),
-              "twitter:url"         => "#{@request.scheme}://#{@request.host}/#{@entry.link}",
-            }.merge(images)
-          else
-            default.call
-          end
-        else
-          default.call
-        end
+    class BaseHash
+      include Padrino::Helpers::FormatHelpers
+
+      def initialize(entry: nil, site: nil, request: nil, theme: nil)
+        @entry   = entry
+        @site    = site
+        @request = request
+        @theme   = theme
       end
 
-      def extract_description_from(entry)
-        content = strip_tags(entry.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
+      def site_host
+        "#{@request.scheme}://#{@request.host}"
+      end
+
+      def default_image
+        "#{site_host}#{@theme.path}/screenshot.png"
+      end
+
+      def entry_link
+        "#{site_host}#{@entry.link}"
+      end
+
+      def extract_description
+        content = strip_tags(@entry.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
         content = @site.meta_description if content.blank?
         truncate(content, length: 200)
       end
+    end
 
-      def detect_card_type_from(photos)
-        image = photos.first
+    class OGPHash < BaseHash
+      using AddImagesToEntry
+
+      def website
+        {
+          "og:type"        => "website",
+          "og:url"         => site_host,
+          "og:title"       => @site.title,
+          "og:description" => @site.meta_description,
+          "og:image"       => default_image
+        }
+      end
+
+      def article
+        {
+          "og:type"        => "article",
+          "og:url"         => entry_link,
+          "og:title"       => @entry.title,
+          "og:description" => extract_description,
+          "og:image"       => @entry.images.first
+        }
+      end
+
+      def generate
+        if @entry.present?
+          article
+        else
+          website
+        end
+      end
+    end
+
+    class TwitterCardHash < BaseHash
+      using AddImagesToEntry
+
+      def summary
+        {
+          "twitter:card"        => "summary",
+          "twitter:site"        => @site.title,
+          "twitter:creator"     => "@#{User.first.name}",
+          "twitter:title"       => @site.title,
+          "twitter:description" => @site.meta_description,
+          "twitter:image"       => default_image,
+          "twitter:url"         => site_host
+        }
+      end
+
+      def entry_default
+        {
+          "twitter:card"        => detect_card_type,
+          "twitter:site"        => @site.title,
+          "twitter:creator"     => "@#{@entry.user.name}",
+          "twitter:title"       => "#{@entry.title}",
+          "twitter:description" => extract_description,
+          "twitter:image"       => default_image,
+          "twitter:url"         => entry_link
+        }
+      end
+
+      def entry_without_image
+        entry_default
+      end
+
+      def entry_with_image
+        entry_default.merge("twitter:image" => @entry.images.first)
+      end
+
+      def entry_with_images
+        images = @entry.images.each_with_index.each_with_object({}) {|(url, i), _images|
+          break _images if i > 3
+          _images["twitter:image#{i}"] = url
+        }
+        entry_default.delete("twitter:image")
+        entry_default.merge(images)
+      end
+
+      def generate
+        case
+        when @entry.nil?
+          summary
+        when @entry
+          case
+          when @entry.images.nil?
+            entry_without_image
+          when @entry.images.length == 1
+            entry_with_image
+          when @entry.images.length > 1
+            entry_with_images
+          else
+            entry_default
+          end
+        else
+          entry_default
+        end
+      end
+
+      def detect_card_type
+        image = @entry.images.first
         width, height = FastImage.size(image)
         if width > 639 || height > 639
           return 'gallery' if photos.length > 1
