@@ -33,7 +33,8 @@ module Markup
             :autolink            => true,
             :tables              => true,
             :superscript         => true,
-            :space_after_headers => true
+            :space_after_headers => true,
+            :footnotes           => true
           ).render(text)
         end]
   ]
