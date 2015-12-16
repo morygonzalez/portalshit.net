@@ -152,7 +152,7 @@ module Lokka
         image = @entry.images.first
         width, height = FastImage.size(image)
         if width > 639 || height > 639
-          return 'gallery' if photos.length > 1
+          return 'gallery' if @entry.images.length > 1
           'summary_large_image'
         else
           'summary'
