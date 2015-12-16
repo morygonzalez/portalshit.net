@@ -123,8 +123,9 @@ module Lokka
           break _images if i > 3
           _images["twitter:image#{i}"] = url
         }
-        entry_default.delete("twitter:image")
-        entry_default.merge(images)
+        default = entry_default
+        default.delete("twitter:image")
+        default.merge(images)
       end
 
       def generate
