@@ -16,6 +16,7 @@
     %link(title="#{@site.title}" rel="alternate" href="/index.atom" type="application/atom+xml")
     %link(rel="canonical" href="#{request.url}")
     %link(rel="stylesheet" href="#{@theme.path}/style.css" type="text/css")
+    %link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css")
     %script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript")
     = header
     -# %script(data-kz-key="0417c6ef4d22330c" data-kz-namespace="kzs" src="//cdn.kaizenplatform.net/s/04/17c6ef4d22330c.js")
@@ -23,9 +24,18 @@
     #header.clearfix
       %h1= link_to @site.title, '/'
       %ul#nav
-        %li.profile= link_to 'Profile', '/author'
-        %li.github= link_to 'Github', 'http://github.com/morygonzalez'
-        %li.twitter= link_to 'Twitter', 'http://twitter.com/morygonzalez'
+        %li.profile
+          = image_tag 'http://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
+          = link_to 'Profile', '/author'
+        %li.github
+          %i.fa.fa-github-square
+          = link_to 'GitHub', 'http://github.com/morygonzalez'
+        %li.twitter
+          %i.fa.fa-twitter-square
+          = link_to 'Twitter', 'http://twitter.com/morygonzalez'
+        %li.archives
+          %i.fa.fa-list
+          = link_to 'Archives', '/archives'
         %li
           %form#search_form(action="/search/" method="get")
             %input(type="text" name="query" placeholder="Search")

@@ -5,8 +5,15 @@
 }
 
 @mixin nav-profile {
-  padding-left: 24px;
   height: 28px;
+  color: #000000;
+  img {
+    vertical-align: middle;
+  }
+  i {
+    font-size: 24px;
+    vertical-align: middle;
+  }
 }
 
 @mixin _border-radius {
