@@ -253,22 +253,29 @@ table {
 
       &.profile {
         @include nav-profile;
-        background: url("http://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=24") no-repeat;
+        // background: url("http://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=24") no-repeat;
       }
 
       &.github {
         @include nav-profile;
-        background: url(images/icons.png) no-repeat -4px -68px;
+        // background: url(images/icons.png) no-repeat -4px -68px;
       }
 
       &.twitter {
         @include nav-profile;
-        background: url(images/icons.png) no-repeat -1px -4px;
+        // background: url(images/icons.png) no-repeat -1px -4px;
       }
 
       &.facebook {
         @include nav-profile;
         background: url(images/icons.png) no-repeat -4px -260px;
+      }
+
+      &.archives {
+        @include nav-profile;
+        i {
+          font-size: 20px;
+        }
       }
 
       form#search_form input {
