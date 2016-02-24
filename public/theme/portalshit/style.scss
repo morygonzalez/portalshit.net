@@ -1,6 +1,5 @@
 @charset "utf-8";
 @import "monokai";
-@import "smart";
 @import "mixin";
 @import "variables";
 
@@ -218,7 +217,7 @@ table {
     text-decoration: none;
   }
 
-  ul#nav {
+  #nav {
     float: right;
     font-size: 12px;
     list-style: none;
@@ -773,3 +772,5 @@ h4.comment {
     }
   }
 }
+
+@import "smart";
