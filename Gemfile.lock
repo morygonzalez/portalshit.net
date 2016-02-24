@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/capistrano/sshkit.git
-  revision: 9fb1e87a56c67fb896b5f7c3363835179b812abe
-  specs:
-    sshkit (1.7.1)
-      net-scp (>= 1.1.2)
-      net-ssh (>= 2.8.0)
-
-GIT
   remote: git://github.com/datamapper/dm-transactions.git
   revision: a400e7ffdca0a358b44698259584bb5c29f9f1b8
   branch: release-1.2
@@ -63,7 +55,7 @@ GEM
     capistrano-bundler (1.1.4)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
-    capistrano-rbenv (2.0.3)
+    capistrano-rbenv (2.0.4)
       capistrano (~> 3.1)
       sshkit (~> 1.3)
     capistrano-rbenv-install (1.2.0)
@@ -167,7 +159,7 @@ GEM
     multi_xml (0.5.5)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (3.0.1)
+    net-ssh (3.0.2)
     newrelic_rpm (3.14.0.305)
     nokogiri (1.5.11)
     padrino-core (0.11.2)
@@ -195,7 +187,7 @@ GEM
     rack-test (0.6.1)
       rack (>= 1.0)
     raindrops (0.15.0)
-    rake (10.4.2)
+    rake (10.5.0)
     rbtrace (0.4.7)
       ffi (>= 1.0.6)
       msgpack (>= 0.4.3)
@@ -244,6 +236,9 @@ GEM
       temple (~> 0.3.0)
       tilt (~> 1.2)
     slop (3.6.0)
+    sshkit (1.8.1)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.8.0)
     stringex (1.5.1)
     tapp (1.3.0)
       thor
@@ -337,7 +332,7 @@ DEPENDENCIES
   sinatra-contrib (~> 1.4.0)
   sinatra-flash (~> 0.3.0)
   slim (~> 0.9.2)
-  sshkit!
+  sshkit
   tapp (= 1.3.0)
   therubyracer
   tux

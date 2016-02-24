@@ -54,7 +54,7 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-bundler'
   gem 'capistrano-rbenv-install'
-  gem 'sshkit', github: 'capistrano/sshkit'
+  gem 'sshkit'
   gem 'awesome_print'
 end
 
