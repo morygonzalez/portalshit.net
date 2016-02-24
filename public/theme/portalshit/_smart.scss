@@ -4,14 +4,20 @@
     height: auto;
   }
   #header, #content, #footer {
-    width: 95% !important;
     margin: 0;
+    padding: 0 5px;
+    width: 100%;
   }
   #header {
-    margin: 0.5em !important;
     #nav {
-      margin-top: 1em !important;
       width: 98%;
+      margin-top: 1em;
+      li {
+        margin: 0 4px;
+        a {
+          padding: 2px 0;
+        }
+      }
       #search_form {
         display: none;
       }
@@ -19,9 +25,9 @@
   }
   #content {
     #main {
-      padding: 10px 0 !important;
+      padding: 0 5px;
       #categories {
-        display: none !important;
+        display: none;
       }
       .article {
         margin-top: 0.3em;
@@ -36,7 +42,7 @@
             }
             a:before {
               margin-left: -0.12em;
-              font-size: 300% !important;
+              font-size: 300%;
             }
           }
         }
@@ -103,32 +109,32 @@
           margin: 0.15em;
         }
       }
-    }
-  }
-  #comment_form {
-    margin: auto !important;
-    width: 95% !important;
-    padding-bottom: 1.5em;
+      #comment_form {
+        margin: auto !important;
+        width: 95% !important;
+        padding-bottom: 1.5em;
 
-    $comment_form_width: 75% !important;
-    #comment_name {
-      width: $comment_form_width;
-    }
-    #comment_email {
-      width: $comment_form_width;
-    }
-    #comment_homepage {
-      width: $comment_form_width;
-    }
-    #comment_body {
-      width: 95% !important;
+        $comment_form_width: 75% !important;
+        #comment_name {
+          width: $comment_form_width;
+        }
+        #comment_email {
+          width: $comment_form_width;
+        }
+        #comment_homepage {
+          width: $comment_form_width;
+        }
+        #comment_body {
+          width: 95% !important;
+        }
+      }
     }
   }
   #footer {
-    margin: 0 auto;
-    padding: 1em;
+    margin: 0;
     #aside {
-      padding: 0;
+      margin: 0;
+      padding: .7em .6em;
       dl {
         margin: 0.25em;
         dd {
