@@ -100,6 +100,11 @@ module Lokka
       path
     end
 
+    def canonical_url
+      canonical_path = request_path.gsub(/(\?|#).+/, '')
+      "#{request.scheme}://#{request.host}#{canonical_path}"
+    end
+
     def locale; I18n.locale end
 
     def redirect_after_edit(entry)
