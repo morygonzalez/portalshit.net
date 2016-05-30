@@ -27,3 +27,6 @@ config.yml
 /.yardoc
 plugin_old
 /.sass-cache
+*.sql.gz
+
+public/plugin/**/node_modules/*

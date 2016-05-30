@@ -1,5 +1,8 @@
+%link(href="/plugin/lokka-archives/assets/style.css" rel="stylesheet" type="text/css")
+
 %ul.year-list
   - year_list.each do |year|
     %li= link_to year.to_s, "/archives/#{year}"
 
 #archive-by-month
+%script(type="text/javascript" src="/plugin/lokka-archives/assets/script.js")
