@@ -50,12 +50,12 @@ group :production do
 end
 
 group :development do
-  gem 'capistrano'
-  gem 'capistrano-rbenv'
-  gem 'capistrano-bundler'
-  gem 'capistrano-rbenv-install'
-  gem 'sshkit'
   gem 'awesome_print'
+  gem 'capistrano', require: false
+  gem 'capistrano-rbenv', require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano-rbenv-install', require: false
+  gem 'sshkit', require: false
 end
 
 group :development, :test do
