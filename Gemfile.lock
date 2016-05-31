@@ -152,7 +152,7 @@ GEM
     json_pure (1.8.3)
     kgio (2.10.0)
     kramdown (1.9.0)
-    libv8 (3.16.14.13)
+    libv8 (3.16.14.15)
     method_source (0.8.2)
     msgpack (0.7.0)
     multi_json (1.11.2)
