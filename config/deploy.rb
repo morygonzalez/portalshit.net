@@ -1,6 +1,8 @@
 # config valid only for Capistrano 3.1
 lock '3.5.0'
 
+set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} /usr/bin/rbenv exec"
+
 set :application, 'portalshit'
 set :repo_url, 'https://github.com/morygonzalez/portalshit.net.git'
 
