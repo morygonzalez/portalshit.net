@@ -41,7 +41,6 @@ gem 'pry'
 gem 'newrelic_rpm'
 gem 'sinatra-cache', git: 'git://github.com/morygonzalez/sinatra-cache.git'
 gem 'coffee-script'
-gem 'therubyracer'
 gem 'rbtrace'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
