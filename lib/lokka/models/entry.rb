@@ -48,10 +48,12 @@ class Entry
   end
 
   def tag_collection=(string)
-    reg = RUBY_VERSION >= "1.9.0" ? /[^\p{Word}._]/iu : /[^\w\s._-]/i
-    @tag_list = string.to_s.split(',').map { |name|
+    reg = /[^\p{Word}._]/iu
+    @tag_list = string.to_s.split(',').map {|name|
       name.force_encoding(Encoding.default_external).gsub(reg, '').strip
-    }.reject{|x|x.blank?}.uniq.sort
+    }.reject {|x| x.blank? }.uniq.sort
+
+    update_tags
   end
 
   def fuzzy_slug
@@ -142,20 +144,20 @@ class Entry
       ret = first({:slug => str}.update(query))
       ret.blank? ? first({:id => str}.update(query)) : ret
     end
-  
+
     def search(str)
       all(:title.like => "%#{str}%") |
         all(:body.like => "%#{str}%")
     end
-  
+
     def recent(count = 5)
       all(:draft => false, :limit => count)
     end
-  
+
     def published
       all(:draft => false)
     end
-  
+
     def unpublished
       all(:draft => true)
     end
