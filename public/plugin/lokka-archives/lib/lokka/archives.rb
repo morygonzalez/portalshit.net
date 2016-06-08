@@ -6,7 +6,7 @@ module Lokka
       app.set :cache_enabled, true
 
       app.get '/archives' do
-        cache_path = app.public_dir + '/archives.html'
+        cache_path = app.cache_output_dir + '/archives.html'
         if test(?f, cache_path) && Time.now - test(?M, cache_path) < 15.minutes
           return File.read(cache_path)
         end
@@ -29,7 +29,7 @@ module Lokka
       end
 
       app.get '/archives/:year' do |year|
-        cache_path = app.public_dir + "/archives/#{year}.html"
+        cache_path = app.cache_output_dir + "/archives/#{year}.html"
         if test(?f, cache_path) && Time.now - test(?M, cache_path) < 15.minutes
           return File.read(cache_path)
         end
@@ -59,7 +59,7 @@ module Lokka
       app.before do
         assets_path = "/plugin/lokka-archives/assets"
         content_for :header do
-          text = <<-EOS.strip_heredoc
+          <<-EOS.strip_heredoc
             <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.js"></script>
