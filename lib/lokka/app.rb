@@ -43,6 +43,7 @@ module Lokka
         public_key:  Option.recaptcha_public_key,
         private_key: Option.recaptcha_private_key
       helpers Rack::Recaptcha::Helpers
+      set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
     end
 
     configure :development do
