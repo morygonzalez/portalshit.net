@@ -48,6 +48,12 @@ GEM
     bcrypt (3.1.11)
     bcrypt-ruby (3.1.5)
       bcrypt (>= 3.1.3)
+    better_errors (2.1.1)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+      rack (>= 0.9.0)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
     bond (0.5.1)
     builder (3.0.0)
     capistrano (3.5.0)
@@ -79,6 +85,7 @@ GEM
     data_objects (0.10.17)
       addressable (~> 2.1)
     database_cleaner (0.7.1)
+    debug_inspector (0.0.2)
     diff-lcs (1.2.5)
     dm-aggregates (1.2.0)
       dm-core (~> 1.2.0)
@@ -281,6 +288,8 @@ DEPENDENCIES
   amazon-ecs
   awesome_print
   backports (= 2.3.0)
+  better_errors
+  binding_of_caller
   builder (= 3.0.0)
   bundler
   capistrano

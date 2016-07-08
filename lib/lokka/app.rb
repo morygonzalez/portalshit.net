@@ -60,6 +60,9 @@ module Lokka
         public_key:  Option.recaptcha_public_key,
         private_key: Option.recaptcha_private_key
       helpers Rack::Recaptcha::Helpers
+      require 'better_errors'
+      use BetterErrors::Middleware
+      BetterErrors.application_root = __dir__
     end
 
     require 'lokka/app/admin.rb'

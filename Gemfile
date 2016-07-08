@@ -56,6 +56,8 @@ group :development do
   gem 'capistrano-rbenv-install', require: false
   gem 'sshkit', require: false
   gem 'rbtrace'
+  gem 'better_errors'
+  gem 'binding_of_caller'
 end
 
 group :development, :test do
