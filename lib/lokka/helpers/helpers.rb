@@ -224,7 +224,7 @@ module Lokka
     # @return [String] Image url
     #
     def gravatar_image_url(email = nil, size = nil)
-      url = 'http://www.gravatar.com/avatar/'
+      url = '//www.gravatar.com/avatar/'
       url += if email
         Digest::MD5.hexdigest(email)
       else
