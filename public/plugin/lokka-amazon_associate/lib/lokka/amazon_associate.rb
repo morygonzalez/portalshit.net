@@ -54,7 +54,7 @@ module Lokka
         attr = item["ItemAttributes"]
         @title = h!(attr["Title"])         rescue nil
         @link  = item["DetailPageURL"]     rescue nil
-        @image = item["MediumImage"]["URL"] rescue nil
+        @image = item["MediumImage"]["URL"].gsub('http://ecx.images-amazon', 'https://images-na.ssl-images-amazon') rescue nil
         @price = item["OfferSummary"]["LowestNewPrice"]["FormattedPrice"] rescue "-"
         authors = []
         authors << format_authors(attr["Creator"])  if attr["Creator"]
