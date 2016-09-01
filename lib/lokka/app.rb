@@ -42,7 +42,8 @@ module Lokka
     configure :production do
       use Rack::Recaptcha,
         public_key:  Option.recaptcha_public_key,
-        private_key: Option.recaptcha_private_key
+        private_key: Option.recaptcha_private_key,
+        ssl: true
       helpers Rack::Recaptcha::Helpers
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
     end
