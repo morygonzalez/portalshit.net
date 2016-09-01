@@ -48,14 +48,15 @@ module Lokka
     def format_item(json)
       begin
         @title, @link, @image, @price, @author, @manufacturer = *nil
-        error = json["ItemLookupResponse"]["Items"]["Request"]["Errors"]["Error"] rescue nil
+        error = json.dig("ItemLookupResponse", "Items", "Request", "Errors", "Error")
         return @error = "#{error["Code"]}: #{error["Message"]}" if error.present?
-        item = json["ItemLookupResponse"]["Items"]["Item"]
+        item = json.dig("ItemLookupResponse", "Items", "Item")
         attr = item["ItemAttributes"]
-        @title = h!(attr["Title"])         rescue nil
-        @link  = item["DetailPageURL"]     rescue nil
-        @image = item["MediumImage"]["URL"].gsub('http://ecx.images-amazon', 'https://images-na.ssl-images-amazon') rescue nil
-        @price = item["OfferSummary"]["LowestNewPrice"]["FormattedPrice"] rescue "-"
+        @title = h!(attr["Title"]) rescue nil
+        @link  = CGI.unescape(item["DetailPageURL"]) rescue nil
+        @image = item.dig("MediumImage", "URL")&.gsub('http://ecx.images-amazon', 'https://images-na.ssl-images-amazon')
+        @image = CGI.unescape(@image) if @image
+        @price = item.dig("OfferSummary", "LowestNewPrice", "FormattedPrice") || "-"
         authors = []
         authors << format_authors(attr["Creator"])  if attr["Creator"]
         authors << format_authors(attr["Author"])   if attr["Author"]
