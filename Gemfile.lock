@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: https://github.com/tmm1/pygments.rb
-  revision: a21567d28f3fc08cfcdd71048352c7c21ac8b09b
+  revision: 879e9ef99e798a1288b9296875f1c360758e32d3
   specs:
     pygments.rb (0.6.3)
       posix-spawn (~> 0.3.6)
@@ -39,7 +39,7 @@ GEM
     addressable (2.4.0)
     airbrussh (1.0.2)
       sshkit (>= 1.6.1, != 1.7.0)
-    amazon-ecs (2.4.0)
+    amazon-ecs (2.5.0)
       nokogiri (~> 1.4)
       ruby-hmac (~> 0.3)
     args_parser (0.2.0)
@@ -152,8 +152,7 @@ GEM
     http_router (0.11.2)
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
-    httparty (0.13.7)
-      json (~> 1.8)
+    httparty (0.14.0)
       multi_xml (>= 0.5.2)
     i18n (0.6.11)
     im-kayac (0.1.2)
@@ -353,4 +352,4 @@ DEPENDENCIES
   yard-sinatra (= 1.0.0)
 
 BUNDLED WITH
-   1.11.2
+   1.12.5
