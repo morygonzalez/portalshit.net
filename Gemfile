@@ -46,6 +46,7 @@ gem 'coffee-script'
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
 group :production do
+  gem 'rack-ssl-enforcer'
 end
 
 group :development do

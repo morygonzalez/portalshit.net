@@ -198,6 +198,7 @@ GEM
       rack
     rack-recaptcha (0.6.6)
       json
+    rack-ssl-enforcer (0.2.9)
     rack-test (0.6.1)
       rack (>= 1.0)
     raindrops (0.16.0)
@@ -331,6 +332,7 @@ DEPENDENCIES
   rack
   rack-flash (~> 0.1.2)
   rack-recaptcha
+  rack-ssl-enforcer
   rack-test (= 0.6.1)
   rake
   rbtrace
