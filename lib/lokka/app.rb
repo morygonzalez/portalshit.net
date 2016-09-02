@@ -45,6 +45,8 @@ module Lokka
         private_key: Option.recaptcha_private_key
       helpers Rack::Recaptcha::Helpers
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
+      require 'rack/ssl-enforcer'
+      use Rack::SslEnforcer
     end
 
     configure :development do
