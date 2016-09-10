@@ -73,7 +73,7 @@ Archives = React.createClass
     )`
 
 year     = location.href.match(/\d{4}/)
-endPoint = if year? then "/api/archives/#{year[0]}" else "/api/archives"
+endPoint = if year? then "/archives/#{year[0]}.json" else "/archives.json"
 
 ReactDOM.render(
   `<Archives url={endPoint} pollInterval={900000} />`,
