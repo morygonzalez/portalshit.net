@@ -55,6 +55,14 @@ module Lokka
     end
   end
 
+  module Helpers
+    def year_list
+      first_year = Post.published.first.created_at.year
+      last_year  = Post.published.last.created_at.year
+      first_year.downto(last_year).to_a
+    end
+  end
+
   class EntryHashGenerator
     class << self
       def generate(posts)
