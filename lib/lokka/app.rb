@@ -36,6 +36,7 @@ module Lokka
 				:secret => SecureRandom.hex(30)
       register Sinatra::Flash
       Lokka.load_plugin(self)
+      DataMapper::Logger.new('log/datamapper.log', :debug)
       Lokka::Database.new.connect
     end
 
