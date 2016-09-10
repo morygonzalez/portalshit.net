@@ -3,36 +3,13 @@ require 'dm-serializer/to_json'
 module Lokka
   module Archives
     def self.registered(app)
-      app.before do
-        @categories = Category.all(fields: [:id, :slug, :title]).group_by(&:id)
-      end
-
       app.get '/archives.json' do
         posts = Post.all(
           fields: [:id, :category_id, :slug, :title, :created_at],
           draft: false,
           created_at: (1.year.ago..Time.now)
         )
-
-        month_posts = posts.group_by {|post| post.created_at.strftime('%Y-%1m') }
-        month_posts = month_posts.each_with_object({}) {|(month, _posts), object|
-          object[month] ||= []
-          _posts.each do |post|
-            category = @categories[post.category_id].first
-            object[month] << {
-              id: post.id,
-              category: {
-                id: category[:id],
-                title: category[:title],
-                slug: category[:slug]
-              },
-              slug: post.slug,
-              title: post.title,
-              created_at: post.created_at
-            }
-          end
-          object
-        }
+        month_posts = EntryHashGenerator.generate(posts)
 
         content_type :json
         month_posts.to_json
@@ -41,31 +18,10 @@ module Lokka
       app.get '/archives/?:year?.json' do |year|
         posts = Post.all(
           fields: [:id, :category_id, :slug, :title, :created_at],
-          :draft => false,
-          :created_at => (
-            Time.new(year)..Time.new(year).end_of_year
-          )
+          draft: false,
+          created_at: (Time.new(year)..Time.new(year).end_of_year)
         )
-
-        month_posts = posts.group_by {|post| post.created_at.strftime('%Y-%1m') }
-        month_posts = month_posts.each_with_object({}) {|(month, _posts), object|
-          object[month] ||= []
-          _posts.each do |post|
-            category = @categories[post.category_id].first
-            object[month] << {
-              id: post.id,
-              category: {
-                id: category[:id],
-                title: category[:title],
-                slug: category[:slug]
-              },
-              slug: post.slug,
-              title: post.title,
-              created_at: post.created_at
-            }
-          end
-          object
-        }
+        month_posts = EntryHashGenerator.generate(posts)
 
         content_type :json
         month_posts.to_json
@@ -99,11 +55,30 @@ module Lokka
     end
   end
 
-  module Helpers
-    def year_list
-      first_year = Post.published.first.created_at.year
-      last_year  = Post.published.last.created_at.year
-      first_year.downto(last_year).to_a
+  class EntryHashGenerator
+    class << self
+      def generate(posts)
+        categories = Category.all(fields: [:id, :slug, :title]).group_by(&:id)
+        month_posts = posts.group_by {|post| post.created_at.strftime('%Y-%1m') }
+        month_posts.each_with_object({}) {|(month, _posts), object|
+          object[month] ||= []
+          _posts.each do |post|
+            category = categories[post.category_id]&.first || {}
+            object[month] << {
+              id: post.id,
+              category: {
+                id: category[:id],
+                title: category[:title],
+                slug: category[:slug]
+              },
+              slug: post.slug,
+              title: post.title,
+              created_at: post.created_at
+            }
+          end
+          object
+        }
+      end
     end
   end
 end
