@@ -49,9 +49,10 @@ class Entry
 
   def tag_collection=(string)
     reg = /[^\p{Word}._]/iu
-    @tag_list = string.to_s.split(',').map {|name|
-      name.force_encoding(Encoding.default_external).gsub(reg, '').strip
-    }.reject {|x| x.blank? }.uniq.sort
+    @tag_list = string.to_s.split(",").map { |name|
+      name.force_encoding(Encoding.default_external).gsub(reg, "").strip
+    }
+    @tag_list = @tag_list.reject(&:blank?).uniq.sort
 
     update_tags
   end
