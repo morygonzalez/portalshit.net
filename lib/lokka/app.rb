@@ -34,6 +34,7 @@ module Lokka
       use Rack::Session::Cookie,
         :expire_after => 60 * 60 * 24 * 12,
 				:secret => SecureRandom.hex(30)
+      use RequestStore::Middleware
       register Sinatra::Flash
       Lokka.load_plugin(self)
       DataMapper::Logger.new('log/datamapper.log', :debug)
