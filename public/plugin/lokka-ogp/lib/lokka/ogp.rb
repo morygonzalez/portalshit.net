@@ -90,7 +90,7 @@ module Lokka
         {
           "twitter:card"        => "summary",
           "twitter:site"        => @site.title,
-          "twitter:creator"     => "@#{User.first.name}",
+          "twitter:creator"     => "@#{User.first&.name}",
           "twitter:title"       => @site.title,
           "twitter:description" => @site.meta_description,
           "twitter:image"       => default_image,
