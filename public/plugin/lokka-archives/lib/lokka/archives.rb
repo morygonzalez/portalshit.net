@@ -63,15 +63,69 @@ module Lokka
     end
   end
 
+  module AddDateTimeMethodsToEntry
+    refine Entry do
+      def year
+        self.created_at.year.to_s.rjust(4,'0')
+      end
+
+      def monthnum
+        self.created_at.month.to_s.rjust(2,'0')
+      end
+
+      def month
+        self.created_at.month.to_s.rjust(2,'0')
+      end
+
+      def day
+        self.created_at.day.to_s.rjust(2,'0')
+      end
+
+      def hour
+        self.created_at.hour.to_s.rjust(2,'0')
+      end
+
+      def minute
+        self.created_at.min.to_s.rjust(2,'0')
+      end
+
+      def second
+        self.created_at.sec.to_s.rjust(2,'0')
+      end
+
+      def post_id
+        self.id.to_s
+      end
+
+      def postname
+        self.slug || self.id.to_s
+      end
+    end
+  end
+
   class EntryHashGenerator
+    using AddDateTimeMethodsToEntry
+
     class << self
+      def helper
+        Lokka::Helpers
+      end
+
       def generate(posts)
+        permalink_format = helper.custom_permalink_format if helper.custom_permalink?
+        permalink_keys = permalink_format.map {|item| item.sub(/(?:%(.+?)%)?\/?/, '\1') }.delete_if(&:blank?).map(&:to_sym)
         categories = Category.all(fields: [:id, :slug, :title]).group_by(&:id)
         month_posts = posts.group_by {|post| post.created_at.strftime('%Y-%1m') }
         month_posts.each_with_object({}) {|(month, _posts), object|
           object[month] ||= []
           _posts.each do |post|
             category = categories[post.category_id]&.first || {}
+            link = if permalink_format
+                     params = permalink_keys.each_with_object({}) {|key, hash| hash[key] = eval("post.#{key}") }
+                     helper.custom_permalink_path(params)
+                   else
+                     post.slug
+                   end
             object[month] << {
               id: post.id,
               category: {
@@ -79,8 +133,8 @@ module Lokka
                 title: category[:title],
                 slug: category[:slug]
               },
-              slug: post.slug,
               title: post.title,
+              link: link,
               created_at: post.created_at
             }
           end
