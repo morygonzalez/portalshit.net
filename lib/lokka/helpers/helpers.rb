@@ -263,11 +263,11 @@ module Lokka
     end
 
     def custom_permalink?
-      @custom_permalink ||= Option.permalink_enabled == "true"
+      Thread.current[:custom_permalink] ||= Option.permalink_enabled == "true"
     end
 
     def permalink_format
-      @permalink_format ||= Option.permalink_format
+      Thread.current[:permalink_format] ||= Option.permalink_format
     end
 
     def custom_permalink_format

@@ -11,7 +11,7 @@ Entry = React.createClass
   render: ->
     `(
       <li className="entry">
-        <a href={"/" + this.props.link}>{this.props.title}</a>
+        <a href={this.props.link}>{this.props.title}</a>
         <div className="detail-information">
           <span className="created_at">{this.props.created_at}</span>
           <Category category={this.props.category} />
@@ -24,7 +24,7 @@ EntryList = React.createClass
     entries = this.props.entries.map (entry) ->
       uniqueKey = "#{entry.title}-#{entry.created_at}"
       `(
-        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.slug} created_at={entry.created_at} />
+        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
       )`
     title = this.props.monthYear.replace(
       /(\d{4})\-(\d{1,2})/, -> "#{arguments[1]}年#{arguments[2]}月"
