@@ -9,7 +9,7 @@ module Lokka
           draft: false,
           created_at: (1.year.ago..Time.now)
         )
-        month_posts = EntryHashGenerator.generate(posts)
+        month_posts = MonthPosts.generate(posts)
 
         content_type :json
         month_posts.to_json
@@ -21,7 +21,7 @@ module Lokka
           draft: false,
           created_at: (Time.new(year)..Time.new(year).end_of_year)
         )
-        month_posts = EntryHashGenerator.generate(posts)
+        month_posts = MonthPosts.generate(posts)
 
         content_type :json
         month_posts.to_json
@@ -100,32 +100,46 @@ module Lokka
       def postname
         self.slug || self.id.to_s
       end
-    end
-  end
 
-  class EntryHashGenerator
-    using AddDateTimeMethodsToEntry
+      def clever_link
+        if permalink_format
+          params = permalink_keys.each_with_object({}) {|key, hash| hash[key] = eval("self.#{key}") }
+          helper.custom_permalink_path(params)
+        else
+          self.slug
+        end
+      end
 
-    class << self
+      private
+
       def helper
         Lokka::Helpers
       end
 
+      def permalink_format
+        @permalink_format ||= helper.custom_permalink_format if helper.custom_permalink?
+      end
+
+      def permalink_keys
+        @permalink_keys ||= permalink_format.map {|item| item.sub(/(?:%(.+?)%)?\/?/, '\1') }.delete_if(&:blank?).map(&:to_sym)
+      end
+    end
+  end
+
+  class MonthPosts
+    using AddDateTimeMethodsToEntry
+
+    class << self
+      def categories
+        @categories ||= Category.all(fields: [:id, :slug, :title]).group_by(&:id)
+      end
+
       def generate(posts)
-        permalink_format = helper.custom_permalink_format if helper.custom_permalink?
-        permalink_keys = permalink_format.map {|item| item.sub(/(?:%(.+?)%)?\/?/, '\1') }.delete_if(&:blank?).map(&:to_sym)
-        categories = Category.all(fields: [:id, :slug, :title]).group_by(&:id)
         month_posts = posts.group_by {|post| post.created_at.strftime('%Y-%1m') }
         month_posts.each_with_object({}) {|(month, _posts), object|
           object[month] ||= []
           _posts.each do |post|
             category = categories[post.category_id]&.first || {}
-            link = if permalink_format
-                     params = permalink_keys.each_with_object({}) {|key, hash| hash[key] = eval("post.#{key}") }
-                     helper.custom_permalink_path(params)
-                   else
-                     post.slug
-                   end
             object[month] << {
               id: post.id,
               category: {
@@ -134,7 +148,7 @@ module Lokka
                 slug: category[:slug]
               },
               title: post.title,
-              link: link,
+              link: post.clever_link,
               created_at: post.created_at
             }
           end
