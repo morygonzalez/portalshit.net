@@ -34,7 +34,7 @@ module Lokka
         if item = fetch
           File.open(@path, "w") {|f|
             f.print Hash.from_xml(item.doc.to_xml).to_json
-            sleep 1
+            sleep 2
           }
         else
           FileUtils.touch @path
