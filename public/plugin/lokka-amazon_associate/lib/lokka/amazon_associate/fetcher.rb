@@ -31,12 +31,11 @@ module Lokka
       end
 
       def wirite_or_touch_cache
-        if item = fetch
-          File.open(@path, "w") {|f|
-            f.print Hash.from_xml(item.doc.to_xml).to_json
-            sleep 2
-          }
-        else
+        begin
+          sleep 1
+          item = fetch
+          File.open(@path, "w") {|f| f.print Hash.from_xml(item.doc.to_xml).to_json }
+        rescue
           FileUtils.touch @path
         end
       end
