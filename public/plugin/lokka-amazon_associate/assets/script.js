@@ -2,9 +2,12 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   var bodies = document.querySelectorAll('div.body');
+  var regexp = /<!--\s(?:ISBN|ASIN)=([0-9A-Z]+?)\s-->/g;
   bodies.forEach(function(body, index) {
-    var regexp = /<!--\s(?:ISBN|ASIN)=([0-9A-Z]+?)\s-->/g;
-    var matches = body.innerHTML.match(regexp)
+    var matches = body.innerHTML.match(regexp);
+    if (typeof matches === 'undefined' || matches === null) {
+      return;
+    }
     matches.forEach(function(tag, index) {
       var itemId = tag.replace(regexp, function() { return RegExp.$1 });
       var url = '/amazon/' + itemId + '.json';
@@ -31,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
       promise.then(function(result) {
         var replaceRegexp = new RegExp('<!--\\s(ISBN|ASIN)=' + itemId + '\\s-->');
         body.innerHTML = body.innerHTML.replace(replaceRegexp, result);
-        return true;
+      }).catch(function(error) {
+        console.log(error);
       });
       return promise;
     });
@@ -46,38 +50,39 @@ var Formatter = (function() {
   Formatter.prototype.formatItem = function() {
     var json = this.json;
     var item, attr, title, link, image, price, author, manufacturer, str;
-    var errors = json["ItemLookupResponse"]["Items"]["Request"]["Errors"];
-    if (typeof errors !== "undefined" && errors !== null) {
-      return errors;
+    var errors = json['ItemLookupResponse']['Items']['Request']['Errors'];
+    if (typeof errors !== 'undefined' && errors !== null) {
+      console.error(errors);
+      return;
     }
-    item = json["ItemLookupResponse"]["Items"]["Item"];
-    attr = item["ItemAttributes"];
-    title = attr["Title"];
-    link  = item["DetailPageURL"];
-    image = item["MediumImage"]["URL"].replace('http://ecx.images-amazon', 'https://images-na.ssl-images-amazon');
+    item = json['ItemLookupResponse']['Items']['Item'];
+    attr = item['ItemAttributes'];
+    title = attr['Title'];
+    link  = item['DetailPageURL'];
+    image = item['MediumImage']['URL'].replace('http://ecx.images-amazon', 'https://images-na.ssl-images-amazon');
     try {
-      price = item["OfferSummary"]["LowestNewPrice"]["FormattedPrice"];
+      price = item['OfferSummary']['LowestNewPrice']['FormattedPrice'];
     }
     catch(e) {
-      price = "-";
+      price = '-';
     }
 
     var authors = [];
-    if (typeof attr["Creator"] !== "undefined" && attr["Creator"] !== null)
-      authors << this.formatAuthors(attr["Creator"]);
-    if (typeof attr["Author"] !== "undefined" && attr["Author"] !== null)
-      authors << this.formatAuthors(attr["Author"]);
-    if (typeof attr["Director"] !== "undefined" && attr["Director"] !== null)
-      authors << this.formatAuthors(attr["Director"]);
-    if (typeof attr["Actor"] !== "undefined" && attr["Actor"] !== null)
-      authors << this.formatAuthors(attr["Actor"]);
-    if (typeof attr["Artist"] !== "undefined" && attr["Artist"] !== null)
-      authors << this.formatAuthors(attr["Artist"]);
+    if (typeof attr['Creator'] !== 'undefined' && attr['Creator'] !== null)
+      authors << this.formatAuthors(attr['Creator']);
+    if (typeof attr['Author'] !== 'undefined' && attr['Author'] !== null)
+      authors << this.formatAuthors(attr['Author']);
+    if (typeof attr['Director'] !== 'undefined' && attr['Director'] !== null)
+      authors << this.formatAuthors(attr['Director']);
+    if (typeof attr['Actor'] !== 'undefined' && attr['Actor'] !== null)
+      authors << this.formatAuthors(attr['Actor']);
+    if (typeof attr['Artist'] !== 'undefined' && attr['Artist'] !== null)
+      authors << this.formatAuthors(attr['Artist']);
 
-    if (typeof authors !== "undefined" && authors !== null) {
-      author = authors.join(", ");
+    if (typeof authors !== 'undefined' && authors !== null) {
+      author = authors.join(', ');
     }
-    manufacturer = attr["Manufacturer"];
+    manufacturer = attr['Manufacturer'];
 
     str = '<div class="amazon">' +
             '<div class="amazon-image">' +
