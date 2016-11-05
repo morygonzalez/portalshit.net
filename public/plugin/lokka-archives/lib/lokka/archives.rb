@@ -39,19 +39,6 @@ module Lokka
         @bread_crumbs << {:name => year, :link => "/archives/#{year}"}
         haml :"plugin/lokka-archives/views/index", :layout => :"theme/#{@theme.name}/layout"
       end
-
-      app.before do
-        assets_path = "/plugin/lokka-archives/assets"
-        content_for :header do
-          <<-EOS.strip_heredoc
-            <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.2/react-dom.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.js"></script>
-            <script type="text/babel" src="#{assets_path}/script.js"></script>
-          EOS
-        end
-      end
     end
   end
 

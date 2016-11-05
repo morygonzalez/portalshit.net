@@ -6,7 +6,7 @@
       - if post.category
         == | @#{link_to post.category.title, "/category/#{post.category.slug}/"}
   .body
-    ~ associate_link post.body
+    ~ post.body
   .footer
     = post.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}

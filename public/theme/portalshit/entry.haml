@@ -15,7 +15,7 @@
         == | @#{link_to @entry.category.title, "/category/#{@entry.category.slug}/"}
 
   .body
-    ~ associate_link @entry.body
+    ~ @entry.body
 
   .footer
     = @entry.tags_to_html
