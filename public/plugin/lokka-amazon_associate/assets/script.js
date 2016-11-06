@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             reject(request.response);
           } else {
             // 取得成功
-            var response = JSON.parse(request.response);
-            var formatter = new Formatter(response);
+            var formatter = new Formatter(request.response);
             var result = formatter.formatItem();
             resolve(result);
           }
