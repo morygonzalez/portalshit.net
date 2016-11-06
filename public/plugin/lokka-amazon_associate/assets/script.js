@@ -89,16 +89,18 @@ var Formatter = (function() {
     manufacturer = attr['Manufacturer'];
 
     str = '<div class="amazon-image">' +
-            '<a href="' + link + '"><img src="' + image + '" alt="' + title + '" /></a>' +
-          '</div>' +
-          '<div class="amazon-content">' +
-            '<ul>' +
-              '<li><a href="' + link + '">' + title + '</a></li>' +
-              '<li>' + author + '</li>' +
-              '<li>' + manufacturer + '</li>' +
-              '<li>' + price + '</li>' +
-            '</ul>' +
-          '</div>';
+      '<a href="' + link + '"><img src="' + image + '" alt="' + title + '" /></a>' +
+      '</div>' +
+      '<div class="amazon-content">' +
+      '<ul>' +
+      '<li><a href="' + link + '">' + title + '</a></li>';
+    if (author !== '') {
+      str += '<li>' + author + '</li>';
+    }
+    str += '<li>' + manufacturer + '</li>' +
+      '<li>' + price + '</li>' +
+      '</ul>' +
+      '</div>';
     return str;
   };
 
