@@ -1,19 +1,20 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function() {
-  var bodies = document.querySelectorAll('div.body');
-  var regexp = /<!--\s(?:ISBN|ASIN)=([0-9A-Z]+?)\s-->/g;
+  const regexp = /(?:ISBN|ASIN)=([0-9A-Z]+)/g;
+  const COMMENT_NODE = 8;
+  let bodies = document.querySelectorAll('div.body');
   bodies.forEach(function(body, index) {
-    var matches = body.innerHTML.match(regexp);
-    if (typeof matches === 'undefined' || matches === null) {
-      return;
-    }
-    matches.forEach(function(tag, index) {
-      var itemId = tag.replace(regexp, function() { return RegExp.$1 });
-      var url = '/amazon/' + itemId + '.json';
-      var request = new XMLHttpRequest();
+    body.childNodes.forEach(function(node, index) {
+      if (node.nodeType !== COMMENT_NODE)
+        return;
+      if (!node.textContent.match(regexp))
+        return;
+      let itemId = RegExp.$1;
+      let url = '/amazon/' + itemId + '.json';
+      let request = new XMLHttpRequest();
       request.responseType = 'json';
-      var promise = new Promise(function(resolve, reject) {
+      let promise = new Promise(function(resolve, reject) {
         request.open('GET', url);
         request.onreadystatechange = function() {
           if (request.readyState != 4) {
@@ -23,16 +24,20 @@ document.addEventListener('DOMContentLoaded', function() {
             reject(request.response);
           } else {
             // 取得成功
-            var formatter = new Formatter(request.response);
-            var result = formatter.formatItem();
+            let formatter = new Formatter(request.response);
+            let result = formatter.formatItem();
             resolve(result);
           }
         };
         request.send();
       });
       promise.then(function(result) {
-        var replaceRegexp = new RegExp('<!--\\s(ISBN|ASIN)=' + itemId + '\\s-->');
-        body.innerHTML = body.innerHTML.replace(replaceRegexp, result);
+        let previous = node.previousSibling;
+        let parent = node.parentNode;
+        let d = document.createElement('div');
+        d.className = 'amazon';
+        d.innerHTML = result;
+        parent.insertBefore(d, previous.nextSibling);
       }).catch(function(error) {
         console.log(error);
       });
@@ -47,9 +52,9 @@ var Formatter = (function() {
   }
 
   Formatter.prototype.formatItem = function() {
-    var json = this.json;
-    var item, attr, title, link, image, price, author, manufacturer, str;
-    var errors = json['ItemLookupResponse']['Items']['Request']['Errors'];
+    let json = this.json;
+    let item, attr, title, link, image, price, author, manufacturer, str;
+    let errors = json['ItemLookupResponse']['Items']['Request']['Errors'];
     if (typeof errors !== 'undefined' && errors !== null) {
       console.error(errors);
       return;
@@ -66,7 +71,7 @@ var Formatter = (function() {
       price = '-';
     }
 
-    var authors = [];
+    let authors = [];
     if (typeof attr['Creator'] !== 'undefined' && attr['Creator'] !== null)
       authors .push(this.formatAuthors(attr['Creator']));
     if (typeof attr['Author'] !== 'undefined' && attr['Author'] !== null)
@@ -83,25 +88,23 @@ var Formatter = (function() {
     }
     manufacturer = attr['Manufacturer'];
 
-    str = '<div class="amazon">' +
-            '<div class="amazon-image">' +
-              '<a href="' + link + '"><img src="' + image + '" alt="' + title + '" /></a>' +
-            '</div>' +
-            '<div class="amazon-content">' +
-              '<ul>' +
-                '<li><a href="' + link + '">' + title + '</a></li>' +
-                '<li>' + author + '</li>' +
-                '<li>' + manufacturer + '</li>' +
-                '<li>' + price + '</li>' +
-              '</ul>' +
-            '</div>' +
+    str = '<div class="amazon-image">' +
+            '<a href="' + link + '"><img src="' + image + '" alt="' + title + '" /></a>' +
+          '</div>' +
+          '<div class="amazon-content">' +
+            '<ul>' +
+              '<li><a href="' + link + '">' + title + '</a></li>' +
+              '<li>' + author + '</li>' +
+              '<li>' + manufacturer + '</li>' +
+              '<li>' + price + '</li>' +
+            '</ul>' +
           '</div>';
     return str;
   };
 
   Formatter.prototype.formatAuthors = function(authors) {
     if (typeof authors === Array && authors.length > 1) {
-      var _authors = [];
+      let _authors = [];
       authors.forEach(function(item, index) {
         _authors.push(item)
       });
