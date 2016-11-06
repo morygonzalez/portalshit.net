@@ -12,7 +12,7 @@ module Lokka
         item = AmazonAssociate::Fetcher.new(item_id)
 
         content_type :json
-        item.body.to_json
+        item.body
       end
 
       app.get '/admin/plugins/amazon_associate' do
