@@ -69,15 +69,15 @@ var Formatter = (function() {
 
     var authors = [];
     if (typeof attr['Creator'] !== 'undefined' && attr['Creator'] !== null)
-      authors << this.formatAuthors(attr['Creator']);
+      authors .push(this.formatAuthors(attr['Creator']));
     if (typeof attr['Author'] !== 'undefined' && attr['Author'] !== null)
-      authors << this.formatAuthors(attr['Author']);
+      authors .push(this.formatAuthors(attr['Author']));
     if (typeof attr['Director'] !== 'undefined' && attr['Director'] !== null)
-      authors << this.formatAuthors(attr['Director']);
+      authors .push(this.formatAuthors(attr['Director']));
     if (typeof attr['Actor'] !== 'undefined' && attr['Actor'] !== null)
-      authors << this.formatAuthors(attr['Actor']);
+      authors .push(this.formatAuthors(attr['Actor']));
     if (typeof attr['Artist'] !== 'undefined' && attr['Artist'] !== null)
-      authors << this.formatAuthors(attr['Artist']);
+      authors .push(this.formatAuthors(attr['Artist']));
 
     if (typeof authors !== 'undefined' && authors !== null) {
       author = authors.join(', ');
