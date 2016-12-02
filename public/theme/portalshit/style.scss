@@ -1,7 +1,7 @@
 @charset "utf-8";
-@import "monokai";
-@import "mixin";
-@import "variables";
+@import "styles/monokai";
+@import "styles/mixin";
+@import "styles/variables";
 
 body {
   margin: 0;
@@ -454,6 +454,26 @@ table {
             margin-bottom:  20px;
           }
         }
+
+        .iframe-container {
+          position: relative;
+          width: 100%;
+
+          &.google-map {
+            padding-top: 75%;
+          }
+          &.slideshare {
+            padding-top: 84%;
+          }
+
+          iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+          }
+        }
       }
 
       .footer {
@@ -770,4 +790,4 @@ h4.comment {
   }
 }
 
-@import "smart";
+@import "styles/smart";
