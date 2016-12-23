@@ -17,9 +17,9 @@
         a {
           padding: 2px 0;
         }
-      }
-      #search_form {
-        display: none;
+        &.archives {
+          display: none;
+        }
       }
     }
   }
