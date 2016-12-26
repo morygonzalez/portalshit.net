@@ -143,9 +143,10 @@ GEM
     fssm (0.2.10)
     haml (4.0.7)
       tilt
-    http_router (0.11.2)
+    htmlentities (4.3.4)
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
+    http_router (0.11.2)
     httparty (0.14.0)
       multi_xml (>= 0.5.2)
     i18n (0.6.11)
@@ -260,17 +261,25 @@ GEM
       ripl-multi_line (>= 0.2.4)
       ripl-rack (>= 0.2.0)
       sinatra (>= 1.2.1)
+    twitter-text (1.14.0)
+      unf (~> 0.1.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2)
     unicorn (5.1.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     url_mount (0.2.1)
       rack
     uuidtools (2.1.5)
-    wikicloth (0.7.1)
+    wikicloth (0.8.3)
       builder
       expression_parser
     yajl-ruby (1.2.1)
     yard (0.8.7.6)
+      htmlentities
+      nokogiri
+      twitter-text
     yard-sinatra (1.0.0)
       yard (~> 0.7)
 
@@ -346,8 +355,8 @@ DEPENDENCIES
   tilt (~> 1.4.1)
   tux
   unicorn
-  wikicloth (= 0.7.1)
+  wikicloth (= 0.8.3)
   yard-sinatra (= 1.0.0)
 
 BUNDLED WITH
-   1.12.5
+   1.13.6
