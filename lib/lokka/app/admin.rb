@@ -47,6 +47,14 @@ module Lokka
     put   ('/admin/pages/:id')      { |id| put_admin_entry(Page, id) }
     delete('/admin/pages/:id')      { |id| delete_admin_entry(Page, id) }
 
+    # attachments
+    post '/admin/attachments' do
+      result = handle_file_upload(params)
+      content_type :json
+      status result[:status]
+      result.to_json
+    end
+
     # comment
     get '/admin/comments' do
       @comments = Comment.all(:order => :created_at.desc).
