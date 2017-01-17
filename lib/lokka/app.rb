@@ -37,7 +37,6 @@ module Lokka
       use RequestStore::Middleware
       register Sinatra::Flash
       Lokka.load_plugin(self)
-      DataMapper::Logger.new('log/datamapper.log', :debug)
       Lokka::Database.new.connect
     end
 
@@ -67,6 +66,7 @@ module Lokka
       require 'better_errors'
       use BetterErrors::Middleware
       BetterErrors.application_root = __dir__
+      DataMapper::Logger.new('log/datamapper.log', :debug)
     end
 
     require 'lokka/app/admin.rb'
