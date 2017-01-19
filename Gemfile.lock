@@ -34,7 +34,6 @@ GEM
     amazon-ecs (2.5.0)
       nokogiri (~> 1.4)
       ruby-hmac (~> 0.3)
-    args_parser (0.2.0)
     awesome_print (1.7.0)
     aws-sdk (2.6.49)
       aws-sdk-resources (= 2.6.49)
@@ -155,13 +154,7 @@ GEM
     http_router (0.11.2)
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
-    httparty (0.14.0)
-      multi_xml (>= 0.5.2)
     i18n (0.6.11)
-    im-kayac (0.1.2)
-      args_parser
-      httparty
-      json
     jmespath (1.3.1)
     json (1.8.6)
     json_pure (1.8.6)
@@ -172,7 +165,6 @@ GEM
     mini_portile2 (2.1.0)
     msgpack (1.0.2)
     multi_json (1.12.1)
-    multi_xml (0.6.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.0.1)
@@ -337,7 +329,6 @@ DEPENDENCIES
   fastimage
   haml (~> 4.0.4)
   i18n (~> 0.6.0)
-  im-kayac
   json
   kramdown
   newrelic_rpm

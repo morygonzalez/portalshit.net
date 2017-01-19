@@ -1,8 +1,0 @@
-en:
-  comment_notifier:
-    notify_by: "Notify By"
-    notify_to: "Notify To"
-    password: "im.kayac.com Password"
-    signature: "im.kayac.com Signature"
-    configuration_was_successfully_updated: "Comment Notifier configuration was successfully updated!"
-    invalid_value: "Invalid Value!"
