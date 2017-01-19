@@ -8,8 +8,8 @@ set :application, 'portalshit'
 set :repo_url, 'https://github.com/morygonzalez/portalshit.net.git'
 
 # Default branch is :master
-ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
-# set :branch, 'portalshit'
+# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
+set :branch, 'portalshit'
 
 # Default deploy_to directory is /var/www/my_app
 # set :deploy_to, '/var/www/my_app'

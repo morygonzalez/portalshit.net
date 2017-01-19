@@ -32,3 +32,9 @@ build:
         - script:
             name: rspec
             code: RACK_ENV=test bundle exec rake spec
+
+deploy:
+    steps:
+        - script:
+            name: Deploy
+            code: bundle exec cap production deploy
