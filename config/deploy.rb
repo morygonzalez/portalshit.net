@@ -29,7 +29,7 @@ set :deploy_to, "/home/morygonzalez/sites/deploys/#{fetch(:application)}"
 
 # Default value for :linked_files is []
 # set :linked_files, %w{config/database.yml}
-set :linked_files, %w{config/newrelic.yml}
+set :linked_files, %w{config/newrelic.yml database.yml}
 
 # Default value for linked_dirs is []
 # set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
@@ -45,7 +45,6 @@ set :db_host, 'localhost'
 set :bundle_without, %w{development test postgresql sqlite}.join(' ')
 
 namespace :deploy do
-
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
@@ -65,7 +64,6 @@ namespace :deploy do
       # end
     end
   end
-
 end
 
 namespace :unicorn do
@@ -75,12 +73,11 @@ namespace :unicorn do
   end
 
   def start_unicorn
-    ask :db_user, 'MySQL user'
-    ask :db_password, 'MySQL password'
-    set :db_path, "mysql://#{fetch(:db_user)}:#{fetch(:db_password)}@#{fetch(:db_host)}/portalshit"
+    # ask :db_user, 'MySQL user'
+    # ask :db_password, 'MySQL password'
+    # set :db_path, "mysql://#{fetch(:db_user)}:#{fetch(:db_password)}@#{fetch(:db_host)}/portalshit"
     within current_path do
       execute :env, "NEWRELIC_ENABLE=#{fetch(:stage).to_s == 'production' ? true : false}",
-              :env, "DATABASE_URL=#{fetch(:db_path)}",
               :bundle, :exec, :unicorn, "-c #{fetch(:unicorn_config)} -E #{fetch(:stage)} -D"
     end
   end
