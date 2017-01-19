@@ -25,7 +25,7 @@ gem 'sass', '~> 3.2.12'
 gem 'tilt', '~> 1.4.1'
 gem 'compass', "~> 0.12.2"
 gem 'slim', '~> 3.0.7'
-gem 'rake'
+gem 'rake', '~> 11.0'
 gem 'erubis', '~> 2.6.6'
 gem 'activesupport', '~> 3.2.22'
 gem 'nokogiri'
