@@ -35,6 +35,8 @@ build:
 
 deploy:
     steps:
+        - bundle-install:
+            without: postgresql
         - script:
             name: Deploy
             code: bundle exec cap production deploy
