@@ -196,7 +196,7 @@ GEM
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
-    rack (1.6.4)
+    rack (1.6.5)
     rack-flash (0.1.2)
       rack
     rack-protection (1.5.3)
