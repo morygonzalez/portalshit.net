@@ -37,3 +37,5 @@ server 'portalshit.net', user: 'morygonzalez', roles: %w{web app}
 #     # password: 'please use keys'
 #   }
 # setting per server overrides global ssh_options
+
+set :newrelic_enable, true

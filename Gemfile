@@ -21,9 +21,9 @@ gem 'data_objects',     '0.10.17'
 gem 'request_store'
 gem 'builder', '3.0.0'
 gem 'haml', '~> 4.0.4'
-gem 'sass', '~> 3.2.12'
+gem 'sass'
 gem 'tilt', '~> 1.4.1'
-gem 'compass', "~> 0.12.2"
+gem 'compass'
 gem 'slim', '~> 3.0.7'
 gem 'rake', '~> 11.0'
 gem 'erubis', '~> 2.6.6'
@@ -38,7 +38,7 @@ gem 'wikicloth', '0.8.3'
 gem 'redcarpet'
 gem 'yard-sinatra', '1.0.0'
 gem 'backports', '2.3.0'
-gem 'unicorn'
+gem 'puma'
 gem 'pry'
 gem 'newrelic_rpm'
 gem 'sinatra-cache', git: 'git://github.com/morygonzalez/sinatra-cache.git'
@@ -57,6 +57,7 @@ group :development do
   gem 'capistrano-rbenv', require: false
   gem 'capistrano-bundler', require: false
   gem 'capistrano-rbenv-install', require: false
+  gem 'capistrano3-puma', require: false
   gem 'sshkit', require: false
   gem 'rbtrace'
   gem 'better_errors'
