@@ -12,9 +12,20 @@ threads 0,16
 
 bind 'unix:///home/morygonzalez/sites/deploys/portalshit/shared/tmp/sockets/puma.sock'
 
-workers 0
+workers 2
 
-prune_bundler
+# prune_bundler
+
+before_fork do
+  require 'puma_worker_killer'
+
+  PumaWorkerKiller.config do |config|
+    config.ram           = 512 # mb
+    config.frequency     = 5   # seconds
+    config.percent_usage = 0.80
+    config.enable_rolling_restart
+  end
+end
 
 on_restart do
   puts 'Refreshing Gemfile'
