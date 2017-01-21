@@ -22,6 +22,8 @@ require 'capistrano/bundler'
 # require 'capistrano/rails/assets'
 # require 'capistrano/rails/migrations'
 require 'capistrano/puma'
+require "capistrano/scm/git"
+install_plugin Capistrano::SCM::Git
 
 set :rbenv_type, :user
 set :rbenv_ruby, '2.3.3'

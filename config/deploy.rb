@@ -9,7 +9,8 @@ set :repo_url, 'https://github.com/morygonzalez/portalshit.net.git'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
-set :branch, 'portalshit'
+set :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
+# set :branch, 'portalshit'
 
 # Default deploy_to directory is /var/www/my_app
 # set :deploy_to, '/var/www/my_app'
@@ -50,7 +51,6 @@ namespace :deploy do
     on roles(:app), in: :sequence, wait: 5 do
       # Your restart mechanism here, for example:
       # execute :touch, release_path.join('tmp/restart.txt')
-      invoke 'unicorn:restart'
     end
   end
 
@@ -62,67 +62,6 @@ namespace :deploy do
       # within release_path do
       #   execute :rake, 'cache:clear'
       # end
-    end
-  end
-end
-
-namespace :unicorn do
-  task :environment do
-    set :unicorn_pid, "#{shared_path}/tmp/pids/unicorn.pid"
-    set :unicorn_config, "#{current_path}/config/unicorn.rb"
-  end
-
-  def start_unicorn
-    # ask :db_user, 'MySQL user'
-    # ask :db_password, 'MySQL password'
-    # set :db_path, "mysql://#{fetch(:db_user)}:#{fetch(:db_password)}@#{fetch(:db_host)}/portalshit"
-    within current_path do
-      execute :env, "NEWRELIC_ENABLE=#{fetch(:newrelic_enable)}",
-              :bundle, :exec, :unicorn, "-c #{fetch(:unicorn_config)} -E #{fetch(:stage)} -D"
-    end
-  end
-
-  def stop_unicorn
-    execute :kill, "-s QUIT $(< #{fetch(:unicorn_pid)})"
-  end
-
-  def reload_unicorn
-    execute :kill, "-s USR2 $(< #{fetch(:unicorn_pid)})"
-  end
-
-  def force_stop_unicorn
-    execute :kill, "$(< #{fetch(:unicorn_pid)})"
-  end
-
-  desc "Start unicorn server"
-  task :start => :environment do
-    on roles(:app) do
-      start_unicorn
-    end
-  end
-
-  desc "Stop unicorn server gracefully"
-  task :stop => :environment do
-    on roles(:app) do
-      stop_unicorn
-    end
-  end
-
-  desc "Restart unicorn server gracefully"
-  task :restart => :environment do
-    on roles(:app) do
-      if test("[ -f #{fetch(:unicorn_pid)} ]")
-        reload_unicorn
-      else
-        start_unicorn
-      end
-    end
-  end
-
-  desc "Stop unicorn server immediately"
-  task :force_stop => :environment do
-    on roles(:app) do
-      force_stop_unicorn
     end
   end
 end
