@@ -1,5 +1,5 @@
 # config valid only for Capistrano 3.1
-lock '3.5.0'
+lock '3.7.1'
 
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} /usr/bin/rbenv exec"
 set :default_env, { 'RUBYOPT' => '--encoding=UTF-8' }
@@ -77,7 +77,7 @@ namespace :unicorn do
     # ask :db_password, 'MySQL password'
     # set :db_path, "mysql://#{fetch(:db_user)}:#{fetch(:db_password)}@#{fetch(:db_host)}/portalshit"
     within current_path do
-      execute :env, "NEWRELIC_ENABLE=#{fetch(:stage).to_s == 'production' ? true : false}",
+      execute :env, "NEWRELIC_ENABLE=#{fetch(:newrelic_enable)}",
               :bundle, :exec, :unicorn, "-c #{fetch(:unicorn_config)} -E #{fetch(:stage)} -D"
     end
   end
