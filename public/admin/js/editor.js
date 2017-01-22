@@ -79,6 +79,7 @@ $(function() {
         $(editor).removeClass('is-dragover');
       });
       editor.addEventListener('drop', function(e) {
+        var textarea = editor.querySelector('textarea');
         var ajaxData = new FormData();
         var droppedFiles = e.dataTransfer.files;
         if (droppedFiles) {
@@ -108,11 +109,14 @@ $(function() {
             });
             promise.then(function(response) {
               console.log(response.message);
-              var textarea = editor.querySelector('textarea');
-              var delimiter = '';
-              if (textarea.value.length > 0)
-                delimiter = "\n\n";
-              textarea.value = textarea.value + delimiter + '![' + file.name + '](' + response.url + ')';
+              var imageFormat = '![' + file.name + '](' + response.url + ')';
+              if (textarea.selectionStart > 0) {
+                textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
+                  "\n\n" + imageFormat + "\n\n" +
+                  textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
+              } else {
+                textarea.value = imageFormat + textarea.value;
+              }
             }).catch(function(error) {
               console.error(error);
             });
