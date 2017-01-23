@@ -117,12 +117,14 @@ $(function() {
               editor.classList.remove('is-uploading');
               textarea.removeAttribute('disabled');
               var imageFormat = '![' + file.name + '](' + response.url + ')';
-              if (textarea.selectionStart > 0) {
+              if (textarea.value.length === 0) {
+                textarea.value = imageFormat;
+              } else if (textarea.selectionStart > 0) {
                 textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
                   "\n\n" + imageFormat + "\n\n" +
                   textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
-              } else {
-                textarea.value = imageFormat + textarea.value;
+              } else (textarea.selectionStart) {
+                textarea.value = imageFormat + "\n\n" + textarea.value.trim();
               }
             }).catch(function(error) {
               console.error(error);
