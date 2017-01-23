@@ -64,19 +64,23 @@ $(function() {
 
     if (isAdvancedUpload) {
       var eventsToIgnore      = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
-      var eventsToAddClass    = ['dragover', 'dragenter'];
+      var eventsToAddClass    = ['drag', 'dragstart', 'dragover', 'dragenter'];
       var eventsToRemoveClass = ['dragleave', 'dragend', 'drop'];
       eventsToIgnore.forEach(function(event) {
         editor.addEventListener(event, function(e) {
           e.preventDefault();
           e.stopPropagation();
-        })
+        });
       });
       eventsToAddClass.forEach(function(event) {
-        $(editor).addClass('is-dragover');
+        editor.addEventListener(event, function(e) {
+          editor.classList.add('is-dragover');
+        });
       });
       eventsToRemoveClass.forEach(function(event) {
-        $(editor).removeClass('is-dragover');
+        editor.addEventListener(event, function(e) {
+          editor.classList.remove('is-dragover');
+        });
       });
       editor.addEventListener('drop', function(e) {
         var textarea = editor.querySelector('textarea');
@@ -92,16 +96,17 @@ $(function() {
               xhr.onreadystatechange = function() {
                 if (xhr.readyState != 4) {
                   // リクエスト中
-                  $(editor).addClass('is-uploading');
+                  editor.classList.add('is-uploading');
+                  textarea.setAttribute('disabled', true);
                 } else if (xhr.status != 201) {
                   // 失敗
                   response = JSON.parse(xhr.response);
-                  $(editor).addClass('is-error');
+                  editor.classList.add('is-error');
                   reject(response);
                 } else {
                   // 取得成功
                   response = JSON.parse(xhr.response);
-                  $(editor).addClass('is-success');
+                  editor.classList.add('is-success');
                   resolve(response);
                 }
               }
@@ -109,6 +114,8 @@ $(function() {
             });
             promise.then(function(response) {
               console.log(response.message);
+              editor.classList.remove('is-uploading');
+              textarea.removeAttribute('disabled');
               var imageFormat = '![' + file.name + '](' + response.url + ')';
               if (textarea.selectionStart > 0) {
                 textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
