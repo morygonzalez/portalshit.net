@@ -3,7 +3,7 @@
   %form{ action: url(:'/admin/file_upload'), method: :post, :'data-method' => :put }
     %p= t('file_upload.description')
     %p
-      %label= t('file_upload.aws_acesss_key_id')
+      %label= t('file_upload.aws_access_key_id')
       %input{ name: :aws_acesss_key_id, type: :text, value: @aws_acesss_key_id }
     %p
       %label= t('file_upload.aws_secret_access_key')
