@@ -406,13 +406,13 @@ module Lokka
         optional_params.each do |key|
           Option.send("#{key}=", params[key])
         end
-        flash[:notice] = t('was_successfully_updated')
+        flash[:notice] = t('file_upload.successfully_updated')
+        redirect to('/admin/file_upload')
       else
         flash[:error] = (["<ul>"] + errors.map{|e| "<li>#{e}</li>" } + ["</ul>"]).join("\n")
-        flash[:file_upload_format] = format
+        status 400
+        haml :'admin/file_upload', layout: :'admin/layout'
       end
-
-      redirect to('/admin/file_upload')
     end
 
     # field names

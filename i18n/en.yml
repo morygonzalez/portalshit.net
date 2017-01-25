@@ -229,6 +229,7 @@ en:
     s3_region: S3 Region
     s3_bucket_name: S3 Bucket Name
     s3_domain_name: S3 Domain Name
+    successfully_updated: Succssfully Updated
   what_about_lokka: "<p>Lokka is a blogging/CMS tool for the personal cloud.</p><p>Users who are accustomed to WordPress or other existing systems like it will find it easy to manage.<br />It's easy on theme designers, and provides a clean plugin API for Ruby developers.</p>"
   home: Home
   getting_started: Getting Started
