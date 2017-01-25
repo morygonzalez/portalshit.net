@@ -380,6 +380,41 @@ module Lokka
       redirect to('/admin/permalink')
     end
 
+    # file upload
+    get '/admin/file_upload' do
+      @aws_access_key_id     = Option.aws_access_key_id
+      @aws_secret_access_key = Option.aws_secret_access_key
+      @s3_region             = Option.s3_region
+      @s3_bucket_name        = Option.s3_bucket_name
+      @s3_domain_name        = Option.s3_domain_name
+      haml :'admin/file_upload', layout: :'admin/layout'
+    end
+
+    put '/admin/file_upload' do
+      errors = []
+
+      required_params = %i|aws_access_key_id aws_secret_access_key s3_region s3_bucket_name|
+      optional_params = %i|s3_domain_name|
+      required_params.each do |key|
+        errors << t("file_upload.error.no_#{key}") if params[key].blank?
+      end
+
+      if errors.empty?
+        required_params.each do |key|
+          Option.send("#{key}=", params[key])
+        end
+        optional_params.each do |key|
+          Option.send("#{key}=", params[key])
+        end
+        flash[:notice] = t('was_successfully_updated')
+      else
+        flash[:error] = (["<ul>"] + errors.map{|e| "<li>#{e}</li>" } + ["</ul>"]).join("\n")
+        flash[:file_upload_format] = format
+      end
+
+      redirect to('/admin/file_upload')
+    end
+
     # field names
     get '/admin/field_names' do
       @field_names = FieldName.all.

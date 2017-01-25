@@ -383,11 +383,12 @@ module Lokka
     end
 
     def handle_file_upload(params)
-      credentials = Aws::Credentials.new(Option.access_key_id, Option.secret_key)
-      s3 = Aws::S3::Resource.new(region: 'ap-northeast-1', credentials: credentials)
-      bucket = s3.bucket('resources.portalshit.net')
-
       begin
+        credentials = Aws::Credentials.new(Option.aws_access_key_id, Option.aws_secret_access_key)
+        s3 = Aws::S3::Resource.new(region: Option.s3_region, credentials: credentials)
+        bucket = s3.bucket(Option.s3_bucket_name)
+        domain_name = Option.s3_domain_name || "#{Option.s3_bucket_name}"
+
         if params[:file]
           tempfile = params[:file][:tempfile]
           digest = Digest::MD5.file(tempfile.path).to_s
@@ -395,8 +396,8 @@ module Lokka
           filename = digest + extname
           if bucket.object(filename).upload_file(tempfile.path)
             {
-              message: 'upload success',
-              url: "https://resources.portalshit.net/#{filename}",
+              message: 'File upload success',
+              url: "#{request.scheme}//#{domain_name}/#{filename}",
               status: 201
             }
           else

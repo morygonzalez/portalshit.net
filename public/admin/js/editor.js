@@ -54,15 +54,28 @@ $(function() {
 
   switchTextareaAndWysiwyg();
 
-  var isAdvancedUpload = function() {
+  var editor = document.querySelector('#editor');
+  fileUploader = new FileUploader(editor);
+  fileUploader.dragAndDropUpload();
+});
+
+var FileUploader = (function() {
+  function FileUploader(editor) {
+    this.editor = editor;
+    this.textarea = editor.querySelector('textarea');
+  }
+
+  FileUploader.prototype.isAdvancedUpload = function() {
     var div = document.createElement('div');
     return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-  }();
+  }
 
-  var dragAndDropUpload = function() {
-    var editor = document.querySelector('#editor');
+  FileUploader.prototype.dragAndDropUpload = function() {
+    var editor = this.editor;
+    var textarea = this.textarea;
+    var self = this;
 
-    if (isAdvancedUpload) {
+    if (this.isAdvancedUpload()) {
       var eventsToIgnore      = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
       var eventsToAddClass    = ['drag', 'dragstart', 'dragover', 'dragenter'];
       var eventsToRemoveClass = ['dragleave', 'dragend', 'drop'];
@@ -83,59 +96,88 @@ $(function() {
         });
       });
       editor.addEventListener('drop', function(e) {
-        var textarea = editor.querySelector('textarea');
-        var ajaxData = new FormData();
         var droppedFiles = e.dataTransfer.files;
         if (droppedFiles) {
           for (var file of droppedFiles) {
-            ajaxData.append('file', file);
-            var promise = new Promise(function(resolve, reject) {
-              var xhr = new XMLHttpRequest();
-              var response;
-              xhr.open('POST', '/admin/attachments');
-              xhr.onreadystatechange = function() {
-                if (xhr.readyState != 4) {
-                  // リクエスト中
-                  editor.classList.add('is-uploading');
-                  textarea.setAttribute('disabled', true);
-                } else if (xhr.status != 201) {
-                  // 失敗
-                  response = JSON.parse(xhr.response);
-                  editor.classList.add('is-error');
-                  reject(response);
-                } else {
-                  // 取得成功
-                  response = JSON.parse(xhr.response);
-                  editor.classList.add('is-success');
-                  resolve(response);
-                }
-              }
-              xhr.send(ajaxData);
-            });
-            promise.then(function(response) {
-              console.log(response.message);
-              editor.classList.remove('is-uploading');
-              textarea.removeAttribute('disabled');
-              var imageFormat = '![' + file.name + '](' + response.url + ')';
-              if (textarea.value.length === 0) {
-                textarea.value = imageFormat;
-              } else if (textarea.selectionStart > 0) {
-                textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
-                  "\n\n" + imageFormat + "\n\n" +
-                  textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
-              } else (textarea.selectionStart) {
-                textarea.value = imageFormat + "\n\n" + textarea.value.trim();
-              }
-            }).catch(function(error) {
-              console.error(error);
-            });
-            return promise;
+            self.upload(file);
           }
           droppedFiles = null;
         }
       });
     }
-  };
+  }
 
-  dragAndDropUpload();
-});
+  FileUploader.prototype.upload = function(file) {
+    var editor = this.editor;
+    var textarea = this.textarea;
+    var ajaxData = new FormData();
+    ajaxData.append('file', file);
+    var promise = new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      var response;
+      xhr.open('POST', '/admin/attachments');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) {
+          editor.classList.add('is-uploading');
+          textarea.setAttribute('disabled', true);
+        } else if (xhr.status != 201) {
+          response = JSON.parse(xhr.response);
+          editor.classList.add('is-error');
+          reject(response);
+        } else {
+          response = JSON.parse(xhr.response);
+          editor.classList.add('is-success');
+          resolve(response);
+        }
+      }
+      xhr.send(ajaxData);
+    });
+    promise.then(function(response) {
+      console.log(response.message);
+      editor.classList.remove('is-uploading');
+      textarea.removeAttribute('disabled');
+      var imageTag = this.detectImageTag(file, response.url);
+      this.insertImage(imageTag);
+    }).catch(function(response) {
+      textarea.removeAttribute('disabled');
+      console.error(response.message);
+    });
+    return promise;
+  }
+
+  FileUploader.prototype.insertImage = function(imageTag) {
+    var textarea = this.textarea;
+
+    if (textarea.value.length === 0) {
+      textarea.value = imageTag;
+    } else if (textarea.selectionStart > 0) {
+      textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
+        "\n\n" + imageTag + "\n\n" +
+        textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
+    } else {
+      textarea.value = imageTag + "\n\n" + textarea.value.trim();
+    }
+  }
+
+  FileUploader.prototype.detectImageTag = function(file, url) {
+    var imageTag;
+    var markup = document.querySelector('#post_markup option:selected').value;
+    switch (markup) {
+      case 'kramdown':
+      case 'redcarpet':
+        imageTag = '![' + file.name + '](' + url + ')';
+        break;
+      case 'redcloth':
+        imageTag = '!' + url + '!';
+        break;
+      case 'html':
+      case 'wikicloth':
+      default:
+        imageTag = '<img src="' + url + '" alt="' + file.name + '" />';
+        break;
+    }
+    return imageTag;
+  }
+
+  return FileUploader;
+})();
