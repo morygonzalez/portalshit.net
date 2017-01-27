@@ -409,7 +409,7 @@ module Lokka
         flash[:notice] = t('file_upload.successfully_updated')
         redirect to('/admin/file_upload')
       else
-        flash[:error] = (["<ul>"] + errors.map{|e| "<li>#{e}</li>" } + ["</ul>"]).join("\n")
+        flash.now[:error] = (["<ul>"] + errors.map{|e| "<li>#{e}</li>" } + ["</ul>"]).join("\n")
         status 400
         haml :'admin/file_upload', layout: :'admin/layout'
       end
