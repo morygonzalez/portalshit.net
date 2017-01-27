@@ -5,8 +5,7 @@ $(function() {
 
   var switchTextareaAndWysiwyg = (function() {
     var name = $('select[name$="[markup]"] option:selected').val();
-    name = name == '' ? 'kramdown' : name;
-    $('select[name$="[markup]"] option[value$="' + name + '"]').attr("selected", "selected");
+    name = name == '' ? 'html' : name
     var html;
     if (name == 'html') {
       // enable wysiwyg
@@ -68,7 +67,6 @@ var FileUploader = (function() {
 
   FileUploader.prototype.dragAndDropUpload = function() {
     var editor = this.editor;
-    var textarea = this.textarea;
     var self = this;
 
     if (this.isAdvancedUpload()) {
@@ -181,8 +179,8 @@ var FileUploader = (function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   var editor = document.querySelector('#editor');
-  if (typeof editor.length !== undefined) {
-    fileUploader = new FileUploader(editor);
+  if (typeof editor !== undefined) {
+    var fileUploader = new FileUploader(editor);
     fileUploader.dragAndDropUpload();
   }
 });
