@@ -397,7 +397,7 @@ module Lokka
           if bucket.object(filename).upload_file(tempfile.path)
             {
               message: 'File upload success',
-              url: "#{request.scheme}//#{domain_name}/#{filename}",
+              url: "#{request.scheme}://#{domain_name}/#{filename}",
               status: 201
             }
           else

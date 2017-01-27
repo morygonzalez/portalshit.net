@@ -53,10 +53,6 @@ $(function() {
   plainTextareaMode = true;
 
   switchTextareaAndWysiwyg();
-
-  var editor = document.querySelector('#editor');
-  fileUploader = new FileUploader(editor);
-  fileUploader.dragAndDropUpload();
 });
 
 var FileUploader = (function() {
@@ -111,6 +107,7 @@ var FileUploader = (function() {
     var editor = this.editor;
     var textarea = this.textarea;
     var ajaxData = new FormData();
+    var self = this;
     ajaxData.append('file', file);
     var promise = new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
@@ -136,8 +133,8 @@ var FileUploader = (function() {
       console.log(response.message);
       editor.classList.remove('is-uploading');
       textarea.removeAttribute('disabled');
-      var imageTag = this.detectImageTag(file, response.url);
-      this.insertImage(imageTag);
+      var imageTag = self.detectImageTag(file, response.url);
+      self.insertImage(imageTag);
     }).catch(function(response) {
       textarea.removeAttribute('disabled');
       console.error(response.message);
@@ -161,7 +158,7 @@ var FileUploader = (function() {
 
   FileUploader.prototype.detectImageTag = function(file, url) {
     var imageTag;
-    var markup = document.querySelector('#post_markup option:selected').value;
+    var markup = document.querySelector('#post_markup option:checked').value;
     switch (markup) {
       case 'kramdown':
       case 'redcarpet':
@@ -181,3 +178,11 @@ var FileUploader = (function() {
 
   return FileUploader;
 })();
+
+document.addEventListener('DOMContentLoaded', function() {
+  var editor = document.querySelector('#editor');
+  if (typeof editor.length !== undefined) {
+    fileUploader = new FileUploader(editor);
+    fileUploader.dragAndDropUpload();
+  }
+});
