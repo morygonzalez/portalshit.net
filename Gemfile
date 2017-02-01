@@ -45,6 +45,7 @@ gem 'newrelic_rpm'
 gem 'sinatra-cache', git: 'git://github.com/morygonzalez/sinatra-cache.git'
 gem 'coffee-script'
 gem 'aws-sdk'
+gem 'mimemagic'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
