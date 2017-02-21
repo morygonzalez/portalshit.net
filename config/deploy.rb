@@ -44,7 +44,6 @@ set :linked_dirs, %w{log tmp/pids tmp/sockets tmp/amazon vendor/bundle}
 
 set :puma_conf, File.join(current_path, 'config', 'puma.rb')
 
-set :db_host, 'localhost'
 set :bundle_without, %w{development test postgresql sqlite}.join(' ')
 
 namespace :deploy do
