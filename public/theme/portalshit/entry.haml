@@ -17,6 +17,15 @@
   .body
     ~ @entry.body
 
+  - if @entry.referrers.present?
+    .referrers
+      %h3 この記事を参照している記事
+      %ul
+        - @entry.referrers.each do |referrer|
+          %li
+            = link_to referrer.title, referrer.link
+            %span.created_at= l(referrer.created_at, format: '%Y年%m月%d日 (%a)')
+
   .footer
     = @entry.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{@entry.comments.size})", "#{@entry.link}#comment_form"}

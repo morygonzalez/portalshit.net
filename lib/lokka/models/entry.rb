@@ -124,6 +124,10 @@ class Entry
     desc.gsub(%r!<[^/]+/>!, " ").gsub(%r!</[^/]+>!, " ").gsub(/<[^>]+>/, "")
   end
 
+  def referrers
+    Entry.all(:body.like => "%#{self.link}%")
+  end
+
   class << self
     def _default_scope
       {:order => :created_at.desc}
