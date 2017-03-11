@@ -34,7 +34,7 @@ class Entry
       begin
         lexer     = Rouge::Lexer.find_fancy(language, code.text.rstrip)
         formatter = Rouge::Formatters::HTML.new
-        wrapped_formatter = Rouge::Formatters::HTMLPygments.new(formatter, "highlight #{lexer.tag}")
+        wrapped_formatter = Rouge::Formatters::HTMLPygments.new(formatter, lexer.tag)
         pre.replace(wrapped_formatter.format(lexer.lex(code.text.rstrip))) if code
       rescue
         next
