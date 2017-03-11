@@ -112,7 +112,7 @@ class Entry
       field.save
     else
       field_name = FieldName.first(:name => attribute)
-      field = Field.first(:entry_id => self.id, :field_name_id => field_name.id)
+      field = Field.first(:entry_id => self.id, :field_name_id => field_name.try(:id))
       field.try(:value)
     end
   end
@@ -122,10 +122,6 @@ class Entry
     desc = (src =~ %r!<p[^>]*>(.+?)</p>!i) ? $1 : src[0..50]
 
     desc.gsub(%r!<[^/]+/>!, " ").gsub(%r!</[^/]+>!, " ").gsub(/<[^>]+>/, "")
-  end
-
-  def referrers
-    Entry.all(:body.like => "%#{self.link}%")
   end
 
   class << self

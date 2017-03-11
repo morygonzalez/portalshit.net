@@ -17,11 +17,11 @@
   .body
     ~ @entry.body
 
-  - if @entry.referrers.present?
+  - if referrers.present?
     .referrers
       %h3 この記事を参照している記事
       %ul
-        - @entry.referrers.each do |referrer|
+        - referrers.each do |referrer|
           %li
             = link_to referrer.title, referrer.link
             %span.created_at= l(referrer.created_at, format: '%Y年%m月%d日 (%a)')
