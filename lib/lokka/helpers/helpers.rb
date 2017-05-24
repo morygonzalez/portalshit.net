@@ -387,7 +387,7 @@ module Lokka
         credentials = Aws::Credentials.new(Option.aws_access_key_id, Option.aws_secret_access_key)
         s3 = Aws::S3::Resource.new(region: Option.s3_region, credentials: credentials)
         bucket = s3.bucket(Option.s3_bucket_name)
-        domain_name = Option.s3_domain_name || "#{Option.s3_bucket_name}"
+        domain_name = Option.s3_domain_name.presence || "#{Option.s3_bucket_name}.s3-website-#{Option.s3_region}.amazonaws.com"
 
         if params[:file]
           tempfile = params[:file][:tempfile]

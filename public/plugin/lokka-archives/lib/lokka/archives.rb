@@ -15,6 +15,11 @@ module Lokka
         month_posts.to_json
       end
 
+      app.get '/archives/years.json' do
+        content_type :json
+        year_list.to_json
+      end
+
       app.get '/archives/?:year?.json' do |year|
         posts = Post.all(
           fields: [:id, :category_id, :slug, :title, :created_at],
