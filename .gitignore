@@ -30,3 +30,7 @@ plugin_old
 *.sql.gz
 /public/plugin/*/node_modules
 /config/newrelic.yml
+
+public/**/build/*.js
+public/**/dist/*.js
+npm-debug.log
