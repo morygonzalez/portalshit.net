@@ -19,7 +19,6 @@
     "gulp": "^3.9.1",
     "gulp-babili": "^0.1.2",
     "react-dom": "^15.0.2",
-    "react-loading-indicator": "^1.0.2",
     "react-router-dom": "^4.1.1"
   },
   "scripts": {
