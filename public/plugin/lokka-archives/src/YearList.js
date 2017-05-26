@@ -33,7 +33,7 @@ class YearList extends React.Component {
   }
 
   render() {
-    let yearList = this.state.data.map(function(year) {
+    let yearList = this.state.data.map((year) => {
       return (
         <li key={year}>
           <Link to={`/archives/${year}`}>{year}</Link>
