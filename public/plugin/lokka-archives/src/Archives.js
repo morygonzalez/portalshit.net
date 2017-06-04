@@ -9,36 +9,41 @@ class Archives extends React.Component {
     }
   }
 
-  loadArchivesFromServer(path) {
+  loadArchivesFromServer(year=null) {
     let xhr = new XMLHttpRequest()
-    let response
-    xhr.open('GET', path + ".json")
+    let response, data
+    let path = year === null ? '/archives.json' : `/archives/${year}.json`
+    xhr.open('GET', path)
     xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) {
         // still requesting
       } else if (xhr.status != 200) {
-        response = JSON.parse(xhr.response)
-        this.setState({ data: response })
+        data = JSON.parse(xhr.response)
+        this.setState({ data: data })
       } else {
-        response = JSON.parse(xhr.response)
-        this.setState({ data: response })
+        data = JSON.parse(xhr.response)
+        this.setState({ data: data })
       }
     }.bind(this)
     xhr.send()
   }
 
   componentWillMount() {
-    this.loadArchivesFromServer(this.props.match.url)
+    if (typeof this.props.match !== undefined) {
+      this.loadArchivesFromServer(this.props.match.params.year)
+    } else {
+      this.loadArchivesFromServer()
+    }
   }
 
   componentWillReceiveProps(next) {
-    this.loadArchivesFromServer(next.match.url)
+    this.loadArchivesFromServer(next.match.params.year)
   }
 
   render() {
     return (
-      <div className="archives archive-by-month">
-        <MonthlyBox data={this.state.data} />
+      <div className="archives archive-by-month" id="archives">
+        <MonthlyBox data={this.state.data} category={this.props.category} />
       </div>
     )
   }
@@ -68,7 +73,9 @@ function Entry(props) {
 }
 
 function EntryList(props) {
-  let entries = props.entries.map (function(entry) {
+  if (props.entries.length === 0)
+    return null
+  let entries = props.entries.map((entry) => {
     let uniqueKey = `${entry.title}-${entry.created_at}`
     return (
       <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
@@ -88,8 +95,14 @@ function EntryList(props) {
 
 function MonthlyBox(props) {
   let data = props.data
-  let entriesGroupByYearMonth = Object.keys(data).map(function(monthYear, index) {
+  let category = props.category
+  let entriesGroupByYearMonth = Object.keys(data).map((monthYear, index) => {
     let entries = data[monthYear]
+    if (typeof category !== 'undefined' && category.length > 0) {
+      entries = entries.filter(function(entry) {
+        return entry.category.title === category
+      })
+    }
     return (
       <EntryList key={monthYear} monthYear={monthYear} entries={entries} />
     )
@@ -102,3 +115,4 @@ function MonthlyBox(props) {
 }
 
 export default Archives
+window.Archives = Archives

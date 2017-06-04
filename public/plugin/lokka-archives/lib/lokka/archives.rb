@@ -20,6 +20,11 @@ module Lokka
         year_list.to_json
       end
 
+      app.get '/archives/categories.json' do
+        content_type :json
+        categories.to_json
+      end
+
       app.get '/archives/?:year?.json' do |year|
         posts = Post.all(
           fields: [:id, :category_id, :slug, :title, :created_at],
@@ -52,6 +57,10 @@ module Lokka
       first_year = Post.published.first.created_at.year
       last_year  = Post.published.last.created_at.year
       first_year.downto(last_year).to_a
+    end
+
+    def categories
+      MonthPosts.categories.values.flatten.map(&:title)
     end
   end
 
