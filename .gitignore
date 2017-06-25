@@ -1,4 +1,5 @@
 config.yml
+.env
 /database.yml
 /db/*.sqlite3
 /bundle

@@ -1,1 +1,2 @@
 gem 'rack-recaptcha', require: 'rack/recaptcha'
+gem 'dotenv'

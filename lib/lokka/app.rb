@@ -41,10 +41,6 @@ module Lokka
     end
 
     configure :production do
-      use Rack::Recaptcha,
-        public_key:  Option.recaptcha_public_key,
-        private_key: Option.recaptcha_private_key
-      helpers Rack::Recaptcha::Helpers
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer
@@ -59,10 +55,6 @@ module Lokka
       file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
       file.sync = true
       use Rack::CommonLogger, file
-      use Rack::Recaptcha,
-        public_key:  Option.recaptcha_public_key,
-        private_key: Option.recaptcha_private_key
-      helpers Rack::Recaptcha::Helpers
       require 'better_errors'
       use BetterErrors::Middleware
       BetterErrors.application_root = __dir__

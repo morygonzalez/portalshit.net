@@ -148,6 +148,7 @@ GEM
     do_sqlite3 (0.10.17)
       data_objects (= 0.10.17)
     docile (1.1.5)
+    dotenv (2.2.1)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     execjs (2.7.0)
@@ -339,6 +340,7 @@ DEPENDENCIES
   dm-transactions (~> 1.2.0)
   dm-types (~> 1.2.2)
   dm-validations (~> 1.2.0)
+  dotenv
   erubis (~> 2.6.6)
   factory_girl (= 2.6.1)
   fastimage
@@ -380,4 +382,4 @@ DEPENDENCIES
   yard-sinatra (= 1.0.0)
 
 BUNDLED WITH
-   1.13.7
+   1.15.1
