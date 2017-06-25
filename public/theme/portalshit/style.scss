@@ -107,13 +107,14 @@
   }
 
   #bread_crumb {
-    margin: 0px auto;
-    width: 90%;
     max-width: 1000px;
+    width: 90%;
+    margin: auto;
     text-align: left;
     overflow: hidden;
     height: 1%;
     display: block;
+    clear: both;
 
     ol {
       padding: 20px 0px 0px;
