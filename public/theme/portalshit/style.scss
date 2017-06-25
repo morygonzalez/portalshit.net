@@ -14,9 +14,13 @@
 }
 
 #header {
-  width: 90%;
-  max-width: 1000px;
-  margin: 20px auto 10px;
+  width: 100%;
+  margin: 0 auto;
+  background-position: top center;
+  background-image: url(/theme/portalshit/images/header-bg.jpeg);
+  background-size: cover;
+  min-height: 300px;
+  max-height: 460px;
   text-align: left;
 
   .description {
@@ -27,11 +31,17 @@
     text-decoration: none;
   }
 
+  h1 {
+    margin-top: 0;
+    margin-left: 8%;
+    float: left;
+  }
+
   #nav {
     float: right;
     font-size: 12px;
     list-style: none;
-    margin-top: 0px;
+    margin-right: 8%;
     padding: 8px 3px 2px;
     border-radius: 5px;
     background: rgba(234,234,234,0.65);
@@ -162,7 +172,6 @@
   #main {
     background-color: rgba(33,33,33,0.80);
     padding: 20px 30px;
-    border-radius: 12px;
     min-height: 500px;
 
     .article {
@@ -340,7 +349,7 @@
 #footer {
   clear: both;
   width: 100%;
-  margin: 20px auto 0;
+  margin: auto;
   text-align: center;
   padding: 1em 0 2em;
   background: #630101 url(images/footer-background.png) repeat-x;
