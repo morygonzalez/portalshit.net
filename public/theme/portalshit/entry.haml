@@ -33,7 +33,9 @@
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
 
-  = partial :advertisement
+  .article-bottom
+    = partial :advertisement
+    = partial :related
 
 %ul.comments
   - @entry.comments.reverse.each do |comment|
