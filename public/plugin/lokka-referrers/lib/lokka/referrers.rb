@@ -1,4 +1,8 @@
 module Lokka
+  module Referrers
+    def self.registered(app); end
+  end
+
   module AddReferrersToEntry
     class Entry
       def referrers
