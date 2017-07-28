@@ -42,8 +42,10 @@ module Lokka
 
     configure :production do
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
-      require 'rack/ssl-enforcer'
-      use Rack::SslEnforcer
+      require 'newrelic_rpm'
+      NewRelic::Agent.after_fork(:force_reconnect => true)
+      # require 'rack/ssl-enforcer'
+      # use Rack::SslEnforcer
     end
 
     configure :development do

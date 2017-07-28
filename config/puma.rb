@@ -4,11 +4,14 @@ directory File.expand_path(File.join(File.dirname(__FILE__), '../'))
 rackup 'config.ru'
 
 environment ENV['RACK_ENV']
+port 3000
 
 if ENV['RACK_ENV'] == 'production'
   tmp_dir = File.join(get(:directory),'tmp')
   log_dir = File.join(get(:directory), 'log')
   pid_dir = File.join(tmp_dir, 'pids')
+
+  Dir.mkdir(pid_dir) unless Dir.exists?(pid_dir)
 
   pidfile         File.join(pid_dir, 'puma.pid')
   state_path      File.join(pid_dir, 'puma.state')

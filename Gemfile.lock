@@ -156,8 +156,7 @@ GEM
     factory_girl (2.6.1)
       activesupport (>= 2.3.9)
     fastercsv (1.5.5)
-    fastimage (2.0.1)
-      addressable (~> 2)
+    fastimage (2.1.0)
     ffi (1.9.17)
     get_process_mem (0.2.1)
     haml (4.0.7)
@@ -180,7 +179,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.0.1)
-    newrelic_rpm (3.17.2.327)
+    newrelic_rpm (4.3.0.335)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
     padrino-core (0.11.4)
@@ -209,7 +208,6 @@ GEM
       rack
     rack-recaptcha (0.6.6)
       json
-    rack-ssl-enforcer (0.2.9)
     rack-test (0.6.1)
       rack (>= 1.0)
     rake (11.3.0)
@@ -358,7 +356,6 @@ DEPENDENCIES
   rack
   rack-flash (~> 0.1.2)
   rack-recaptcha
-  rack-ssl-enforcer
   rack-test (= 0.6.1)
   rake (~> 11.0)
   rbtrace
@@ -382,4 +379,4 @@ DEPENDENCIES
   yard-sinatra (= 1.0.0)
 
 BUNDLED WITH
-   1.15.1
+   1.15.3

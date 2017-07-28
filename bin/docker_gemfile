@@ -1,0 +1,2 @@
+#!/bin/sh
+find . -type d -name 'vendor' -prune -o -type f -name 'Gemfile' -print | xargs cat > Gemfile.docker
