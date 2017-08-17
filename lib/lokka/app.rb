@@ -44,8 +44,8 @@ module Lokka
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
       require 'newrelic_rpm'
       NewRelic::Agent.after_fork(:force_reconnect => true)
-      # require 'rack/ssl-enforcer'
-      # use Rack::SslEnforcer
+      require 'rack/ssl-enforcer'
+      use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
     end
 
     configure :development do

@@ -40,7 +40,6 @@ gem 'backports', '2.3.0'
 gem 'puma'
 gem 'puma_worker_killer'
 gem 'pry'
-gem 'newrelic_rpm'
 gem 'sinatra-cache', git: 'git://github.com/morygonzalez/sinatra-cache.git'
 gem 'coffee-script'
 gem 'request_store'
@@ -50,7 +49,8 @@ gem 'mimemagic'
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
 group :production do
-#   gem 'rack-ssl-enforcer'
+  gem 'rack-ssl-enforcer'
+  gem 'newrelic_rpm'
 end
 
 group :development do
