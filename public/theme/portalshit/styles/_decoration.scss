@@ -93,6 +93,14 @@ code {
   font-family: $code-font;
 }
 
+p code, li code {
+  color: #b5b2b2;
+  background-color: $various-bg;
+  border: 1px solid #333;
+  padding: .2em .3em;
+  @include _border-radius;
+}
+
 blockquote:not([class]) {
   padding: 1em 3em 1em;
   margin: 0 0 2em 0;
