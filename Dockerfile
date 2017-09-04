@@ -9,7 +9,8 @@ COPY Gemfile.lock /app/
 RUN gem install bundler
 RUN apk add --no-cache bash nodejs mysql-client sqlite mysql-dev sqlite-dev
 RUN apk add --no-cache alpine-sdk \
-      --virtual .build_deps libxml2-dev libxslt-dev zlib zlib-dev \
+      --virtual .build_deps libxml2-dev libxslt-dev zlib zlib-dev tzdata \
+      && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
       && bundle install -j4 --without postgresql \
       && apk del alpine-sdk .build_deps \
       && rm -rf /tmp/* /var/cache/apk/*
