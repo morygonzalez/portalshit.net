@@ -8,9 +8,18 @@
 #   postgres://user:pass@host/database
 # heroku:
 #   <%= ENV['DATABASE_URL'] %>
+default: &default
+  encoding: UTF-8-MB4
 production:
-  dsn: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  adapter: 'mysql'
+  database: <%= ENV['DATABASE_NAME'] %>
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  host: <%= ENV['DATABASE_HOST'] %>
 development:
+  <<: *default
   dsn: sqlite3://<%= root %>/db/development.sqlite3
 test:
+  <<: *default
   dsn: <%= ENV['DATABASE_URL'] || "sqlite3://#{root}/db/test.sqlite3" %>
