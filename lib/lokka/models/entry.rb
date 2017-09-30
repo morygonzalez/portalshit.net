@@ -31,6 +31,11 @@ class Entry
   end
 
   after :save, :update_fields
+  after :save do
+    if Lokka.production? && !draft
+      system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
+    end
+  end
 
   alias_method :raw_body, :body
   def long_body
