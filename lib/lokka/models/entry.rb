@@ -28,6 +28,8 @@ class Entry
 
   before :valid? do
     self.category_id = nil if category_id === ''
+    self.created_at = DateTime.now if created_at.blank?
+    self.updated_at = DateTime.now if updated_at.blank?
   end
 
   after :save, :update_fields
