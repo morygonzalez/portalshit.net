@@ -165,8 +165,8 @@ module Lokka
     module RefineHash
       refine Hash do
         def to_meta_tags
-          self.each_with_object('') do |(name, content), final|
-            final << "<meta name=\"#{name}\" content=\"#{content}\" />\n"
+          self.each_with_object(SafeBuffer.new) do |(name, content), final|
+            final << "<meta name=\"#{name}\" content=\"#{content}\" />\n".html_safe
           end
         end
       end
