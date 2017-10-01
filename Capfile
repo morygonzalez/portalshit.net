@@ -23,11 +23,12 @@ require 'capistrano/bundler'
 # require 'capistrano/rails/migrations'
 require 'capistrano/puma'
 # require 'capistrano/puma/workers'
+install_plugin Capistrano::Puma
 require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.3.3'
+set :rbenv_ruby, '2.4.2'
 
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
