@@ -43,7 +43,7 @@ gem 'pry'
 gem 'sinatra-cache', git: 'git://github.com/morygonzalez/sinatra-cache.git'
 gem 'coffee-script'
 gem 'request_store'
-gem 'aws-sdk'
+gem 'aws-sdk-s3'
 gem 'mimemagic'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
