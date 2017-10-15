@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: circleci/ruby:2.4.2-node
+        environment:
+          RAILS_ENV: test
+    steps:
+      # - run:
+      #     name: Install Dependencies
+      #     command: |
+      #       apt-get install -y sqlite3
+      - checkout
+      - restore_cache:
+          key: portalshit-{{ checksum "Gemfile.lock" }}
+      - run: bundle install -j4 --path vendor/bundle --without mysql postgresql
+      - save_cache:
+          key: portalshit-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Database set up
+          command: |
+            : > db/test.sqlite3
+            RACK_ENV=test bundle exec rake db:migrate
+      - run:
+          name: Run rspec
+          command: |
+            RACK_ENV=test bundle exec rspec --profile 10 \
+              --format progress \
+              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+      - run:
+          name: Deploy to production
+          command: |
+            if [ ${CIRCLE_BRANCH} = 'portalshit' ]; then
+              bundle exec cap production deploy
+            fi
