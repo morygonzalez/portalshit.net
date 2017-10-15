@@ -30,7 +30,7 @@ module Lokka
       app.before do
         assets_path = "/plugin/lokka-amazon_associate/assets"
         content_for :header do
-          text = <<-EOS.strip_heredoc
+          <<~EOS.html_safe
             <script src="#{assets_path}/script.js"></script>
             <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
           EOS

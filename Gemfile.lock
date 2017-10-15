@@ -1,16 +1,18 @@
 GIT
   remote: git://github.com/morygonzalez/sinatra-cache.git
-  revision: 7431c823278684f4a1849da941812554df2d9cf9
+  revision: 5a33b6f789fc44b0b797d0a7fbfaddd8353f691f
   specs:
     sinatra-cache (0.3.7)
       sinatra
       sinatra-outputbuffer
 
 GIT
-  remote: git://github.com/yayugu/dm-pagination.git
-  revision: ab6e85d1b9e7d8d8ee69921bd0796f20d34a5e89
+  remote: https://github.com/lokka/dm-pagination
+  revision: dc67daa8a6b335af94c341277fd5a19815ce5083
   specs:
-    dm-pager (1.1.1)
+    dm-pager (1.2.1)
+      dm-aggregates (~> 1.2.0)
+      dm-core (~> 1.2.0)
 
 GIT
   remote: https://github.com/morygonzalez/rouge.git

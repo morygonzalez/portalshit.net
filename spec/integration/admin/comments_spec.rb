@@ -98,7 +98,7 @@ describe '/admin/comments' do
     context "GET /admin/comments" do
       it "should escape html tag" do
         get "/admin/comments"
-        last_response.body.should match(/&lt;xmp&gt;/)
+        last_response.body.should match(/&amp;lt;xmp&amp;gt;/)
       end
     end
   end

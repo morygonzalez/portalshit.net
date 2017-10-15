@@ -19,7 +19,7 @@ module Lokka
       app.get '/admin/plugins/akismet' do
         login_required
         @akismet = akismet_key
-         haml :"#{akismet_view}index", :layout => :"admin/layout"
+        haml :"#{akismet_view}index", :layout => :"admin/layout"
       end
 
       app.put '/admin/plugins/akismet' do
@@ -68,9 +68,7 @@ module Lokka
       queries << "comment_author_email=#{params[:comment][:email]}"
       queries << "comment_author_url=#{params[:comment][:homepage]}"
       queries << "comment_content=#{params[:comment][:body]}"
-      queries.map!{|value|
-        URI.encode(value)
-      }
+      queries.map! {|value| URI.encode(value) }
       request = queries.join("&")
       response = akismet_post host, '/1.1/comment-check', request
 
