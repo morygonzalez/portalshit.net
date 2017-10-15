@@ -16,7 +16,7 @@ module Lokka
         tracker = Option.tracker
         if !tracker.blank? and ENV['RACK_ENV'] == 'production' and !logged_in?
           content_for :header do
-            text = <<~EOS
+            <<~EOS.html_safe
               <script>
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

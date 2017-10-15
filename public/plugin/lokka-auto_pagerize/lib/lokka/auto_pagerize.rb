@@ -8,7 +8,7 @@ module DataMapper
   class Pager
     private
       def link_to(page, contents=nil, rel={})
-        %(<a href="#{uri_for(page)}" rel="#{rel[:rel]}">#{contents || page}</a>)
+        %(<a href="#{uri_for(page)}" rel="#{rel[:rel]}">#{contents || page}</a>).html_safe
       end
 
       def previous_link

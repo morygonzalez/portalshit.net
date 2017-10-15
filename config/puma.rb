@@ -3,7 +3,7 @@
 directory File.expand_path(File.join(File.dirname(__FILE__), '../'))
 rackup 'config.ru'
 
-environment ENV['RACK_ENV']
+environment ENV['RACK_ENV'] || 'development'
 port 3000
 
 if ENV['RACK_ENV'] == 'production'

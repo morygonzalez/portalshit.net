@@ -10,13 +10,13 @@ end
 class Entry
   alias_method :original_body, :body
   def highlighted_body
-    syntax_highlight(self.original_body)
+    syntax_highlight(self.original_body).html_safe
   end
   alias_method :body, :highlighted_body
 
   alias_method :original_short_body, :short_body
   def highlighted_short_body
-    syntax_highlight(self.original_short_body)
+    syntax_highlight(self.original_short_body).html_safe
   end
   alias_method :short_body, :highlighted_short_body
 

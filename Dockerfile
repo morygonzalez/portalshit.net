@@ -1,10 +1,13 @@
-FROM ruby:2.3-alpine
+FROM ruby:2.4-alpine
 
 RUN mkdir -p /app
 WORKDIR /app
 
 COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
+
+ENV BUNDLE_PATH /bundle
+ENV BUNDLE_DISABLE_SHARED_GEMS 0
 
 RUN gem install bundler
 RUN apk add --no-cache bash nodejs mysql-client sqlite mysql-dev sqlite-dev

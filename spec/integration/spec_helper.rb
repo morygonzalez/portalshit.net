@@ -5,6 +5,6 @@ def fixture_path
 end
 
 shared_context 'in site' do
-  before { Factory(:site) }
+  before { create(:site) }
   after { Site.destroy; User.destroy }
 end
