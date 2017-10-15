@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/morygonzalez/sinatra-cache.git
-  revision: 5a33b6f789fc44b0b797d0a7fbfaddd8353f691f
-  specs:
-    sinatra-cache (0.3.7)
-      sinatra
-      sinatra-outputbuffer
-
-GIT
   remote: https://github.com/lokka/dm-pagination
   revision: dc67daa8a6b335af94c341277fd5a19815ce5083
   specs:
@@ -20,6 +12,14 @@ GIT
   branch: fix-pygments-formatter
   specs:
     rouge (2.0.7)
+
+GIT
+  remote: https://github.com/morygonzalez/sinatra-cache
+  revision: 92f90c6e922f02491de6dd4b0f43541257fb8c36
+  specs:
+    sinatra-cache (0.3.7)
+      sinatra
+      sinatra-outputbuffer
 
 GEM
   remote: https://rubygems.org/
