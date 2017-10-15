@@ -1,1 +1,1 @@
-gem 'rouge', git: 'https://github.com/morygonzalez/rouge.git', branch: 'fix-pygments-formatter'
+gem 'rouge'
