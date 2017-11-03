@@ -18,8 +18,4 @@ module Lokka
       @entry.referrers
     end
   end
-
-  module Referrers
-    def self.registered(app); end
-  end
 end
