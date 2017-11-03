@@ -19,7 +19,7 @@ module Lokka
 
     # h + n2br
     def hbr(str)
-      h(str).gsub(/\r\n|\r|\n/, "<br />\n")
+      h(str).gsub(/\r\n|\r|\n/, "<br />\n").html_safe
     end
 
     def login_required
