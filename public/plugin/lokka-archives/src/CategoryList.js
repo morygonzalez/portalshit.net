@@ -6,8 +6,7 @@ class CategoryList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: [],
-      category: ''
+      data: []
     }
     this.filterArchive = this.filterArchive.bind(this)
   }
@@ -30,12 +29,28 @@ class CategoryList extends React.Component {
     xhr.send()
   }
 
+  entriesCountByCategory() {
+    let categoryCount = [...document.querySelectorAll('ul.category-list li a')].map((categoryList) => {
+      let category = categoryList.dataset.category
+      let entries = [...document.querySelectorAll('ul.entries li.entry')].filter((entry) => {
+        return (entry.querySelector('div.detail-information span.category').textContent == category)
+      })
+      let entriesCount = categoryList.querySelector('span.entries-count')
+      entriesCount.textContent = entries.length
+    })
+  }
+
   componentDidMount() {
     this.loadCategoryListFromServer()
+    setTimeout(this.entriesCountByCategory, 500)
+  }
+
+  componentWillReceiveProps() {
+    setTimeout(this.entriesCountByCategory, 500)
   }
 
   filterArchive(e) {
-    let category = e.target.textContent
+    let category = e.target.dataset.category
     let entries = [...document.querySelectorAll('ul.entries li.entry')].map((entry) => {
       let entryCategory = entry.querySelector('div.detail-information span.category').textContent
       if (entryCategory == category) {
@@ -65,7 +80,7 @@ class CategoryList extends React.Component {
     let categoryList = this.state.data.map((category) => {
       return (
         <li key={category}>
-          <a href="javascript:void(0)" onClick={this.filterArchive}>{category}</a>
+          <a href="javascript:void(0)" data-category={category} onClick={this.filterArchive}>{category} (<span className="entries-count">0</span>)</a>
         </li>
       )
     })
