@@ -286,6 +286,12 @@
           &.slideshare {
             padding-top: 84%;
           }
+          &.youtube {
+            padding-top: 75%;
+            &.wide {
+              padding-top: 56.25%;
+            }
+          }
 
           iframe {
             position: absolute;
