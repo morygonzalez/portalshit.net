@@ -24,6 +24,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify src/script.js -o build/script.js",
+    "production-build": "NODE_ENV=production browserify src/script.js -o build/script.js && NODE_ENV=production npm run minify && cp dist/script.js assets/script.js",
     "minify": "gulp minify"
   },
   "browserify": {
