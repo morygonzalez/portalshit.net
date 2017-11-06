@@ -30,7 +30,7 @@ class CategoryList extends React.Component {
   }
 
   entriesCountByCategory() {
-    let categoryCount = [...document.querySelectorAll('ul.category-list li a')].map((categoryList) => {
+    [...document.querySelectorAll('ul.category-list li a')].forEach((categoryList) => {
       let category = categoryList.dataset.category
       let entries = [...document.querySelectorAll('ul.entries li.entry')].filter((entry) => {
         return (entry.querySelector('div.detail-information span.category').textContent == category)
@@ -42,11 +42,13 @@ class CategoryList extends React.Component {
 
   componentDidMount() {
     this.loadCategoryListFromServer()
-    setTimeout(this.entriesCountByCategory, 500)
+    let intervalId = setInterval(this.entriesCountByCategory, 100)
+    setTimeout(() => { clearInterval(intervalId) }, 1000)
   }
 
   componentWillReceiveProps() {
-    setTimeout(this.entriesCountByCategory, 500)
+    let intervalId = setInterval(this.entriesCountByCategory, 100)
+    setTimeout(() => { clearInterval(intervalId) }, 1000)
   }
 
   filterArchive(e) {
