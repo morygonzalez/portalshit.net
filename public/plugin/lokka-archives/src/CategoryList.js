@@ -53,7 +53,7 @@ class CategoryList extends React.Component {
 
   filterArchive(e) {
     let category = e.target.dataset.category
-    let entries = [...document.querySelectorAll('ul.entries li.entry')].map((entry) => {
+    document.querySelectorAll('ul.entries li.entry').forEach((entry) => {
       let entryCategory = entry.querySelector('div.detail-information span.category').textContent
       if (entryCategory == category) {
         entry.style.display = "block"
@@ -61,7 +61,7 @@ class CategoryList extends React.Component {
         entry.style.display = "none"
       }
     })
-    let entryList = [...document.querySelectorAll('li.entryList')].map((entryList) => {
+    document.querySelectorAll('li.entryList').forEach((entryList) => {
       let shouldHideList = [...entryList.querySelectorAll('li.entry')].every((entry) => {
         return entry.style.display == "none"
       })
