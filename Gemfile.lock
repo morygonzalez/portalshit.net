@@ -201,7 +201,7 @@ GEM
       rack
     rack-protection (1.5.3)
       rack
-    rack-recaptcha (0.6.6)
+    rack-recaptcha2 (1.0.0)
       json
     rack-ssl-enforcer (0.2.9)
     rack-test (0.6.1)
@@ -348,7 +348,7 @@ DEPENDENCIES
   puma_worker_killer
   rack
   rack-flash (~> 0.1.2)
-  rack-recaptcha
+  rack-recaptcha2
   rack-ssl-enforcer
   rack-test (= 0.6.1)
   rake (~> 11.0)
