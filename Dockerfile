@@ -19,5 +19,6 @@ RUN apk add --no-cache alpine-sdk \
       && rm -rf /tmp/* /var/cache/apk/*
 
 COPY . /app
+COPY Gemfile.docker /app/Gemfile
 
 CMD /bin/sh

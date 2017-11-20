@@ -1,3 +1,10 @@
+gem 'amazon-ecs'
+gem 'json'
+gem 'dm-serializer'
+gem 'fastimage'
+gem 'rouge'
+gem 'rack-recaptcha2', require: 'rack/recaptcha'
+gem 'dotenv'
 source 'https://rubygems.org'
 
 gem 'bundler'
@@ -90,10 +97,3 @@ end
 group :postgresql do
   gem 'dm-postgres-adapter', '1.2.0'
 end
-gem 'amazon-ecs'
-gem 'json'
-gem 'dm-serializer'
-gem 'fastimage'
-gem 'rack-recaptcha', require: 'rack/recaptcha'
-gem 'dotenv'
-gem 'rouge'
