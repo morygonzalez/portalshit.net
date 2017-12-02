@@ -37,6 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
         let d = document.createElement('div');
         d.className = 'amazon';
         d.innerHTML = result;
+        d.querySelectorAll('a').forEach(function(item) {
+          item.onclick = function(e) {
+            let productTitle = item.textContent || item.title;
+            if (typeof ga !== 'undefined') {
+              ga('send', 'event', 'Amazon Affiliate', 'click', productTitle);
+            }
+          };
+        });
         parent.insertBefore(d, previous.nextSibling);
       }).catch(function(error) {
         console.log(error);
@@ -89,11 +97,13 @@ var Formatter = (function() {
     manufacturer = attr['Manufacturer'];
 
     str = '<div class="amazon-image">' +
-      '<a href="' + link + '"><img src="' + image + '" alt="' + title + '" /></a>' +
+      '<a href="' + link + '" title="' + title  + '">' +
+      '<img src="' + image + '" alt="' + title + '" />' +
+      '</a>' +
       '</div>' +
       '<div class="amazon-content">' +
       '<ul>' +
-      '<li><a href="' + link + '">' + title + '</a></li>';
+      '<li><a href="' + link + '" title="' + title + '">' + title + '</a></li>';
     if (author !== '') {
       str += '<li>' + author + '</li>';
     }
