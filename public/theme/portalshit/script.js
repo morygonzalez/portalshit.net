@@ -12,3 +12,11 @@ document.body.addEventListener(
 init = function(node) { }
 
 window.onload = init();
+
+$(function() {
+  if ($(window).width() <= 640) {
+    $('#aside dt').on('click', function() {
+      $(this).siblings('dd').slideToggle();
+    });
+  }
+});
