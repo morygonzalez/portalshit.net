@@ -57,21 +57,39 @@ document.addEventListener('DOMContentLoaded', function() {
 var Formatter = (function() {
   function Formatter(json) {
     this.json = json;
+    this.itemId = json['ItemLookupResponse']['OperationRequest']['Arguments']['Argument'].find(function(argument) {
+      return(argument['Name'] === 'ItemId');
+    })['Value'];
+    this.errors = json['ItemLookupResponse']['Items']['Request']['Errors'];
+    if (typeof this.errors === 'undefined' || this.errors === null) {
+      this.attributes = json['ItemLookupResponse']['Items']['Item']['ItemAttributes']
+      this.title = this.attributes['Title'];
+    } else {
+      console.error(this.errors);
+      return;
+    }
   }
 
   Formatter.prototype.formatItem = function() {
-    let json = this.json;
-    let item, attr, title, link, image, price, author, manufacturer, str;
-    let errors = json['ItemLookupResponse']['Items']['Request']['Errors'];
-    if (typeof errors !== 'undefined' && errors !== null) {
-      console.error(errors);
-      return;
+    if (this.errors) {
+      return '<pre>Item ' + this.itemId + ' Not Found</pre>';
     }
+    let json = this.json;
+    let item, attr, title, link, image, imageSet, price, author, manufacturer, str;
     item = json['ItemLookupResponse']['Items']['Item'];
     attr = item['ItemAttributes'];
     title = attr['Title'];
-    link  = item['DetailPageURL'];
-    image = item['MediumImage']['URL'].replace('http://ecx.images-amazon', 'https://images-na.ssl-images-amazon');
+    link = item['DetailPageURL'];
+    imageSet = item['ImageSets'] ? item['ImageSets']['ImageSet'] : false;
+    if (item['LargeImage']) {
+      image = item['LargeImage'];
+    } else if (imageSet && imageSet.length > 1) {
+      image = item['ImageSets']['ImageSet'];
+    } else if (imageSet && imageSet.length == 1) {
+      image = imageSet['LargeImage'];
+    } else {
+      image = { 'URL': '/plugin/lokka-amazon_associate/assets/no-image.png' };
+    }
     try {
       price = item['OfferSummary']['LowestNewPrice']['FormattedPrice'];
     }
@@ -94,11 +112,11 @@ var Formatter = (function() {
     if (typeof authors !== 'undefined' && authors !== null) {
       author = authors.join(', ');
     }
-    manufacturer = attr['Manufacturer'];
+    manufacturer = attr['Manufacturer'] || attr['Format'];
 
     str = '<div class="amazon-image">' +
       '<a href="' + link + '" title="' + title  + '">' +
-      '<img src="' + image + '" alt="' + title + '" />' +
+      this.imageTag(image) +
       '</a>' +
       '</div>' +
       '<div class="amazon-content">' +
@@ -115,7 +133,7 @@ var Formatter = (function() {
   };
 
   Formatter.prototype.formatAuthors = function(authors) {
-    if (typeof authors === Array && authors.length > 1) {
+    if (authors instanceof Array && authors.length > 1) {
       let _authors = [];
       authors.forEach(function(item, index) {
         _authors.push(item)
@@ -124,6 +142,14 @@ var Formatter = (function() {
     }
     return authors;
   };
+
+  Formatter.prototype.imageTag = function(image) {
+    let title = this.title;
+    if (image instanceof Array && image.length > 1) {
+      image = image[0]['LargeImage'];
+    }
+    return '<img src="' + image['URL'] + '" alt="' + title + '" />';
+  }
 
   return Formatter;
 })();
