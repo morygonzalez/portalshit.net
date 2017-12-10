@@ -32,7 +32,7 @@ gem 'tilt', '~> 2.0'
 gem 'compass'
 gem 'slim', '~> 3.0.7'
 gem 'rake', '~> 11.0'
-gem 'erubis', '~> 2.6.6'
+gem 'erubis', '~> 2.7.0'
 gem 'activesupport', '~> 4.2'
 gem 'nokogiri'
 gem 'tux'
@@ -62,7 +62,7 @@ end
 
 group :development do
   gem 'awesome_print'
-  gem 'capistrano', require: false
+  gem 'capistrano', '3.10.1', require: false
   gem 'capistrano-rbenv', require: false
   gem 'capistrano-bundler', require: false
   gem 'capistrano-rbenv-install', require: false
@@ -87,7 +87,6 @@ group :test do
   gem 'simplecov', require: false
   gem 'factory_girl', '~> 4.0'
   gem 'database_cleaner', '0.7.1'
-  gem 'therubyracer'
 end
 
 group :mysql do
