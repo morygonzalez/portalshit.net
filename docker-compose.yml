@@ -13,6 +13,8 @@ services:
     image: morygonzalez/portalshit
     secrets:
       - newrelic_config
+    environment:
+      DB_HOST: db
     build: .
     command: bundle exec puma
     volumes:
