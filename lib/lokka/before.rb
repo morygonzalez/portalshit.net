@@ -8,7 +8,7 @@ module Lokka
 
         locales = Lokka.parse_http(request.env['HTTP_ACCEPT_LANGUAGE'])
         locales.map! do |locale|
-          locale =~ /-/ ? locale.split('-').first : locale
+          locale =~ /-/ ? locale.split('-').first.to_sym : locale.to_sym
         end
 
         if params[:locale]
@@ -18,7 +18,7 @@ module Lokka
         elsif session[:locale]
           I18n.locale = session[:locale]
         elsif locales.present?
-          I18n.locale = (I18n.available_locales & locales).first
+          I18n.locale = (locales & I18n.available_locales).first
         end
 
         theme = request.cookies['theme']
