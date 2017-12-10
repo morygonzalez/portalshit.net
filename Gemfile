@@ -80,7 +80,6 @@ group :test do
   gem 'simplecov', require: false
   gem 'factory_girl', '~> 4.0'
   gem 'database_cleaner', '0.7.1'
-  gem 'therubyracer'
 end
 
 group :mysql do
