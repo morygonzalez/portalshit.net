@@ -11,6 +11,7 @@ module Lokka
       app.get '/amazon/?:item_id?.json' do |item_id|
         item = AmazonAssociate::Fetcher.new(item_id)
 
+        cache_control :public, :must_revalidate, :max_age => 12.hours
         content_type :json
         item.body
       end

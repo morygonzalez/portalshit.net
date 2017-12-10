@@ -17,3 +17,9 @@
   margin-top: 0;
   list-style: disc;
 }
+@media screen and (max-width:640px) {
+  .amazon-content, .amazon-image {
+    float: none;
+    max-width: 100%;
+  }
+}
