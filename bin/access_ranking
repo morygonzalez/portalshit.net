@@ -1,0 +1,8 @@
+#!/bin/bash
+
+zcat -f /home/morygonzalez/sites/portalshit/log/access.log* \
+  | grep -vE 'useragent:.+?(bot|Feed\s?Fetcher|Crawler|Fastladder|Feed|Ruby|Aol\sReader|proximic|Hatena\sAntenna|Mediapartners-Google|subscribe)' \
+  | cut -f5 | sed -e 's/request_uri://' \
+  | grep -v -E '(favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|^\-$|^\/$)' \
+  | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+  | tee /home/morygonzalez/sites/portalshit/public/access-ranking.txt
