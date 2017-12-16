@@ -47,6 +47,12 @@
     #footer
       #aside
         - cache_fragment :footer, shared: true do
+          %dl.popular_entries
+            %dt= t('popular_entries')
+            %dd
+              %ul
+                - Post.popular.each do |post|
+                  %li= link_to post.title, post.link
           %dl.rcent_entries
             %dt= t('recent_entries')
             %dd
@@ -59,12 +65,12 @@
               %ul
                 - Comment.recent.each do |comment|
                   %li= link_to strip_tags(comment.body).truncate(16), comment.link
-          %dl.tags
-            %dt= t('tags')
-            %dd
-              %ul
-                - Tag.all.each do |tag|
-                  %li= link_to tag.name, tag.link
+          -# %dl.tags
+          -#   %dt= t('tags')
+          -#   %dd
+          -#     %ul
+          -#       - Tag.all.each do |tag|
+          -#         %li= link_to tag.name, tag.link
           %dl.archives
             %dt= link_to t('archives.title'), '/archives'
             %dd
