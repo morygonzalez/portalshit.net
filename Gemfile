@@ -45,6 +45,9 @@ gem 'coffee-script'
 gem 'request_store'
 gem 'aws-sdk-s3'
 gem 'mimemagic'
+gem 'natto'
+gem 'sqlite3'
+gem 'parallel'
 
 Dir["public/plugin/lokka-*/Gemfile"].each {|path| eval(open(path) {|f| f.read }) }
 
