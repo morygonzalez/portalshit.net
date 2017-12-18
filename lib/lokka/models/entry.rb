@@ -17,6 +17,8 @@ class Entry
   belongs_to :user
   belongs_to :category, :required => false
   has n, :comments, :status
+  has n, :similarities
+  has n, :similar_entries, through: :similarities, model: 'Entry'
 
   has_tags
 
