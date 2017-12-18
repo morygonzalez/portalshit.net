@@ -29,7 +29,7 @@
     .similar
       %h3 この記事に似ている記事
       %ul
-        - @entry.similarities.all(order: [:score.desc]).each do |similarity|
+        - @entry.similarities.all(order: [:score.desc], limit: 10).each do |similarity|
           - similar = similarity.similar_entry
           %li
             = link_to similar.title, similar.link
