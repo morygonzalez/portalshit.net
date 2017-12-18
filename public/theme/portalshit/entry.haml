@@ -29,7 +29,8 @@
     .similar
       %h3 この記事に似ている記事
       %ul
-        - @entry.similar_entries.each do |similar|
+        - @entry.similarities.all(order: [:score.desc]).each do |similarity|
+          - similar = similarity.similar_entry
           %li
             = link_to similar.title, similar.link
             %span.created_at= l(similar.created_at, format: '%Y年%m月%d日 (%a)')
