@@ -10,7 +10,7 @@
             = link_to "#{truncate(@entry.prev.title, length: 25)} >>", @entry.prev.link, rel: :next, title: @entry.prev.title
     %h2.title= link_to @entry.title, @entry.link
     .meta
-      = l(@entry.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+      = l(@entry.created_at, format: '%Y年%m月%d日 (%a)')
       - if @entry.category
         == | @#{link_to @entry.category.title, "/category/#{@entry.category.slug}/"}
 
@@ -25,9 +25,10 @@
           %li
             = link_to referrer.title, referrer.link
             %span.created_at= l(referrer.created_at, format: '%Y年%m月%d日 (%a)')
-  - if related_entries.present?
+  - if @entry.similar_entries.present?
     .similar
       %h3 この記事に似ている記事
+      %ul
         - @entry.similar_entries.each do |similar|
           %li
             = link_to similar.title, similar.link
@@ -42,6 +43,7 @@
 
   .article-bottom
     = partial :advertisement
+    = partial :related
 
 %ul.comments
   - @entry.comments.reverse.each do |comment|
