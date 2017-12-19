@@ -2,10 +2,10 @@ require 'natto'
 require 'sqlite3'
 require 'parallel'
 
-namespace :similar_entries do
-  desc "Do all related_entries detection task"
-  task :all => %i[extract_term vector_normalize export]
+desc "Detect and update similar entries"
+task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
 
+namespace :similar_entries do
   desc "Extract term"
   task :extract_term do
     nm = Natto::MeCab.new
@@ -25,7 +25,7 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    entries = Entry.all(fields: [:id, :body], draft: false)
+    entries = Entry.published.all(fields: [:id, :body])
     entry_word_frequencies = {}
     Parallel.each(entries, in_threads: 10) do |entry|
       words = []
@@ -38,7 +38,7 @@ namespace :similar_entries do
           next if !n.feature.match(/名詞/)
           next if n.feature.match(/(サ変接続|数)/)
           next if n.surface.match(/\A([a-z][0-9]|\p{hiragana}|\p{katakana})\Z/i)
-          next if %w[これ こと とき よう そう やつ とこ ところ 用 もの はず みたい たち 後 確か 中 気 方 頃 上 先 点 前 一 内 lt gt ここ なか どこ まま わけ ため 的 それ あと].include?(n.surface)
+          next if %w[これ こと とき よう そう やつ とこ ところ 用 もの はず みたい たち いま 後 確か 中 気 方 頃 上 先 点 前 一 内 lt gt ここ なか どこ まま わけ ため 的 それ あと].include?(n.surface)
           words << n.surface
         end
       rescue ArgumentError
@@ -175,9 +175,9 @@ namespace :similar_entries do
       LIMIT 10;
     SQL
 
-    Parallel.each(Entry.all(fields: [:id], draft: false), in_threads: 10)do |entry|
-      db.results_as_hash = true
+    Parallel.each(Entry.published.all(fields: [:id]), in_threads: 10) do |entry|
       db.execute(extract_similar_entries_sql, [entry.id, entry.id, entry.id])
+      db.results_as_hash = true
       results = db.execute(search_similar_entries_sql, [entry.id, entry.id, entry.id, entry.id])
       if results.present?
         results.each do |similar|
