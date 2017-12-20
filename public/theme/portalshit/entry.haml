@@ -18,7 +18,7 @@
     ~ @entry.body
 
   - if referrers.present?
-    - cache_fragment :"referres-#{@entry.id}-#{I18n.locale}", shared: true do
+    - cache_fragment :"referres-#{I18n.locale}" do
       .referrers
         %h3 この記事を参照している記事
         %ul
@@ -27,7 +27,7 @@
               = link_to referrer.title, referrer.link
               %span.created_at= l(referrer.created_at, format: '%Y年%m月%d日 (%a)')
   - if @entry.similar_entries.present?
-    - cache_fragment :"similar-#{@entry.id}-#{I18n.locale}", shared: true do
+    - cache_fragment :"similar-#{I18n.locale}" do
       .similar
         %h3 この記事に似ている記事
         %ul
