@@ -2,11 +2,10 @@ desc "Detect and update similar entries"
 task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
 
 namespace :similar_entries do
-  require 'natto'
   require 'sqlite3'
-  require 'parallel'
   desc "Extract term"
   task :extract_term do
+    require 'natto'
     nm = Natto::MeCab.new
     db = SQLite3::Database.new('db/tfidf.sqlite3')
     create_table_sql =<<~SQL
@@ -25,7 +24,8 @@ namespace :similar_entries do
     db.execute_batch(create_table_sql)
 
     entries = Entry.published.all(fields: [:id, :body])
-    Parallel.each(entries, in_threads: 10) do |entry|
+    entry_frequencies = {}
+    entries.each do |entry|
       words = []
       body_cleansed = entry.body.
         gsub(/<.+?>/, '').
@@ -43,8 +43,11 @@ namespace :similar_entries do
         next
       end
       frequency = words.inject(Hash.new(0)) {|sum, word| sum[word] += 1; sum }
+      entry_frequencies[entry.id] = frequency
+    end
+    entry_frequencies.each do |entry_id, frequency|
       frequency.each do |word, count|
-        db.execute("INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)", [word, entry.id, count])
+        db.execute("INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)", [word, entry_id, count])
       end
     end
   end
@@ -160,21 +163,28 @@ namespace :similar_entries do
           ON
           a.term = b.term
       )
-      WHERE similar_entry_id != ?
+      WHERE similar_entry_id <> ?
       GROUP BY entry_id
       ORDER BY score DESC
       LIMIT 10;
     SQL
 
-    Parallel.each(Entry.published.all(fields: [:id]), in_threads: 10) do |entry|
+    results = {}
+    Entry.published.all(fields: [:id]).each do |entry|
       db.execute(extract_similar_entries_sql, [entry.id, entry.id, entry.id])
       db.results_as_hash = true
-      results = db.execute(search_similar_entries_sql, [entry.id, entry.id, entry.id, entry.id])
-      if results.present?
-        results.each do |similar|
-          conditions = { entry_id: similar["entry_id"], similar_entry_id: similar["similar_entry_id"] }
+      similarities = db.execute(search_similar_entries_sql, [entry.id, entry.id, entry.id, entry.id])
+      results[entry.id] = similarities
+    end
+
+    Similarity.destroy
+
+    results.each do |entry_id, similarities|
+      if similarities.present?
+        similarities.each do |s|
+          conditions = { entry_id: s["entry_id"], similar_entry_id: s["similar_entry_id"] }
           similarity = Similarity.first(conditions) || Similarity.new(conditions)
-          similarity.score = similar["score"]
+          similarity.score = s["score"]
           similarity.save
         end
       end
