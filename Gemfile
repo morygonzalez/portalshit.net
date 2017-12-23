@@ -93,5 +93,4 @@ end
 group :batch do
   gem 'natto'
   gem 'sqlite3'
-  gem 'parallel'
 end
