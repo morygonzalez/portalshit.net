@@ -1,11 +1,10 @@
-require 'natto'
-require 'sqlite3'
-require 'parallel'
-
 desc "Detect and update similar entries"
 task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
 
 namespace :similar_entries do
+  require 'natto'
+  require 'sqlite3'
+  require 'parallel'
   desc "Extract term"
   task :extract_term do
     nm = Natto::MeCab.new
@@ -26,7 +25,6 @@ namespace :similar_entries do
     db.execute_batch(create_table_sql)
 
     entries = Entry.published.all(fields: [:id, :body])
-    entry_word_frequencies = {}
     Parallel.each(entries, in_threads: 10) do |entry|
       words = []
       body_cleansed = entry.body.
@@ -44,16 +42,9 @@ namespace :similar_entries do
       rescue ArgumentError
         next
       end
-      frequency = words.inject(Hash.new(0)) {|sum, word|
-        sum[word] += 1; sum
-      }.sort_by {|item|
-        item.to_a[1]
-      }.reverse.to_h
-      entry_word_frequencies[entry.id] = frequency
-    end
-    Parallel.each(entry_word_frequencies, in_threads: 10) do |entry_id, frequency|
+      frequency = words.inject(Hash.new(0)) {|sum, word| sum[word] += 1; sum }
       frequency.each do |word, count|
-        db.execute("INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)", [word, entry_id, count])
+        db.execute("INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)", [word, entry.id, count])
       end
     end
   end
