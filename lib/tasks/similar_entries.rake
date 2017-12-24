@@ -2,12 +2,17 @@ desc "Detect and update similar entries"
 task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
 
 namespace :similar_entries do
-  require 'sqlite3'
+  def db
+    @db ||= begin
+              require 'sqlite3'
+              SQLite3::Database.new('db/tfidf.sqlite3')
+            end
+  end
+
   desc "Extract term"
   task :extract_term do
     require 'natto'
     nm = Natto::MeCab.new
-    db = SQLite3::Database.new('db/tfidf.sqlite3')
     create_table_sql =<<~SQL
       DROP TABLE IF EXISTS tfidf;
       CREATE TABLE tfidf (
@@ -54,8 +59,6 @@ namespace :similar_entries do
 
   desc "Vector Normalize"
   task :vector_normalize do
-    db = SQLite3::Database.new('db/tfidf.sqlite3')
-
     load_extension_sql =<<~SQL
       -- SQRT や LOG を使いたいので
       SELECT load_extension('/usr/local/Cellar/sqlite/3.21.0/lib/libsqlitefunctions.dylib');
@@ -115,7 +118,6 @@ namespace :similar_entries do
 
   desc "Export calculation result to MySQL"
   task :export do
-    db = SQLite3::Database.new('db/tfidf.sqlite3')
     create_similar_candidate_sql = <<~SQL
       DROP TABLE IF EXISTS similar_candidate;
       DROP INDEX IF EXISTS index_sc_parent_id;
