@@ -59,12 +59,20 @@ namespace :similar_entries do
 
   desc "Vector Normalize"
   task :vector_normalize do
+    libsqlite_path = case
+                     when ENV["LIBSQLITE_PATH"]
+                       ENV["LIBSQLITE_PATH"]
+                     when RUBY_PLATFORM.match(/darwin/)
+                       "/usr/local/Cellar/sqlite/3.21.0/lib/libsqlitefunctions.dylib"
+                     when RUBY_PLATFORM.match(/linux\-musl/)
+                       "/usr/lib/libsqlite3.so"
+                     end
     load_extension_sql =<<~SQL
       -- SQRT や LOG を使いたいので
-      SELECT load_extension('/usr/local/Cellar/sqlite/3.21.0/lib/libsqlitefunctions.dylib');
+      SELECT load_extension(?);
     SQL
     db.enable_load_extension(true)
-    db.execute(load_extension_sql)
+    db.execute(load_extension_sql, libsqlite_path)
 
     update_tfidf_column_sql = <<~SQL
       -- エントリ数をカウントしておきます
