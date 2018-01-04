@@ -44,7 +44,7 @@ set :linked_dirs, %w{log tmp/pids tmp/sockets tmp/amazon vendor/bundle}
 
 set :puma_conf, File.join(current_path, 'config', 'puma.rb')
 
-set :bundle_without, %w{development test postgresql sqlite}.join(' ')
+set :bundle_without, %w{development test postgresql sqlite batch}.join(' ')
 
 namespace :deploy do
   desc 'Restart application'

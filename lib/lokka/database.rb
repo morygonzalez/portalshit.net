@@ -1,6 +1,6 @@
 module Lokka
   class Database
-    MODELS = %w(site option user entry category comment snippet tag tagging field_name field)
+    MODELS = %w(site option user entry similarity category comment snippet tag tagging field_name field)
 
     def connect
       DataMapper.finalize

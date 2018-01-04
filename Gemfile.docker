@@ -96,3 +96,8 @@ end
 group :postgresql do
   gem 'dm-postgres-adapter', '1.2.0'
 end
+
+group :batch do
+  gem 'natto'
+  gem 'sqlite3'
+end

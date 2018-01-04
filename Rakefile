@@ -56,3 +56,5 @@ begin
   end
 rescue LoadError => e
 end
+
+Dir.glob("lib/tasks/*.rake").each {|f| load f }
