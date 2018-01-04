@@ -34,10 +34,10 @@ module Lokka
                     page(params[:page], :per_page => @site.per_page, :order => @site.default_order_query_operator)
       @posts = apply_continue_reading(@posts)
 
-      @title = "Search by #{@query}"
+      @title = "Search by #{h(@query)}"
 
       @bread_crumbs = [{:name => t('home'), :link => '/'},
-                       {:name => @query }]
+                       {:name => h(@query)}]
 
       render_detect :search, :entries
     end
