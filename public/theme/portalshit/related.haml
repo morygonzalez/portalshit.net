@@ -1,9 +1,19 @@
-.article-bottom
-  %script(async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
-  %ins(class="adsbygoogle"
-    style="display:block"
-    data-ad-client="ca-pub-7665673588234323"
-    data-ad-slot="3942164192"
-    data-ad-format="autorelaxed")
-  :javascript
-    (adsbygoogle = window.adsbygoogle || []).push({});
+- if referrers.present?
+  - cache_fragment :"referres-#{I18n.locale}" do
+    .referrers
+      %h3 この記事を参照している記事
+      %ul
+        - referrers.each do |referrer|
+          %li
+            = link_to referrer.title, referrer.link
+            %span.created_at= l(referrer.created_at.to_date, format: :long)
+- if @entry.similar_entries.present?
+  - cache_fragment :"similar-#{I18n.locale}" do
+    .similar
+      %h3 この記事に似ている記事
+      %ul
+        - @entry.similarities.all(order: [:score.desc], limit: 10).each do |similarity|
+          - similar = similarity.similar_entry
+          %li
+            = link_to similar.title, similar.link
+            %span.created_at= l(similar.created_at.to_date, format: :long)
