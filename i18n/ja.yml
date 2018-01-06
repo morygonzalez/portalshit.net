@@ -252,3 +252,6 @@ ja:
   comment_spam_successfuly: コメントはSPAM判定されました
   continue_reading: 続きを読む
   delete_spam: スパムを削除
+  date:
+    formats:
+      long: '%Y年%m月%d日 (%a)'
