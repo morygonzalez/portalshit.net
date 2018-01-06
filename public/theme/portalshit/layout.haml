@@ -64,7 +64,7 @@
             %dd
               %ul
                 - Comment.recent.each do |comment|
-                  %li= link_to strip_tags(comment.body).truncate(16), comment.link
+                  %li= link_to strip_tags(comment.body).truncate(22), comment.link
           -# %dl.tags
           -#   %dt= t('tags')
           -#   %dd
