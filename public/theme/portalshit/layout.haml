@@ -38,7 +38,7 @@
         %li
           %form#search_form(action="/search/" method="get")
             %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
-      - unless index? or entry?
+      - unless index?
         #bread_crumb= bread_crumb
 
     #content.clearfix
