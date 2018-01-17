@@ -41,9 +41,24 @@ module Lokka
     end
 
     def bread_crumb
-      bread_crumb = @bread_crumbs[0..-2].inject('<ol>') {|html, bread|
-        html += "<li><a href=\"#{bread[:link]}\">#{bread[:name]}</a></li>"
-      } + "<li>#{@bread_crumbs[-1][:name]}</li></ol>"
+      bread_crumb = @bread_crumbs[0..-2].inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') {|html, bread|
+        html += <<~RUBY_HTML
+          <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+            <a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="#{bread[:link]}">
+              <span itemprop="name">#{bread[:name]}</span>
+            </a>
+            <meta itemprop="position" content="#{@bread_crumbs.index(bread) + 1}" />
+          </li>
+        RUBY_HTML
+      } + <<~RUBY_HTML
+          <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+            <span itemscope itemtype="http://schema.org/Thing" itemprop="item">
+              <span itemprop="name">#{@bread_crumbs[-1][:name]}</span>
+            </span>
+            <meta itemprop="position" content="#{@bread_crumbs.length}" />
+          </li>
+        </ol>
+      RUBY_HTML
       bread_crumb.html_safe
     end
 
