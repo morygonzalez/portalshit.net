@@ -16,6 +16,8 @@ class Entry
         break if index == count
       end
       all(slug: slugs.values, limit: count).sort_by {|entry| slugs.values.index(entry.slug) }
+    rescue
+      []
     end
   end
 end
