@@ -1,4 +1,5 @@
 import React from 'react'
+import Moment from 'react-moment'
 import { render } from 'react-dom'
 
 class Archives extends React.Component {
@@ -65,7 +66,7 @@ function Entry(props) {
     <li className="entry">
       <a href={props.link}>{props.title}</a>
       <div className="detail-information">
-        <span className="created_at">{props.created_at}</span>
+        <Moment fromNow className="created_at" date={props.created_at} />
         <Category category={props.category} />
       </div>
     </li>

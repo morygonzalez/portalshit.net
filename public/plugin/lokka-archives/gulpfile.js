@@ -1,9 +1,9 @@
 const gulp = require("gulp");
-const babili = require("gulp-babili")
+const minify = require("gulp-babel-minify")
 
 gulp.task("minify", () =>
   gulp.src("./build/script.js")
-    .pipe(babili({
+    .pipe(minify({
       mangle: {
         keepClassNames: true
       }
