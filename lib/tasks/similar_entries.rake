@@ -32,10 +32,11 @@ namespace :similar_entries do
     entry_frequencies = {}
     entries.each do |entry|
       words = []
-      body_cleansed = entry.body.
+      body_cleansed = entry.title + entry.tags.map(&:name).join(' ') +
+        entry.body.
         gsub(/<.+?>/, '').
         gsub(/!?\[.+?\)/, '').
-        gsub(/(```|<code>).+?(```|<\/code>)/m, '')
+        gsub(/(?:```|<code>)(.+?)(?:```|<\/code>)/m, '\1')
       begin
         nm.parse(body_cleansed) do |n|
           next if !n.feature.match(/名詞/)
