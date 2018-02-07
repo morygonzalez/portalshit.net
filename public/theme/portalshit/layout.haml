@@ -63,7 +63,7 @@
                 - Post.hotentry.each do |post|
                   %li
                     =link_to post.title, post.link
-                    %span.bookmark_count= "#{post.bookmark_count} users"
+                    %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
           %dl.recent_entries
             %dt= t('recent_entries')
             %dd
