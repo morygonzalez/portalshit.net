@@ -56,7 +56,15 @@
               %ul
                 - Post.popular.each do |post|
                   %li= link_to post.title, post.link
-          %dl.rcent_entries
+          %dl.hotentry
+            %dt= t('hotentry')
+            %dd
+              %ul
+                - Post.hotentry.each do |post|
+                  %li
+                    =link_to post.title, post.link
+                    %span.bookmark_count= "#{post.bookmark_count} users"
+          %dl.recent_entries
             %dt= t('recent_entries')
             %dd
               %ul
@@ -74,14 +82,14 @@
           -#     %ul
           -#       - Tag.all.each do |tag|
           -#         %li= link_to tag.name, tag.link
-          %dl.archives
-            %dt= link_to t('archives.title'), '/archives'
-            %dd
-              %ul
-                - months.each_with_index do |m, i|
-                  - if i < 6
-                    %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/"
-              %p.more= link_to(t('archives.more'), '/archives', id: 'show_more_archive_list')
+          -# %dl.archives
+          -#   %dt= link_to t('archives.title'), '/archives'
+          -#   %dd
+          -#     %ul
+          -#       - months.each_with_index do |m, i|
+          -#         - if i < 6
+          -#           %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/"
+          -#     %p.more= link_to(t('archives.more'), '/archives', id: 'show_more_archive_list')
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
