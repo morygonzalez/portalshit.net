@@ -27,17 +27,16 @@ class Entry
       require 'nokogiri'
 
       max = limit - 1
-      url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net'
-      ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36'
+      url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net&mode=rss'
+      ua = 'AppleWebKit/604.5.6 (KHTML, like Gecko) Reeder/3.1.2 Safari/604.5.6'
       content = open(url, 'User-Agent' => ua).read
-      doc = Nokogiri::HTML(content)
-      slugs = doc.xpath('//li[contains(@class, "entry-unit")]')[0..max].inject({}) {|result, item|
-        attributes = item.xpath('div[2]/h3/a')
-        meta = item.xpath('div[2]/ul/li/span/a')[0]
-        entry_url = '/entry/' + attributes.attr('href').value.gsub(%r{https?://}, '')
-        slug = attributes.attr('href').value.gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '')
-        bookmark_count = item.attr('data-bookmark-count')
-        bookmark_url = "http://b.hatena.ne.jp#{meta&.attr('href') || entry_url}"
+      parsed = Hash.from_xml(content)
+      slugs = parsed['RDF']['item'][0..max].inject({}) {|result, item|
+        link = item['link']
+        entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
+        slug = link.gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '')
+        bookmark_count = item['bookmarkcount']
+        bookmark_url = "http://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
         result
       }
@@ -47,8 +46,8 @@ class Entry
         entry.bookmark_url = slugs[entry.slug][:bookmark_url]
         entry
       }
-    # rescue
-    #   []
+    rescue
+      []
     end
   end
 end
