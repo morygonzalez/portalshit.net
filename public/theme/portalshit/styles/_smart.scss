@@ -20,12 +20,16 @@
       margin-top: 1em;
       margin-right: 0;
       li {
-        margin: 0 4px;
         a {
           padding: 2px 0;
         }
-        &.archives {
+        &.github, &.twitter {
           display: none;
+        }
+        &.search {
+          input[type=text] {
+            font-size: 16px;
+          }
         }
       }
     }
