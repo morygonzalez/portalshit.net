@@ -1,8 +1,8 @@
 #!/bin/bash
 
 zcat -f /home/morygonzalez/sites/portalshit/log/access.log* \
-  | grep "status:200" \
-  | grep -vE 'useragent:.+?(bot|Bot|Feed|Fetcher|Crawler|Fastladder|Ruby|Aol\sReader|proximic|Hatena\sAntenna|Mediapartners-Google|subscribe)' \
+  | grep 'status:200' \
+  | grep -viE 'useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs)' \
   | cut -f5 | sed -e 's/request_uri://' \
   | grep -vE '(favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|^\-$|^\/$)' \
   | sed -e 's/gain-profit-at-somebody-elses-profit/gain-profit-at-somebody-elses-expense/' \
