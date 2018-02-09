@@ -1,7 +1,7 @@
 #!/bin/bash
 
 zcat -f /home/morygonzalez/sites/portalshit/log/access.log* \
-  | grep -vE 'useragent:.+?(bot|Bot|Feed|Fetcher|Crawler|Fastladder|Ruby|Aol\sReader|proximic|Hatena\sAntenna|Mediapartners-Google|subscribe)' \
+  | grep -viE 'useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs)' \
   | grep -vE 'request_uri:.+?(favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|^\-$|^\/$)' \
   | cut -f12 | sed -e 's/referer://' \
   | grep -vE '(^-$|portalshit\.net)' \
