@@ -18,7 +18,7 @@ module Lokka
         elsif session[:locale]
           I18n.locale = session[:locale]
         elsif locales.present?
-          I18n.locale = (locales & I18n.available_locales).first
+          I18n.locale = (locales & I18n.available_locales).first || I18n.default_locale
         end
 
         theme = request.cookies['theme']
