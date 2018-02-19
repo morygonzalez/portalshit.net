@@ -27,6 +27,7 @@
 /.yardoc
 plugin_old
 /.sass-cache
+*.sql
 *.sql.gz
 /public/plugin/*/node_modules
 /config/newrelic.yml

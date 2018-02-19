@@ -48,7 +48,7 @@ COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
 
 RUN gem install bundler
-RUN apk add --no-cache bash nodejs mysql-client sqlite mysql-dev sqlite-dev
+RUN apk add --no-cache bash nodejs mysql-client sqlite mysql-dev sqlite-dev sqlite-libs
 RUN apk add --no-cache alpine-sdk \
       --virtual .build_deps libxml2-dev libxslt-dev zlib zlib-dev tzdata \
       && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
