@@ -76,10 +76,7 @@ pre {
   line-height: 115%;
   padding: 1.0em 1.5em;
   background-color: $various-bg;
-  white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
-  white-space: -o-pre-wrap;
-  white-space: pre-wrap;
+  white-space: pre;
   word-wrap: break-word;
   overflow-x: auto;
   overflow-y: visible;
