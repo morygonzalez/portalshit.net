@@ -13,6 +13,3 @@
     .created_at== #{l post.created_at, format: :long}
     - if logged_in?
       .edit= link_to t('edit'), post.edit_link
-  .article-bottom
-    - if index.zero?
-      = partial :advertisement
