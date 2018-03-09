@@ -78,12 +78,11 @@ pre {
   background-color: $various-bg;
   white-space: pre;
   word-wrap: break-word;
-  overflow-x: auto;
-  overflow-y: visible;
   max-width: 900px;
   color: #b5b2b2;
   text-shadow: none;
   font-family: $code-font;
+  @include _overflow-x-scroll;
 }
 
 code {
@@ -104,7 +103,7 @@ blockquote:not([class]) {
   background-color: #2c2525;
   color: #c7c7c7;
   text-shadow: none;
-  @include _border-radius;
+  @include _overflow-x-scroll;
 
   & > * {
     margin-left: 2.4em;
