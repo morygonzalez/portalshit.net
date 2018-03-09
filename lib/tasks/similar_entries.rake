@@ -64,7 +64,7 @@ namespace :similar_entries do
                      when ENV["LIBSQLITE_PATH"]
                        ENV["LIBSQLITE_PATH"]
                      when RUBY_PLATFORM.match(/darwin/)
-                       "/usr/local/Cellar/sqlite/3.21.0/lib/libsqlitefunctions.dylib"
+                       "/usr/local/lib/libsqlitefunctions.dylib"
                      when RUBY_PLATFORM.match(/linux\-musl/)
                        "/usr/lib/libsqlite3.so"
                      end
