@@ -32,3 +32,9 @@
   }
 }
 
+@mixin _overflow-x-scroll {
+  overflow-x: scroll;
+  &::-webkit-toolbar {
+    display: none;
+  }
+}
