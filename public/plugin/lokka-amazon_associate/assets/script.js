@@ -91,10 +91,17 @@ var Formatter = (function() {
       image = { 'URL': '/plugin/lokka-amazon_associate/assets/no-image.png' };
     }
     try {
-      price = item['OfferSummary']['LowestNewPrice']['FormattedPrice'];
-    }
-    catch(e) {
-      price = '-';
+      if (item['OfferSummary']['LowestNewPrice']) {
+        price = item['OfferSummary']['LowestNewPrice']['FormattedPrice'];
+      }
+      else if (item['OfferSummary']['LowestUsedPrice']) {
+        price = item['OfferSummary']['LowestUsedPrice']['FormattedPrice'];
+      }
+      else if (item['OfferSummary']['LowestCollectiblePrice']) {
+        price = item['OfferSummary']['LowestCollectiblePrice']['FormattedPrice'];
+      }
+    } catch(e) {
+      price = 'Amazon で確認';
     }
 
     let authors = [];
@@ -126,7 +133,7 @@ var Formatter = (function() {
       str += '<li>' + author + '</li>';
     }
     str += '<li>' + manufacturer + '</li>' +
-      '<li>' + price + '</li>' +
+      '<li>' + '<a href="' + link + '">' + price + '</a></li>' +
       '</ul>' +
       '</div>';
     return str;
