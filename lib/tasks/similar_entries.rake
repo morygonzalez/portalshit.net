@@ -9,8 +9,14 @@ namespace :similar_entries do
             end
   end
 
+  def target_entry_exists?
+    Entry.last.id > Similarity.aggregate(:entry_id).max
+  end
+
   desc "Extract term"
   task :extract_term do
+    next if not target_entry_exists?
+
     require 'natto'
     nm = Natto::MeCab.new
     create_table_sql =<<~SQL
@@ -60,13 +66,15 @@ namespace :similar_entries do
 
   desc "Vector Normalize"
   task :vector_normalize do
+    next if not target_entry_exists?
+
     libsqlite_path = case
                      when ENV["LIBSQLITE_PATH"]
                        ENV["LIBSQLITE_PATH"]
                      when RUBY_PLATFORM.match(/darwin/)
                        "/usr/local/lib/libsqlitefunctions.dylib"
                      when RUBY_PLATFORM.match(/linux\-musl/)
-                       "/usr/lib/libsqlite3.so"
+                       "/usr/local/lib/libsqlitefunctions.so"
                      end
     load_extension_sql =<<~SQL
       -- SQRT や LOG を使いたいので
@@ -127,6 +135,8 @@ namespace :similar_entries do
 
   desc "Export calculation result to MySQL"
   task :export do
+    next if not target_entry_exists?
+
     create_similar_candidate_sql = <<~SQL
       DROP TABLE IF EXISTS similar_candidate;
       DROP INDEX IF EXISTS index_sc_parent_id;
