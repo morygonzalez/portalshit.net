@@ -12,6 +12,7 @@ ENV mecab_url https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOX
 ENV ipadic_url https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM
 ENV build_deps 'curl git bash file sudo openssh'
 ENV dependencies 'openssl'
+ENV sqlite_version sqlite-autoconf-3230100
 
 RUN apk add --update --no-cache ${build_deps} \
   # Install dependencies
@@ -48,15 +49,22 @@ COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
 
 RUN gem install bundler
-RUN apk add --no-cache bash nodejs mysql-client sqlite mysql-dev sqlite-dev sqlite-libs
+RUN apk add --no-cache bash nodejs mysql-client mysql-dev less
 RUN apk add --no-cache alpine-sdk \
       --virtual .build_deps libxml2-dev libxslt-dev zlib zlib-dev tzdata \
       && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+      && curl -SLO http://www.sqlite.org/2018/${sqlite_version}.tar.gz \
+      && tar xvzf ${sqlite_version}.tar.gz \
+      && cd ${sqlite_version} \
+      && curl -SL -o extension-functions.c http://www.sqlite.org/contrib/download/extension-functions.c?get=25 \
+      && ./configure && make && make install \
+      && gcc -fPIC -shared extension-functions.c -o /usr/local/lib/libsqlitefunctions.so -lm \
+      && cd /app \
       && bundle install -j4 --without postgresql:sqlite \
       && apk del alpine-sdk .build_deps \
-      && rm -rf /tmp/* /var/cache/apk/*
+      && rm -rf /tmp/* /var/cache/apk/* ${sqlite_version}
 
 COPY . /app
 COPY Gemfile.docker /app/Gemfile
 
-CMD /bin/sh
+CMD /bin/bash
