@@ -1,6 +1,7 @@
 # config valid only for Capistrano 3.1
 lock '3.10.1'
 
+set :default_shell, '/bin/bash -l'
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} rbenv exec"
 set :default_env, { 'RUBYOPT' => '--encoding=UTF-8' }
 
