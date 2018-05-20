@@ -4,15 +4,6 @@
 @import "styles/variables";
 @import "styles/decoration";
 
-.body > .highlight, .body > blockquote > .highlight {
-  @include _monokai;
-  @include _border-radius;
-  pre {
-    border: 1px solid #333;
-    @include _border-radius;
-  }
-}
-
 #header {
   width: 100%;
   margin: 0 auto;
@@ -274,6 +265,58 @@
           dd {
             margin-top: 10px;
             margin-bottom:  20px;
+          }
+        }
+
+        > .highlight,
+        > blockquote > .highlight {
+          @include _monokai;
+          @include _border-radius;
+          pre {
+            border: 1px solid #333;
+            @include _border-radius;
+          }
+        }
+
+        a.ogp-link {
+          display: block;
+          &:link, &:hover { color: $visited-link-color; }
+
+          .fetched-ogp {
+            @include _border-radius;
+            &:hover { background: $various-bg }
+            border: 1px solid #333;
+            margin: 2em 1em;
+            font-size: .9em;
+            height: 121px;
+            display: flex;
+            width: 80%;
+            justify-content: space-between;
+
+            .ogp-image {
+              max-width: 120px;
+              flex-grow: 1;
+              img {
+                min-height: 120px;
+                max-width: 120px;
+                object-fit: cover;
+              }
+            }
+
+            .ogp-summary {
+              flex-grow: 3;
+              padding: 0 1em;
+              h3 {
+                margin: .3em 0;
+                &:link, &:visited { color: $base-font-color; }
+                &::before { content: none; }
+              }
+              .description {
+                margin: auto .5em;
+                line-height: 1.5em;
+                margin: .5em auto 0;
+              }
+            }
           }
         }
 
