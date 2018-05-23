@@ -1,1 +1,2 @@
 gem 'fastimage'
+gem 'open_graph_reader'
