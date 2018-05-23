@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'fileutils'
 
 module Lokka
   module OGP
@@ -18,7 +19,8 @@ module Lokka
           escaped_url = CGI.escape(url)
           each_fetcher = EachFetcher.new(url)
           if each_fetcher.fetch
-            node.replace(OGElement.find(escaped_url)&.html_safe)
+            content = OGElement.find(escaped_url)&.html_safe
+            node.replace(content) if content
           end
         end
       end
@@ -59,20 +61,22 @@ module Lokka
 
           def exist?(url)
             path = File.join(CACHE_DIR, url)
-            File.exist?(path)
+            File.exist?(path) && test(?M, File.open(path)) > 1.month.ago
           end
         end
 
         def initialize(escaped_url:, url:, title: nil, image: nil, description: nil)
           @escaped_url = escaped_url
           @url = url
+          @host = URI.parse(url).host
           @title = title.presence || title_fallback || url
           @image = image.presence || image_fallback
-          @description = description
+          @description = description&.truncate(140)
         end
 
         def create
           return true if File.exist?(path)
+          FileUtils.mkdir_p(CACHE_DIR)
           File.open(path, 'w') do |file|
             file.puts html
           end
@@ -110,6 +114,7 @@ module Lokka
               <div class="ogp-summary">
                 <h3>#{html_escape(@title)}</h3>
                 <p class="description">#{html_escape(@description)}</p>
+                <p class="host">#{@host}</p>
               </div>
             </div>
           </a>
