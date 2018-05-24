@@ -4,7 +4,7 @@ RUN mkdir -p /app
 WORKDIR /app
 
 # MeCab Installation
-RUN apk add --update --no-cache build-base
+RUN apk add --no-cache build-base
 
 ENV MECAB_VERSION 0.996
 ENV IPADIC_VERSION 2.7.0-20070801
@@ -14,9 +14,9 @@ ENV build_deps 'curl git bash file sudo openssh'
 ENV dependencies 'openssl'
 ENV sqlite_version sqlite-autoconf-3230100
 
-RUN apk add --update --no-cache ${build_deps} \
+RUN apk add --no-cache ${build_deps} \
   # Install dependencies
-  && apk add --update --no-cache ${dependencies} \
+  && apk add --no-cache ${dependencies} \
   # Install MeCab
   && curl -SL -o mecab-${MECAB_VERSION}.tar.gz ${mecab_url} \
   && tar zxf mecab-${MECAB_VERSION}.tar.gz \
