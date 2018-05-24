@@ -5,7 +5,7 @@ namespace :similar_entries do
   def db
     @db ||= begin
               require 'sqlite3'
-              SQLite3::Database.new('db/tfidf.sqlite3')
+              SQLite3::Database.new(':memory:')
             end
   end
 
