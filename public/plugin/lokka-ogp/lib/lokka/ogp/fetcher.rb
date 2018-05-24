@@ -104,12 +104,20 @@ module Lokka
           '/plugin/lokka-ogp/assets/no-image.png'
         end
 
+        def secure_image
+          if Lokka.production? && @image.to_s.match(%r{^http://})
+            "/imageproxy/#{@image}"
+          else
+            @image
+          end
+        end
+
         def html
           <<~HTML
           <a href="#{@url}" class="ogp-link">
             <div class="fetched-ogp">
               <div class="ogp-image">
-                <img src="#{@image}" alt="#{html_escape(@title)}" />
+                <img src="#{secure_image}" alt="#{html_escape(@title)}" />
               </div>
               <div class="ogp-summary">
                 <h3>#{html_escape(@title)}</h3>
