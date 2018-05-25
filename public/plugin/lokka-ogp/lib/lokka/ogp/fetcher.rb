@@ -71,7 +71,7 @@ module Lokka
           @host = URI.parse(url).host
           @title = title.presence || title_fallback || url
           @image = image.presence || image_fallback
-          @description = description&.truncate(140)
+          @description = (description || description_fallback).to_s.truncate(140)
         end
 
         def create
@@ -104,9 +104,13 @@ module Lokka
           '/plugin/lokka-ogp/assets/no-image.png'
         end
 
+        def description_fallback
+          doc&.xpath('//head/meta[@name="description"]').first.try(:[], 'content')
+        end
+
         def secure_image
-          if Lokka.production? && @image.to_s.match(%r{^http://})
-            "/imageproxy/#{@image}"
+          if Lokka.production? && @image.to_s.start_with?('http')
+            "/imageproxy/120x120/#{@image}"
           else
             @image
           end
