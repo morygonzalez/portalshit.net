@@ -14,7 +14,8 @@ module Lokka
 
       def fetch
         doc.xpath('./p').each do |node|
-          next unless node.xpath('./a').first&.text&.start_with?('http')
+          next if node.children.length > 1
+          next if not node.xpath('./a').first&.text&.start_with?('http')
           url = node.xpath('./a').first.text
           escaped_url = CGI.escape(url)
           each_fetcher = EachFetcher.new(url)
