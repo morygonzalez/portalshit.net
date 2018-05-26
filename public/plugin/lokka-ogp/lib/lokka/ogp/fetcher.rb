@@ -118,7 +118,7 @@ module Lokka
         end
 
         def use_proxy?
-          exclude_regexp = %r{st-hatena\.com|githubusercontent}
+          exclude_regexp = %r{(githubusercontent|=\d)}
           Lokka.production? && @image.to_s.start_with?('http') && !@image.to_s.match(exclude_regexp)
         end
 
