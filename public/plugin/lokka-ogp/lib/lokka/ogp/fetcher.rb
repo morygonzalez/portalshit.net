@@ -118,7 +118,8 @@ module Lokka
         end
 
         def use_proxy?
-          Lokka.production? && @image.to_s.start_with?('http') && !@image.to_s.match(/githubusercontent/)
+          exclude_regexp = %r{st-hatena\.com|githubusercontent}
+          Lokka.production? && @image.to_s.start_with?('http') && !@image.to_s.match(exclude_regexp)
         end
 
         def html
