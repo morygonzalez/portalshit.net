@@ -52,11 +52,13 @@ module Lokka
 
       def article
         {
-          "og:type"        => "article",
-          "og:url"         => entry_link,
-          "og:title"       => @entry.title,
-          "og:description" => extract_description,
-          "og:image"       => @entry.images.first || default_image
+          "og:type"                   => "article",
+          "og:url"                    => entry_link,
+          "og:title"                  => @entry.title,
+          "og:description"            => extract_description,
+          "og:image"                  => @entry.images.first || default_image,
+          "og:article:published_time" => @entry.created_at,
+          "og:article:author"         => @entry.user.name
         }
       end
 
@@ -138,7 +140,7 @@ module Lokka
         image = @entry.images.first
         width, height = FastImage.size(image)
         if width > 639 || height > 639
-          return 'gallery' if @entry.images.length > 1
+          # return 'gallery' if @entry.images.length > 1
           'summary_large_image'
         else
           'summary'
