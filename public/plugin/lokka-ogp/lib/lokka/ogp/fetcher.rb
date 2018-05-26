@@ -102,7 +102,7 @@ module Lokka
         end
 
         def image_fallback
-          '/plugin/lokka-ogp/assets/no-image.png'
+          doc&.xpath('//head/meta[@property="og:image"]').first.try(:[], 'content') || '/plugin/lokka-ogp/assets/no-image.png'
         end
 
         def description_fallback
