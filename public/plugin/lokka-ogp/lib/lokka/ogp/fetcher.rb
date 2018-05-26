@@ -109,11 +109,15 @@ module Lokka
         end
 
         def secure_image
-          if Lokka.production? && @image.to_s.start_with?('http')
+          if use_proxy?
             "/imageproxy/120x120/#{@image}"
           else
             @image
           end
+        end
+
+        def use_proxy?
+          Lokka.production? && @image.to_s.start_with?('http') && !@image.to_s.match(/githubusercontent/)
         end
 
         def html
