@@ -1,9 +1,0 @@
-#!/bin/bash
-
-zcat -f /home/morygonzalez/sites/portalshit/log/access.log* \
-  | grep -viE 'useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs)' \
-  | grep -vE 'request_uri:.+?(favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|^\-$|^\/$)' \
-  | cut -f12 | sed -e 's/referer://' \
-  | grep -vE '(^-$|portalshit\.net)' \
-  | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-  | tee /home/morygonzalez/sites/portalshit/public/referer-ranking.txt
