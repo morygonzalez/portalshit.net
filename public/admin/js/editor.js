@@ -1,136 +1,139 @@
-$(function() {
-  var wysiwyg;
-  var textarea = $('textarea.editor').clone();
-  var plainTextareaMode;
+class FormObserver {
+  constructor(textarea) {
+    this.textarea = textarea;
+    this.selected = document.querySelector('select#post_markup option:checked').value;
+    this.setupEditor();
+    this.observeSubmit();
+  }
 
-  var switchTextareaAndWysiwyg = (function() {
-    var name = $('select[name$="[markup]"] option:selected').val();
-    name = name == '' ? 'html' : name
-    var html;
-    if (name == 'html') {
-      // enable wysiwyg
-      if (plainTextareaMode) {
-        textarea = $('textarea.editor').clone();
-        translateToWysiwyg($('textarea.editor'));
-        plainTextareaMode = false;
-      }
+  setupEditor() {
+    if (this.selected === 'html' || this.selected === '') {
+      this.setupQuill();
     } else {
-      // enable textarea
-      if (!plainTextareaMode) {
-        html = wysiwyg[0].contentDocument.body.innerHTML;
-        textarea[0].innerHTML = html;
-        $('#editor').empty();
-        $('#editor').prepend(textarea);
-        plainTextareaMode = true;
-      }
+      this.setupTextarea();
     }
-  });
+  }
 
-  var translateToWysiwyg = (function(jQueryObj) {
-    jQueryObj.wysiwyg({
-      controls: {
-        h1:          { visible: false },
-        html:        { visible: true },
-        indent:      { visible: false },
-        outdent:     { visible: false },
-        paragraph:   { visible: true },
-        redo:        { visible: false },
-        subscript:   { visible: false },
-        superscript: { visible: false },
-        underline:   { visible: false },
-        undo:        { visible: false }
+  handleMarkupChange(event) {
+    if (event.target.querySelector('option:checked').value === 'html') {
+      this.setupQuill();
+    } else {
+      this.setupTextarea();
+    }
+  }
+
+  setupQuill() {
+    const content = document.querySelector('#editor textarea').value;
+    this.quill = new Quill('#editor', {
+      modules: {
+        toolbar:[
+          [{ header: [3, 4, false] }],
+          ['bold', 'link'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['image', 'code-block']
+        ]
       },
-      autoGrow: true,
-      css: '/admin/css/editor.css'
+      theme: 'snow'
     });
-    $('.toolbar ~ div[style*="clear: both;"]').css({ clear: 'none' }); // style patch
-    wysiwyg = $('.wysiwyg iframe');
-  });
+    this.quill.clipboard.dangerouslyPasteHTML(content);
+    this.quill.getModule('toolbar').addHandler('image', () => {
+      this.selectLocalImage();
+    });
+  }
 
-  $('select[name$="[markup]"]').change(switchTextareaAndWysiwyg);
+  setupTextarea() {
+    const textarea = this.textarea;
+    this.quill = Quill.find(document.querySelector('#editor'));
+    if (this.quill) {
+      const label = document.querySelector('label[for="post_body"]');
+      const qlToolbar = document.querySelector('.ql-toolbar');
+      const qlContainer = document.querySelector('.ql-container');
+      const content = this.quill.root.innerHTML;
+      textarea.value = content;
+      qlContainer.remove();
+      qlToolbar.remove();
+      const editor = document.createElement('div');
+      editor.setAttribute('id', 'editor');
+      editor.appendChild(textarea);
+      label.parentNode.insertBefore(editor, label.nextSibling);
+    }
+  }
 
-  plainTextareaMode = true;
+  selectLocalImage() {
+    const editor = document.querySelector('#editor');
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.click();
 
-  switchTextareaAndWysiwyg();
-});
+    // Listen upload local image and save to server
+    input.onchange = () => {
+      const file = input.files[0];
+      // file type is only image.
+      if (/^image\//.test(file.type)) {
+        const uploader = new FileUploader(editor);
+        uploader.upload(file).then((response) => {
+          const range = this.quill.getSelection();
+          this.quill.insertEmbed(range.index, 'image', response.url);
+        });
+      } else {
+        console.warn('You could only upload images.');
+      }
+    };
+  }
 
-var FileUploader = (function() {
-  function FileUploader(editor) {
+  observeSubmit() {
+    const form = document.querySelector('#main form');
+    form.onsubmit = () => {
+      this.setupTextarea();
+    }
+  }
+}
+
+class FileUploader {
+  constructor(editor) {
     this.editor = editor;
-    this.textarea = editor.querySelector('textarea');
     this.markupSelector = document.querySelector('#post_markup');
     this.observeDragAndDrop();
-    this.observeWysiwyg();
   };
 
-  FileUploader.prototype.isAvailable = function() {
-    var div = document.createElement('div');
+  isAvailable() {
+    const div = document.createElement('div');
     return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
   };
 
-  FileUploader.prototype.observeWysiwyg = function() {
-    var self = this;
-
-    this.markupSelector.addEventListener('change', function(e) {
-      self.toggleWarning();
-      var wysiwyg = document.querySelector('#editor .wysiwyg');
-      if (wysiwyg) {
-        wysiwyg.querySelector('.html').addEventListener('click', function(e) {
-          self.toggleWarning();
-        });
-      }
-    });
-  };
-
-  FileUploader.prototype.isWysiwyg = function() {
-    if (this.markupSelector.querySelector('option:checked').value !== 'html')
-      return false;
-    if (this.textarea.style.display === 'block')
-      return false;
-    return true;
-  };
-
-  FileUploader.prototype.toggleWarning = function() {
-    var warning = document.querySelector('#upload-disabled-warning');
-    if (this.isWysiwyg()) {
-      warning.style.display = 'block';
-    } else {
-      warning.style.display = 'none';
-    }
-  };
-
-  FileUploader.prototype.observeDragAndDrop = function() {
-    var editor = this.editor;
-    var self = this;
+  observeDragAndDrop() {
+    const editor = this.editor;
+    const self = this;
 
     if (!this.isAvailable()) {
       console.log("Drag and Drop upload is not available on this Browser");
       return false;
     }
 
-    var eventsToIgnore      = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
-    var eventsToAddClass    = ['drag', 'dragstart', 'dragover', 'dragenter'];
-    var eventsToRemoveClass = ['dragleave', 'dragend', 'drop'];
-    eventsToIgnore.forEach(function(event) {
-      editor.addEventListener(event, function(e) {
+    const eventsToIgnore      = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
+    const eventsToAddClass    = ['drag', 'dragstart', 'dragover', 'dragenter'];
+    const eventsToRemoveClass = ['dragleave', 'dragend', 'drop'];
+
+    eventsToIgnore.forEach((event) => {
+      editor.addEventListener(event, (e) => {
         e.preventDefault();
         e.stopPropagation();
       });
     });
-    eventsToAddClass.forEach(function(event) {
-      editor.addEventListener(event, function(e) {
+    eventsToAddClass.forEach((event) => {
+      editor.addEventListener(event, (e) => {
         editor.classList.add('is-dragover');
       });
     });
-    eventsToRemoveClass.forEach(function(event) {
-      editor.addEventListener(event, function(e) {
+    eventsToRemoveClass.forEach((event) => {
+      editor.addEventListener(event, (e) => {
         editor.classList.remove('is-dragover');
       });
     });
-    editor.addEventListener('drop', function(e) {
-      var droppedFiles = e.dataTransfer.files;
+    editor.addEventListener('drop', (e) => {
+      let droppedFiles = e.dataTransfer.files;
       if (droppedFiles) {
-        for (var file of droppedFiles) {
+        for (let file of droppedFiles) {
           self.upload(file);
         }
         droppedFiles = null;
@@ -138,20 +141,22 @@ var FileUploader = (function() {
     });
   };
 
-  FileUploader.prototype.upload = function(file) {
-    var editor = this.editor;
-    var textarea = this.textarea;
-    var ajaxData = new FormData();
-    var self = this;
+  upload(file) {
+    const editor = this.editor;
+    const textarea = editor.querySelector('textarea');
+    const ajaxData = new FormData();
+    const self = this;
     ajaxData.append('file', file);
-    var promise = new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      var response;
+    let promise = new Promise((resolve, reject) => {
+      let xhr = new XMLHttpRequest();
+      let response;
       xhr.open('POST', '/admin/attachments');
-      xhr.onreadystatechange = function() {
+      xhr.onreadystatechange = () => {
         if (xhr.readyState != 4) {
           editor.classList.add('is-uploading');
-          textarea.setAttribute('disabled', true);
+          if (textarea) {
+            textarea.setAttribute('disabled', true);
+          }
         } else if (xhr.status != 201) {
           response = JSON.parse(xhr.response);
           editor.classList.add('is-error');
@@ -164,21 +169,29 @@ var FileUploader = (function() {
       }
       xhr.send(ajaxData);
     });
-    promise.then(function(response) {
+    promise.then((response) => {
       console.log(response.message);
       editor.classList.remove('is-uploading');
-      textarea.removeAttribute('disabled');
-      var imageTag = self.detectImageTag(file, response.url);
-      self.insertImage(imageTag);
-    }).catch(function(response) {
-      textarea.removeAttribute('disabled');
-      console.error(response.message);
+      if (textarea) {
+        textarea.removeAttribute('disabled');
+        const imageTag = self.detectImageTag(file, response.url);
+        self.insertImage(imageTag);
+      }
+    }).catch((response) => {
+      if (textarea) {
+        textarea.removeAttribute('disabled');
+        console.error(response.message);
+      }
     });
     return promise;
   };
 
-  FileUploader.prototype.insertImage = function(imageTag) {
-    var textarea = this.textarea;
+  insertImage(imageTag) {
+    const textarea = this.editor.querySelector('textarea');
+
+    if (!textarea) {
+      return;
+    }
 
     if (textarea.value.length === 0) {
       textarea.value = imageTag;
@@ -191,9 +204,9 @@ var FileUploader = (function() {
     }
   };
 
-  FileUploader.prototype.detectImageTag = function(file, url) {
-    var imageTag;
-    var markup = document.querySelector('#post_markup option:checked').value;
+  detectImageTag(file, url) {
+    let imageTag;
+    const markup = document.querySelector('#post_markup option:checked').value;
     switch (markup) {
       case 'kramdown':
       case 'redcarpet':
@@ -210,13 +223,19 @@ var FileUploader = (function() {
     }
     return imageTag;
   };
+}
 
-  return FileUploader;
-})();
-
-document.addEventListener('DOMContentLoaded', function() {
-  var editor = document.querySelector('#editor');
-  if (typeof editor !== undefined) {
+document.addEventListener('DOMContentLoaded', () => {
+  const editor = document.querySelector('#editor');
+  if (editor) {
     new FileUploader(editor);
+  }
+
+  const textarea = document.querySelector('#editor textarea');
+  if (textarea) {
+    const formObserver = new FormObserver(textarea);
+    document.querySelector('#post_markup').addEventListener('change', (event) => {
+      formObserver.handleMarkupChange(event);
+    }, false);
   }
 });
