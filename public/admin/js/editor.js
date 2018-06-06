@@ -63,6 +63,7 @@ class FormObserver {
     const editor = document.querySelector('#editor');
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
     input.click();
 
     // Listen upload local image and save to server
