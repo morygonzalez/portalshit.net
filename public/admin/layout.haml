@@ -8,7 +8,7 @@
     %title== #{@site.title} - Lokka
     %link{'rel' => "shortcut icon", 'href' => url("/admin/favicon.ico")}
     %link{'rel' => "stylesheet", 'href' => url("/admin/css/style.css"), 'type' => "text/css"}
-    %script{'src' => url("/admin/js/editor.js"), 'type' => "text/javascript"}
+    %script{'src' => url("/admin/js/index.js"), 'type' => "text/javascript"}
     - head_last = yield_content :head_last
     - unless head_last.blank?
       = head_last
