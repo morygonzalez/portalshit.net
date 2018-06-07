@@ -1,15 +1,15 @@
-if RUBY_VERSION >= '1.9'
-  require 'simplecov'
+# frozen_string_literal: true
 
-  SimpleCov.start do
-    add_filter "spec/"
-    add_filter "public/"
-    add_filter "i18n/"
-    add_filter "db/"
-    add_filter "coverage/"
-    add_filter "tmp/"
-    add_filter "log/"
-  end if ENV["COVERAGE"]
+require 'simplecov'
+
+SimpleCov.start do
+  add_filter 'spec/'
+  add_filter 'public/'
+  add_filter 'i18n/'
+  add_filter 'db/'
+  add_filter 'coverage/'
+  add_filter 'tmp/'
+  add_filter 'log/'
 end
 
 require File.join(File.dirname(__FILE__), '..', 'init.rb')
@@ -22,9 +22,8 @@ require 'factory_girl'
 require 'database_cleaner'
 
 require 'factories'
-require "dm-core"
-require "dm-transactions"
-
+require 'dm-core'
+require 'dm-transactions'
 
 set :environment, :test
 Lokka::Database.new.connect
