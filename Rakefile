@@ -47,6 +47,11 @@ task 'spec:setup' do
   ENV['RACK_ENV'] = ENV['LOKKA_ENV'] = 'test'
 end
 
+desc 'Build admin js'
+task :'admin:build_js' do
+  system('cd public/admin && npm run build')
+end
+
 begin
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(spec: 'spec:setup') do |spec|

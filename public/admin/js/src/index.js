@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const textarea = document.querySelector('#editor textarea');
   if (textarea) {
     const formObserver = new FormObserver(textarea);
-    document.querySelector('#post_markup').addEventListener('change', (event) => {
+    document.querySelector('select[id$=_markup]').addEventListener('change', (event) => {
       formObserver.handleMarkupChange(event);
     }, false);
   }
