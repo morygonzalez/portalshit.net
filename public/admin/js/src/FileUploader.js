@@ -1,7 +1,6 @@
 class FileUploader {
   constructor(editor) {
     this.editor = editor;
-    this.markupSelector = document.querySelector('#post_markup');
     this.observeDragAndDrop();
   };
 
@@ -115,7 +114,7 @@ class FileUploader {
 
   detectImageTag(file, url) {
     let imageTag;
-    const markup = document.querySelector('#post_markup option:checked').value;
+    const markup = document.querySelector('select[id$=_markup] option:checked').value;
     switch (markup) {
       case 'kramdown':
       case 'redcarpet':
