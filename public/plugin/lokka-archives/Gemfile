@@ -1,1 +1,1 @@
-gem 'dm-serializer'
+gem 'dm-serializer', '~> 1.2.2'
