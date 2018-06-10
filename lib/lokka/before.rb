@@ -9,7 +9,7 @@ module Lokka
 
         locales = Lokka.parse_http(request.env['HTTP_ACCEPT_LANGUAGE'])
         locales.map! do |locale|
-          locale =~ /-/ ? locale.split('-').first.to_sym : locale.to_sym
+          locale.match?(/-/) ? locale.split('-').first.to_sym : locale.to_sym
         end
 
         if params[:locale] && I18n.available_locales.include?(params[:locale].to_sym)

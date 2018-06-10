@@ -1,5 +1,7 @@
-require "rack/recaptcha"
-require "dotenv/load"
+# frozen_string_literal: true
+
+require 'rack/recaptcha'
+require 'dotenv/load'
 
 module Lokka
   module Recaptcha
@@ -12,10 +14,10 @@ module Lokka
 
       app.before do
         return if request.request_method != 'POST'
-        return if request.env['PATH_INFO'] =~ /^\/admin\//
+        return if request.env['PATH_INFO'].match?(%r{^/admin/})
         return unless Lokka.production?
 
-        halt 402, "You need to pay money to accomplish this action." if !recaptcha_valid?
+        halt 402, 'You need to pay money to accomplish this action.' unless recaptcha_valid?
       end
     end
   end

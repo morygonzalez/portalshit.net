@@ -39,24 +39,26 @@ module Lokka
     end
 
     def bread_crumb
-      bread_crumb = @bread_crumbs[0..-2].inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') {|html, bread|
-        html += <<~RUBY_HTML
-          <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-            <a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="#{bread[:link]}">
-              <span itemprop="name">#{bread[:name]}</span>
-            </a>
-            <meta itemprop="position" content="#{@bread_crumbs.index(bread) + 1}" />
-          </li>
+      bread_crumb =
+        @bread_crumbs[0..-2].
+          inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, bread|
+          html += <<~RUBY_HTML
+            <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+              <a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="#{bread[:link]}">
+                <span itemprop="name">#{bread[:name]}</span>
+              </a>
+              <meta itemprop="position" content="#{@bread_crumbs.index(bread) + 1}" />
+            </li>
+          RUBY_HTML
+        end + <<~RUBY_HTML
+            <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+              <span itemscope itemtype="http://schema.org/Thing" itemprop="item">
+                <span itemprop="name">#{@bread_crumbs[-1][:name]}</span>
+              </span>
+              <meta itemprop="position" content="#{@bread_crumbs.length}" />
+            </li>
+          </ol>
         RUBY_HTML
-      } + <<~RUBY_HTML
-          <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-            <span itemscope itemtype="http://schema.org/Thing" itemprop="item">
-              <span itemprop="name">#{@bread_crumbs[-1][:name]}</span>
-            </span>
-            <meta itemprop="position" content="#{@bread_crumbs.length}" />
-          </li>
-        </ol>
-      RUBY_HTML
       bread_crumb.html_safe
     end
 
@@ -65,7 +67,7 @@ module Lokka
       categories.each do |category|
         html += '<li>'
         html += "<a href=\"#{category.link}\">#{category.title}</a>"
-        html += category_tree(category.children) if category.children.count > 0
+        html += category_tree(category.children) if category.children.count.positive?
         html += '</li>'
       end
       html += '</ul>'
@@ -389,8 +391,8 @@ module Lokka
 
     def slugs
       tmp = @theme_types
-      tmp << @entry.slug    if @entry && @entry.slug
-      tmp << @category.slug if @category && @category.slug
+      tmp << @entry.slug    if @entry&.slug
+      tmp << @category.slug if @category&.slug
       tmp
     end
 

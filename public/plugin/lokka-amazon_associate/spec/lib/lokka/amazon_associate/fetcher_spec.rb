@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Lokka::AmazonAssociate::Fetcher do
@@ -31,7 +33,7 @@ describe Lokka::AmazonAssociate::Fetcher do
     before do
       Amazon::Ecs.stub(:options=).and_return(true)
       fake_option = Class.new
-      [:associate_tag, :access_key_id, :secret_key].each do |method|
+      %i[associate_tag access_key_id secret_key].each do |method|
         fake_option.stub(method)
       end
       stub_const('Option', fake_option)

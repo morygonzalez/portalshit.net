@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dm-serializer/to_json'
 
 module Lokka
@@ -5,7 +7,7 @@ module Lokka
     def self.registered(app)
       app.get '/archives.json' do
         posts = Post.all(
-          fields: [:id, :category_id, :slug, :title, :created_at],
+          fields: %i[id category_id slug title created_at],
           draft: false,
           created_at: (1.year.ago..Time.now)
         )
@@ -27,7 +29,7 @@ module Lokka
 
       app.get '/archives/?:year?.json' do |year|
         posts = Post.all(
-          fields: [:id, :category_id, :slug, :title, :created_at],
+          fields: %i[id category_id slug title created_at],
           draft: false,
           created_at: (Time.new(year)..Time.new(year).end_of_year)
         )
@@ -38,16 +40,16 @@ module Lokka
       end
 
       app.get '/archives' do
-        @bread_crumbs = [{:name => t('home'), :link => '/'}]
-        @bread_crumbs << {:name => t('archives.title'), :link => '/archives'}
-        haml :"plugin/lokka-archives/views/index", :layout => :"theme/#{@theme.name}/layout"
+        @bread_crumbs = [{ name: t('home'), link: '/' }]
+        @bread_crumbs << { name: t('archives.title'), link: '/archives' }
+        haml :"plugin/lokka-archives/views/index", layout: :"theme/#{@theme.name}/layout"
       end
 
       app.get '/archives/:year' do |year|
-        @bread_crumbs = [{:name => t('home'), :link => '/'}]
-        @bread_crumbs << {:name => t('archives.title'), :link => '/archives'}
-        @bread_crumbs << {:name => year, :link => "/archives/#{year}"}
-        haml :"plugin/lokka-archives/views/index", :layout => :"theme/#{@theme.name}/layout"
+        @bread_crumbs = [{ name: t('home'), link: '/' }]
+        @bread_crumbs << { name: t('archives.title'), link: '/archives' }
+        @bread_crumbs << { name: year, link: "/archives/#{year}" }
+        haml :"plugin/lokka-archives/views/index", layout: :"theme/#{@theme.name}/layout"
       end
     end
   end
@@ -67,47 +69,47 @@ module Lokka
   module AddDateTimeMethodsToEntry
     refine Entry do
       def year
-        self.created_at.year.to_s.rjust(4,'0')
+        created_at.year.to_s.rjust(4, '0')
       end
 
       def monthnum
-        self.created_at.month.to_s.rjust(2,'0')
+        created_at.month.to_s.rjust(2, '0')
       end
 
       def month
-        self.created_at.month.to_s.rjust(2,'0')
+        created_at.month.to_s.rjust(2, '0')
       end
 
       def day
-        self.created_at.day.to_s.rjust(2,'0')
+        created_at.day.to_s.rjust(2, '0')
       end
 
       def hour
-        self.created_at.hour.to_s.rjust(2,'0')
+        created_at.hour.to_s.rjust(2, '0')
       end
 
       def minute
-        self.created_at.min.to_s.rjust(2,'0')
+        created_at.min.to_s.rjust(2, '0')
       end
 
       def second
-        self.created_at.sec.to_s.rjust(2,'0')
+        created_at.sec.to_s.rjust(2, '0')
       end
 
       def post_id
-        self.id.to_s
+        id.to_s
       end
 
       def postname
-        self.slug || self.id.to_s
+        slug || id.to_s
       end
 
       def clever_link
         if permalink_format
-          params = permalink_keys.each_with_object({}) {|key, hash| hash[key] = eval("self.#{key}") }
+          params = permalink_keys.each_with_object({}) {|key, hash| hash[key] = send(key) }
           helper.custom_permalink_path(params)
         else
-          self.slug
+          slug
         end
       end
 
@@ -122,7 +124,9 @@ module Lokka
       end
 
       def permalink_keys
-        @permalink_keys ||= permalink_format.map {|item| item.sub(/(?:%(.+?)%)?\/?/, '\1') }.delete_if(&:blank?).map(&:to_sym)
+        @permalink_keys ||=
+          permalink_format.map {|item| item.sub(%r{(?:%(.+?)%)?/?}, '\1') }.
+            delete_if(&:blank?).map(&:to_sym)
       end
     end
   end
@@ -132,29 +136,25 @@ module Lokka
 
     class << self
       def categories
-        @categories ||= Category.all(fields: [:id, :slug, :title]).group_by(&:id)
+        @categories ||= Category.all(fields: %i[id slug title]).group_by(&:id)
       end
 
       def generate(posts)
-        month_posts = posts.group_by {|post| post.created_at.strftime('%Y-%1m') }
-        month_posts.each_with_object({}) {|(month, _posts), object|
-          object[month] ||= []
-          _posts.each do |post|
-            category = categories[post.category_id]&.first || {}
-            object[month] << {
-              id: post.id,
-              category: {
-                id: category[:id],
-                title: category[:title],
-                slug: category[:slug]
-              },
-              title: post.title,
-              link: post.clever_link,
-              created_at: post.created_at
-            }
+        posts.group_by {|post| post.created_at.strftime('%Y-%1m') }.
+          each_with_object({}) do |(month, month_posts), object|
+            object[month] ||= []
+            month_posts.each do |post|
+              category = categories[post.category_id]&.first || {}
+              object[month] << {
+                id: post.id,
+                category: { id: category[:id], title: category[:title], slug: category[:slug] },
+                title: post.title,
+                link: post.clever_link,
+                created_at: post.created_at
+              }
+            end
+            object
           end
-          object
-        }
       end
     end
   end

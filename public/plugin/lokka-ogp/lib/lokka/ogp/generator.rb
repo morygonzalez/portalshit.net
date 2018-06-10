@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Lokka
   module OGP
     module AddImagesToEntry
       refine Entry do
         def images
-          self.body.scan(/https?:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)/)
+          body.scan(%r{https?://[\w/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)})
         end
       end
     end
@@ -42,23 +44,23 @@ module Lokka
 
       def website
         {
-          "og:type"        => "website",
-          "og:url"         => site_host,
-          "og:title"       => @site.title,
-          "og:description" => @site.meta_description,
-          "og:image"       => default_image
+          'og:type'        => 'website',
+          'og:url'         => site_host,
+          'og:title'       => @site.title,
+          'og:description' => @site.meta_description,
+          'og:image'       => default_image
         }
       end
 
       def article
         {
-          "og:type"                   => "article",
-          "og:url"                    => entry_link,
-          "og:title"                  => @entry.title,
-          "og:description"            => extract_description,
-          "og:image"                  => @entry.images.first || default_image,
-          "og:article:published_time" => @entry.created_at,
-          "og:article:author"         => @entry.user.name
+          'og:type'                   => 'article',
+          'og:url'                    => entry_link,
+          'og:title'                  => @entry.title,
+          'og:description'            => extract_description,
+          'og:image'                  => @entry.images.first || default_image,
+          'og:article:published_time' => @entry.created_at,
+          'og:article:author'         => @entry.user.name
         }
       end
 
@@ -76,25 +78,25 @@ module Lokka
 
       def summary
         {
-          "twitter:card"        => "summary",
-          "twitter:site"        => @site.title,
-          "twitter:creator"     => "@#{User.first&.name}",
-          "twitter:title"       => @site.title,
-          "twitter:description" => @site.meta_description,
-          "twitter:image"       => default_image,
-          "twitter:url"         => site_host
+          'twitter:card'        => 'summary',
+          'twitter:site'        => @site.title,
+          'twitter:creator'     => "@#{User.first&.name}",
+          'twitter:title'       => @site.title,
+          'twitter:description' => @site.meta_description,
+          'twitter:image'       => default_image,
+          'twitter:url'         => site_host
         }
       end
 
       def entry_default
         {
-          "twitter:card"        => detect_card_type,
-          "twitter:site"        => @site.title,
-          "twitter:creator"     => "@#{@entry.user.name}",
-          "twitter:title"       => "#{@entry.title}",
-          "twitter:description" => extract_description,
-          "twitter:image"       => default_image,
-          "twitter:url"         => entry_link
+          'twitter:card'        => detect_card_type,
+          'twitter:site'        => @site.title,
+          'twitter:creator'     => "@#{@entry.user.name}",
+          'twitter:title'       => @entry.title.to_s,
+          'twitter:description' => extract_description,
+          'twitter:image'       => default_image,
+          'twitter:url'         => entry_link
         }
       end
 
@@ -103,30 +105,28 @@ module Lokka
       end
 
       def entry_with_image
-        entry_default.merge("twitter:image" => @entry.images.first)
+        entry_default.merge('twitter:image' => @entry.images.first)
       end
 
       def entry_with_images
-        images = @entry.images.each_with_index.each_with_object({}) {|(url, i), _images|
-          break _images if i > 3
-          _images["twitter:image#{i}"] = url
-        }
+        images = @entry.images.each_with_index.each_with_object({}) do |(url, i), entry_images|
+          break entry_images if i > 3
+          entry_images["twitter:image#{i}"] = url
+        end
         default = entry_default
-        default.delete("twitter:image")
+        default.delete('twitter:image')
         default.merge(images)
       end
 
       def generate
-        case
-        when @entry.nil?
+        if @entry.nil?
           summary
-        when @entry
-          case
-          when @entry.images.nil?
+        elsif @entry
+          if @entry.images.nil?
             entry_without_image
-          when @entry.images.length == 1
+          elsif @entry.images.length == 1
             entry_with_image
-          when @entry.images.length > 1
+          elsif @entry.images.length > 1
             entry_with_images
           else
             entry_default
@@ -145,7 +145,7 @@ module Lokka
         else
           'summary'
         end
-      rescue
+      rescue StandardError
         'summary'
       end
     end
@@ -153,7 +153,7 @@ module Lokka
     module RefineHash
       refine Hash do
         def to_meta_tags
-          self.each_with_object(SafeBuffer.new) do |(name, content), final|
+          each_with_object(SafeBuffer.new) do |(name, content), final|
             final << "<meta property=\"#{name}\" content=\"#{content}\" />\n".html_safe
           end
         end

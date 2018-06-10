@@ -30,9 +30,9 @@ class Entry
   validates_format_of :slug, with: %r{^[_/0-9a-zA-Z-]+$}
 
   before :valid? do
-    self.category_id = nil if category_id === ''
-    self.created_at = DateTime.now if created_at.blank?
-    self.updated_at = DateTime.now if updated_at.blank?
+    self.category_id = nil if category_id == ''
+    self.created_at = Time.now if created_at.blank?
+    self.updated_at = Time.now if updated_at.blank?
   end
 
   after :save, :update_fields
@@ -106,7 +106,7 @@ class Entry
 
   def method_missing(method, *args)
     attribute = method.to_s
-    if attribute =~ /=$/
+    if attribute.match?(/=$/)
       column = attribute[0, attribute.size - 1]
       field_name = fieldname.first(name: column)
       field = field.first(entry_id: id, field_name_id: field_name.id)

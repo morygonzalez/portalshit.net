@@ -1,2 +1,4 @@
-gem 'rack-recaptcha2', require: 'rack/recaptcha'
+# frozen_string_literal: true
+
 gem 'dotenv'
+gem 'rack-recaptcha2', require: 'rack/recaptcha'

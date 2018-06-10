@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'open-uri'
 require 'fileutils'
 
@@ -15,7 +17,7 @@ module Lokka
       def fetch
         doc.xpath('./p').each do |node|
           next if node.children.length > 1
-          next if not node.xpath('./a').first&.text&.start_with?('http')
+          next unless node.xpath('./a').first&.text&.start_with?('http')
           url = node.xpath('./a').first.text
           escaped_url = CGI.escape(url)
           each_fetcher = EachFetcher.new(url)
@@ -52,7 +54,7 @@ module Lokka
       end
 
       class OGElement
-        CACHE_DIR = "#{Lokka.root}/tmp/ogp".freeze
+        CACHE_DIR = "#{Lokka.root}/tmp/ogp"
 
         class << self
           def find(url)
@@ -62,7 +64,7 @@ module Lokka
 
           def exist?(url)
             path = File.join(CACHE_DIR, url)
-            File.exist?(path) && test(?M, File.open(path)) > 1.month.ago
+            File.exist?(path) && test('M', File.open(path)) > 1.month.ago
           end
         end
 
@@ -92,7 +94,7 @@ module Lokka
           @doc ||= begin
                      response = Faraday.get(@url)
                      Nokogiri::HTML(response.body)
-                   rescue
+                   rescue StandardError
                      nil
                    end
         end
@@ -102,11 +104,11 @@ module Lokka
         end
 
         def image_fallback
-          doc&.xpath('//head/meta[@property="og:image"]').first.try(:[], 'content') || '/plugin/lokka-ogp/assets/no-image.png'
+          doc&.xpath('//head/meta[@property="og:image"]')&.first.try(:[], 'content') || '/plugin/lokka-ogp/assets/no-image.png'
         end
 
         def description_fallback
-          doc&.xpath('//head/meta[@name="description"]').first.try(:[], 'content')
+          doc&.xpath('//head/meta[@name="description"]')&.first.try(:[], 'content')
         end
 
         def secure_image
@@ -118,24 +120,24 @@ module Lokka
         end
 
         def use_proxy?
-          exclude_regexp = %r{(githubusercontent|=\d)}
+          exclude_regexp = /(githubusercontent|=\d)/
           Lokka.production? && @image.to_s.start_with?('http') && !@image.to_s.match(exclude_regexp)
         end
 
         def html
           <<~HTML
-          <a href="#{@url}" class="ogp-link">
-            <div class="fetched-ogp">
-              <div class="ogp-image">
-                <img src="#{secure_image}" alt="#{html_escape(@title)}" />
+            <a href="#{@url}" class="ogp-link">
+              <div class="fetched-ogp">
+                <div class="ogp-image">
+                  <img src="#{secure_image}" alt="#{html_escape(@title)}" />
+                </div>
+                <div class="ogp-summary">
+                  <h3>#{html_escape(@title)}</h3>
+                  <p class="description">#{html_escape(@description)}</p>
+                  <p class="host">#{@host}</p>
+                </div>
               </div>
-              <div class="ogp-summary">
-                <h3>#{html_escape(@title)}</h3>
-                <p class="description">#{html_escape(@description)}</p>
-                <p class="host">#{@host}</p>
-              </div>
-            </div>
-          </a>
+            </a>
           HTML
         end
       end

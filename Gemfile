@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gem 'activesupport', '~> 4.2'
@@ -26,6 +28,9 @@ gem 'kramdown'
 gem 'mimemagic'
 gem 'nokogiri'
 gem 'padrino-helpers', '~> 0.14.1.1'
+gem 'pry'
+gem 'puma'
+gem 'puma_worker_killer'
 gem 'rack'
 gem 'rack-flash', '~> 0.1.2'
 gem 'rake', '~> 11.0'
@@ -34,6 +39,7 @@ gem 'RedCloth', '4.2.9'
 gem 'request_store'
 gem 'sass'
 gem 'sinatra', '~> 1.4.2'
+gem 'sinatra-cache', git: 'https://github.com/morygonzalez/sinatra-cache'
 gem 'sinatra-contrib', '~> 1.4.0'
 gem 'sinatra-flash', '~> 0.3.0'
 gem 'slim', '~> 3.0.7'
@@ -41,28 +47,24 @@ gem 'tilt', '~> 2.0'
 gem 'tux'
 gem 'wikicloth', '0.8.3'
 gem 'yard-sinatra', '1.0.0'
-gem 'puma'
-gem 'puma_worker_killer'
-gem 'pry'
-gem 'sinatra-cache', git: 'https://github.com/morygonzalez/sinatra-cache'
 
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 
 group :production do
-  gem 'rack-ssl-enforcer'
   gem 'newrelic_rpm'
+  gem 'rack-ssl-enforcer'
 end
 
 group :development do
   gem 'awesome_print'
+  gem 'better_errors'
+  gem 'binding_of_caller'
   gem 'capistrano', '3.10.1', require: false
-  gem 'capistrano-rbenv', require: false
   gem 'capistrano-bundler', require: false
+  gem 'capistrano-rbenv', require: false
   gem 'capistrano-rbenv-install', require: false
   gem 'capistrano3-puma', require: false
   gem 'sshkit', require: false
-  gem 'better_errors'
-  gem 'binding_of_caller'
 end
 
 group :development, :test do

@@ -44,7 +44,7 @@ module Lokka
     configure :production do
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
       require 'newrelic_rpm'
-      NewRelic::Agent.after_fork(:force_reconnect => true)
+      NewRelic::Agent.after_fork(force_reconnect: true)
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
     end
@@ -52,7 +52,7 @@ module Lokka
     configure :development do
       register Sinatra::Reloader
       supported_stylesheet_templates.each do |style|
-        set style, :style => :expanded
+        set style, style: :expanded
       end
       enable :logging
       file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
@@ -69,7 +69,7 @@ module Lokka
 
     not_found do
       if custom_permalink?
-        return redirect(request.path.sub(%r{/$}, '')) if %r{/$} =~ request.path
+        return redirect(request.path.sub(%r{/$}, '')) if %r{/$}.match?(request.path)
 
         correct_path = custom_permalink_fix(request.path)
         return redirect(correct_path) if correct_path

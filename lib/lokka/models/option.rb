@@ -12,7 +12,7 @@ class Option
 
   def self.method_missing(method, *args)
     attribute = method.to_s
-    if attribute =~ /=$/
+    if attribute.match?(/=$/)
       column = attribute[0, attribute.size - 1]
       option = first_or_new(name: column)
       option.value = args.first.to_s
