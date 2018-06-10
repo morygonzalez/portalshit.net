@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 namespace :'plugin:archives' do
   desc 'Install dependencies'
   task :install do
-    command =<<~SHELL
+    command = <<~SHELL
       cd #{__dir__} && npm install
     SHELL
     system(command)
   end
 
   desc 'Build JavaScript'
-  task :build_js => [:install] do
-    command =<<~SHELL
+  task build_js: [:install] do
+    command = <<~SHELL
       cd #{__dir__} && npm run build
     SHELL
     system(command)

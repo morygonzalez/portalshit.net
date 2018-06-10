@@ -38,7 +38,7 @@ class Site
   end
 
   def method_missing(method, *args)
-    if method.to_s =~ /=$/
+    if method.to_s.match?(/=$/)
       super
     else
       option = Option.first_or_new(name: method)

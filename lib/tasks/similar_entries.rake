@@ -1,4 +1,6 @@
-desc "Detect and update similar entries"
+# frozen_string_literal: true
+
+desc 'Detect and update similar entries'
 task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
 
 namespace :similar_entries do
@@ -13,13 +15,13 @@ namespace :similar_entries do
     Entry.last.id > Similarity.aggregate(:entry_id).max
   end
 
-  desc "Extract term"
+  desc 'Extract term'
   task :extract_term do
-    next if not target_entry_exists?
+    next unless target_entry_exists?
 
     require 'natto'
     nm = Natto::MeCab.new
-    create_table_sql =<<~SQL
+    create_table_sql = <<~SQL
       DROP TABLE IF EXISTS tfidf;
       CREATE TABLE tfidf (
         `id` INTEGER PRIMARY KEY,
@@ -34,49 +36,52 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    entries = Entry.published.all(fields: [:id, :body])
+    entries = Entry.published.all(fields: %i[id body])
     entry_frequencies = {}
     entries.each do |entry|
       words = []
       body_cleansed = entry.title + entry.tags.map(&:name).join(' ') +
         entry.body.
-        gsub(/<.+?>/, '').
-        gsub(/!?\[.+?\)/, '').
-        gsub(/(?:```|<code>)(.+?)(?:```|<\/code>)/m, '\1')
+          gsub(/<.+?>/, '').
+          gsub(/!?\[.+?\)/, '').
+          gsub(%r{(?:```|<code>)(.+?)(?:```|</code>)}m, '\1')
       begin
+        words_to_ignore = %w[
+          これ こと とき よう そう やつ とこ ところ 用 もの はず みたい たち いま 後 確か 中 気 方
+          頃 上 先 点 前 一 内 lt gt ここ なか どこ まま わけ ため 的 それ あと
+        ]
         nm.parse(body_cleansed) do |n|
-          next if !n.feature.match(/名詞/)
-          next if n.feature.match(/(サ変接続|数)/)
-          next if n.surface.match(/\A([a-z][0-9]|\p{hiragana}|\p{katakana})\Z/i)
-          next if %w[これ こと とき よう そう やつ とこ ところ 用 もの はず みたい たち いま 後 確か 中 気 方 頃 上 先 点 前 一 内 lt gt ここ なか どこ まま わけ ため 的 それ あと].include?(n.surface)
+          next unless n.feature.match?(/名詞/)
+          next if n.feature.match?(/(サ変接続|数)/)
+          next if n.surface.match?(/\A([a-z][0-9]|\p{hiragana}|\p{katakana})\Z/i)
+          next if words_to_ignore.include?(n.surface)
           words << n.surface
         end
       rescue ArgumentError
         next
       end
-      frequency = words.inject(Hash.new(0)) {|sum, word| sum[word] += 1; sum }
+      frequency = words.each_with_object(Hash.new(0)) {|word, sum| sum[word] += 1; }
       entry_frequencies[entry.id] = frequency
     end
     entry_frequencies.each do |entry_id, frequency|
       frequency.each do |word, count|
-        db.execute("INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)", [word, entry_id, count])
+        db.execute('INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)', [word, entry_id, count])
       end
     end
   end
 
-  desc "Vector Normalize"
+  desc 'Vector Normalize'
   task :vector_normalize do
-    next if not target_entry_exists?
+    next unless target_entry_exists?
 
-    libsqlite_path = case
-                     when ENV["LIBSQLITE_PATH"]
-                       ENV["LIBSQLITE_PATH"]
-                     when RUBY_PLATFORM.match(/darwin/)
-                       "/usr/local/lib/libsqlitefunctions.dylib"
-                     when RUBY_PLATFORM.match(/linux\-musl/)
-                       "/usr/local/lib/libsqlitefunctions.so"
+    libsqlite_path = if ENV['LIBSQLITE_PATH']
+                       ENV['LIBSQLITE_PATH']
+                     elsif RUBY_PLATFORM.match?(/darwin/)
+                       '/usr/local/lib/libsqlitefunctions.dylib'
+                     elsif RUBY_PLATFORM.match?(/linux\-musl/)
+                       '/usr/local/lib/libsqlitefunctions.so'
                      end
-    load_extension_sql =<<~SQL
+    load_extension_sql = <<~SQL
       -- SQRT や LOG を使いたいので
       SELECT load_extension(?);
     SQL
@@ -133,9 +138,9 @@ namespace :similar_entries do
     db.execute_batch(vector_normalize_sql)
   end
 
-  desc "Export calculation result to MySQL"
+  desc 'Export calculation result to MySQL'
   task :export do
-    next if not target_entry_exists?
+    next unless target_entry_exists?
 
     create_similar_candidate_sql = <<~SQL
       DROP TABLE IF EXISTS similar_candidate;
@@ -200,14 +205,13 @@ namespace :similar_entries do
 
     Similarity.destroy
 
-    results.each do |entry_id, similarities|
-      if similarities.present?
-        similarities.each do |s|
-          conditions = { entry_id: s["entry_id"], similar_entry_id: s["similar_entry_id"] }
-          similarity = Similarity.first(conditions) || Similarity.new(conditions)
-          similarity.score = s["score"]
-          similarity.save
-        end
+    results.each_values do |similarities|
+      next unless similarities.present?
+      similarities.each do |s|
+        conditions = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'] }
+        similarity = Similarity.first(conditions) || Similarity.new(conditions)
+        similarity.score = s['score']
+        similarity.save
       end
     end
   end

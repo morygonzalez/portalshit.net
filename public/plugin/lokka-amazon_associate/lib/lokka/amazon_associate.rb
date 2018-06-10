@@ -1,4 +1,6 @@
-# coding: utf-8
+
+# frozen_string_literal: true
+
 require 'amazon/ecs'
 require 'nokogiri'
 require 'fileutils'
@@ -11,13 +13,13 @@ module Lokka
       app.get '/amazon/?:item_id?.json' do |item_id|
         item = AmazonAssociate::Fetcher.new(item_id)
 
-        cache_control :public, :must_revalidate, :max_age => 12.hours
+        cache_control :public, :must_revalidate, max_age: 12.hours
         content_type :json
         item.body
       end
 
       app.get '/admin/plugins/amazon_associate' do
-        haml :"plugin/lokka-amazon_associate/views/index", :layout => :"admin/layout"
+        haml :"plugin/lokka-amazon_associate/views/index", layout: :"admin/layout"
       end
 
       app.put '/admin/plugins/amazon_associate' do
@@ -29,12 +31,12 @@ module Lokka
       end
 
       app.before do
-        assets_path = "/plugin/lokka-amazon_associate/assets"
+        assets_path = '/plugin/lokka-amazon_associate/assets'
         content_for :header do
-          <<~EOS.html_safe
+          <<~HTML.html_safe
             <script src="#{assets_path}/script.js"></script>
             <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
-          EOS
+          HTML
         end
       end
     end

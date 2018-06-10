@@ -365,9 +365,9 @@ module Lokka
 
       if params[:enable] == '1'
         format = params[:format]
-        format = "/#{format}" unless %r{^/} =~ format
+        format = "/#{format}" unless %r{^/}.match?(format)
 
-        errors << t('permalink.error.no_tags') unless /%.+%/ =~ format
+        errors << t('permalink.error.no_tags') unless /%.+%/.match?(format)
         errors << t('permalink.error.tag_unclosed') unless format.chars.select {|c| c == '%' }.size.even?
       end
 

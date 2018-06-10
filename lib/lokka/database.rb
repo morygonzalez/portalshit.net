@@ -2,7 +2,7 @@
 
 module Lokka
   class Database
-    MODELS = %w(site option user entry similarity category comment snippet tag tagging field_name field).freeze
+    MODELS = %w[site option user entry similarity category comment snippet tag tagging field_name field].freeze
 
     def connect
       DataMapper.finalize

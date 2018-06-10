@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fastimage'
 require 'open_graph_reader'
 require_relative 'ogp/generator'
@@ -21,17 +23,17 @@ module Lokka
 end
 
 class Entry
-  alias_method :_original_body, :body
+  alias _original_body body
   def ogp_fetched_body
     Lokka::OGP::Fetcher.new(_original_body).replace
   end
-  alias_method :body, :ogp_fetched_body
+  alias body ogp_fetched_body
 
-  alias_method :_original_short_body, :short_body
+  alias _original_short_body short_body
   def ogp_fetched_short_body
     Lokka::OGP::Fetcher.new(_original_short_body).replace
   end
-  alias_method :short_body, :ogp_fetched_short_body
+  alias short_body ogp_fetched_short_body
 end
 
-Faraday.default_connection = Faraday.new(headers: { user_agent: "OpenGraphReader" })
+Faraday.default_connection = Faraday.new(headers: { user_agent: 'OpenGraphReader' })

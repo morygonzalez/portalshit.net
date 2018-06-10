@@ -3,7 +3,7 @@
 module Lokka
   module Importer
     class WordPress
-      DEFAULT_PASSWORD = 'test'.freeze
+      DEFAULT_PASSWORD = 'test'
 
       def initialize(file)
         @file = file
