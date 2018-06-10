@@ -6,9 +6,9 @@
     %meta{ 'http-equiv': 'Content-Script-Type', content: 'text/javascript' }
     %meta{ name: 'viewport', content: 'width=device-width' }
     %title== #{@site.title} - Lokka
-    %link{'rel' => "shortcut icon", 'href' => url("/admin/favicon.ico")}
-    %link{'rel' => "stylesheet", 'href' => url("/admin/css/style.css"), 'type' => "text/css"}
-    %script{ src: url('/admin/js/index.js'), type: 'text/javascript' }
+    %link{ rel: 'shortcut icon', href: url('/admin/favicon.ico'), type: 'image/ico' }
+    %link{ rel: 'stylesheet', href: url('/admin/css/style.css'), type: 'text/css' }
+    %script{ src: asset_path(:js, url('/admin/js/index.js')), type: 'text/javascript' }
     - head_last = yield_content :head_last
     - unless head_last.blank?
       = head_last
