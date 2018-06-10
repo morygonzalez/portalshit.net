@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './init'
 require 'yard'
 
@@ -63,4 +65,5 @@ rescue LoadError => e
   puts e.backtrace
 end
 
-Dir.glob("lib/tasks/*.rake").each {|f| load f }
+Dir.glob('lib/tasks/*.rake').each {|f| load f }
+Dir.glob('public/plugin/**/Rakefile').each {|f| load f }
