@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+namespace :'theme:portalshit' do
+  desc 'Install dependencies'
+  task :install do
+    command = <<~SHELL
+      cd #{__dir__} && npm install
+    SHELL
+    system(command)
+  end
+
+  desc 'Build JavaScript'
+  task build_js: [:install] do
+    command = <<~SHELL
+      cd #{__dir__} && npm run build
+    SHELL
+    system(command)
+  end
+end

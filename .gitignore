@@ -29,8 +29,7 @@ plugin_old
 /.sass-cache
 *.sql
 *.sql.gz
-/public/admin/node_modules
-/public/plugin/*/node_modules
+/public/**/node_modules
 /config/newrelic.yml
 
 public/**/build/*.js

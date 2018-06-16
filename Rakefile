@@ -66,4 +66,4 @@ rescue LoadError => e
 end
 
 Dir.glob('lib/tasks/*.rake').each {|f| load f }
-Dir.glob('public/plugin/**/Rakefile').each {|f| load f }
+Dir.glob('public/{plugin,theme}/**/Rakefile').each {|f| load f }
