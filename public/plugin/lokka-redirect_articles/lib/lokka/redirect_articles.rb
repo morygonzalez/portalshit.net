@@ -17,6 +17,10 @@ module Lokka
       app.get %r{/index\.php} do
         redirect '/', 301
       end
+
+      app.get '/2014/12/11/thought-on-own-house' do
+        redirect '/2014/12/11/thoughts-on-own-house', :permanent
+      end
     end
   end
 end
