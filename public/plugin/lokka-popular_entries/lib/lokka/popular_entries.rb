@@ -29,10 +29,13 @@ class Entry
       require 'nokogiri'
 
       max = limit - 1
-      url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net&mode=rss'
       ua = 'AppleWebKit/604.5.6 (KHTML, like Gecko) Reeder/3.1.2 Safari/604.5.6'
+      url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net&mode=rss'
+      www_url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=www.portalshit.net&mode=rss'
       content = open(url, 'User-Agent' => ua).read
+      www_content = open(www_url, 'User-Agent' => ua).read
       parsed = Hash.from_xml(content)
+      www_parsed = Hash.from_xml(www_content)
       slugs = parsed['RDF']['item'][0..max].each_with_object({}) do |item, result|
         link = item['link']
         entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
@@ -43,10 +46,22 @@ class Entry
         bookmark_url = "http://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
       end
-      entries = all(slug: slugs.keys, limit: limit).sort_by {|entry| slugs.keys.index(entry.slug) }
+      www_slugs = www_parsed['RDF']['item'][0..max].each_with_object({}) do |item, result|
+        link = item['link']
+        entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
+        slug = link.gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '')
+        bookmark_count = item['bookmarkcount']
+        bookmark_url = "http://b.hatena.ne.jp#{entry_path}"
+        result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
+      end
+      merged_slugs = slugs.merge(www_slugs).sort_by {|_, item| item[:bookmark_count].to_i }
+      merged_slugs = merged_slugs.reverse[0..max].to_h
+
+      entries = all(slug: merged_slugs.keys, limit: limit)
+      entries.sort_by! {|entry| merged_slugs.keys.index(entry.slug) }
       entries.map do |entry|
-        entry.bookmark_count = slugs[entry.slug][:bookmark_count]
-        entry.bookmark_url = slugs[entry.slug][:bookmark_url]
+        entry.bookmark_count = merged_slugs[entry.slug][:bookmark_count]
+        entry.bookmark_url = merged_slugs[entry.slug][:bookmark_url]
         entry
       end
     rescue StandardError
