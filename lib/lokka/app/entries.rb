@@ -94,9 +94,9 @@ module Lokka
 
       year = year.to_i
       month = month.to_i
-      @posts = Post.all(:created_at.gte => Time.local(year, month)).
-                 all(:created_at.lt => Time.local(year, month) >> 1).
-                 published.
+      @posts = Post.published.
+                 all(:created_at.gte => Time.local(year, month)).
+                 all(:created_at.lt => Time.local(year, month) + 1.month).
                  page(params[:page], per_page: @site.per_page, order: @site.default_order_query_operator)
       @posts = apply_continue_reading(@posts)
 
