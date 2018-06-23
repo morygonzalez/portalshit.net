@@ -40,8 +40,8 @@ class Entry
         link = item['link']
         entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
         slug = link.
-          gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '').
-          sub('thought-on-own-house', 'thoughts-on-own-house')
+                 gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '').
+                 sub('thought-on-own-house', 'thoughts-on-own-house')
         bookmark_count = item['bookmarkcount']
         bookmark_url = "http://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
