@@ -78,7 +78,6 @@ module Lokka
         end
 
         def create
-          return true if File.exist?(path)
           FileUtils.mkdir_p(CACHE_DIR)
           File.open(path, 'w') do |file|
             file.puts html
