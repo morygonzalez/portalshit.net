@@ -75,7 +75,7 @@ var Formatter = (function() {
       return '<pre>Item ' + this.itemId + ' Not Found</pre>';
     }
     let json = this.json;
-    let item, attr, title, link, image, imageSet, price, author, manufacturer, str;
+    let item, attr, title, link, image, imageSet, price, author, binding, manufacturer, output;
     item = json['ItemLookupResponse']['Items']['Item'];
     attr = item['ItemAttributes'];
     title = attr['Title'];
@@ -93,35 +93,37 @@ var Formatter = (function() {
     try {
       if (item['OfferSummary']['LowestNewPrice']) {
         price = item['OfferSummary']['LowestNewPrice']['FormattedPrice'];
-      }
-      else if (item['OfferSummary']['LowestUsedPrice']) {
+      } else if (item['OfferSummary']['LowestUsedPrice']) {
         price = item['OfferSummary']['LowestUsedPrice']['FormattedPrice'];
-      }
-      else if (item['OfferSummary']['LowestCollectiblePrice']) {
+      } else if (item['OfferSummary']['LowestCollectiblePrice']) {
         price = item['OfferSummary']['LowestCollectiblePrice']['FormattedPrice'];
+      } else {
+        price = 'Amazon で確認';
       }
     } catch(e) {
+      console.log('Price unavailable');
       price = 'Amazon で確認';
     }
 
     let authors = [];
-    if (typeof attr['Creator'] !== 'undefined' && attr['Creator'] !== null)
-      authors .push(this.formatAuthors(attr['Creator']));
-    if (typeof attr['Author'] !== 'undefined' && attr['Author'] !== null)
-      authors .push(this.formatAuthors(attr['Author']));
-    if (typeof attr['Director'] !== 'undefined' && attr['Director'] !== null)
-      authors .push(this.formatAuthors(attr['Director']));
-    if (typeof attr['Actor'] !== 'undefined' && attr['Actor'] !== null)
-      authors .push(this.formatAuthors(attr['Actor']));
-    if (typeof attr['Artist'] !== 'undefined' && attr['Artist'] !== null)
-      authors .push(this.formatAuthors(attr['Artist']));
+    if (attr['Creator'])
+      authors.push(this.formatAuthors(attr['Creator']));
+    if (attr['Author'])
+      authors.push(this.formatAuthors(attr['Author']));
+    if (attr['Director'])
+      authors.push(this.formatAuthors(attr['Director']));
+    if (attr['Actor'])
+      authors.push(this.formatAuthors(attr['Actor']));
+    if (attr['Artist'])
+      authors.push(this.formatAuthors(attr['Artist']));
 
-    if (typeof authors !== 'undefined' && authors !== null) {
-      author = authors.join(', ');
+    if (authors.length > 0) {
+      author = authors.filter(function(item) { return item }).join(', ');
     }
-    manufacturer = attr['Manufacturer'] || attr['Format'];
+    binding = attr['Binding'] || attr['ProductGroup'] || attr['Format'] || null;
+    manufacturer = attr['Brand'] || attr['Manufacturer'] || attr['Studio'] || null;
 
-    str = '<div class="amazon-image">' +
+    output = '<div class="amazon-image">' +
       '<a href="' + link + '" title="' + title  + '">' +
       this.imageTag(image) +
       '</a>' +
@@ -129,14 +131,17 @@ var Formatter = (function() {
       '<div class="amazon-content">' +
       '<ul>' +
       '<li><a href="' + link + '" title="' + title + '">' + title + '</a></li>';
+    if (binding)
+      output += '<li>' + binding + '</li>';
     if (author !== '') {
-      str += '<li>' + author + '</li>';
+      output += '<li>' + author + '</li>';
     }
-    str += '<li>' + manufacturer + '</li>' +
-      '<li>' + '<a href="' + link + '">' + price + '</a></li>' +
+    if (manufacturer)
+      output += '<li>' + manufacturer + '</li>';
+    output += '<li>' + '<a href="' + link + '">' + price + '</a></li>' +
       '</ul>' +
       '</div>';
-    return str;
+    return output;
   };
 
   Formatter.prototype.formatAuthors = function(authors) {
