@@ -112,7 +112,7 @@ module Lokka
 
         def secure_image
           if use_proxy?
-            "/imageproxy/120x120/#{@image}"
+            "/imageproxy/120/#{@image}"
           else
             @image
           end
