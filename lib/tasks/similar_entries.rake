@@ -12,7 +12,7 @@ namespace :similar_entries do
   end
 
   def target_entry_exists?
-    Entry.last.id > Similarity.aggregate(:entry_id).max
+    Entry.last.id > Similarity.aggregate(:entry_id).max.to_i
   end
 
   desc 'Extract term'
@@ -205,7 +205,7 @@ namespace :similar_entries do
 
     Similarity.destroy
 
-    results.each_values do |similarities|
+    results.each_value do |similarities|
       next unless similarities.present?
       similarities.each do |s|
         conditions = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'] }
