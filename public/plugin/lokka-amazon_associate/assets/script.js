@@ -133,7 +133,7 @@ var Formatter = (function() {
       '<li><a href="' + link + '" title="' + title + '">' + title + '</a></li>';
     if (binding)
       output += '<li>' + binding + '</li>';
-    if (author !== '') {
+    if (typeof author !== 'undefined' && author !== '') {
       output += '<li>' + author + '</li>';
     }
     if (manufacturer)
