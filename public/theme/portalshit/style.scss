@@ -99,7 +99,7 @@
   }
 
   #bread_crumb {
-    max-width: 1000px;
+    max-width: $content-max-width;
     width: 90%;
     margin: auto;
     text-align: left;
@@ -115,7 +115,6 @@
 
       li {
         display: inline;
-        font-size: 14px;
 
         &:before {
           content: " > ";
@@ -131,7 +130,7 @@
 
 #content {
   width: 90%;
-  max-width: 1000px;
+  max-width: $content-max-width;
   height: auto;
   margin: 0 auto;
   text-align: left;
@@ -148,9 +147,8 @@
 
     li {
       float: left;
-      font-size: 15px;
       text-shadow: #191919 0.1em 0.1em 0.2em;
-      margin-right: 8px;
+      margin-right: 1em;
       padding: 5px 0 15px;
 
       a.clicked {
@@ -237,7 +235,7 @@
         text-align: left;
         margin-bottom: 1em;
         padding: 0 8px;
-        line-height: 150%;
+        line-height: 180%;
 
         h3 {
           font-size: 1.12em;
@@ -272,6 +270,7 @@
         > blockquote > .highlight {
           @include _monokai;
           @include _border-radius;
+          font-size: $code-font-size;
           pre {
             border: 1px solid #333;
             @include _border-radius;
@@ -306,9 +305,9 @@
 
             .ogp-summary {
               flex-grow: 3;
-              padding: .5em 1.5em;
+              padding: .2em 1.5em;
               h3 {
-                margin: .3em 0;
+                margin: 0 0 .3em;
                 &:link, &:visited { color: $base-font-color; }
                 &::before { content: none; }
               }
@@ -422,14 +421,13 @@
     margin: 0 auto;
     text-align: left;
     padding: 20px 30px;
-    width: 90%;
-    max-width: 1000px;
+    max-width: $content-max-width;
 
     dl {
       display: block;
       margin: 0 18px 0 0;
       float: left;
-      width: 222px;
+      width: 22%;
 
       a:link {
         color: $base-font-color;
@@ -638,12 +636,6 @@ h4.comment {
   #comment_body {
     width: 480px;
     height: 250px;
-  }
-}
-
-#a_flickr_badge_image {
-  a img {
-    padding: 0 5px 5px 0;
   }
 }
 

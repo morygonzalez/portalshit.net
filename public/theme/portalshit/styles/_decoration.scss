@@ -2,9 +2,9 @@ body {
   margin: 0;
   padding: 0;
   text-align: center;
-  font-size: 15px;
+  font-size: 18px;
   color: $base-font-color;
-  line-height: 22px;
+  line-height: 26px;
   text-shadow: -1px -1px -1px #1d1a1a;
   font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
   background: black url(images/background.jpg) no-repeat fixed;
@@ -27,6 +27,19 @@ a {
 
   &:hover {
     color: #f60;
+  }
+}
+
+#main {
+  .archives,
+  .body,
+  .year-list,
+  .category-list,
+  .footer,
+  .pager {
+    a {
+      text-shadow: -1px -1px 1px #180614;
+    }
   }
 }
 
@@ -78,7 +91,7 @@ pre {
   background-color: $various-bg;
   white-space: pre;
   word-wrap: break-word;
-  max-width: 900px;
+  max-width: $content-max-width * 0.9;
   color: #b5b2b2;
   text-shadow: none;
   font-family: $code-font;
@@ -87,6 +100,7 @@ pre {
 
 code {
   font-family: $code-font;
+  font-size: $code-font-size;
 }
 
 p code, li code {
@@ -99,15 +113,16 @@ p code, li code {
 
 blockquote:not([class]) {
   padding: 1em 3em 1em;
-  margin: 0 0 2em 0;
+  margin: 0 0 .5em 0;
   background-color: #2c2525;
   color: #c7c7c7;
   text-shadow: none;
+  line-height: 120%;
+  @include _border-radius;
   @include _overflow-x-scroll;
 
   & > * {
     margin-left: 2.4em;
-    /*margin-right: 2.4em;*/
   }
 
   &::before {
@@ -117,15 +132,8 @@ blockquote:not([class]) {
     content: "\00201c";
     float:  left;
     font: 600% Georgia, "Times New Roman", Times, serif;
+    height: 22px;
   }
-
-//   &::after {
-//     position: relative;
-//     left: 780px;
-//     top: -50px;
-//     font: 600% Georgia, "Times New Roman", Times, serif;
-//     content: "\00201d";
-//   }
 }
 
 label {
@@ -225,4 +233,10 @@ kbd {
 
 .clearfix {
   display: block;
+}
+
+#a_flickr_badge_image {
+  a img {
+    padding: 0 5px 5px 0;
+  }
 }
