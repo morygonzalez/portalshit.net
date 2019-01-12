@@ -4,7 +4,7 @@ UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladde
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$)'
 
 # Access Ranking
-find /home/morygonzalez/sites/portalshit/log/access.log* -mtime -8 \
+find /home/morygonzalez/sites/portalshit/log/access.log* \
   | xargs zcat -f \
   | grep 'status:200' \
   | grep -viE ${UA_TO_IGNORE} \
@@ -16,7 +16,7 @@ find /home/morygonzalez/sites/portalshit/log/access.log* -mtime -8 \
   | tee /home/morygonzalez/sites/portalshit/public/access-ranking.txt
 
 # Referer Ranking
-find /home/morygonzalez/sites/portalshit/log/access.log* -mtime -8 \
+find /home/morygonzalez/sites/portalshit/log/access.log* \
   | xargs zcat -f \
   | grep -viE ${UA_TO_IGNORE} \
   | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
