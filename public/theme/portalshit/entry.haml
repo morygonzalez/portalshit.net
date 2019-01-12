@@ -34,5 +34,5 @@
         %li.gravatar= image_tag gravatar_image_url comment.email
         %li.name= link_to comment.name, comment.homepage, unless: comment.homepage.blank?
         %li.created_at= l comment.created_at, format: :long
-      .body= hbr comment.body
+      .body~ Markup.use_engine('redcarpet', strip_tags(comment.body)).html_safe
 = partial 'comment'
