@@ -60,7 +60,9 @@
             %dd
               %ul
                 - Post.popular.each do |post|
-                  %li= link_to post.title, post.link
+                  %li
+                    = link_to post.title, post.link
+                    %span.created_at= l(post.created_at.to_date, format: :long)
           %dl.hotentry
             %dt= t('hotentry')
             %dd
@@ -69,32 +71,23 @@
                   %li
                     =link_to post.title, post.link
                     %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
+                    %span.created_at= l(post.created_at.to_date, format: :long)
           %dl.recent_entries
             %dt= t('recent_entries')
             %dd
               %ul
                 - Post.recent.each do |post|
-                  %li= link_to post.title, post.link
+                  %li
+                    = link_to post.title, post.link
+                    %span.created_at= l(post.created_at.to_date, format: :long)
           %dl.recent_comments
             %dt= t('recent_comments')
             %dd
               %ul
                 - Comment.recent.each do |comment|
-                  %li= link_to strip_tags(comment.body).truncate(22), comment.link
-          -# %dl.tags
-          -#   %dt= t('tags')
-          -#   %dd
-          -#     %ul
-          -#       - Tag.all.each do |tag|
-          -#         %li= link_to tag.name, tag.link
-          -# %dl.archives
-          -#   %dt= link_to t('archives.title'), '/archives'
-          -#   %dd
-          -#     %ul
-          -#       - months.each_with_index do |m, i|
-          -#         - if i < 6
-          -#           %li= link_to "#{m.year}年#{m.month}月 (#{m.count})", "/#{m.year}/#{m.month}/"
-          -#     %p.more= link_to(t('archives.more'), '/archives', id: 'show_more_archive_list')
+                  %li
+                    = link_to "#{comment.entry.title} from #{comment.name}", comment.link
+                    %span.created_at= l(comment.created_at.to_date, format: :long)
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
