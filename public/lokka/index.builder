@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-port = request.port == 80 ? '' : ':' + request.port.to_s
+port = [443, 80].include?(request.port) ? '' : ':' + request.port.to_s
 base_url = request.scheme + '://' + request.host + port
 
 xml.instruct! :xml, version: '1.0'
