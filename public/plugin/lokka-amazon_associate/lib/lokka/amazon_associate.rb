@@ -6,12 +6,15 @@ require 'nokogiri'
 require 'fileutils'
 require 'json'
 require_relative 'amazon_associate/fetcher'
+require_relative 'amazon_associate/item'
+require_relative 'amazon_associate/formatter'
+require_relative 'amazon_associate/expander'
 
 module Lokka
   module AmazonAssociate
     def self.registered(app)
       app.get '/amazon/?:item_id?.json' do |item_id|
-        item = AmazonAssociate::Fetcher.new(item_id)
+        item = Fetcher.new(item_id)
 
         cache_control :public, :must_revalidate, max_age: 12.hours
         content_type :json
@@ -39,6 +42,13 @@ module Lokka
           HTML
         end
       end
+    end
+  end
+
+  module Helpers
+    def expand_associate_link(body)
+      expander = Lokka::AmazonAssociate::Expander.new(body)
+      expander.expand_associate_link
     end
   end
 end
