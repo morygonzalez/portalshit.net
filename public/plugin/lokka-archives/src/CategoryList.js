@@ -46,7 +46,7 @@ class CategoryList extends React.Component {
     setTimeout(() => { clearInterval(intervalId) }, 1000)
   }
 
-  componentWillReceiveProps() {
+  componentDidUpdate() {
     let intervalId = setInterval(this.entriesCountByCategory, 100)
     setTimeout(() => { clearInterval(intervalId) }, 1000)
   }
