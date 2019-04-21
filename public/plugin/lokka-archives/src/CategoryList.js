@@ -56,7 +56,7 @@ class CategoryList extends React.Component {
     document.querySelectorAll('ul.entries li.entry').forEach((entry) => {
       let entryCategory = entry.querySelector('div.detail-information span.category').textContent
       if (entryCategory == category) {
-        entry.style.display = "block"
+        entry.style.display = "list-item"
       } else {
         entry.style.display = "none"
       }
@@ -68,7 +68,7 @@ class CategoryList extends React.Component {
       if (shouldHideList) {
         entryList.style.display = "none"
       } else {
-        entryList.style.display = "block"
+        entryList.style.display = "list-item"
       }
     })
   }
