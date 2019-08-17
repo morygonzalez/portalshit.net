@@ -41,18 +41,19 @@ class FileUploader {
     });
     eventsToHandleUpload.forEach(event => {
       editor.addEventListener(event, (e) => {
-        let source, droppedFiles;
+        let source, droppedItems;
         if (event === 'paste') {
           source = e.clipboardData;
         } else {
           source = e.dataTransfer;
         }
-        droppedFiles = source.files;
-        if (droppedFiles.length > 0) {
-          for (let file of droppedFiles) {
+        droppedItems = source.items;
+        if (droppedItems.length > 0) {
+          for (const item of droppedItems) {
+            const file = item.getAsFile();
             self.upload(file);
           }
-          droppedFiles = null;
+          droppedItems = null;
           e.preventDefault();
         }
       });
