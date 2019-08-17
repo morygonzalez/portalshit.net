@@ -18,34 +18,44 @@ class FileUploader {
       return false;
     }
 
-    const eventsToIgnore      = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
-    const eventsToAddClass    = ['drag', 'dragstart', 'dragover', 'dragenter'];
-    const eventsToRemoveClass = ['dragleave', 'dragend', 'drop'];
+    const eventsToIgnore       = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'];
+    const eventsToAddClass     = ['drag', 'dragstart', 'dragover', 'dragenter'];
+    const eventsToRemoveClass  = ['dragleave', 'dragend', 'drop'];
+    const eventsToHandleUpload = ['drop', 'paste'];
 
-    eventsToIgnore.forEach((event) => {
+    eventsToIgnore.forEach(event => {
       editor.addEventListener(event, (e) => {
         e.preventDefault();
         e.stopPropagation();
       });
     });
-    eventsToAddClass.forEach((event) => {
+    eventsToAddClass.forEach(event => {
       editor.addEventListener(event, (e) => {
         editor.classList.add('is-dragover');
       });
     });
-    eventsToRemoveClass.forEach((event) => {
+    eventsToRemoveClass.forEach(event => {
       editor.addEventListener(event, (e) => {
         editor.classList.remove('is-dragover');
       });
     });
-    editor.addEventListener('drop', (e) => {
-      let droppedFiles = e.dataTransfer.files;
-      if (droppedFiles) {
-        for (let file of droppedFiles) {
-          self.upload(file);
+    eventsToHandleUpload.forEach(event => {
+      editor.addEventListener(event, (e) => {
+        let source, droppedFiles;
+        if (event === 'paste') {
+          source = e.clipboardData;
+        } else {
+          source = e.dataTransfer;
         }
-        droppedFiles = null;
-      }
+        droppedFiles = source.files;
+        if (droppedFiles.length > 0) {
+          for (let file of droppedFiles) {
+            self.upload(file);
+          }
+          droppedFiles = null;
+          e.preventDefault();
+        }
+      });
     });
   };
 
@@ -77,7 +87,7 @@ class FileUploader {
       }
       xhr.send(ajaxData);
     });
-    promise.then((response) => {
+    promise.then(response => {
       console.log(response.message);
       editor.classList.remove('is-uploading');
       if (textarea) {
@@ -85,7 +95,7 @@ class FileUploader {
         const imageTag = self.detectImageTag(file, response.url);
         self.insertImage(imageTag);
       }
-    }).catch((response) => {
+    }).catch(response => {
       if (textarea) {
         textarea.removeAttribute('disabled');
         console.error(response.message);
