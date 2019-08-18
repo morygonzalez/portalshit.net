@@ -47,11 +47,16 @@ class FileUploader {
         } else {
           source = e.dataTransfer;
         }
+        if (!source.types.every(type => type === 'Files')) {
+          return;
+        }
         droppedItems = source.items;
         if (droppedItems.length > 0) {
           for (const item of droppedItems) {
             const file = item.getAsFile();
-            self.upload(file);
+            if (file && /^image\//.test(file.type)) {
+              self.upload(file);
+            }
           }
           droppedItems = null;
           e.preventDefault();
@@ -116,10 +121,10 @@ class FileUploader {
       textarea.value = imageTag;
     } else if (textarea.selectionStart > 0) {
       textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
-        "\n\n" + imageTag + "\n\n" +
+        imageTag +
         textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
     } else {
-      textarea.value = imageTag + "\n\n" + textarea.value.trim();
+      textarea.value = imageTag + textarea.value.trim();
     }
   };
 
