@@ -136,7 +136,7 @@ module Lokka
       @entry = entry
       @entry.user = current_user
       @entry.title << ' - Preview'
-      @entry.updated_at = Time.current
+      @entry.created_at = @entry.updated_at = Time.current
       @comment = @entry.comments.new
       setup_and_render_entry
     end
@@ -431,6 +431,23 @@ module Lokka
           status: 400
         }
       end
+    rescue StandardError => e
+      {
+        message: e.message,
+        status: 500
+      }
+    end
+
+    def handle_entry_preview(params)
+      markup   = params[:markup]   || @site.default_markup
+      raw_body = params[:raw_body] || ''
+      body     = Markup.use_engine(markup, raw_body)
+      {
+        message: 'Preview successfull',
+        body: body,
+        markup: markup,
+        status: 201
+      }
     rescue StandardError => e
       {
         message: e.message,
