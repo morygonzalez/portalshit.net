@@ -99,14 +99,15 @@ class FormObserver {
   observePreview() {
     let editor;
     const preview = document.querySelector('#preview');
-    const previewRadio = document.querySelector('input[type="radio"][name="preview"][value="preview"]');
-    const editRadio = document.querySelector('input[type="radio"][name="preview"][value="edit"]');
+    const previewRadio = document.querySelector('input[type="radio"][name="ipreview"][value="preview"]');
+    const editRadio = document.querySelector('input[type="radio"][name="ipreview"][value="edit"]');
     editRadio.addEventListener('change', (e) => {
       editor = document.querySelector('#editor');
       e.srcElement.parentElement.classList.add('selected');
       previewRadio.parentElement.classList.remove('selected');
       preview.style.display = 'none';
       editor.style.display = 'block';
+      preview.innerHTML = '';
     });
     previewRadio.addEventListener('change', (e) => {
       editor = document.querySelector('#editor');
@@ -137,7 +138,28 @@ class FormObserver {
         xhr.send(ajaxData);
       });
       promise.then(response => {
-        preview.innerHTML = response.body;
+        const iframe = document.createElement('iframe');
+        preview.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        const style = `<style>
+          img { max-width: 100%; }
+          html, body {
+            font-size: 16px;
+            font-family: "Lucida Sans Unicode","Lucida Grande",Arial,Helvetica,"ヒラギノ角ゴ Pro W3",HiraKakuPro-W3,Osaka,sans-serif;
+          }
+        </style>`;
+        const result = new Promise(resolve => { resolve(iframe) });
+        const renderIframe = () => {
+          doc.open();
+          doc.write(style);
+          doc.write(response.body);
+          doc.close();
+        }
+        const resizeIframe = () => {
+          iframe.style.width = '100%';
+          iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+        }
+        result.then(renderIframe).then(resizeIframe);
         editor.style.display = 'none';
         preview.style.display = 'block';
       }).catch(response => {
