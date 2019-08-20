@@ -176,9 +176,11 @@ ul.preview-edit li > input[type='radio'] {
     display: none;
     background: #eee;
     padding: 8px .5em;
-    margin: -3px auto 0;
+    margin: -3px 0 0;
     border-radius: 6px;
     min-height: 445px;
+    width: 85%;
+    max-width: 1000px;
 }
 
 #preview h1, h2, h3, h4, h5, h6 {
@@ -197,7 +199,8 @@ textarea {
     display: block;
     position: relative;
     top: -3px;
-    width: 100%;
+    width: 85%;
+    max-width: 1000px;
     height: 450px;
 }
 textarea#site_description {
