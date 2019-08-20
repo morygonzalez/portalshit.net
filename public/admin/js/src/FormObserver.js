@@ -146,6 +146,7 @@ class FormObserver {
           html, body {
             font-size: 16px;
             font-family: "Lucida Sans Unicode","Lucida Grande",Arial,Helvetica,"ヒラギノ角ゴ Pro W3",HiraKakuPro-W3,Osaka,sans-serif;
+            word-wrap: break-word;
           }
         </style>`;
         const result = new Promise(resolve => { resolve(iframe) });
