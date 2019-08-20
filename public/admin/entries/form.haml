@@ -20,10 +20,10 @@
     %ul.preview-edit
       %li.selected
         = label_tag :edit, for: 'preview-edit', caption: 'Edit'
-        = radio_button_tag :preview, value: 'edit', checked: true, id: 'preview-edit'
+        = radio_button_tag :ipreview, value: 'edit', checked: true, id: 'preview-edit'
       %li
         = label_tag :preview, for: 'preview-preview', caption: 'Preview'
-        = radio_button_tag :preview, value: 'preview', id: 'preview-preview'
+        = radio_button_tag :ipreview, value: 'preview', id: 'preview-preview'
     #editor
       %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", rows: 10, cols: 50 }= @entry.raw_body
     #preview
