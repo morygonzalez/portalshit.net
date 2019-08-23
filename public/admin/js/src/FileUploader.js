@@ -47,20 +47,18 @@ class FileUploader {
         } else {
           source = e.dataTransfer;
         }
-        if (!source.types.every(type => type === 'Files')) {
-          return;
-        }
         droppedItems = source.items;
-        if (droppedItems.length > 0) {
-          for (const item of droppedItems) {
-            const file = item.getAsFile();
-            if (file && /^image\//.test(file.type)) {
-              self.upload(file);
-            }
+        for (const item of droppedItems) {
+          if (item.kind !== 'file') {
+            return;
           }
-          droppedItems = null;
-          e.preventDefault();
+          const file = item.getAsFile();
+          if (file && /^image\//.test(file.type)) {
+            self.upload(file);
+          }
         }
+        droppedItems = null;
+        e.preventDefault();
       });
     });
   };
