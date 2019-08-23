@@ -115,7 +115,7 @@ class FormObserver {
       editRadio.parentElement.classList.remove('selected');
       const textarea = document.querySelector('#editor textarea');
       const body = textarea.value;
-      const markup = document.querySelector('#post_markup option[selected="selected"]').value;
+      const markup = document.querySelector('#post_markup option[selected="selected"], #page_markup option[selected="selected"]').value;
       const self = this;
       const ajaxData = new FormData();
       ajaxData.append('raw_body', body);
@@ -142,25 +142,25 @@ class FormObserver {
         preview.appendChild(iframe);
         const doc = iframe.contentWindow.document;
         const style = `<style>
-          img { max-width: 100%; }
-          html, body {
-            font-size: 16px;
-            font-family: "Lucida Sans Unicode","Lucida Grande",Arial,Helvetica,"ヒラギノ角ゴ Pro W3",HiraKakuPro-W3,Osaka,sans-serif;
-            word-wrap: break-word;
-          }
-        </style>`;
+img { max-width: 100%; }
+img { height: auto; }
+html, body {
+  font-size: 16px;
+  font-family: "Lucida Sans Unicode","Lucida Grande",Arial,Helvetica,"ヒラギノ角ゴ Pro W3",HiraKakuPro-W3,Osaka,sans-serif;
+  word-wrap: break-word;
+}
+</style>`;
         const result = new Promise(resolve => { resolve(iframe) });
         const renderIframe = () => {
           doc.open();
-          doc.write(style);
-          doc.write(response.body);
+          doc.write(style + response.body);
           doc.close();
         }
         const resizeIframe = () => {
           iframe.style.width = '100%';
           iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
         }
-        result.then(renderIframe).then(resizeIframe);
+        result.then(renderIframe).then(resizeIframe).catch(setTimeout(resizeIframe, 300));
         editor.style.display = 'none';
         preview.style.display = 'block';
       }).catch(response => {
