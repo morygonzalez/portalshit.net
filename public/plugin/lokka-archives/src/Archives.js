@@ -37,8 +37,10 @@ class Archives extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    this.loadArchivesFromServer(this.props.match.params.year)
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.match.params.year !== this.props.match.params.year) {
+      this.loadArchivesFromServer(this.props.match.params.year)
+    }
   }
 
   render() {
