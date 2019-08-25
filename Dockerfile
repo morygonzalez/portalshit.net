@@ -1,4 +1,4 @@
-FROM ruby:2.5-alpine
+FROM ruby:2.6-alpine
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -48,7 +48,7 @@ RUN apk add --no-cache ${build_deps} \
 COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
 
-RUN gem install bundler
+RUN gem install bundler:2.0.2
 RUN apk add --no-cache bash nodejs mysql-client mysql-dev less
 RUN apk add --no-cache alpine-sdk \
       --virtual .build_deps libxml2-dev libxslt-dev zlib zlib-dev tzdata \

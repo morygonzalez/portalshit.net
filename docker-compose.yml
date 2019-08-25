@@ -19,7 +19,8 @@ services:
     command: ['bundle', 'exec', 'puma']
     volumes:
       - .:/app
-      - bundle:/usr/local/bundle
+      - bundle:/app/.bundle
+      - vendor:/app/vendor
     ports:
       - "3000:3000"
     depends_on:
@@ -27,6 +28,7 @@ services:
 volumes:
   data-volume:
   bundle:
+  vendor:
 secrets:
   newrelic_config:
     file: config/newrelic.yml
