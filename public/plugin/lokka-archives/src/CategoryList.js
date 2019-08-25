@@ -82,7 +82,7 @@ class CategoryList extends React.Component {
     let categoryList = this.state.data.map((category) => {
       return (
         <li key={category}>
-          <a href="javascript:void(0)" data-category={category} onClick={this.filterArchive}>{category} (<span className="entries-count">0</span>)</a>
+          <a href={this.onClick} data-category={category} onClick={this.filterArchive}>{category} (<span className="entries-count">0</span>)</a>
         </li>
       )
     })
