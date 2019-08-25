@@ -29,7 +29,7 @@ class Archives extends React.Component {
     xhr.send()
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (typeof this.props.match !== undefined) {
       this.loadArchivesFromServer(this.props.match.params.year)
     } else {

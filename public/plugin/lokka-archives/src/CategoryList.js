@@ -6,7 +6,8 @@ class CategoryList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: []
+      data: [],
+      activeCategory: null
     }
     this.filterArchive = this.filterArchive.bind(this)
   }
@@ -30,12 +31,12 @@ class CategoryList extends React.Component {
   }
 
   entriesCountByCategory() {
-    [...document.querySelectorAll('ul.category-list li a')].forEach((categoryList) => {
-      let category = categoryList.dataset.category
+    [...document.querySelectorAll('ul.category-list li a')].forEach((categoryItem) => {
+      let category = categoryItem.dataset.category
       let entries = [...document.querySelectorAll('ul.entries li.entry')].filter((entry) => {
-        return (entry.querySelector('div.detail-information span.category').textContent == category)
+        return (entry.querySelector('div.detail-information span.category').textContent === category)
       })
-      let entriesCount = categoryList.querySelector('span.entries-count')
+      let entriesCount = categoryItem.querySelector('span.entries-count')
       entriesCount.textContent = entries.length
     })
   }
@@ -46,16 +47,24 @@ class CategoryList extends React.Component {
     setTimeout(() => { clearInterval(intervalId) }, 1000)
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    [...document.querySelectorAll('ul.category-list li.selected')].forEach((categoryItem) => {
+      const category = categoryItem.querySelector('a').dataset.category
+      if (category === prevState.activeCategory) {
+        this.filterArchive(null)
+      }
+    })
     let intervalId = setInterval(this.entriesCountByCategory, 100)
     setTimeout(() => { clearInterval(intervalId) }, 1000)
   }
 
-  filterArchive(e) {
-    let category = e.target.dataset.category
+  filterArchive(category) {
+    this.setState({ activeCategory: category })
     document.querySelectorAll('ul.entries li.entry').forEach((entry) => {
       let entryCategory = entry.querySelector('div.detail-information span.category').textContent
-      if (entryCategory == category) {
+      if (!category) {
+        entry.style.display = "list-item"
+      } else if (entryCategory === category) {
         entry.style.display = "list-item"
       } else {
         entry.style.display = "none"
@@ -63,7 +72,7 @@ class CategoryList extends React.Component {
     })
     document.querySelectorAll('li.entryList').forEach((entryList) => {
       let shouldHideList = [...entryList.querySelectorAll('li.entry')].every((entry) => {
-        return entry.style.display == "none"
+        return entry.style.display === "none"
       })
       if (shouldHideList) {
         entryList.style.display = "none"
@@ -81,15 +90,32 @@ class CategoryList extends React.Component {
     }
     let categoryList = this.state.data.map((category) => {
       return (
-        <li key={category}>
-          <a href={this.onClick} data-category={category} onClick={this.filterArchive}>{category} (<span className="entries-count">0</span>)</a>
-        </li>
+        <Category key={category} category={category} filterArchive={this.filterArchive} active={this.state.activeCategory === category} />
       )
     })
     return (
       <ul className="category-list">
         {categoryList}
       </ul>
+    )
+  }
+}
+
+class Category extends React.Component {
+  constructor(props) {
+    super(props)
+    this.filterArchive = this.filterArchive.bind(this)
+  }
+
+  filterArchive() {
+    this.props.filterArchive(this.props.category)
+  }
+
+  render() {
+    return (
+      <li key={this.props.category} className={this.props.active ? "selected" : null}>
+        <a href={this.onClick} data-category={this.props.category} onClick={this.filterArchive}>{this.props.category} (<span className="entries-count">0</span>)</a>
+      </li>
     )
   }
 }

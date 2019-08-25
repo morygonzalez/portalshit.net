@@ -13,8 +13,21 @@ ul.year-list, ul.category-list {
     padding-left: 0;
 
     li {
+        &.selected {
+          a {
+            color: #f60;
+          }
+        }
         float: left;
         list-style: none;
         margin-right: 1em;
+
+        a {
+          cursor: pointer;
+          color: #8c0000;
+          &:hover {
+            color: #f60;
+          }
+        }
     }
 }
