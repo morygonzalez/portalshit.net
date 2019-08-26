@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
-class YearList extends React.Component {
+class YearList extends Component {
   constructor(props) {
     super(props)
     this.state = {
