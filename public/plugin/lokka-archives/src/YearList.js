@@ -33,9 +33,14 @@ class YearList extends Component {
   }
 
   render() {
-    let yearList = this.state.data.map((year) => {
+    let thisYear
+    let yearList = this.state.data.map(year => {
+      thisYear = false
+      if (location.href.match(year)) {
+        thisYear = true
+      }
       return (
-        <li key={year}>
+        <li key={year} className={thisYear ? 'selected' : null}>
           <Link to={`/archives/${year}`}>{year}</Link>
         </li>
       )
