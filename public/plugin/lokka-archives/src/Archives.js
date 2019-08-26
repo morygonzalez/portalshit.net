@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Component }  from 'react'
 import Moment from 'react-moment'
 import { render } from 'react-dom'
 
-class Archives extends React.Component {
+class Archives extends Component {
   constructor(props) {
     super(props)
     this.state = {
