@@ -15,7 +15,11 @@ ul.year-list, ul.category-list {
     li {
         &.selected {
           a {
-            color: #f60;
+            color: #e8ecef;
+            background-color: #444439;
+            border-radius: 5px;
+            padding: .2em .4em;
+            text-shadow: 0 -1px 1px #222121;
           }
         }
         float: left;

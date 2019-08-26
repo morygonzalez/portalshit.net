@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+
 import YearList from './YearList'
 import CategoryList from './CategoryList'
 import Archives from './Archives'
@@ -12,8 +13,10 @@ class Routes extends Component {
         <div>
           <YearList />
           <CategoryList />
-          <Route exact path="/archives" component={Archives} />
-          <Route path="/archives/:year(\d{4})" component={Archives} />
+          <Switch>
+            <Route exact path="/archives" component={Archives} />
+            <Route path="/archives/:year(\d{4})" component={Archives} />
+          </Switch>
         </div>
       </Router>
     )
