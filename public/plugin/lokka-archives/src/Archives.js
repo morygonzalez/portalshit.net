@@ -101,7 +101,7 @@ function MonthlyBox(props) {
   let category = props.category
   let entriesGroupByYearMonth = Object.keys(data).map((monthYear, index) => {
     let entries = data[monthYear]
-    if (typeof category !== 'undefined' && category.length > 0) {
+    if (category && typeof category !== 'undefined' && category.length > 0) {
       entries = entries.filter(function(entry) {
         return entry.category.title === category
       })
