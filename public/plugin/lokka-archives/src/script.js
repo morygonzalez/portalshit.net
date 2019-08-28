@@ -7,15 +7,31 @@ import CategoryList from './CategoryList'
 import Archives from './Archives'
 
 class Routes extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      category: null
+    }
+    this.updateState = this.updateState.bind(this)
+  }
+
+  updateState(category) {
+    this.setState({ category: category })
+  }
+
   render() {
     return(
       <Router>
         <div>
           <YearList />
-          <CategoryList />
+          <CategoryList update={this.updateState} activeCategory={this.state.category} />
           <Switch>
-            <Route exact path="/archives" component={Archives} />
-            <Route path="/archives/:year(\d{4})" component={Archives} />
+            <Route exact path="/archives"
+              render={(props) => <Archives category={this.state.category} {...props} />}
+            />
+            <Route path="/archives/:year(\d{4})"
+              render={(props) => <Archives category={this.state.category} {...props} />}
+            />
           </Switch>
         </div>
       </Router>
