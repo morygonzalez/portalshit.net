@@ -1,0 +1,131 @@
+#content #main {
+  .article .body {
+    > .highlight,
+    > blockquote > .highlight {
+      @include _monokai;
+      @include _border-radius;
+      font-size: $code-font-size;
+      pre {
+        border: 1px solid #333;
+        @include _border-radius;
+      }
+    }
+
+    a.ogp-link {
+      display: block;
+      &:link, &:hover { color: $visited-link-color; }
+
+      .fetched-ogp {
+        @include _border-radius;
+        &:hover { background: $various-bg }
+        border: 1px solid #333;
+        margin: 2em auto;
+        font-size: .9em;
+        height: 120px;
+        display: flex;
+        max-width: 95%;
+        justify-content: space-between;
+        overflow: hidden;
+
+        .ogp-image {
+          max-width: 120px;
+          flex-grow: 1;
+          img {
+            min-height: 120px;
+            max-width: 120px;
+            object-fit: cover;
+          }
+          background-color: #fffffc;
+        }
+
+        .ogp-summary {
+          flex-grow: 3;
+          padding: .2em 1.5em;
+          h3 {
+            margin: 0 0 .3em;
+            &:link, &:visited { color: $base-font-color; }
+            &::before { content: none; }
+          }
+          .description {
+            font-size: 0.9em;
+            line-height: 1.5em;
+            margin: .5em auto 0;
+          }
+          .host {
+            margin: .3em auto;
+          }
+        }
+      }
+    }
+  }
+
+  // Similarity
+  .referrers, .similar {
+    margin-top: 2.5em;
+
+    ul {
+      padding-left: 2em;
+
+      .created_at {
+        font-size: 92%;
+        text-align: right;
+        color: $meta-text-color;
+      }
+    }
+  }
+
+  // Archive
+  ul.year-list, ul.category-list {
+    display: block;
+    height: 1%;
+    overflow: hidden;
+    padding-left: 0;
+
+    li {
+      &.selected {
+        a {
+          color: #e8ecef;
+          background-color: #444439;
+          border-radius: 5px;
+          text-shadow: 0 -1px 1px #222121;
+        }
+      }
+      float: left;
+      list-style: none;
+      margin-right: .3em;
+
+      a {
+        padding: .2em .5em;
+        cursor: pointer;
+        color: #8c0000;
+        &:hover {
+          color: #f60;
+        }
+      }
+    }
+  }
+
+  .archive-by-month {
+    h2 { display: none; }
+    ul {
+      list-style: disc;
+      -webkit-padding-start: 25px;
+    }
+    .detail-information {
+      font-size: 0.85em;
+      margin-left: .5em;
+      display: inline;
+
+      .created_at {
+        color: #7d7c7c;
+        text-shadow: 0 -1px #000000;
+      }
+      .category {
+        padding-left: .5em;
+      }
+    }
+    .year-month {
+      list-style: none;
+    }
+  }
+}

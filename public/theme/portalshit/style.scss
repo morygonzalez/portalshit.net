@@ -3,6 +3,7 @@
 @import "styles/mixin";
 @import "styles/variables";
 @import "styles/decoration";
+@import "styles/plugin";
 
 #header {
   width: 100%;
@@ -263,63 +264,6 @@
           dd {
             margin-top: 10px;
             margin-bottom:  20px;
-          }
-        }
-
-        > .highlight,
-        > blockquote > .highlight {
-          @include _monokai;
-          @include _border-radius;
-          font-size: $code-font-size;
-          pre {
-            border: 1px solid #333;
-            @include _border-radius;
-          }
-        }
-
-        a.ogp-link {
-          display: block;
-          &:link, &:hover { color: $visited-link-color; }
-
-          .fetched-ogp {
-            @include _border-radius;
-            &:hover { background: $various-bg }
-            border: 1px solid #333;
-            margin: 2em auto;
-            font-size: .9em;
-            height: 120px;
-            display: flex;
-            max-width: 95%;
-            justify-content: space-between;
-            overflow: hidden;
-
-            .ogp-image {
-              max-width: 120px;
-              flex-grow: 1;
-              img {
-                min-height: 120px;
-                max-width: 120px;
-                object-fit: cover;
-              }
-            }
-
-            .ogp-summary {
-              flex-grow: 3;
-              padding: .2em 1.5em;
-              h3 {
-                margin: 0 0 .3em;
-                &:link, &:visited { color: $base-font-color; }
-                &::before { content: none; }
-              }
-              .description {
-                font-size: 0.9em;
-                line-height: 1.5em;
-                margin: .5em auto 0;
-              }
-              .host {
-                margin: .3em auto;
-              }
-            }
           }
         }
 
@@ -640,27 +584,6 @@ h4.comment {
   #comment_body {
     width: 480px;
     height: 250px;
-  }
-}
-
-.archive-by-month {
-  h2 { display: none; }
-  ul {
-    list-style: disc;
-    -webkit-padding-start: 25px;
-  }
-  .detail-information {
-    font-size: 0.85em;
-    margin-left: .5em;
-    display: inline;
-
-    .created_at {
-      color: #7d7c7c;
-      text-shadow: 0 -1px #000000;
-    }
-    .category {
-      padding-left: .5em;
-    }
   }
 }
 
