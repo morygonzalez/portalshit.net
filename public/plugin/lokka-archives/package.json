@@ -20,31 +20,15 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-minify": "0.5.0",
     "babel-preset-react": "^6.5.0",
-    "babelify": "10.0.0",
-    "browserify": "16.2.3",
-    "gulp": "^4.0.2",
-    "gulp-babel-minify": "0.5.0",
     "react-dom": "^16.9.0",
-    "react-router-dom": "^4.1.1"
+    "react-router-dom": "^4.1.1",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify src/script.js -o build/script.js",
-    "production-build": "NODE_ENV=production browserify src/script.js -o build/script.js && NODE_ENV=production npm run minify && cp dist/script.js assets/script.js",
-    "minify": "gulp minify"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "@babel/preset-env",
-            "@babel/preset-react"
-          ]
-        }
-      ]
-    ]
+    "build": "./node_modules/.bin/webpack --config webpack.config.js",
+    "production-build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack.production.config.js"
   },
   "author": "morygonzalez",
   "license": "MIT"
