@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import YearList from './YearList'
 import CategoryList from './CategoryList'
 import Archives from './Archives'
 
-class Routes extends Component {
+class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -39,9 +38,4 @@ class Routes extends Component {
   }
 }
 
-export default Routes
-
-ReactDOM.render(
-  <Routes />,
-  document.getElementById('root')
-)
+export default App
