@@ -30,8 +30,8 @@ class Entry
 
       max = limit - 1
       ua = 'AppleWebKit/604.5.6 (KHTML, like Gecko) Reeder/3.1.2 Safari/604.5.6'
-      url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net&mode=rss'
-      www_url = 'http://b.hatena.ne.jp/entrylist?sort=count&url=www.portalshit.net&mode=rss'
+      url = 'https://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net&mode=rss'
+      www_url = 'https://b.hatena.ne.jp/entrylist?sort=count&url=www.portalshit.net&mode=rss'
       content = open(url, 'User-Agent' => ua).read
       www_content = open(www_url, 'User-Agent' => ua).read
       parsed = Hash.from_xml(content)
@@ -40,18 +40,18 @@ class Entry
         link = item['link']
         entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
         slug = link.
-                 gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '').
+                 gsub(%r{https?://portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)?}, '').
                  sub('thought-on-own-house', 'thoughts-on-own-house')
         bookmark_count = item['bookmarkcount']
-        bookmark_url = "http://b.hatena.ne.jp#{entry_path}"
+        bookmark_url = "https://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
       end
       www_slugs = www_parsed['RDF']['item'][0..max].each_with_object({}) do |item, result|
         link = item['link']
         entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
-        slug = link.gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)}, '')
+        slug = link.gsub(%r{https?://(www\.)?portalshit\.net/(\d{4}/\d{2}/\d{2}/|article\.php\?id=)?}, '')
         bookmark_count = item['bookmarkcount']
-        bookmark_url = "http://b.hatena.ne.jp#{entry_path}"
+        bookmark_url = "https://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
       end
       merged_slugs = slugs.merge(www_slugs).sort_by {|_, item| item[:bookmark_count].to_i }
