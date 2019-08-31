@@ -30,12 +30,16 @@ class Entry
 
       max = limit - 1
       ua = 'AppleWebKit/604.5.6 (KHTML, like Gecko) Reeder/3.1.2 Safari/604.5.6'
+
       url = 'https://b.hatena.ne.jp/entrylist?sort=count&url=portalshit.net&mode=rss'
       www_url = 'https://b.hatena.ne.jp/entrylist?sort=count&url=www.portalshit.net&mode=rss'
+
       content = open(url, 'User-Agent' => ua).read
       www_content = open(www_url, 'User-Agent' => ua).read
+
       parsed = Hash.from_xml(content)
       www_parsed = Hash.from_xml(www_content)
+
       slugs = parsed['RDF']['item'][0..max].each_with_object({}) do |item, result|
         link = item['link']
         entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
@@ -46,6 +50,7 @@ class Entry
         bookmark_url = "https://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
       end
+
       www_slugs = www_parsed['RDF']['item'][0..max].each_with_object({}) do |item, result|
         link = item['link']
         entry_path = link.sub(%r{http://}, '/entry/').sub(%r{https://}, '/entry/s/')
@@ -54,6 +59,14 @@ class Entry
         bookmark_url = "https://b.hatena.ne.jp#{entry_path}"
         result[slug] = { bookmark_count: bookmark_count, bookmark_url: bookmark_url }
       end
+
+      www_slugs.each {|key, value|
+        if slugs[key]
+          slugs[key][:bookmark_count].to_i += www_slugs[key][:bookmark_count].to_i
+          www_slugs.delete(key)
+        end
+      }
+
       merged_slugs = slugs.merge(www_slugs).sort_by {|_, item| item[:bookmark_count].to_i }
       merged_slugs = merged_slugs.reverse[0..max].to_h
 
