@@ -1,6 +1,7 @@
 import React, { Component }  from 'react'
 import Moment from 'react-moment'
 import { render } from 'react-dom'
+import 'moment/locale/ja'
 
 class Archives extends Component {
   constructor(props) {
@@ -68,7 +69,7 @@ function Entry(props) {
     <li className="entry">
       <a href={props.link}>{props.title}</a>
       <div className="detail-information">
-        <Moment fromNow className="created_at" date={props.created_at} />
+        <span className="created_at"><Moment format="LL" date={props.created_at} /></span>
         <Category category={props.category} />
       </div>
     </li>
@@ -84,13 +85,12 @@ function EntryList(props) {
       <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
     )
   })
-  let title = props.monthYear.replace(/(\d{4})\-(\d{1,2})/, function() {
-      return `${arguments[1]}年${arguments[2]}月`
-    }
-  )
+  let date = props.monthYear.replace(/(\d{4})\-(\d{1,2})/, function() {
+    return `${arguments[1]}-${(0 + arguments[2]).slice(-2)}-01T00:00:00`
+  })
   return (
     <li className="entryList year-month">
-      <h3>{title}</h3>
+      <h3><Moment format="YYYY年MMM">{date}</Moment></h3>
       <ul className="entries">{entries}</ul>
     </li>
   )
