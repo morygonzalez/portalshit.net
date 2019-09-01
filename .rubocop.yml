@@ -16,24 +16,26 @@ Naming/MethodName:
   Exclude:
     - lib/lokka/models/**/*
 
-Style/MethodMissing:
-  Exclude:
-    - lib/lokka/models/entry.rb
-    - lib/lokka/models/site.rb
-    - lib/lokka/models/option.rb
-    - lib/lokka/helpers/helpers.rb
-
 Style/StringLiterals:
   EnforcedStyle: single_quotes
   SupportedStyles:
     - single_quotes
     - double_quotes
 
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
 Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
   SupportedStyles:
     - with_first_parameter
     - with_fixed_indentation
+
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/AlignHash:
+  EnforcedHashRocketStyle: table
 
 Layout/DotPosition:
   EnforcedStyle: trailing
