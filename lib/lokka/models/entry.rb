@@ -130,25 +130,27 @@ class Entry
     desc.gsub(%r{<[^/]+/>}, ' ').gsub(%r{</[^/]+>}, ' ').gsub(/<[^>]+>/, '').html_safe
   end
 
-  class << self
+  module FinderstWithScope
     def _default_scope
       { order: :created_at.desc }
     end
 
-    def first_with_scope(limit = 1, query = DataMapper::Undefined)
+    def first(limit = 1, query = DataMapper::Undefined)
       query = limit unless limit.is_a? Integer
       query = _default_scope.update(query) if query.is_a? Hash
       query = _default_scope if query == DataMapper::Undefined
-      first_without_scope query
+      super(query)
     end
-    alias_method_chain :first, :scope
 
-    def all_with_scope(query = DataMapper::Undefined)
+    def all(query = DataMapper::Undefined)
       query = _default_scope.update(query) if query.is_a? Hash
       query = _default_scope if query == DataMapper::Undefined
-      all_without_scope query
+      super(query)
     end
-    alias_method_chain :all, :scope
+  end
+
+  class << self
+    prepend FinderstWithScope
 
     def get_by_fuzzy_slug(str, query = {})
       query = { draft: false }.update(query)
@@ -183,18 +185,20 @@ class Post < Entry
   alias orig_link link
   def link
     if Lokka::Helpers.custom_permalink?
-      Lokka::Helpers.custom_permalink_path(year: created_at.year.to_s.rjust(4, '0'),
-                                           monthnum: created_at.month.to_s.rjust(2, '0'),
-                                           month: created_at.month.to_s.rjust(2, '0'),
-                                           day: created_at.day.to_s.rjust(2, '0'),
-                                           hour: created_at.hour.to_s.rjust(2, '0'),
-                                           minute: created_at.min.to_s.rjust(2, '0'),
-                                           second: created_at.sec.to_s.rjust(2, '0'),
-                                           post_id: id.to_s,
-                                           id: id.to_s,
-                                           slug: slug || id.to_s,
-                                           postname: slug || id.to_s,
-                                           category: category ? (category.slug || category.id.to_s) : '')
+      Lokka::Helpers.custom_permalink_path(
+        year:     created_at.year.to_s.rjust(4,  '0'),
+        monthnum: created_at.month.to_s.rjust(2, '0'),
+        month:    created_at.month.to_s.rjust(2, '0'),
+        day:      created_at.day.to_s.rjust(2,   '0'),
+        hour:     created_at.hour.to_s.rjust(2,  '0'),
+        minute:   created_at.min.to_s.rjust(2,   '0'),
+        second:   created_at.sec.to_s.rjust(2,   '0'),
+        post_id:  id.to_s,
+        id:       id.to_s,
+        slug:     slug || id.to_s,
+        postname: slug || id.to_s,
+        category: category ? (category.slug || category.id.to_s) : ''
+      )
     else
       orig_link
     end
