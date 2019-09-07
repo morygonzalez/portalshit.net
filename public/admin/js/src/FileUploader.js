@@ -13,6 +13,11 @@ class FileUploader {
     const editor = this.editor;
     const self = this;
 
+    if (editor.dataset.uploadObserved) {
+      console.log("The editor is already observed by FileUploader");
+      return;
+    }
+
     if (!this.isAvailable()) {
       console.log("Drag and Drop upload is not available on this Browser");
       return false;
@@ -61,6 +66,8 @@ class FileUploader {
         e.preventDefault();
       });
     });
+
+    this.editor.dataset.uploadObserved = true;
   };
 
   upload(file) {
@@ -118,11 +125,11 @@ class FileUploader {
     if (textarea.value.length === 0) {
       textarea.value = imageTag;
     } else if (textarea.selectionStart > 0) {
-      textarea.value = textarea.value.substr(0, textarea.selectionStart).trim() +
-        imageTag +
-        textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
+      let beforeSelect = textarea.value.substr(0, textarea.selectionStart).trim();
+      let afterSelect = textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
+      textarea.value = `${beforeSelect}\n${imageTag}\n${afterSelect}`;
     } else {
-      textarea.value = imageTag + textarea.value.trim();
+      textarea.value = `${imageTag}\n${textarea.value.trim()}`;
     }
   };
 
