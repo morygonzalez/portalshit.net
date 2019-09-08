@@ -52,11 +52,11 @@ class FileUploader {
         } else {
           source = e.dataTransfer;
         }
+        if (!source.types.some(type => type === 'Files')) {
+          return;
+        }
         droppedItems = source.items;
         for (const item of droppedItems) {
-          if (item.kind !== 'file') {
-            return;
-          }
           const file = item.getAsFile();
           if (file && /^image\//.test(file.type)) {
             self.upload(file);
