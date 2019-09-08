@@ -122,15 +122,9 @@ class FileUploader {
       return;
     }
 
-    if (textarea.value.length === 0) {
-      textarea.value = imageTag;
-    } else if (textarea.selectionStart > 0) {
-      let beforeSelect = textarea.value.substr(0, textarea.selectionStart).trim();
-      let afterSelect = textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
-      textarea.value = `${beforeSelect}\n${imageTag}\n${afterSelect}`;
-    } else {
-      textarea.value = `${imageTag}\n${textarea.value.trim()}`;
-    }
+    let beforeSelect = textarea.value.substr(0, textarea.selectionStart).trim();
+    let afterSelect = textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
+    textarea.value = `${beforeSelect}${imageTag}${afterSelect}`;
   };
 
   detectImageTag(file, url) {
