@@ -122,8 +122,8 @@ class FileUploader {
       return;
     }
 
-    let beforeSelect = textarea.value.substr(0, textarea.selectionStart).trim();
-    let afterSelect = textarea.value.substr(textarea.selectionStart, textarea.value.length - 1).trim();
+    let beforeSelect = textarea.value.substr(0, textarea.selectionStart);
+    let afterSelect = textarea.value.substr(textarea.selectionStart, textarea.value.length - 1);
     textarea.value = `${beforeSelect}${imageTag}${afterSelect}`;
   };
 
