@@ -40,22 +40,28 @@ module Lokka
 
     def bread_crumb
       bread_crumb =
-        @bread_crumbs[0..-2].
-          inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, bread|
-          html += <<~RUBY_HTML
+        @bread_crumbs[0..-2].each_with_index.
+          inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, (bread, index)|
+            html += if index == 0
+                      <<~RUBY_HTML
+                        <li><a href="#{bread[:link]}"><span>#{bread[:name]}</span></a></li>
+                      RUBY_HTML
+                    else
+                      <<~RUBY_HTML
+                        <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                          <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="#{bread[:link]}" id="#{bread[:link]}">
+                            <span itemprop="name">#{bread[:name]}</span>
+                          </a>
+                          <meta itemprop="position" content="#{index}" />
+                        </li>
+                      RUBY_HTML
+                    end
+          end + <<~RUBY_HTML
             <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-              <a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="#{bread[:link]}">
-                <span itemprop="name">#{bread[:name]}</span>
-              </a>
-              <meta itemprop="position" content="#{@bread_crumbs.index(bread) + 1}" />
-            </li>
-          RUBY_HTML
-        end + <<~RUBY_HTML
-            <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-              <span itemscope itemtype="http://schema.org/Thing" itemprop="item">
+              <span itemscope itemtype="http://schema.org/Thing" itemprop="item" id="#{@bread_crumbs[-1][:link]}">
                 <span itemprop="name">#{@bread_crumbs[-1][:name]}</span>
               </span>
-              <meta itemprop="position" content="#{@bread_crumbs.length}" />
+              <meta itemprop="position" content="#{@bread_crumbs.length - 1}" />
             </li>
           </ol>
         RUBY_HTML
