@@ -28,28 +28,30 @@
       });
     = header
   %body
-    #header.clearfix
-      %h1= link_to @site.title, '/'
-      %ul#nav
-        %li.profile
-          = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
-          = link_to 'Profile', '/author'
-        %li.github
-          %i.fa.fa-github-square
-          = link_to 'GitHub', 'http://github.com/morygonzalez'
-        %li.twitter
-          %i.fa.fa-twitter-square
-          = link_to 'Twitter', 'http://twitter.com/morygonzalez'
-        %li.archives
-          %i.fa.fa-list
-          = link_to 'Archives', '/archives'
-        %li.search
-          %form#search_form(action="/search/" method="get")
-            %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
-      - unless index?
-        #bread_crumb= bread_crumb
+    #header
+      #header-inner
+        %h1= link_to @site.title, '/'
+        %nav
+          %ul
+            %li.profile
+              = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
+              = link_to 'Profile', '/author'
+            %li.github
+              %i.fa.fa-github-square
+              = link_to 'GitHub', 'http://github.com/morygonzalez'
+            %li.twitter
+              %i.fa.fa-twitter-square
+              = link_to 'Twitter', 'http://twitter.com/morygonzalez'
+            %li.archives
+              %i.fa.fa-list
+              = link_to 'Archives', '/archives'
+            %li.search
+              %form#search_form(action="/search/" method="get")
+                %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
+        - unless index?
+          #bread_crumb= bread_crumb
 
-    #content.clearfix
+    #content
       #main.hfeed= yield
 
     #footer

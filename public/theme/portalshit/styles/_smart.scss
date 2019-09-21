@@ -8,30 +8,36 @@
   }
   #header, #content, #footer {
     margin: 0;
-    padding: 0 5px;
+    padding: 0;
     width: 100%;
   }
-  #header {
+  #header #header-inner {
+    width: 95%;
     padding: 0;
     min-height: 50px;
     h1 {
       margin-top: -8px;
       margin-left: 0;
     }
-    #nav {
-      width: 98%;
-      margin-top: 1em;
-      margin-right: 0;
-      li {
-        a {
-          padding: 2px 0;
-        }
-        &.github, &.twitter {
-          display: none;
-        }
-        &.search {
-          input[type=text] {
-            font-size: 16px;
+    nav {
+      width: 97%;
+      ul {
+        li {
+          padding-left: 3px;
+          margin: auto;
+          flex-grow: 1;
+          a {
+            padding: 2px 5px;
+          }
+          &.github, &.twitter {
+            display: none;
+          }
+          &.search {
+            flex-grow: 1.5;
+            #search_form input[type=text] {
+              max-width: 120px;
+              width: 100px;
+            }
           }
         }
       }

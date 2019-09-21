@@ -7,126 +7,130 @@
 
 #header {
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   background-position: top center;
   background-image: url(/theme/portalshit/images/header-bg.jpeg);
   background-size: cover;
-  min-height: 300px;
-  max-height: 460px;
-  text-align: left;
-  display: flex;
-  flex-wrap: wrap;
 
-  .description {
-    margin: 8px 0px 0px 70px;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  h1 {
-    margin-top: 0;
-    margin-left: 8%;
-    margin-right: auto;
-    width: 275px;
-    height: 62px;
-  }
-
-  #nav {
-    height: 35px;
-    font-size: 12px;
-    list-style: none;
-    margin-right: 8%;
-    padding-left: 0;
-    border-radius: 5px;
-    background: rgba(234,234,234,0.65);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    li {
-      flex: auto;
-      margin: 0px 7px;
-
-      img {
-        margin: 0px;
-        padding: 0px;
-      }
-
-      a {
-        padding: 2px 5px;
-
-        &:link, &:visited {
-          color: $various-bg;
-        }
-
-        &:hover {
-          color: $base-font-color;
-          background-color: #444439;
-          border-radius: 5px;
-          text-shadow: 0 -1px 1px #222121;
-        }
-      }
-
-      &.profile {
-        @include nav-profile;
-      }
-
-      &.github {
-        @include nav-profile;
-      }
-
-      &.twitter {
-        @include nav-profile;
-      }
-
-      &.facebook {
-        @include nav-profile;
-        background: url(images/icons.png) no-repeat -4px -260px;
-      }
-
-      &.archives {
-        @include nav-profile;
-        i {
-          font-size: 20px;
-        }
-      }
-
-      form#search_form input {
-        margin-left: 10px;
-        border: none;
-        border-radius: 3px;
-        padding: 2px 2px 2px 8px;
-        height: 16px;
-        width: 120px;
-        font-size: 95%;
-      }
-    }
-  }
-
-  #bread_crumb {
-    max-width: $content-max-width;
+  #header-inner {
     width: 90%;
-    margin: auto;
+    max-width: $content-max-width;
+    min-height: 300px;
+    max-height: 460px;
     text-align: left;
-    align-self: flex-end;
+    display: flex;
+    margin: auto;
+    flex-wrap: wrap;
 
-    ol {
-      padding: 0px;
-      margin: 0px;
+    .description {
+      margin: 8px 0px 0px 70px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-right: auto;
+      width: 275px;
+      height: 62px;
+    }
+
+    nav ul {
+      height: 35px;
+      font-size: 12px;
       list-style: none;
+      padding-left: 0;
+      border-radius: 5px;
+      background: rgba(234,234,234,0.65);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
 
       li {
-        display: inline;
+        flex: auto;
+        margin: 0px 7px;
 
-        &:before {
-          content: " > ";
+        img {
+          margin: 0px;
+          padding: 0px;
         }
 
-        &:first-child:before {
-          content: "";
+        a {
+          padding: 2px 5px;
+
+          &:link, &:visited {
+            color: $various-bg;
+          }
+
+          &:hover {
+            color: $base-font-color;
+            background-color: #444439;
+            border-radius: 5px;
+            text-shadow: 0 -1px 1px #222121;
+          }
+        }
+
+        &.profile {
+          @include nav-profile;
+        }
+
+        &.github {
+          @include nav-profile;
+        }
+
+        &.twitter {
+          @include nav-profile;
+        }
+
+        &.facebook {
+          @include nav-profile;
+          background: url(images/icons.png) no-repeat -4px -260px;
+        }
+
+        &.archives {
+          @include nav-profile;
+          i {
+            font-size: 20px;
+          }
+        }
+
+        form#search_form input {
+          margin-left: 10px;
+          border: none;
+          border-radius: 3px;
+          padding: 2px 2px 2px 8px;
+          height: 16px;
+          width: 120px;
+          font-size: 95%;
+        }
+      }
+    }
+
+    #bread_crumb {
+      width: 100%;
+      max-width: $content-max-width;
+      margin: auto 0;
+      text-align: left;
+      align-self: flex-end;
+
+      ol {
+        padding: 0px;
+        margin: 0px;
+        list-style: none;
+
+        li {
+          display: inline;
+
+          &:before {
+            content: " > ";
+          }
+
+          &:first-child:before {
+            content: "";
+          }
         }
       }
     }
