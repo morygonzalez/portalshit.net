@@ -20,7 +20,7 @@
       margin-left: 0;
     }
     nav {
-      width: 97%;
+      width: 100%;
       ul {
         li {
           padding-left: 3px;
@@ -33,7 +33,6 @@
             display: none;
           }
           &.search {
-            flex-grow: 1.5;
             #search_form input[type=text] {
               max-width: 120px;
               width: 100px;
