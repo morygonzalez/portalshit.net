@@ -18,7 +18,8 @@ module Lokka
       def fetch
         doc.xpath('./p').each do |node|
           next if node.children.length > 1
-          next unless node.inner_html =~ %r|\A<a href.+?/a>\Z|
+          next if node.inner_html =~ %r|img src|
+          next if node.inner_html !~ %r|\A<a href.+?/a>\Z|
           url = node.xpath('./a').first.attributes["href"].value
           escaped_url = CGI.escape(url)
           each_fetcher = EachFetcher.new(url)
