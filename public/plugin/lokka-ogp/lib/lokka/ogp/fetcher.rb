@@ -2,6 +2,7 @@
 
 require 'open-uri'
 require 'fileutils'
+require 'faraday_middleware'
 
 module Lokka
   module OGP
@@ -18,7 +19,7 @@ module Lokka
         doc.xpath('./p').each do |node|
           next if node.children.length > 1
           next unless node.inner_html =~ %r|\A<a href.+?/a>\Z|
-          url = node.xpath('./a').first.attributes["href"]
+          url = node.xpath('./a').first.attributes["href"].value
           escaped_url = CGI.escape(url)
           each_fetcher = EachFetcher.new(url)
           if each_fetcher.fetch
@@ -91,7 +92,11 @@ module Lokka
 
         def doc
           @doc ||= begin
-                     response = Faraday.get(@url)
+                     connection = Faraday.new do |builder|
+                       builder.response :follow_redirects
+                       builder.adapter Faraday.default_adapter
+                     end
+                     response = connection.get(@url)
                      Nokogiri::HTML(response.body)
                    rescue StandardError
                      nil

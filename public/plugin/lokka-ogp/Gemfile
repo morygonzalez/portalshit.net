@@ -2,3 +2,4 @@
 
 gem 'fastimage'
 gem 'open_graph_reader'
+gem 'faraday_middleware'
