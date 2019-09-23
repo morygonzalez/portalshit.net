@@ -41,18 +41,25 @@
         .ogp-summary {
           flex-grow: 3;
           padding: .2em 1.5em;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
           h3 {
             margin: 0 0 .3em;
             &:link, &:visited { color: $base-font-color; }
             &::before { content: none; }
           }
           .description {
+            max-width: 980px;
             font-size: 0.9em;
             line-height: 1.5em;
-            margin: .5em auto 0;
+            margin: .5em auto;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
           }
           .host {
-            margin: .3em auto;
+            margin: .3em 0;
           }
         }
       }

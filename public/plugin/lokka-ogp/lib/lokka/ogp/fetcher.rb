@@ -75,7 +75,7 @@ module Lokka
           @host = URI.parse(url).host
           @title = title.presence || title_fallback || url
           @image = image.presence || image_fallback
-          @description = (description || description_fallback).to_s.truncate(140)
+          @description = (description || description_fallback).to_s
         end
 
         def create
