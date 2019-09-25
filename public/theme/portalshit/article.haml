@@ -1,11 +1,30 @@
-.article.section.autopagerize_page_element.hentry
+%article.article.section.autopagerize_page_element.hentry{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
   .header
-    %h2.title= link_to post.title, post.link
+    %h2.title{ itemprop: 'name' }= link_to post.title, post.link, itemprop: 'url'
     .meta
-      == #{link_to l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)'), post.link}
+      %time{ datetime: post.created_at }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
       - if post.category
-        == | @#{link_to post.category.title, "/category/#{post.category.slug}/"}
-  .body
+        == | @#{link_to post.category.title, "/category/#{post.category.slug}/", itemprop: 'articleSection'}
+    %div{ style: 'display: none'}
+      %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
+      %time{ datetime: post.created_at, itemprop: 'datePublished' }= post.created_at
+      %time{ datetime: post.updated_at, itemprop: 'dateModified' }= post.updated_at
+      %span{ itemprop: 'headline' }= truncate(strip_tags(post.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, ''), length: 100)
+      %span{ itemprop: 'author' }= post.user.name
+      %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Organization' }
+        %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
+          %meta{ content: 'https://portalshit.net/theme/portalshit/screenshot.png', itemprop: :url }
+          %meta{ content: '350', itemprop: :width }
+          %meta{ content: '255', itemprop: :height }
+        %meta{ content: post.user.name, itemprop: :name }
+      %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
+        - if post.images.present?
+          %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.images.first}" }
+        - else
+          %meta{ itemprop: :url, content: 'https://portalshit.net/imageproxy/350x/https://portalshit.net/theme/portalshit/screenshot.png' }
+        %meta{ itemprop: :width, content: 350 }
+        %meta{ itemprop: :height, content: 255 }
+  .body{ itemprop: 'articleBody' }
     ~ post.body
   .footer
     = post.tags_to_html

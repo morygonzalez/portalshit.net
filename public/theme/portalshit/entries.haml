@@ -1,8 +1,8 @@
-.articles.section
-  - cache_fragment('index-categories', shared: true) do
-    %ul#categories
-      - Category.all.each do |category|
-        %li= link_to category.title, "/category/#{category.slug}/"
+- cache_fragment('index-categories', shared: true) do
+  %ul#categories
+    - Category.all.each do |category|
+      %li= link_to category.title, "/category/#{category.slug}/"
+.articles.section.hfeed
   - @posts.each_with_index do |post, index|
     = partial :article, locals: { post: post, index: index }
   = @posts.pager.to_html(request.url)

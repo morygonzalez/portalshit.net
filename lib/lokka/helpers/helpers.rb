@@ -40,22 +40,16 @@ module Lokka
 
     def bread_crumb
       bread_crumb =
-        @bread_crumbs[0..-2].each_with_index.
+        @bread_crumbs[1..-2].each.with_index(1).
           inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, (bread, index)|
-            html += if index == 0
-                      <<~RUBY_HTML
-                        <li><a href="#{bread[:link]}"><span>#{bread[:name]}</span></a></li>
-                      RUBY_HTML
-                    else
-                      <<~RUBY_HTML
-                        <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                          <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="#{bread[:link]}" id="#{bread[:link]}">
-                            <span itemprop="name">#{bread[:name]}</span>
-                          </a>
-                          <meta itemprop="position" content="#{index}" />
-                        </li>
-                      RUBY_HTML
-                    end
+            html += <<~RUBY_HTML
+                      <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="#{bread[:link]}" id="#{bread[:link]}">
+                          <span itemprop="name">#{bread[:name]}</span>
+                        </a>
+                        <meta itemprop="position" content="#{index}" />
+                      </li>
+                    RUBY_HTML
           end + <<~RUBY_HTML
             <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
               <span itemscope itemtype="http://schema.org/Thing" itemprop="item" id="#{@bread_crumbs[-1][:link]}">
