@@ -35,7 +35,7 @@ module Lokka
       def extract_description
         content = strip_tags(@entry.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
         content = @site.meta_description if content.blank?
-        truncate(content, length: 200)
+        truncate(content, length: 100)
       end
     end
 
@@ -119,18 +119,13 @@ module Lokka
       end
 
       def generate
-        if @entry.nil?
-          summary
-        elsif @entry
-          if @entry.images.nil?
-            entry_without_image
-          elsif @entry.images.length == 1
-            entry_with_image
-          elsif @entry.images.length > 1
-            entry_with_images
-          else
-            entry_default
-          end
+        return summary if @entry.nil?
+        if @entry.images.nil?
+          entry_without_image
+        elsif @entry.images.length == 1
+          entry_with_image
+        elsif @entry.images.length > 1
+          entry_with_images
         else
           entry_default
         end

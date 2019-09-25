@@ -130,6 +130,10 @@ class Entry
     desc.gsub(%r{<[^/]+/>}, ' ').gsub(%r{</[^/]+>}, ' ').gsub(/<[^>]+>/, '').html_safe
   end
 
+  def images
+    body.scan(%r{https?://[\w/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)})
+  end
+
   module FinderstWithScope
     def _default_scope
       { order: :created_at.desc }
