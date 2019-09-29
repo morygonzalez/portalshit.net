@@ -30,6 +30,54 @@ a {
   }
 }
 
+#header {
+  &[data-background-image="black-kite"] {
+    @include gradient-background('black-kite');
+  }
+  &[data-background-image="container-ship"] {
+    @include gradient-background('container-ship');
+  }
+  &[data-background-image="daytime-aso"] {
+    @include gradient-background('daytime-aso');
+  }
+  &[data-background-image="evening-aso"] {
+    @include gradient-background('evening-aso');
+  }
+  &[data-background-image="fire"] {
+    @include gradient-background('fire');
+  }
+  &[data-background-image="halo"] {
+    @include gradient-background('halo');
+  }
+  &[data-background-image="heimin"] {
+    @include gradient-background('heimin');
+  }
+  &[data-background-image="jizou"] {
+    @include gradient-background('jizou');
+  }
+  &[data-background-image="karatsu"] {
+    @include gradient-background('karatsu');
+  }
+  &[data-background-image="momiji"] {
+    @include gradient-background('momiji');
+  }
+  &[data-background-image="moss"] {
+    @include gradient-background('moss');
+  }
+  &[data-background-image="nagatare"] {
+    @include gradient-background('nagatare');
+  }
+  &[data-background-image="nanzenji"] {
+    @include gradient-background('nanzenji');
+  }
+  &[data-background-image="night-moon"] {
+    @include gradient-background('night-moon');
+  }
+  &[data-background-image="wave"] {
+    @include gradient-background('wave');
+  }
+}
+
 #main {
   .archives,
   .body,

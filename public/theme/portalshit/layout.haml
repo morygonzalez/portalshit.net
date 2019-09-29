@@ -25,7 +25,8 @@
       });
     = header
   %body
-    #header
+    - images = %i{black-kite container-ship daytime-aso evening-aso evening-moon fire halo heimin jizou karatsu momiji moss nagatare nanzenji night-moon wave}
+    #header{ 'data-background-image': images.sample }
       #header-inner
         %h1= link_to @site.title, '/'
         %nav
