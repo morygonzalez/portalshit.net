@@ -373,6 +373,7 @@ DEPENDENCIES
   nokogiri
   open_graph_reader
   padrino-helpers (~> 0.14.1.1)
+  parallel
   pry
   puma
   puma_worker_killer

@@ -101,6 +101,7 @@ gem 'dm-serializer', '~> 1.2.2'
 gem 'fastimage'
 gem 'open_graph_reader'
 gem 'faraday_middleware'
+gem 'parallel'
 
 gem 'dotenv'
 gem 'rack-recaptcha2', require: 'rack/recaptcha'
