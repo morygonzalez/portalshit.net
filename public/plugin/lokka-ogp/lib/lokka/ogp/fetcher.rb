@@ -3,6 +3,7 @@
 require 'open-uri'
 require 'fileutils'
 require 'faraday_middleware'
+require 'parallel'
 
 module Lokka
   module OGP
@@ -16,7 +17,7 @@ module Lokka
       end
 
       def fetch
-        doc.xpath('./p').each do |node|
+        Parallel.each(doc.xpath('./p'), in_threads: 3) do |node|
           next if node.children.length > 1
           next if node.inner_html =~ %r|img src|
           next if node.inner_html !~ %r|\A<a href.+?/a>\Z|
@@ -36,22 +37,26 @@ module Lokka
       end
 
       class EachFetcher
+        attr_reader :url
+
         def initialize(url)
           @url = url
         end
 
         def fetch
-          escaped_url = CGI.escape(@url)
+          escaped_url = CGI.escape(url)
           return true if OGElement.exist?(escaped_url)
-          opengraph = OpenGraphReader.fetch(@url)
+          opengraph = OpenGraphReader.fetch(URI.encode(url))
           element = OGElement.new(
             escaped_url: escaped_url,
-            url: opengraph&.og&.url || @url,
+            url: opengraph&.og&.url || url,
             title: opengraph&.og&.title,
             image: opengraph&.og&.image,
             description: opengraph&.og&.description
           )
           element.create
+        rescue URI::InvalidURIError
+          puts e.message
         end
       end
 
@@ -97,7 +102,7 @@ module Lokka
                        builder.response :follow_redirects
                        builder.adapter Faraday.default_adapter
                      end
-                     response = connection.get(@url)
+                     response = connection.get(URI.encode(@url))
                      Nokogiri::HTML(response.body)
                    rescue StandardError
                      nil
