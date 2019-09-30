@@ -67,7 +67,7 @@
           }
 
           &:hover {
-            color: $base-font-color;
+            color: $dark-font-color;
             background-color: #444439;
             border-radius: 5px;
             text-shadow: 0 -1px 1px #222121;
@@ -162,7 +162,7 @@
       padding: 5px 0 15px;
 
       a.clicked {
-        color: $base-font-color;
+        color: $dark-font-color;
         background: $meta-text-color;
         border-radius: $radius;
         padding: 1px 3px;
@@ -209,15 +209,15 @@
             }
 
             &:link::before {
-              color: $base-link-color;
+              color: $dark-link-color;
             }
 
             &:visited::before {
-              color: $visited-link-color;
+              color: $dark-visited-link-color;
             }
 
             &:hover::before {
-              color: #ff7a00;
+              color: $dark-hover-link-color;
             }
           }
         }
@@ -383,7 +383,7 @@
       width: 22%;
 
       a:link {
-        color: $base-font-color;
+        color: $dark-font-color;
       }
 
       &.tags {
@@ -426,7 +426,7 @@
       margin: 0;
       padding: 0;
       list-style-type: none;
-      color: $base-font-color;
+      color: $dark-font-color;
 
       li {
         margin: 5px 0;

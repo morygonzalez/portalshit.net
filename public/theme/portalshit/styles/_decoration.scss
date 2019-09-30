@@ -3,7 +3,7 @@ body {
   padding: 0;
   text-align: center;
   font-size: 18px;
-  color: $base-font-color;
+  color: $dark-font-color;
   line-height: 26px;
   text-shadow: -1px -1px -1px #1d1a1a;
   font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
@@ -18,15 +18,15 @@ a {
   text-decoration: none;
 
   &:link {
-    color: $base-link-color;
+    color: $dark-link-color;
   }
 
   &:visited {
-    color: $visited-link-color;
+    color: $dark-visited-link-color;
   }
 
   &:hover {
-    color: #f60;
+    color: $dark-hover-link-color;
   }
 }
 
@@ -107,8 +107,8 @@ h1 {
   font: bold 3em/62px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
 
   a {
-    &:link, &:visited { color: $base-font-color; }
-    &:hover { color: $base-link-color; }
+    &:link, &:visited { color: $dark-font-color; }
+    &:hover { color: $dark-link-color; }
   }
 }
 
@@ -286,4 +286,46 @@ kbd {
 
 .created_at {
   @include _meta;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-image: none;
+    background-color: #fff;
+    color: #000;
+    text-shadow: none;
+    #bread_crumb {
+      color: $dark-font-color;
+    }
+    #content #main {
+      background-color: #e8ecef !important;
+      .archives,
+      .body,
+      .year-list,
+      .category-list,
+      .footer,
+      .pager {
+        a {
+          text-shadow: 0px 0px 1px #180614;
+        }
+      }
+
+      .article .header .title a {
+        &:link {
+          color: $light-link-color;
+        }
+        &:visited {
+          color: $light-font-color;
+        }
+        &:hover:before {
+          color: $light-hover-link-color;
+        }
+      }
+    }
+    #footer #aside {
+      dt {
+        color: $dark-font-color;
+      }
+    }
+  }
 }

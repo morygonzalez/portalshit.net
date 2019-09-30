@@ -13,7 +13,7 @@
 
     a.ogp-link {
       display: block;
-      &:link, &:hover { color: $visited-link-color; }
+      &:link, &:hover { color: $dark-visited-link-color; }
 
       .fetched-ogp {
         @include _border-radius;
@@ -46,7 +46,7 @@
           justify-content: space-between;
           h3 {
             margin: 0 0 .3em;
-            &:link, &:visited { color: $base-font-color; }
+            &:link, &:visited { color: $dark-font-color; }
             &::before { content: none; }
           }
           .description {
@@ -105,9 +105,9 @@
       a {
         padding: .3em .5em;
         cursor: pointer;
-        color: #8c0000;
+        color: $dark-link-color;
         &:hover {
-          color: #f60;
+          color: $dark-hover-link-color;
         }
       }
     }
