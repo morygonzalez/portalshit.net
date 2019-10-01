@@ -157,7 +157,7 @@
 
     li {
       float: left;
-      text-shadow: #191919 0.1em 0.1em 0.2em;
+      text-shadow: $dark-text-shadow-color 0.1em 0.1em 0.2em;
       margin-right: 1em;
       padding: 5px 0 15px;
 
@@ -188,13 +188,13 @@
 
           a {
             text-decoration: none;
-            text-shadow: #191919 0 1px 0;
+            text-shadow: $dark-text-shadow-color 0 1px 0;
             z-index: 999;
             position: relative;
 
             &:link, &:visited {
               color: #e6e6e6;
-              text-shadow: #191919 0 1px 0;
+              text-shadow: $dark-text-shadow-color 0 1px 0;
             }
 
             &:before {
