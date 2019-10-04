@@ -162,7 +162,7 @@ p code, li code {
 blockquote:not([class]) {
   padding: 1em 3em 1em;
   margin: 0 0 .5em 0;
-  background-color: #2c2525;
+  background-color: $various-bg;
   color: #c7c7c7;
   text-shadow: none;
   @include _border-radius;
@@ -297,50 +297,52 @@ kbd {
     #bread_crumb {
       color: $dark-font-color;
     }
-    #content #main {
-      background-color: #e8ecef !important;
-      .archives,
-      .body,
-      .year-list,
-      .category-list,
-      .footer,
-      .pager {
-        a {
-          text-shadow: #f8f4e6 -1px 1px 1px;
-
-          &:link {
-            // color: $light-link-color;
+    #content {
+      #main {
+        background-color: #e8ecef !important;
+        #categories {
+          li {
+            font-weight: bold;
+            text-shadow: #f8f4e6 -1px 1px 1px;
           }
-          &:hover {
+        }
+        .archives,
+        .body,
+        .year-list,
+        .category-list,
+        .footer,
+        .pager {
+          a {
+            text-shadow: #f8f4e6 -0.5px -0.5px 1px;
+
+            &:link {
+              // color: $light-link-color;
+            }
+            &:hover {
+              color: $light-hover-link-color;
+            }
+            &:visited {
+            }
+          }
+        }
+
+        .article .header .title a {
+          text-shadow: #f8f4e6 -0.5px -0.5px 1px !important;
+
+          &:link, &:visited {
+            color: $light-title-link-color;
+          }
+
+          &:link::before {
+            color: $light-link-color;
+          }
+          &:visited::before {
+            // color: $light-visited-link-color;
+          }
+          &:hover:before {
             color: $light-hover-link-color;
           }
-          &:visited {
-          }
         }
-      }
-
-      .article .header .title a {
-        text-shadow: #f8f4e6 -0.5px -0.5px 1px !important;
-
-        &:link, &:visited {
-          color: $light-title-link-color;
-        }
-
-        &:link::before {
-          color: $light-link-color;
-        }
-        &:visited::before {
-          // color: $light-visited-link-color;
-        }
-        &:hover:before {
-          color: $light-hover-link-color;
-        }
-      }
-    }
-    #content #categories {
-      li {
-        font-weight: bold;
-        text-shadow: #f8f4e6 -1px 1px 1px;
       }
     }
     #footer #aside {
