@@ -22,10 +22,9 @@ module Lokka
           next if node.inner_html =~ %r|img src|
           next if node.inner_html !~ %r|\A<a href.+?/a>\Z|
           url = node.xpath('./a').first.attributes["href"].value
-          escaped_url = CGI.escape(url)
           each_fetcher = EachFetcher.new(url)
           if each_fetcher.fetch
-            content = OGElement.find(escaped_url)&.html_safe
+            content = OGElement.find(url)&.html_safe
             node.replace(content) if content
           end
         end
@@ -44,18 +43,16 @@ module Lokka
         end
 
         def fetch
-          escaped_url = CGI.escape(url)
-          return true if OGElement.exist?(escaped_url)
+          return true if OGElement.exist?(url)
           opengraph = OpenGraphReader.fetch(URI.encode(url))
           element = OGElement.new(
-            escaped_url: escaped_url,
-            url: opengraph&.og&.url || url,
+            url: url,
             title: opengraph&.og&.title,
             image: opengraph&.og&.image,
             description: opengraph&.og&.description
           )
           element.create
-        rescue URI::InvalidURIError
+        rescue URI::InvalidURIError => e
           puts e.message
         end
       end
@@ -65,18 +62,20 @@ module Lokka
 
         class << self
           def find(url)
-            return nil unless exist?(url)
-            File.open(File.join(CACHE_DIR, url)).read
+            uname = Base64.urlsafe_encode64(url)
+            path = File.join(CACHE_DIR, uname)
+            return nil unless test('f?', path)
+            File.open(path).read
           end
 
           def exist?(url)
-            path = File.join(CACHE_DIR, url)
+            uname = Base64.urlsafe_encode64(url)
+            path = File.join(CACHE_DIR, uname)
             File.exist?(path) && test('M', File.open(path)) > 1.month.ago
           end
         end
 
-        def initialize(escaped_url:, url:, title: nil, image: nil, description: nil)
-          @escaped_url = escaped_url
+        def initialize(url:, title: nil, image: nil, description: nil)
           @url = url
           @host = URI.parse(url).host
           @title = title.presence || title_fallback || url
@@ -90,10 +89,13 @@ module Lokka
             file.puts html
           end
           true
+        rescue Errno::ENAMETOOLONG => e
+          puts e.message
         end
 
         def path
-          File.join(CACHE_DIR, @escaped_url)
+          uname = Base64.urlsafe_encode64(@url)
+          File.join(CACHE_DIR, uname)
         end
 
         def doc
