@@ -73,6 +73,9 @@ a {
   &[data-background-image="night-moon"] {
     @include gradient-background('night-moon');
   }
+  &[data-background-image="sunset"] {
+    @include gradient-background('sunset');
+  }
   &[data-background-image="wave"] {
     @include gradient-background('wave');
   }
