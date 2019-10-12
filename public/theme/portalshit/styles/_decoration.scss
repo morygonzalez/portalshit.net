@@ -306,7 +306,7 @@ kbd {
         #categories {
           li {
             font-weight: bold;
-            text-shadow: #f8f4e6 -1px 1px 1px;
+            text-shadow: #{$light-text-shadow-color} -1px 1px 1px;
           }
         }
         .archives,
@@ -316,7 +316,7 @@ kbd {
         .footer,
         .pager {
           a {
-            text-shadow: #f8f4e6 -0.5px -0.5px 1px;
+            text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px;
 
             &:link {
               // color: $light-link-color;
@@ -327,10 +327,13 @@ kbd {
             &:visited {
             }
           }
+          blockquote a {
+            text-shadow: #{$dark-text-shadow-color} -0.5px -0.5px 1px;
+          }
         }
 
         .article .header .title a {
-          text-shadow: #f8f4e6 -0.5px -0.5px 1px !important;
+          text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
 
           &:link, &:visited {
             color: $light-title-link-color;
