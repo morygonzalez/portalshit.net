@@ -31,54 +31,35 @@ a {
 }
 
 #header {
-  &[data-background-image="black-kite"] {
-    @include gradient-background('black-kite');
+  // dark images
+  &[data-background-dark-image="dark-amaguri"] {
+    @include gradient-background('dark-amaguri');
   }
-  &[data-background-image="container-ship"] {
-    @include gradient-background('container-ship');
+  &[data-background-dark-image="dark-aso"] {
+    @include gradient-background('dark-aso');
   }
-  &[data-background-image="daytime-aso"] {
-    @include gradient-background('daytime-aso');
+  &[data-background-dark-image="dark-beach"] {
+    @include gradient-background('dark-beach');
   }
-  &[data-background-image="evening-aso"] {
-    @include gradient-background('evening-aso');
+  &[data-background-dark-image="dark-crossing"] {
+    @include gradient-background('dark-crossing');
   }
-  &[data-background-image="fire"] {
-    @include gradient-background('fire');
+  &[data-background-dark-image="dark-evening-moon"] {
+    @include gradient-background('dark-evening-moon');
   }
-  &[data-background-image="halo"] {
-    @include gradient-background('halo');
+  &[data-background-dark-image="dark-fire"] {
+    @include gradient-background('dark-fire');
   }
-  &[data-background-image="heimin"] {
-    @include gradient-background('heimin');
+  &[data-background-dark-image="dark-heimin"] {
+    @include gradient-background('dark-heimin');
   }
-  &[data-background-image="jizou"] {
-    @include gradient-background('jizou');
+  &[data-background-dark-image="dark-night-moon"] {
+    @include gradient-background('dark-night-moon');
   }
-  &[data-background-image="karatsu"] {
-    @include gradient-background('karatsu');
+  &[data-background-dark-image="dark-sunset"] {
+    @include gradient-background('dark-sunset');
   }
-  &[data-background-image="momiji"] {
-    @include gradient-background('momiji');
-  }
-  &[data-background-image="moss"] {
-    @include gradient-background('moss');
-  }
-  &[data-background-image="nagatare"] {
-    @include gradient-background('nagatare');
-  }
-  &[data-background-image="nanzenji"] {
-    @include gradient-background('nanzenji');
-  }
-  &[data-background-image="night-moon"] {
-    @include gradient-background('night-moon');
-  }
-  &[data-background-image="sunset"] {
-    @include gradient-background('sunset');
-  }
-  &[data-background-image="wave"] {
-    @include gradient-background('wave');
-  }
+
 }
 
 #main {
@@ -297,6 +278,47 @@ kbd {
     background-color: #fff;
     color: #000;
     text-shadow: none;
+
+    #header {
+      // light images
+      &[data-background-light-image="light-aso"] {
+        @include gradient-background('light-aso');
+      }
+      &[data-background-light-image="light-black-kite"] {
+        @include gradient-background('light-black-kite');
+      }
+      &[data-background-light-image="light-container-ship"] {
+        @include gradient-background('light-container-ship');
+      }
+      &[data-background-light-image="light-halo"] {
+        @include gradient-background('light-halo');
+      }
+      &[data-background-light-image="light-jizou"] {
+        @include gradient-background('light-jizou');
+      }
+      &[data-background-light-image="light-karatsu"] {
+        @include gradient-background('light-karatsu');
+      }
+      &[data-background-light-image="light-momiji"] {
+        @include gradient-background('light-momiji');
+      }
+      &[data-background-light-image="light-moss"] {
+        @include gradient-background('light-moss');
+      }
+      &[data-background-light-image="light-nagatare"] {
+        @include gradient-background('light-nagatare');
+      }
+      &[data-background-light-image="light-nanzenji"] {
+        @include gradient-background('light-nanzenji');
+      }
+      &[data-background-light-image="light-temple-wall"] {
+        @include gradient-background('light-temple-wall');
+      }
+      &[data-background-light-image="light-wave"] {
+        @include gradient-background('light-wave');
+      }
+    }
+
     #bread_crumb {
       color: $dark-font-color;
     }

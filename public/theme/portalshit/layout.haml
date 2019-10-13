@@ -25,8 +25,9 @@
       });
     = header
   %body
-    - images = %i{black-kite container-ship daytime-aso evening-aso evening-moon fire halo heimin jizou karatsu momiji moss nagatare nanzenji night-moon sunset wave}
-    #header{ 'data-background-image': images.sample }
+    - dark_images = %i{amaguri aso beach crossing evening-moon fire heimin night-moon sunset}
+    - light_images = %i{aso black-kite container-ship halo jizou karatsu momiji moss nagatare nanzenji temple-wall wave}
+    #header{ 'data-background-dark-image': "dark-#{dark_images.sample}", 'data-background-light-image': "light-#{light_images.sample}" }
       #header-inner
         %h1= link_to @site.title, '/'
         %nav
