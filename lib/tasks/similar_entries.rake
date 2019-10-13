@@ -41,7 +41,7 @@ namespace :similar_entries do
     entries.each do |entry|
       words = []
       body_cleansed = entry.title + entry.tags.map(&:name).join(' ') +
-        entry.body.
+        entry.raw_body.
           gsub(/<.+?>/, '').
           gsub(/!?\[.+?\)/, '').
           gsub(%r{(?:```|<code>)(.+?)(?:```|</code>)}m, '\1')
