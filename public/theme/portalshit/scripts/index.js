@@ -11,7 +11,7 @@ document.body.addEventListener(
 
 $(function() {
   if ($(window).width() <= 640) {
-    $('#aside dt').on('click', function() {
+    $('#footer aside dt').on('click', function() {
       $(this).siblings('dd').slideToggle();
     });
   }

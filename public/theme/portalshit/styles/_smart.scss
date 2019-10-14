@@ -169,7 +169,8 @@
   }
   #footer {
     margin: 0;
-    #aside {
+    aside {
+      display: block;
       margin: 0;
       padding: .7em .6em;
       dl {

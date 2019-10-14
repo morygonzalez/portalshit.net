@@ -54,7 +54,7 @@
       #main= yield
 
     #footer
-      #aside
+      %aside
         - cache_fragment :"footer-#{I18n.locale}", shared: true do
           %dl.popular_entries
             %dt= t('popular_entries')

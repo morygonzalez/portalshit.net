@@ -104,7 +104,7 @@ h2 {
   line-height: 115%;
 }
 
-h2, h3, h4, h5, #aside dt {
+h2, h3, h4, h5, aside dt {
   font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 }
 
@@ -272,6 +272,151 @@ kbd {
   @include _meta;
 }
 
+.icon {
+  vertical-align: middle;
+  border: none;
+  margin: 0 0.6em 0.3em 0;
+}
+
+#article_body_editor {
+  font-size: 14px;
+  width: 100%;
+  height: 400px;
+  border: 1px solid #999999;
+}
+
+.export {
+  margin: 0 10px;
+}
+
+.fieldWithErrors {
+  border: solid 2px red;
+}
+
+#errorExplanation {
+  border: 2px solid red;
+  padding: 7px;
+  margin-bottom: 10px;
+  background-color: #f0f0f0;
+
+  h2 {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px 5px 5px 15px;
+    font-size: 12px;
+    margin: -7px;
+    background-color: #cc0000;
+    color: white;
+
+    ul li {
+      list-style: square;
+    }
+  }
+}
+
+.notice {
+  background: #eeeeee;
+  padding: 10px 15px;
+  margin: 10px 0px;
+  border-top: solid 1px #0b53c1;
+  border-bottom: solid 1px #0b53c1;
+}
+
+.warn {
+  background: #ffeeee;
+  padding: 10px 15px;
+  margin: 10px 0px;
+  border-top: solid 1px red;
+  border-bottom: solid 1px red;
+}
+
+ul.pager {
+  text-align: center;
+
+  li {
+    display: inline;
+    margin: 0px 5px;
+  }
+}
+
+ul.comments {
+  list-style: none;
+  padding: 0;
+  margin-top: 3em;
+  display: block;
+  overflow: hidden;
+  height: 1%;
+
+  .comment {
+    margin: 0px 30px 30px 0px;
+    display: block;
+    overflow: hidden;
+    height: 1%;
+
+    .body {
+      float: left;
+      width: 70%;
+      font-size: 94%;
+      margin-bottom: 2.5em;
+      padding: 0 8px;
+
+      p {
+        margin: .7em 0;
+      }
+    }
+
+    .meta {
+      @include _meta;
+      padding-left: 10px;
+      margin-right: 20px;
+      width: 23%;
+      float: left;
+
+      .gravatar {}
+      .name {}
+      .created_at {
+        font-size: 75%;
+      }
+    }
+  }
+}
+
+h4.comment {
+  display: none;
+  margin: 0 30px 0 0;
+}
+
+#comment_form {
+  margin: 0 30px 0 26%;
+  width: 70%;
+
+  input, textarea {
+    font-size: 14px;
+    background: $various-bg;
+    color: #ffffff;
+    border-width: 1px;
+    border-style: ridge;
+    border-color: #fff;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+  }
+
+  #comment_name {
+    width: 240px;
+  }
+  #comment_email {
+    width: 240px;
+  }
+  #comment_homepage {
+    width: 360px;
+  }
+  #comment_body {
+    width: 480px;
+    height: 250px;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   body {
     background-image: none;
@@ -373,10 +518,8 @@ kbd {
         }
       }
     }
-    #footer #aside {
-      dt {
-        color: $dark-font-color;
-      }
+    #footer {
+      color: $dark-font-color;
     }
   }
 }
