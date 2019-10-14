@@ -7,7 +7,7 @@ module Lokka
     include Padrino::Helpers::TranslationHelpers
 
     configure do
-      enable :method_override, :raise_errors, :static, :sessions
+      enable :method_override, :raise_errors, :static
       YAML::ENGINE.yamler = 'syck' if YAML.const_defined?(:ENGINE)
       register Padrino::Helpers
       register Sinatra::Cache
@@ -34,7 +34,8 @@ module Lokka
       helpers Lokka::RenderHelper
       use Rack::Session::Cookie,
         expire_after: 60 * 60 * 24 * 12,
-        secret: SecureRandom.hex(30)
+        secret: ENV['SESSION_SECRET'],
+        old_secret: ENV['OLD_SESSION_SECRET']
       use RequestStore::Middleware
       register Sinatra::Flash
       Lokka.load_plugin(self)
