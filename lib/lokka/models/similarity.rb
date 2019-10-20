@@ -3,9 +3,8 @@
 class Similarity
   include DataMapper::Resource
 
-  property :id, Serial
-  property :entry_id, Integer
-  property :similar_entry_id, Integer
+  property :entry_id, Integer, key: true
+  property :similar_entry_id, Integer, key: true
   property :score, Float
 
   belongs_to :entry
