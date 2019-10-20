@@ -62,14 +62,14 @@ module Lokka
 
         class << self
           def find(url)
-            uname = Base64.urlsafe_encode64(url)
+            uname = OpenSSL::Digest::MD5.new(url).hexdigest
             path = File.join(CACHE_DIR, uname)
             return nil unless test('f?', path)
             File.open(path).read
           end
 
           def exist?(url)
-            uname = Base64.urlsafe_encode64(url)
+            uname = OpenSSL::Digest::MD5.new(url).hexdigest
             path = File.join(CACHE_DIR, uname)
             File.exist?(path) && test('M', File.open(path)) > 1.month.ago
           end
@@ -94,7 +94,7 @@ module Lokka
         end
 
         def path
-          uname = Base64.urlsafe_encode64(@url)
+          uname = OpenSSL::Digest::MD5.new(@url).hexdigest
           File.join(CACHE_DIR, uname)
         end
 
