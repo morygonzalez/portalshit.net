@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
+import Select from 'react-select'
 
 class CategoryList extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: []
+      data: [],
+      selectedOption: null
     }
+    this.handleChange = this.handleChange.bind(this)
   }
 
   loadCategoryListFromServer() {
@@ -31,46 +34,30 @@ class CategoryList extends Component {
     this.loadCategoryListFromServer()
   }
 
-  render() {
-    let year
-    let matched = location.pathname.match(/\d{4}/)
-    if (matched && matched.length > 0) {
-      year = matched[0]
-    }
-    let categoryList = this.state.data.map((category) => {
-      return (
-        <Category key={category} category={category} active={this.props.activeCategory === category} update={this.props.update} />
-      )
-    })
-    return (
-      <ul className="category-list">
-        {categoryList}
-      </ul>
+  handleChange(selectedOption) {
+    this.setState(
+      { selectedOption },
+      () => {
+        let category = selectedOption ? selectedOption.value : null
+        this.props.update(category)
+      }
     )
   }
-}
-
-class Category extends React.Component {
-  constructor(props) {
-    super(props)
-    this.updateCategory = this.updateCategory.bind(this)
-  }
-
-  updateCategory() {
-    if (this.props.active) {
-      this.props.update(null)
-    } else {
-      this.props.update(this.props.category)
-    }
-  }
 
   render() {
+    const options = this.state.data.map(category => {
+      return { value: category, label: category }
+    })
     return (
-      <li key={this.props.category} className={this.props.active ? "selected" : null}>
-        <a href={this.onClick} data-category={this.props.category} onClick={this.updateCategory}>
-          {this.props.category}
-        </a>
-      </li>
+      <div className="category-list">
+        <Select
+          value={this.state.selectedOption}
+          onChange={this.handleChange}
+          options={options}
+          placeholder="Category"
+          isClearable
+        />
+      </div>
     )
   }
 }

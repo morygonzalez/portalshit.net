@@ -1,16 +1,28 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import Select from 'react-select'
+import PropTypes from 'prop-types'
+import { withRouter } from 'react-router-dom'
 
-class YearList extends Component {
+import history from './history'
+
+class YearSelect extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: []
+      data: [],
+      selectedOption: null
     }
+    this.handleChange = this.handleChange.bind(this)
   }
 
-  loadYearListFromServer() {
+  static propTypes = {
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired
+  }
+
+  loadYearSelectFromServer() {
     let xhr = new XMLHttpRequest()
     let response
     xhr.open('GET', '/archives/years.json')
@@ -29,28 +41,40 @@ class YearList extends Component {
   }
 
   componentDidMount() {
-    this.loadYearListFromServer()
+    this.loadYearSelectFromServer()
+  }
+
+  handleChange(selectedOption) {
+    let year = selectedOption ? selectedOption.value : null
+    if (year) {
+      this.props.history.push(`/archives/${year}`)
+    } else {
+      this.props.history.push("/archives")
+    }
+    this.setState(
+      { selectedOption },
+      () => { this.props.update(year) }
+    )
   }
 
   render() {
-    let thisYear
-    let yearList = this.state.data.map(year => {
-      thisYear = false
-      if (location.href.match(year)) {
-        thisYear = true
-      }
-      return (
-        <li key={year} className={thisYear ? 'selected' : null}>
-          <Link to={`/archives/${year}`}>{year}</Link>
-        </li>
-      )
+    const options = this.state.data.map(year => {
+      return { value: year, label: year }
     })
     return (
-      <ul className="year-list">
-        {yearList}
-      </ul>
+      <div className="year-list">
+        <Select
+          value={this.state.selectedOption}
+          onChange={this.handleChange}
+          options={options}
+          placeholder="Year"
+          isClearable
+        />
+      </div>
     )
   }
 }
+
+const YearList = withRouter(YearSelect)
 
 export default YearList
