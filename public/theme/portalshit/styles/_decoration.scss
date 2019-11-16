@@ -59,7 +59,9 @@ a {
   &[data-background-dark-image="dark-sunset"] {
     @include gradient-background('dark-sunset');
   }
-
+  &[data-background-dark-image="dark-takitate-bento"] {
+    @include gradient-background('dark-takitate-bento');
+  }
 }
 
 #main {
