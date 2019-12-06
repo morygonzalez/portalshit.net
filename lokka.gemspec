@@ -248,7 +248,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rake>, ['= 0.8.7'])
       s.add_runtime_dependency(%q<exceptional>, ['= 2.0.25'])
       s.add_runtime_dependency(%q<erubis>, ['= 2.6.6'])
-      s.add_runtime_dependency(%q<activesupport>, ['= 3.0.0'])
+      s.add_runtime_dependency(%q<activesupport>, ['= 6.0.1'])
       s.add_runtime_dependency(%q<bluefeather>, ['>= 0'])
       s.add_development_dependency(%q<dm-sqlite-adapter>, ['= 1.0.2'])
       s.add_development_dependency(%q<shoulda>, ['= 2.11.3'])
@@ -272,7 +272,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rake>, ['= 0.8.7'])
       s.add_runtime_dependency(%q<exceptional>, ['= 2.0.25'])
       s.add_runtime_dependency(%q<erubis>, ['= 2.6.6'])
-      s.add_runtime_dependency(%q<activesupport>, ['= 3.0.0'])
+      s.add_runtime_dependency(%q<activesupport>, ['= 6.0.1'])
       s.add_runtime_dependency(%q<bluefeather>, ['= 0.33'])
       s.add_runtime_dependency(%q<dm-sqlite-adapter>, ['= 1.0.2'])
     else
