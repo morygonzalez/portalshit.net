@@ -5,6 +5,7 @@
   "main": "script.js",
   "dependencies": {
     "jquery": "^3.4.0",
+    "set-value": "^3.0.1",
     "webpack": "^4.12.0"
   },
   "devDependencies": {
