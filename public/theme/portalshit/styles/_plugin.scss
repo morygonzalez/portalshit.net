@@ -71,13 +71,53 @@
     margin-top: 2.5em;
 
     ul {
-      padding-left: 2em;
+      padding-left: .5em;
+      list-style: none;
+      display: flex;
+      flex-flow: row wrap;
 
-      .created_at {
-        font-size: 92%;
-        text-align: right;
-        color: $meta-text-color;
+      li {
+        width: 50%;
+        margin: 1.2em 0;
       }
+
+      .title {
+        display: flex;
+        flex-direction: row;
+        margin: .8em 0;
+
+        .link {
+          display: inline-block;
+          font-size: 110%;
+          font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+          font-weight: 500;
+        }
+
+        .created_at {
+          font-size: 80%;
+          color: $meta-text-color;
+          padding-left: 1em;
+        }
+      }
+
+      .description {
+        display: flex;
+        flex-direction: row;
+
+        .image {
+          flex-grow: 3;
+          img {
+            max-width: none;
+          }
+        }
+
+        .text {
+          flex-grow: 7;
+          font-size: 90%;
+          margin: 0 1em;
+        }
+      }
+
     }
   }
 

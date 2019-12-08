@@ -122,6 +122,18 @@
             display: block !important;
           }
         }
+        .referrers, .similar {
+          width: 100%;
+
+          ul li {
+            width: 100%;
+            margin: .5em;
+          }
+
+          .description .image img {
+            max-width: 100px;
+          }
+        }
       }
       .comments {
         margin: auto;

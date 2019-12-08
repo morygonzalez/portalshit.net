@@ -342,20 +342,6 @@
         text-align: left;
       }
     }
-
-    .referrers, .similar {
-      margin-top: 2.5em;
-
-      ul {
-        padding-left: 2em;
-
-        .created_at {
-          font-size: 92%;
-          text-align: right;
-          color: $meta-text-color;
-        }
-      }
-    }
   }
 }
 
