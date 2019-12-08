@@ -130,8 +130,17 @@ class Entry
     desc.gsub(%r{<[^/]+/>}, ' ').gsub(%r{</[^/]+>}, ' ').gsub(/<[^>]+>/, '').html_safe
   end
 
+  def long_description
+    content = body.strip.gsub(/<\/?[^>]*>/, "").gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')[0..120]
+    sprintf '%s...', content
+  end
+
   def images
     body.scan(%r{https?://[\w/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)})
+  end
+
+  def cover_image
+    images.first || 'https://portalshit.net/theme/portalshit/screenshot.png'
   end
 
   module FinderstWithScope
