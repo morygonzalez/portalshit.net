@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Lokka::AmazonAssociate::Fetcher do
+describe Lokka::AmazonAssociate::JsonFetcher do
   let(:base_dir) do
     File.join(File.dirname(__FILE__), '../../../../')
   end
