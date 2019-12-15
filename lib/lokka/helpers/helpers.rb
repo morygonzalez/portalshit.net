@@ -40,7 +40,7 @@ module Lokka
 
     def bread_crumb
       bread_crumb =
-        @bread_crumbs[1..-2].each.with_index(1).
+        @bread_crumbs[0..-2].each.with_index(1).
           inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, (bread, index)|
             html += <<~RUBY_HTML
                       <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
@@ -150,14 +150,14 @@ module Lokka
 
       @title = @entry.title
 
-      @bread_crumbs = [{ name: t('home'), link: '/' }]
+      @bread_crumbs = [{ name: t('home'), link: base_url }]
       if @entry.category
         @entry.category.ancestors.each do |cat|
-          @bread_crumbs << { name: cat.title, link: cat.link }
+          @bread_crumbs << { name: cat.title, link: "#{base_url}#{cat.link}" }
         end
-        @bread_crumbs << { name: @entry.category.title, link: @entry.category.link }
+        @bread_crumbs << { name: @entry.category.title, link: "#{base_url}#{@entry.category.link}" }
       end
-      @bread_crumbs << { name: @entry.title, link: @entry.link }
+      @bread_crumbs << { name: @entry.title, link: "#{base_url}#{@entry.link}" }
 
       render_detect_with_options [type, :entry]
     end
