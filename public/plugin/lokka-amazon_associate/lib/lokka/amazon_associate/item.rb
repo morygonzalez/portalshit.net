@@ -9,12 +9,12 @@ module Lokka
         @item_id = item_id
       end
 
-      def associate_item
-        @associate_item ||= Lokka::AmazonAssociate::Fetcher.new(item_id)
+      def fetched_json
+        @fetched_json ||= JsonFetcher.new(item_id)
       end
 
       def body
-        @body ||= associate_item.body
+        @body ||= fetched_json.body
       end
 
       def item

@@ -13,10 +13,10 @@ module Lokka
         matches = body.scan(/<!--\s(?:ASIN|ISBN)=(.+?)\s-->/).flatten
         return body if matches.blank?
 
-        matches.each do |match|
-          item = Item.new(match)
-          partial = Formatter.new(item).format
-          body.gsub!(/<!--\s(?:ASIN|ISBN)=#{match}\s-->/, partial)
+        matches.each do |item_id|
+          html = HtmlFormatter.new(item_id)
+          iframe = %Q(<iframe src="/#{html.path}" />)
+          body.gsub!(/<!--\s(?:ASIN|ISBN)=#{item_id}\s-->/, iframe)
         end
 
         body
