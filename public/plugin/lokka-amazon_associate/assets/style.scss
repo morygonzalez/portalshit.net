@@ -1,17 +1,14 @@
 .amazon {
-  display: block;
-  overflow: hidden;
-  height: 1%;
+  display: flex;
   margin: 3em 0;
 }
 .amazon-image {
-  float: left;
-  max-width: 50%;
-  height: auto;
+  max-width: 200px;
+}
+.amazon-image img {
+  margin: auto;
 }
 .amazon-content {
-  float: left;
-  width: 50%;
 }
 .amazon-content ul {
   margin-top: 0;
