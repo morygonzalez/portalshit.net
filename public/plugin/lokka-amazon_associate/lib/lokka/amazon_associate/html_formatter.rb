@@ -14,7 +14,7 @@ module Lokka
       end
 
       def item
-        @item ||= Lokka::AmazonAssociate::Item.new(@item_id)
+        @item ||= Item.new(@item_id)
       end
 
       def format
@@ -36,10 +36,11 @@ module Lokka
                   text-shadow: none;
                 }
                 .amazon-image {
+                  display: flex;
+                  align-items: center;
                   flex-grow: 1;
                   width: 300px;
                   margin: 1em auto;
-                  display: flex;
                   justify-content: center;
                 }
                 .amazon-image img {
@@ -52,8 +53,9 @@ module Lokka
                   flex-grow: 4;
                 }
                 .amazon-content ul {
-                  margin-top: 0;
+                  margin: 0 auto;
                   list-style: disc;
+                  padding-left: 1em;
                 }
                 @media screen and (max-width:640px) {
                   .amazon-content, .amazon-image {
