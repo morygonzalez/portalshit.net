@@ -16,7 +16,7 @@ module Lokka
         matches.each do |item_id|
           html = HtmlFormatter.new(item_id)
           base_url = "https://portalshit.net"
-          iframe = %Q(<iframe src="#{base_url}/amazon/html/#{item_id}.html" />)
+          iframe = %Q(<iframe src="#{base_url}/amazon/#{item_id}.html" />)
           body.gsub!(/<!--\s(?:ASIN|ISBN)=#{html.item_id}\s-->/, iframe)
         end
 
