@@ -25,3 +25,28 @@ find /home/morygonzalez/sites/portalshit/log/access.log* \
   | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee /home/morygonzalez/sites/portalshit/public/referer-ranking.txt
+
+# Access Ranking Today
+find /home/morygonzalez/sites/portalshit/log/access.log \
+  | xargs zcat -f \
+  | grep "time:$(date "+%Y-%m-%d")" \
+  | grep 'status:200' \
+  | grep -v '/author' \
+  | grep -viE ${UA_TO_IGNORE} \
+  | cut -f5 | sed -e 's/request_uri://' \
+  | grep -vE ${REQUEST_PATH_TO_IGNORE} \
+  | sed -e 's/gain-profit-at-somebody-elses-profit/gain-profit-at-somebody-elses-expense/' \
+  | sed -e 's/thought-on-own-house/thoughts-on-own-house/' \
+  | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+  | tee /home/morygonzalez/sites/portalshit/public/access-ranking-today.txt
+
+# Referer Ranking Today
+find /home/morygonzalez/sites/portalshit/log/access.log \
+  | xargs zcat -f \
+  | grep "time:$(date "+%Y-%m-%d")" \
+  | grep -viE ${UA_TO_IGNORE} \
+  | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+  | cut -f12 | sed -e 's/referer://' \
+  | grep -vE '(^-$|portalshit\.net)' \
+  | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+  | tee /home/morygonzalez/sites/portalshit/public/referer-ranking-today.txt
