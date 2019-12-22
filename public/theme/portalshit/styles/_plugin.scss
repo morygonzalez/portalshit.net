@@ -10,60 +10,6 @@
         @include _border-radius;
       }
     }
-
-    a.ogp-link {
-      display: block;
-      &:link, &:hover { color: $dark-visited-link-color; }
-
-      .fetched-ogp {
-        @include _border-radius;
-        &:hover { background: $various-bg }
-        border: 1px solid #333;
-        margin: 2em auto;
-        font-size: .9em;
-        height: 120px;
-        display: flex;
-        max-width: 95%;
-        justify-content: space-between;
-        overflow: hidden;
-
-        .ogp-image {
-          max-width: 120px;
-          flex-grow: 1;
-          img {
-            min-height: 120px;
-            max-width: 120px;
-            object-fit: cover;
-          }
-          background-color: #fffffc;
-        }
-
-        .ogp-summary {
-          flex-grow: 3;
-          padding: .2em 1.5em;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          h3 {
-            margin: 0 0 .3em;
-            &:link, &:visited { color: $dark-font-color; }
-            &::before { content: none; }
-          }
-          .description {
-            max-width: 980px;
-            font-size: 0.9em;
-            line-height: 1.5em;
-            margin: .5em auto .5em 0;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-          }
-          .host {
-            margin: .3em 0;
-          }
-        }
-      }
-    }
   }
 
   // Similarity
