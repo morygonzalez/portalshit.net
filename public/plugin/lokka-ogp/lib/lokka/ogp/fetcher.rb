@@ -152,6 +152,7 @@ module Lokka
                   a.ogp-link, a.ogp-link:link {
                     color: #a3a3a2;
                     background: #fffffc;
+                    text-decoration: none;
                   }
 
                   a.ogp-link:hover {
@@ -172,7 +173,7 @@ module Lokka
                     max-width: 120px;
                     flex-grow: 1;
                     background-color: #fffffc;
-                    border-radius: 5px;
+                    border-radius: 5px 0 0 5px;
                   }
 
                   .ogp-image img {
