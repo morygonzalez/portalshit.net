@@ -11,13 +11,13 @@ end
 class Entry
   alias original_body body
   def highlighted_body
-    syntax_highlight(original_body).html_safe
+    @highlited ||= syntax_highlight(original_body).html_safe
   end
   alias body highlighted_body
 
   alias original_short_body short_body
   def highlighted_short_body
-    syntax_highlight(original_short_body).html_safe
+    @short_highlighted ||= syntax_highlight(original_short_body).html_safe
   end
   alias short_body highlighted_short_body
 

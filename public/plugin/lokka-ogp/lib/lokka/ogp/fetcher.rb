@@ -22,17 +22,24 @@ module Lokka
           next if node.inner_html =~ %r|img src|
           next if node.inner_html !~ %r|\A<a href.+?/a>\Z|
           url = node.xpath('./a').first.attributes["href"].value
+          next if url.blank?
           each_fetcher = EachFetcher.new(url)
-          if each_fetcher.fetch
-            content = OGElement.find(url)&.html_safe
-            node.replace(content) if content
-          end
+          element = each_fetcher.element
+            iframe = <<~HTML
+              <iframe
+                src="/ogp/#{element.uname}" title="#{element.title}" scrolling="no" frameborder="0"
+                style="display: block; width: 100%; height: 140px; max-width: 800px; margin: 10px 0px;">
+              </iframe>
+            HTML
+            node.replace(iframe) if element.exist?
         end
       end
 
       def replace
-        fetch
-        doc.to_s.html_safe
+        @replaced ||= begin
+                        fetch
+                        doc.to_s.html_safe
+                      end
       end
 
       class EachFetcher
@@ -43,37 +50,30 @@ module Lokka
         end
 
         def fetch
-          return true if OGElement.exist?(url)
-          opengraph = OpenGraphReader.fetch(URI.encode(url))
-          element = OGElement.new(
+          return true if element.exist?
+          element.create
+        rescue URI::InvalidURIError => e
+          puts e.message
+        end
+
+        def opengraph
+          @opengraph ||= OpenGraphReader.fetch(URI.encode(url))
+        end
+
+        def element
+          @element ||= OGElement.new(
             url: url,
             title: opengraph&.og&.title,
             image: opengraph&.og&.image,
             description: opengraph&.og&.description
           )
-          element.create
-        rescue URI::InvalidURIError => e
-          puts e.message
         end
       end
 
       class OGElement
         CACHE_DIR = "#{Lokka.root}/tmp/ogp"
 
-        class << self
-          def find(url)
-            uname = OpenSSL::Digest::MD5.new(url).hexdigest
-            path = File.join(CACHE_DIR, uname)
-            return nil unless test('f?', path)
-            File.open(path).read
-          end
-
-          def exist?(url)
-            uname = OpenSSL::Digest::MD5.new(url).hexdigest
-            path = File.join(CACHE_DIR, uname)
-            File.exist?(path) && test('M', File.open(path)) > 1.month.ago
-          end
-        end
+        attr_reader :url, :title, :image, :description
 
         def initialize(url:, title: nil, image: nil, description: nil)
           @url = url
@@ -83,9 +83,13 @@ module Lokka
           @description = (description || description_fallback).to_s
         end
 
+        def exist?
+          File.exist?(cache_path) && test('M', File.open(cache_path)) > 1.month.ago
+        end
+
         def create
           FileUtils.mkdir_p(CACHE_DIR)
-          File.open(path, 'w') do |file|
+          File.open(cache_path, 'w') do |file|
             file.puts html
           end
           true
@@ -93,8 +97,11 @@ module Lokka
           puts e.message
         end
 
-        def path
-          uname = OpenSSL::Digest::MD5.new(@url).hexdigest
+        def uname
+          @uname ||= OpenSSL::Digest::MD5.new(@url).hexdigest
+        end
+
+        def cache_path
           File.join(CACHE_DIR, uname)
         end
 
@@ -137,20 +144,111 @@ module Lokka
         end
 
         def html
-          <<~HTML
-            <a href="#{@url}" class="ogp-link">
-              <div class="fetched-ogp">
-                <div class="ogp-image">
-                  <img src="#{secure_image}" alt="#{html_escape(@title)}" />
+          template = <<~ERUBY
+            <!DOCTYPE html>
+            <html lang="ja">
+              <head>
+                <title><%= @title %></title>
+                <style>
+                  body {
+                    margin: 0;
+                  }
+
+                  a.ogp-link {
+                    display:block
+                  }
+
+                  a.ogp-link:link,
+                  a.ogp-link:hover {
+                    color:#a3a3a2
+                  }
+
+                  a.ogp-link .fetched-ogp {
+                    border-radius: 5px;
+                    -moz-border-radius: 5px;
+                    -webkit-border-radius: 5px;
+                    border: 1px solid #333;
+                    font-size: .9em;
+                    height: 120px;
+                    display: flex;
+                    justify-content: space-between;
+                    overflow:hidden
+                  }
+
+                  a.ogp-link .fetched-ogp:hover {
+                    background:#212121
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-image {
+                    max-width: 120px;
+                    flex-grow: 1;
+                    background-color:#fffffc
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-image img {
+                    min-height: 120px;
+                    max-width: 120px;
+                    object-fit:cover
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-summary {
+                    flex-grow: 3;
+                    padding: .2em 1.5em;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content:space-between
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-summary h3 {
+                    margin:0 0 .3em
+                    text-overflow: ellipsis;
+                    max-width: 680px;
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-summary h3:link,
+                  a.ogp-link .fetched-ogp .ogp-summary h3:visited {
+                    color:#e8ecef
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-summary h3::before {
+                    content:none
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-summary .description {
+                    max-width: 680px;
+                    font-size: 0.9em;
+                    line-height: 1.5em;
+                    margin: .5em auto .5em 0;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow:hidden
+                  }
+
+                  a.ogp-link .fetched-ogp .ogp-summary .host {
+                    margin:.3em 0
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="ogp">
+                  <a href="<%= @url %>" class="ogp-link">
+                  <div class="fetched-ogp">
+                    <div class="ogp-image">
+                      <img src="<%= secure_image %>" alt="<%= html_escape(@title) %>" />
+                    </div>
+                    <div class="ogp-summary">
+                      <h3><%= html_escape(@title) %></h3>
+                      <p class="description"><%= html_escape(@description) %></p>
+                      <p class="host"><%= @host %></p>
+                    </div>
+                  </div>
+                  </a>
                 </div>
-                <div class="ogp-summary">
-                  <h3>#{html_escape(@title)}</h3>
-                  <p class="description">#{html_escape(@description)}</p>
-                  <p class="host">#{@host}</p>
-                </div>
-              </div>
-            </a>
-          HTML
+              </body>
+            </html>
+          ERUBY
+          erb = ERB.new(template)
+          erb.result(binding)
         end
       end
     end
