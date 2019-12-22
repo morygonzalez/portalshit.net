@@ -1,0 +1,7 @@
+#!/bin/bash
+
+DATE=`date "+%Y-%m-%d"`
+aws --profile=personal s3 cp s3://backup.portalshit.net/database/${DATE}-portalshit.sql.gz db/
+gunzip -f db/${DATE}-portalshit.sql.gz
+docker-compose run --rm app mysql -uroot -ppassword -hdb portalshit < db/${DATE}-portalshit.sql
+rm db/${DATE}-portalshit.sql*
