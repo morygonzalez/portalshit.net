@@ -191,6 +191,7 @@ module Lokka
                     flex-direction: column;
                     justify-content: space-between;
                     background: #fffffc;
+                    overflow: hidden;
                   }
 
                   .ogp-link:hover .ogp-summary {
@@ -201,7 +202,7 @@ module Lokka
                   .ogp-summary h3 {
                     margin:0 0 .3em;
                     text-overflow: ellipsis;
-                    max-width: 680px;
+                    max-width: 630px;
                   }
 
                   .ogp-summary h3:link, .ogp-summary h3:visited {
@@ -209,7 +210,7 @@ module Lokka
                   }
 
                   .description {
-                    max-width: 680px;
+                    max-width: 630px;
                     font-size: 0.9em;
                     line-height: 1.5em;
                     margin: .5em auto .5em 0;
@@ -221,6 +222,15 @@ module Lokka
 
                   .host {
                     margin: .3em 0;
+                  }
+
+                  @media screen and (max-width:640px) {
+                    .ogp {
+                      font-size: 80%;
+                    }
+                    .description, .ogp-summary h3 {
+                      float: none;
+                    }
                   }
                 </style>
               </head>
