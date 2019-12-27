@@ -26,10 +26,10 @@ module Lokka
               <style>
                 .amazon {
                   display: flex;
-                  margin: 1em auto;
+                  margin: 2em auto;
                   max-height: 320px;
                   background: #fff;
-                  border-radius: 4px;
+                  border-radius: 8px;
                   color: #000;
                 }
                 .amazon a {
