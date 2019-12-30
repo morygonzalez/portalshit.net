@@ -27,7 +27,7 @@ module Lokka
               next if url.blank?
               iframe = <<~HTML
                 <iframe
-                  src="/ogp?url=#{url}" scrolling="no" frameborder="0"
+                  src="https://portalshit.net/ogp?url=#{url}" scrolling="no" frameborder="0"
                   style="display: block; width: 100%; height: 140px; max-width: 800px; margin: 10px 0px;">
                 </iframe>
               HTML
