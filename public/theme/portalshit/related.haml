@@ -1,4 +1,4 @@
-- if referrers.present?
+- if @entry.is_a?(Post) && referrers.present?
   - cache_fragment :"referres-#{I18n.locale}" do
     .referrers
       %h3 この記事を参照している記事
@@ -11,7 +11,7 @@
             .description
               .image= image_tag "https://portalshit.net/imageproxy/200x200,sc/#{referrer.cover_image}"
               .text= referrer.long_description
-- if @entry.similar_entries.present?
+- if @entry.is_a?(Post) && @entry.similar_entries.present?
   - cache_fragment :"similar-#{I18n.locale}" do
     .similar
       %h3 この記事に似ている記事
