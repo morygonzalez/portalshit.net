@@ -55,7 +55,7 @@ module Lokka
               <span itemscope itemtype="http://schema.org/Thing" itemprop="item" id="#{@bread_crumbs[-1][:link]}">
                 <span itemprop="name">#{@bread_crumbs[-1][:name]}</span>
               </span>
-              <meta itemprop="position" content="#{@bread_crumbs.length - 1}" />
+              <meta itemprop="position" content="#{@bread_crumbs.length}" />
             </li>
           </ol>
         RUBY_HTML
