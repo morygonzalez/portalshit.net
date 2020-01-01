@@ -1,13 +1,13 @@
 #!/bin/bash
 
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs)'
-REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$|^\/ogp)'
+REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$|^\/ogp|^\/amazon.+\.html)'
 
 # Access Ranking
 find /home/morygonzalez/sites/portalshit/log/access.log* \
   | xargs zcat -f \
   | grep 'status:200' \
-  | grep -v '/author' \
+  | grep -vE '\/(about|morygonzalez|author)' \
   | grep -viE ${UA_TO_IGNORE} \
   | cut -f5 | sed -e 's/request_uri://' \
   | grep -vE ${REQUEST_PATH_TO_IGNORE} \
@@ -31,7 +31,7 @@ find /home/morygonzalez/sites/portalshit/log/access.log \
   | xargs zcat -f \
   | grep "time:$(date "+%Y-%m-%d")" \
   | grep 'status:200' \
-  | grep -v '/author' \
+  | grep -vE '\/(about|morygonzalez|author)' \
   | grep -viE ${UA_TO_IGNORE} \
   | cut -f5 | sed -e 's/request_uri://' \
   | grep -vE ${REQUEST_PATH_TO_IGNORE} \
