@@ -46,7 +46,3 @@ class Site
     end
   end
 end
-
-def Site
-  Site.get(1)
-end
