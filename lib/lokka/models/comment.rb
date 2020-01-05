@@ -50,7 +50,7 @@ class Comment
 
   def send_notification_to_entry_author
     return if Lokka.test?
-    return if comment.email == entry.author.email
+    return if email == entry.user.email
     credentials = Aws::Credentials.new(Option.aws_access_key_id, Option.aws_secret_access_key)
     region = 'us-east-1'
     client = Aws::SESV2::Client.new(credentials: credentials, region: region)
@@ -58,18 +58,20 @@ class Comment
   end
 
   def notification_params
-    subject_data = "#{name} commented on your entry #{entry.title}"
-    subject_data = "[#{Lokka.env}] #{subject_data}" if Lokka.env != 'production'
+    from = 'portal shit! <info@portalshit.net>'
+    to = entry.user.email
+    subject_data = %Q(#{name} commented on your entry "#{entry.title}")
+    subject_data = "[#{Lokka.env}] #{subject_data}" unless Lokka.production?
     body_data = <<~TEXT
-      You have received comment from #{name} on #{entry.title}, at #{created_at}
+      You have received comment from #{name} on "#{entry.title}", at #{created_at}
 
       #{body.lines.map {|line| "> #{line}" }.join("\n")}
 
       See full conversation https://portalshit.net#{link}
     TEXT
     {
-      from_email_address: "#{@site.title} <info@portalshit.net>",
-      destination: { to_addresses: [entry.user.email] },
+      from_email_address: from,
+      destination: { to_addresses: [to] },
       content: {
         simple: {
           subject: {
