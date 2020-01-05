@@ -28,7 +28,7 @@ require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.6.3'
+set :rbenv_ruby, '2.7.0'
 
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
