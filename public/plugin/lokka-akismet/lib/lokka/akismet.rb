@@ -11,11 +11,12 @@ module Lokka
         path = request.env['PATH_INFO']
         if params['comment'] && %r{^/admin/comments} !~ path
           params['comment']['status'] = if logged_in?
-                                          1 # approved
+                                          Comment::APPROVED # approved
                                         elsif spam?
-                                          2 # spam
+                                          Comment::SPAM # spam
                                         else
-                                          0 # moderated
+                                          # Comment::MODERATED # moderated
+                                          Comment::APPROVED # approved
                                         end
         end
       end
