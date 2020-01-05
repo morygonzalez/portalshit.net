@@ -24,6 +24,8 @@ class Comment
   validates_presence_of :name
   validates_presence_of :body
 
+  after :save, :send_notification_to_entry_author
+
   def self.recent(count = 5)
     all(status: APPROVED, limit: count, order: [:created_at.desc])
   end
@@ -42,6 +44,45 @@ class Comment
 
   def link
     (entry ? "#{entry.link}#comment-#{id}" : '#')
+  end
+
+  private
+
+  def send_notification_to_entry_author
+    return if Lokka.test?
+    return if comment.email == entry.author.email
+    credentials = Aws::Credentials.new(Option.aws_access_key_id, Option.aws_secret_access_key)
+    region = 'us-east-1'
+    client = Aws::SESV2::Client.new(credentials: credentials, region: region)
+    client.send_email(notification_params)
+  end
+
+  def notification_params
+    subject_data = "#{name} commented on your entry #{entry.title}"
+    subject_data = "[#{Lokka.env}] #{subject_data}" if Lokka.env != 'production'
+    body_data = <<~TEXT
+      You have received comment from #{name} on #{entry.title}, at #{created_at}
+
+      #{body.lines.map {|line| "> #{line}" }.join("\n")}
+
+      See full conversation https://portalshit.net#{link}
+    TEXT
+    {
+      from_email_address: "#{@site.title} <info@portalshit.net>",
+      destination: { to_addresses: [entry.user.email] },
+      content: {
+        simple: {
+          subject: {
+            data: subject_data
+          },
+          body: {
+            html: {
+              data: Markup.use_engine('redcarpet', body_data)
+            }
+          }
+        }
+      }
+    }
   end
 end
 
