@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", function() {
     for (let image of lazyImages) {
       let src = image.src;
       image.dataset.src = src;
+      if (lazyImages.indexOf(image) == 0) {
+        continue;
+      }
       image.src = "";
     };
 
