@@ -1,22 +1,14 @@
-document.body.addEventListener("AutoPagerize_DOMNodeInserted", function(e) {
-    let node       = e.target
-    let requestURL = e.newValue
-    let parentNode = e.relatedNode
-    init(node);
-  }, false
-);
-
 document.addEventListener("DOMContentLoaded", function() {
   let selectors = "#content article .body img, #content article .similar img";
   var lazyImages = [].slice.call(document.querySelectorAll(selectors));
 
-  for (let image of lazyImages) {
-    let src = image.src;
-    image.dataset.src = src;
-    image.src = "";
-  };
-
   if ("IntersectionObserver" in window) {
+    for (let image of lazyImages) {
+      let src = image.src;
+      image.dataset.src = src;
+      image.src = "";
+    };
+
     let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
@@ -36,6 +28,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // Possibly fall back to a more compatible method here
   }
 });
+
+document.body.addEventListener("AutoPagerize_DOMNodeInserted", function(e) {
+    let node       = e.target
+    let requestURL = e.newValue
+    let parentNode = e.relatedNode
+    init(node);
+  }, false
+);
 
 $(function() {
   if ($(window).width() <= 640) {
