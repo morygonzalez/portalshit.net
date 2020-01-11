@@ -1,7 +1,6 @@
 # config valid only for Capistrano 3.1
 lock '3.13.0'
 
-set :default_shell, '/bin/bash -l'
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} rbenv exec"
 set :default_env, { 'RUBYOPT' => '--encoding=UTF-8' }
 
@@ -15,7 +14,7 @@ set :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
 # Default deploy_to directory is /var/www/my_app
 # set :deploy_to, '/var/www/my_app'
-set :deploy_to, "/home/morygonzalez/sites/deploys/#{fetch(:application)}"
+set :deploy_to, "/var/www/deploys/#{fetch(:application)}"
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -56,8 +55,6 @@ set :linked_dirs, %w{log tmp/pids tmp/sockets tmp/amazon tmp/ogp vendor/bundle}
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
-
-set :puma_conf, File.join(current_path, 'config', 'puma.rb')
 
 set :bundle_without, %w{development test postgresql sqlite batch}.join(' ')
 
