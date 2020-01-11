@@ -26,6 +26,14 @@ find /home/morygonzalez/sites/portalshit/log/access.log* \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee /home/morygonzalez/sites/portalshit/public/referer-ranking.txt
 
+# Cache Hit Rate
+find /home/morygonzalez/sites/portalshit/log/access.log* \
+  | xargs zcat -f \
+  | grep 'cache_hit:' | grep -v 'cache_hit:-' \
+  | cut -f16 | sort | uniq -c \
+  | awk '{if($2~/HIT/){hit=$1};if($2~/EXPIRED/){expire=$1};if($2~/MISS/){miss=$1};sum+=$1}END{hit_rate=hit/sum*100;expired_rate=expire/sum*100;miss_rate=miss/sum*100;print"HIT\t"hit_rate"%\n""EXPIRE\t"expired_rate"%\n""MISS\t"miss_rate"%"}' \
+  | tee /home/morygonzalez/sites/portalshit/public/cache-hit-rate.txt
+
 # Access Ranking Today
 find /home/morygonzalez/sites/portalshit/log/access.log \
   | xargs zcat -f \
@@ -50,3 +58,11 @@ find /home/morygonzalez/sites/portalshit/log/access.log \
   | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee /home/morygonzalez/sites/portalshit/public/referer-ranking-today.txt
+
+# Cache Hit Rate Today
+find /home/morygonzalez/sites/portalshit/log/access.log \
+  | xargs zcat -f \
+  | grep 'cache_hit:' | grep -v 'cache_hit:-' \
+  | cut -f16 | sort | uniq -c \
+  | awk '{if($2~/HIT/){hit=$1};if($2~/EXPIRED/){expire=$1};if($2~/MISS/){miss=$1};sum+=$1}END{hit_rate=hit/sum*100;expired_rate=expire/sum*100;miss_rate=miss/sum*100;print"HIT\t"hit_rate"%\n""EXPIRE\t"expired_rate"%\n""MISS\t"miss_rate"%"}' \
+  | tee /home/morygonzalez/sites/portalshit/public/cache-hit-rate-today.txt

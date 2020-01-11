@@ -40,6 +40,8 @@ set :linked_files,
     public/referer-ranking.txt
     public/access-ranking-today.txt
     public/referer-ranking-today.txt
+    public/cache-hit-rate.txt
+    public/cache-hit-rate-today.txt
     public/ads.txt
   }
 
