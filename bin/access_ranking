@@ -1,7 +1,7 @@
 #!/bin/bash
 
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs)'
-REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$|^\/ogp|^\/amazon.+\.html)'
+REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 
 # Access Ranking
 find /home/morygonzalez/sites/portalshit/log/access.log* \
