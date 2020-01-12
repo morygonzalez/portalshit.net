@@ -22,7 +22,6 @@ module Lokka
       app.get '/ogp' do
         url = params['url']
         fetcher = Lokka::OGP::Fetcher::EachFetcher.new(url)
-        fetcher.fetch
         if fetcher.fetch
           element = fetcher.element
           path = "#{Lokka.root}/tmp/ogp/#{element.uname}"

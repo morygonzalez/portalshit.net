@@ -118,7 +118,11 @@ module Lokka
         end
 
         def image_fallback
-          doc&.xpath('//head/meta[@property="og:image"]')&.first.try(:[], 'content') || '/plugin/lokka-ogp/assets/no-image.png'
+          og_image_url = doc&.xpath('//head/meta[@property="og:image"]')&.first.try(:[], 'content')
+          fallback_og_image_url = '/plugin/lokka-ogp/assets/no-image.png'
+          return og_image_url if og_image_url =~ /^https?:/
+          return URI.parse(@url).scheme + ':' + @host + og_image_url if og_image_url =~ /^\//
+          fallback_og_image_url
         end
 
         def description_fallback
