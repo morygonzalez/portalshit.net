@@ -19,6 +19,7 @@ module Lokka
       def replace
         @replaced ||=
           begin
+            ogp_host = Lokka.production? ? 'https://portalshit.net' : nil
             Parallel.each(doc.xpath('./p'), in_threads: 3) do |node|
               next if node.children.length > 1
               next if node.inner_html =~ %r|img src|
@@ -27,7 +28,7 @@ module Lokka
               next if url.blank?
               iframe = <<~HTML
                 <iframe
-                  src="https://portalshit.net/ogp?url=#{url}" scrolling="no" frameborder="0"
+                  src="#{ogp_host}/ogp?url=#{url}" scrolling="no" frameborder="0"
                   style="display: block; width: 100%; height: 140px; max-width: 800px; margin: 10px 0px;">
                 </iframe>
               HTML
@@ -51,31 +52,34 @@ module Lokka
           puts e.message
         end
 
-        def opengraph
-          @opengraph ||= OpenGraphReader.fetch(URI.encode(url))
-        end
-
         def element
-          @element ||= OGElement.new(
-            url: url,
-            title: opengraph&.og&.title,
-            image: opengraph&.og&.image,
-            description: opengraph&.og&.description
-          )
+          @element ||= OGElement.new(url)
         end
       end
 
       class OGElement
         CACHE_DIR = "#{Lokka.root}/tmp/ogp"
 
-        attr_reader :url, :title, :image, :description
+        attr_reader :url
 
-        def initialize(url:, title: nil, image: nil, description: nil)
+        def initialize(url)
           @url = url
-          @host = URI.parse(url).host
-          @title = title.presence || title_fallback || url
-          @image = image.presence || image_fallback
-          @description = (description || description_fallback).to_s
+        end
+
+        def host
+          @host ||= URI.parse(url).host
+        end
+
+        def title
+          @title ||= opengraph&.og&.title.presence || title_fallback || url
+        end
+
+        def image
+          @image ||= opengraph&.og&.image.presence || image_fallback
+        end
+
+        def description
+          @description ||= opengraph&.og&.description.presence || description_fallback
         end
 
         def exist?
@@ -93,7 +97,13 @@ module Lokka
         end
 
         def uname
-          @uname ||= OpenSSL::Digest::MD5.new(@url).hexdigest
+          @uname ||= OpenSSL::Digest::MD5.new(url).hexdigest
+        end
+
+        private
+
+        def opengraph
+          @opengraph ||= OpenGraphReader.fetch(URI.encode(url))
         end
 
         def cache_path
@@ -121,12 +131,12 @@ module Lokka
           og_image_url = doc&.xpath('//head/meta[@property="og:image"]')&.first.try(:[], 'content')
           fallback_og_image_url = '/plugin/lokka-ogp/assets/no-image.png'
           return og_image_url if og_image_url =~ /^https?:/
-          return URI.parse(@url).scheme + ':' + @host + og_image_url if og_image_url =~ /^\//
+          return URI.parse(@url).scheme + ':' + host + og_image_url if og_image_url =~ /^\//
           fallback_og_image_url
         end
 
         def description_fallback
-          doc&.xpath('//head/meta[@name="description"]')&.first.try(:[], 'content')
+          doc&.xpath('//head/meta[@name="description"]')&.first.try(:[], 'content')&.to_s
         end
 
         def secure_image
@@ -247,7 +257,7 @@ module Lokka
                     <div class="ogp-summary">
                       <h3><%= html_escape(@title) %></h3>
                       <p class="description"><%= html_escape(@description) %></p>
-                      <p class="host"><%= @host %></p>
+                      <p class="host"><%= host %></p>
                     </div>
                   </div>
                 </a>
