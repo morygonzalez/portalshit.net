@@ -5,6 +5,8 @@ require 'open_graph_reader'
 require_relative 'ogp/generator'
 require_relative 'ogp/fetcher'
 require_relative 'ogp/helpers'
+require_relative 'ogp/replacer'
+require_relative 'ogp/element'
 
 module Lokka
   module OGP
@@ -21,7 +23,7 @@ module Lokka
 
       app.get '/ogp' do
         url = params['url']
-        fetcher = Lokka::OGP::Fetcher::EachFetcher.new(url)
+        fetcher = Lokka::OGP::Fetcher.new(url)
         if fetcher.fetch
           element = fetcher.element
           path = "#{Lokka.root}/tmp/ogp/#{element.uname}"
@@ -37,13 +39,13 @@ end
 class Entry
   alias _original_body body
   def ogp_fetched_body
-    @fetched ||= Lokka::OGP::Fetcher.new(_original_body).replace
+    @fetched ||= Lokka::OGP::Replacer.new(_original_body).replace
   end
   alias body ogp_fetched_body
 
   alias _original_short_body short_body
   def ogp_fetched_short_body
-    @short_fetched ||= Lokka::OGP::Fetcher.new(_original_short_body).replace
+    @short_fetched ||= Lokka::OGP::Replacer.new(_original_short_body).replace
   end
   alias short_body ogp_fetched_short_body
 end
