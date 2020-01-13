@@ -78,6 +78,9 @@ class Comment
             data: subject_data
           },
           body: {
+            text: {
+              data: body_data
+            },
             html: {
               data: Markup.use_engine('redcarpet', body_data)
             }
