@@ -18,7 +18,7 @@ module Lokka
       end
 
       def format
-        template = <<~ERUBY
+        template = <<~HTML
           <!DOCTYPE html>
           <html lang="ja">
             <head>
@@ -29,7 +29,6 @@ module Lokka
                   margin: 2em auto;
                   max-height: 320px;
                   background: #fff;
-                  border-radius: 8px;
                   color: #000;
                 }
                 .amazon a {
@@ -39,17 +38,20 @@ module Lokka
                   display: flex;
                   align-items: center;
                   flex-grow: 1;
-                  width: 300px;
+                  max-width: 300px;
                   margin: 1em auto;
                   justify-content: center;
                 }
                 .amazon-image img {
-                  border-radius: 4px;
                   max-height: 280px;
                   max-width: 280px;
+                  filter: brightness(100%);
+                }
+                .amazon-image img:hover {
+                  filter: brightness(105%);
                 }
                 .amazon-content {
-                  margin: 1em auto;
+                  margin-left: 2em;
                   flex-grow: 4;
                 }
                 .amazon-content ul {
@@ -57,15 +59,40 @@ module Lokka
                   list-style: disc;
                   padding-left: 1em;
                 }
-                @media screen and (max-width:640px) {
-                  .amazon-content, .amazon-image {
+                .amazon-content .to-amazon a {
+                  display: block;
+                  width: 328px;
+                  height: 52px;
+                  background: url("https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4_new.png") no-repeat;
+                  background-size: cover;
+                  filter: brightness(100%);
+                }
+                .amazon-content ul .to-amazon a:hover {
+                  filter: brightness(95%);
+                  transition: all .3s ease;
+                }
+                @media screen and (max-width: 640px) {
+                  .amazon {
+                    font-size: 88%;
+                    line-height: 155%;
+                  }
+                  .amazon-image, .amazon-content {
                     float: none;
-                    max-width: 50%;
+                  }
+                  .amazon-image {
+                    max-width: 40%;
                   }
                   .amazon-image img {
-                    border-radius: 4px;
-                    max-height: 150px;
-                    max-width: 150px;
+                    max-height: 130px;
+                    max-width: 130px;
+                  }
+                  .amazon-content {
+                    max-width: 60%;
+                    margin: 0 0 1em;
+                  }
+                  div.to-amazon a {
+                    width: 152px;
+                    height: 24px;
                   }
                 }
               </style>
@@ -89,11 +116,12 @@ module Lokka
                     <% end %>
                     <li><a href="<%= item.link %>"><%= item.price %></a></li>
                   </ul>
+                  <div><a href="<%= item.link %>"><img src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4_new.png" width="328" /></a></div>
                 </div>
               </div>
             </body>
           </html>
-        ERUBY
+        HTML
         erb = ERB.new(template)
         erb.result(binding)
       end
