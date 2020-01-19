@@ -123,24 +123,22 @@ var Formatter = (function() {
     binding = attr['Binding'] || attr['ProductGroup'] || attr['Format'] || null;
     manufacturer = attr['Brand'] || attr['Manufacturer'] || attr['Studio'] || null;
 
-    output = '<div class="amazon-image">' +
-      '<a href="' + link + '" title="' + title  + '">' +
-      this.imageTag(image) +
-      '</a>' +
-      '</div>' +
-      '<div class="amazon-content">' +
-      '<ul>' +
-      '<li><a href="' + link + '" title="' + title + '">' + title + '</a></li>';
+    output = `
+      <div class="amazon-image">
+        <a href="${link}" title="${title}">${this.imageTag(image)}</a>
+      </div>
+      <div class="amazon-content">
+        <ul>
+          <li><a href="${link}" title="${title}">${title}</a></li>
+    `;
     if (binding)
-      output += '<li>' + binding + '</li>';
+      output += `<li>${binding}</li>`;
     if (typeof author !== 'undefined' && author !== '') {
-      output += '<li>' + author + '</li>';
+      output += `<li>${author}</li>`;
     }
     if (manufacturer)
-      output += '<li>' + manufacturer + '</li>';
-    output += '<li>' + '<a href="' + link + '">' + price + '</a></li>' +
-      '</ul>' +
-      '</div>';
+      output += `<li>${manufacturer}</li>`;
+    output += `<li><a href="${link }">${price}</a></li></ul></div>`;
     return output;
   };
 
