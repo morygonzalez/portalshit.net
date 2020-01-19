@@ -138,7 +138,14 @@ var Formatter = (function() {
     }
     if (manufacturer)
       output += `<li>${manufacturer}</li>`;
-    output += `<li><a href="${link }">${price}</a></li></ul></div>`;
+    output += `
+          <li><a href="${link}">${price}</a></li>
+        </ul>
+        <div class="to-amazon">
+          <a href="${link}"></a>
+        </div>
+      </div>
+    `;
     return output;
   };
 

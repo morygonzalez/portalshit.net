@@ -20,7 +20,7 @@ module Lokka
             <iframe
                src="#{base_url}/amazon/#{item_id}.html"
                title="#{html.item.title}" scrolling="no" frameborder="0"
-               style="display: block; width: 100%; margin: 10px 0px;">
+               style="display: block; width: 100%; height: 320px; max-width: 800px; margin: 10px 0px;">
             </iframe>
           HTML
           body.gsub!(/<!--\s(?:ASIN|ISBN)=#{html.item_id}\s-->/, iframe)
