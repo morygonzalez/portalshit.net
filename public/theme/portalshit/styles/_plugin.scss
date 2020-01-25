@@ -113,6 +113,8 @@
     max-height: 320px;
     background: #fff;
     color: #000;
+    font-size: 16px;
+    line-height: 150%;
     a {
       text-shadow: none;
     }
@@ -121,8 +123,9 @@
     display: flex;
     align-items: center;
     flex-grow: 1;
+    width: 300px;
     max-width: 300px;
-    margin: 1em auto;
+    margin: auto;
     justify-content: center;
 
     img {
@@ -136,7 +139,7 @@
     }
   }
   .amazon-content {
-    margin-left: 2em;
+    margin: 1em 0 1em 2em;
     flex-grow: 4;
 
     ul {

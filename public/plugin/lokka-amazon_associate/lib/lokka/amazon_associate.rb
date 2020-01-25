@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'amazon/ecs'
+require 'vacuum'
 require 'nokogiri'
 require 'fileutils'
 require 'json'
@@ -8,22 +8,13 @@ require_relative 'amazon_associate/cache_controllable'
 require_relative 'amazon_associate/expander'
 require_relative 'amazon_associate/html_formatter'
 require_relative 'amazon_associate/item'
-require_relative 'amazon_associate/json_fetcher'
+require_relative 'amazon_associate/fetcher'
 
 module Lokka
   module AmazonAssociate
     def self.registered(app)
-      app.get '/amazon/?:item_id?.json' do |item_id|
-        item = JsonFetcher.new(item_id)
-
-        cache_control :public, :must_revalidate, max_age: 12.hours
-        content_type :json
-        item.body
-      end
-
       app.get '/amazon/?:item_id?.html' do |item_id|
         html = HtmlFormatter.new(item_id)
-
         cache_control :public, :must_revalidate, max_age: 12.hours
         html.body
       end
