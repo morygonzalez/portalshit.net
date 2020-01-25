@@ -177,9 +177,6 @@ module Lokka
                   font-size: 0.9em;
                   line-height: 1.5em;
                   margin: .5em auto .5em 0;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  overflow: hidden;
                   border-radius: 0 5px 5px 0;
                 }
 
