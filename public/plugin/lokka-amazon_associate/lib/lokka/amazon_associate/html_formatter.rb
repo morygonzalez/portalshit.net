@@ -18,7 +18,7 @@ module Lokka
       end
 
       def format
-        template = <<~HTML
+        <<~HTML
           <!DOCTYPE html>
           <html lang="ja">
             <head>
@@ -30,6 +30,8 @@ module Lokka
                   max-height: 320px;
                   background: #fff;
                   color: #000;
+                  font-size: 16px;
+                  line-height: 150%;
                 }
                 .amazon a {
                   text-shadow: none;
@@ -38,8 +40,9 @@ module Lokka
                   display: flex;
                   align-items: center;
                   flex-grow: 1;
+                  width: 300px;
                   max-width: 300px;
-                  margin: 1em auto;
+                  margin: auto;
                   justify-content: center;
                 }
                 .amazon-image img {
@@ -51,7 +54,7 @@ module Lokka
                   filter: brightness(105%);
                 }
                 .amazon-content {
-                  margin-left: 2em;
+                  margin: 1em 0 1em 2em;
                   flex-grow: 4;
                 }
                 .amazon-content ul {
@@ -116,18 +119,19 @@ module Lokka
                     <% end %>
                     <li><a href="<%= item.link %>"><%= item.price %></a></li>
                   </ul>
-                  <div><a href="<%= item.link %>"><img src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4_new.png" width="328" /></a></div>
+                  <div class="to-amazon">
+                    <a href="<%= item.link %>"></a>
+                  </div>
                 </div>
               </div>
             </body>
           </html>
         HTML
-        erb = ERB.new(template)
-        erb.result(binding)
       end
 
       def result
-        format
+        erb = ERB.new(format)
+        erb.result(binding)
       end
     end
   end

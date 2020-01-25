@@ -9,80 +9,100 @@ module Lokka
         @item_id = item_id
       end
 
-      def fetched_json
-        @fetched_json ||= JsonFetcher.new(item_id)
-      end
-
-      def body
-        @body ||= fetched_json.body
-      end
-
-      def item
-        @item ||= JSON.parse(body).dig('ItemLookupResponse', 'Items', 'Item') || {}
-      end
-
-      def attributes
-        @attributes ||= item['ItemAttributes'] || {}
-      end
-
       def title
-        @title ||= attributes['Title']
+        @title ||= item_info['Title']['DisplayValue']
       end
 
       def link
         @link ||= item['DetailPageURL']
       end
 
-      def image_set
-        @image_set ||= item['ImageSets'] ? item.dig('ImageSets', 'ImageSet') : false
-      end
 
       def image
-        @image ||= case
-                   when item['LargeImage']
-                     item.dig('LargeImage', 'URL')
-                   when image_set && image_set.length > 1
-                     item.dig('ImageSets', 'ImageSet', 'URL')
-                   when image_set && image_set.length == 1
-                     image_set.dig('LargeImage', 'URL')
-                   else
-                     '/plugin/lokka-amazon_associate/assets/no-image.png'
+        @image ||= begin
+                     image_url = item.dig('Images', 'Primary', 'Medium', 'URL').presence
+                     image_url || '/plugin/lokka-amazon_associate/assets/no-image.png'
                    end
       end
 
       def manufacturer
-        @manufacturer ||= attributes['Brand'] || attributes['Manufacturer'] || attributes['Studio']
+        @manufacturer ||= Value.new(item_info.dig('ByLineInfo', 'Manufacturer')).to_s
+      end
+
+      def contributors
+        @contributors ||= item_info.dig('ByLineInfo', 'Contributors')
       end
 
       def binding
-        @binding ||= attributes['Binding'] || attributes['ProductGroup'] || attributes['Format']
+        @binding ||= Value.new(classifications['Binding'])
+      end
+
+      def product_group
+        @product_group ||= Value.new(classifications['ProductGroup'])
       end
 
       def price
-        @price ||= case
-                   when item.dig('OfferSummary', 'LowestNewPrice')
-                     item.dig('OfferSummary', 'LowestNewPrice', 'FormattedPrice')
-                   when item.dig('OfferSummary', 'LowestUsedPrice')
-                     item.dig('OfferSummary', 'LowestUsedPrice', 'FormattedPrice')
-                   when item.dig('OfferSummary', 'LowestCollectiblePrice')
-                     item.dig('OfferSummary', 'LowestCollectiblePrice', 'FormattedPrice')
-                   else
-                     'Amazon で確認';
-                   end
+        @price ||= item.dig('Offers', 'Listings')[0]&.dig('Price', 'DisplayAmount') || 'Amazon で確認'
       end
 
       def author
-        @author ||= begin
-                      authors = []
+        @author ||= contributors&.map {|contributor|
+          Contributor.new(contributor).display_value
+        }&.join(' / ')
+      end
 
-                      authors.push(attributes['Creator'])  if attributes['Creator'].present?
-                      authors.push(attributes['Author'])   if attributes['Author'].present?
-                      authors.push(attributes['Director']) if attributes['Director'].present?
-                      authors.push(attributes['Actor'])    if attributes['Actor'].present?
-                      authors.push(attributes['Artist'])   if attributes['Artist'].present?
+      private
 
-                      authors.flatten.join(', ')
-                    end
+      def response
+        @response ||= Fetcher.new(item_id).body
+      end
+
+      def item
+        @item ||= JSON.parse(response).dig('ItemsResult', 'Items')[0] || {}
+      end
+
+      def item_info
+        @item_info ||= item['ItemInfo'] || {}
+      end
+
+      def classifications
+        @classifications ||= item_info['Classifications']
+      end
+    end
+
+    class Value
+      attr_reader :value
+
+      def initialize(value = {})
+        @value = value || {}
+      end
+
+      def to_s
+        display_value
+      end
+
+      def display_value
+        value['DisplayValue']
+      end
+
+      def label
+        value['Label']
+      end
+
+      def locale
+        value['Locale']
+      end
+    end
+
+    class Contributor
+      attr_reader :contributor
+
+      def initialize(contributor = {})
+        @contributor = contributor
+      end
+
+      def display_value
+        %(#{contributor['Name']} (#{contributor['Role']}))
       end
     end
   end

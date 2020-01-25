@@ -95,7 +95,7 @@ group :batch do
   gem 'sqlite3'
 end
 
-gem 'amazon-ecs'
+gem 'vacuum'
 gem 'json'
 
 gem 'dm-serializer', '~> 1.2.2'
