@@ -34,11 +34,11 @@ module Lokka
       end
 
       def binding
-        @binding ||= Value.new(classifications['Binding'])
+        @binding ||= Value.new(classifications['Binding']).to_s
       end
 
       def product_group
-        @product_group ||= Value.new(classifications['ProductGroup'])
+        @product_group ||= Value.new(classifications['ProductGroup']).to_s
       end
 
       def price
