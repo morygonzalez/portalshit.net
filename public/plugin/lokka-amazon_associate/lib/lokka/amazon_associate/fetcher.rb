@@ -12,6 +12,7 @@ module Lokka
       end
 
       def fetch
+        sleep 1
         client = Vacuum.new(
           marketplace: 'JP',
           partner_tag: Option.associate_tag,
