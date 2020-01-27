@@ -58,7 +58,10 @@ module Lokka
       end
 
       def item
-        @item ||= JSON.parse(response).dig('ItemsResult', 'Items')[0] || {}
+        @item ||= begin
+                    items = JSON.parse(response).dig('ItemsResult', 'Items')
+                    items.present? ? items[0] : {}
+                  end
       end
 
       def item_info
