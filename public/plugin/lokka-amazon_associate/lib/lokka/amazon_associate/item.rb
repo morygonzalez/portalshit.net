@@ -10,7 +10,7 @@ module Lokka
       end
 
       def title
-        @title ||= item_info['Title']['DisplayValue']
+        @title ||= item_info&.dig('Title', 'DisplayValue')
       end
 
       def link
