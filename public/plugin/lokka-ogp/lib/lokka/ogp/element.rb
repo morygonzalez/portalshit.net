@@ -178,6 +178,11 @@ module Lokka
                   line-height: 1.5em;
                   margin: .5em auto .5em 0;
                   border-radius: 0 5px 5px 0;
+                  display: -webkit-box;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  -webkit-box-orient: vertical;
+                  -webkit-line-clamp: 3;
                 }
 
                 .host {
@@ -188,7 +193,10 @@ module Lokka
                   .ogp {
                     font-size: 80%;
                   }
-                  .description, .ogp-summary h3 {
+                  .description {
+                    display: none;
+                  }
+                  .ogp-summary h3 {
                     float: none;
                   }
                 }
