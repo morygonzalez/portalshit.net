@@ -15,8 +15,7 @@ module Lokka
                                         elsif spam?
                                           Comment::SPAM # spam
                                         else
-                                          # Comment::MODERATED # moderated
-                                          Comment::APPROVED # approved
+                                          Comment::MODERATED # moderated
                                         end
         end
       end
