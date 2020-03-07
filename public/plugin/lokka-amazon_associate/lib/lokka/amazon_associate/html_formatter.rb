@@ -42,6 +42,7 @@ module Lokka
                   flex-grow: 1;
                   width: 300px;
                   max-width: 300px;
+                  min-width: 300px;
                   margin: auto;
                   justify-content: center;
                 }
@@ -84,6 +85,7 @@ module Lokka
                   }
                   .amazon-image {
                     max-width: 40%;
+                    min-width: 130px;
                   }
                   .amazon-image img {
                     max-height: 130px;
