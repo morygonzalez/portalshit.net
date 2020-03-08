@@ -425,7 +425,7 @@ module Lokka
       extname = File.extname(tempfile.path)
       filename = digest + extname
       content_type = MimeMagic.by_magic(tempfile).type
-      if bucket.object(filename).upload_file(tempfile.path, content_type: content_type)
+      if bucket.object(filename).upload_file(tempfile.path, content_type: content_type, cache_control: 'max-age=2592000,s-maxage=31536000')
         {
           message: 'File upload success',
           url: "#{request.scheme}://#{domain_name}/#{filename}",
