@@ -76,7 +76,7 @@ module Lokka
 
     def akismet_post(host, uri, request)
       response = ''
-      Net::HTTP.start(host, 80) do |http|
+      Net::HTTP.start(host, 443, use_ssl: true) do |http|
         response = http.post(uri, request)
       end
       response.body
