@@ -462,6 +462,9 @@ h4.comment {
       &[data-background-light-image="light-nanzenji"] {
         @include gradient-background('light-nanzenji');
       }
+      &[data-background-light-image="light-sakura"] {
+        @include gradient-background('light-sakura');
+      }
       &[data-background-light-image="light-temple-wall"] {
         @include gradient-background('light-temple-wall');
       }
