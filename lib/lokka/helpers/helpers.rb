@@ -53,7 +53,7 @@ module Lokka
           end + <<~RUBY_HTML
             <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
               <span itemscope itemtype="http://schema.org/Thing" itemprop="item" id="#{@bread_crumbs[-1][:link]}">
-                <span itemprop="name">#{@bread_crumbs[-1][:name]}</span>
+                <span itemprop="name">#{h(@bread_crumbs[-1][:name])}</span>
               </span>
               <meta itemprop="position" content="#{@bread_crumbs.length}" />
             </li>
