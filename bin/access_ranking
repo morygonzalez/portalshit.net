@@ -11,8 +11,7 @@ find /home/morygonzalez/sites/portalshit/log/access.log* \
   | grep -viE ${UA_TO_IGNORE} \
   | cut -f5 | sed -e 's/request_uri://' \
   | grep -vE ${REQUEST_PATH_TO_IGNORE} \
-  | sed -e 's/gain-profit-at-somebody-elses-profit/gain-profit-at-somebody-elses-expense/' \
-  | sed -e 's/thought-on-own-house/thoughts-on-own-house/' \
+  | sed -e 's/corvid/covid/' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee /home/morygonzalez/sites/portalshit/public/access-ranking.txt
 
@@ -43,8 +42,7 @@ find /home/morygonzalez/sites/portalshit/log/access.log \
   | grep -viE ${UA_TO_IGNORE} \
   | cut -f5 | sed -e 's/request_uri://' \
   | grep -vE ${REQUEST_PATH_TO_IGNORE} \
-  | sed -e 's/gain-profit-at-somebody-elses-profit/gain-profit-at-somebody-elses-expense/' \
-  | sed -e 's/thought-on-own-house/thoughts-on-own-house/' \
+  | sed -e 's/corvid/covid/' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee /home/morygonzalez/sites/portalshit/public/access-ranking-today.txt
 
