@@ -42,6 +42,8 @@ set :linked_files,
     public/referer-ranking-today.txt
     public/cache-hit-rate.txt
     public/cache-hit-rate-today.txt
+    public/spam-block-rate.txt
+    public/spam-block-rate-today.txt
     public/ads.txt
   }
 
