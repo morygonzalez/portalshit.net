@@ -8,3 +8,4 @@ ja:
     api_key_created: APIキーを登録しました
     api_key_updated: APIキーを更新しました
     api_key_db_error: データベースエラーです
+    ng_words: NG ワード
