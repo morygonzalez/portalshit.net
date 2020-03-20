@@ -249,7 +249,10 @@ ja:
   comment_moderated_successfuly: コメントが未承認になりました
   comment_spam_successfuly: コメントはSPAM判定されました
   continue_reading: 続きを読む
-  delete_spam: スパムを削除
+  comment_delete_spam: スパムを削除
+  comment_select: 選択
+  comment_delete_selected: 選択済を削除
+  comment_delete_confirmation: 選択済の %d 件のコメントを削除します。よろしいですか？
   date:
     formats:
       long: '%Y年%m月%d日 (%a)'
