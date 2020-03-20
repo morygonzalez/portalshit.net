@@ -65,8 +65,6 @@ input[type="submit"],
     white-space: nowrap;
 }
 
-
-
 .button:link, .button:visited {
     color:#444 !important;
     text-decoration:none;
@@ -926,6 +924,29 @@ textarea#category_description
 
 .ql-snow.ql-toolbar:after, .ql-snow .ql-toolbar:after {
   clear: none !important;
+}
+
+.bulk_deletion {
+  display: flex;
+  margin-bottom: 15px;
+}
+.bulk_deletion .spam, .bulk_deletion .selected {
+  height: 30px;
+}
+.bulk_deletion .spam a.button {
+  display: inline-block;
+}
+.bulk_deletion .selected {
+  margin-left: 10px;
+}
+.bulk_deletion .selected input[type="button"] {
+  margin: 0;
+}
+#table_wrapper .comments th.checkbox,
+#table_wrapper .comments td.checkbox {
+  text-align: center;
+  vertical-align: middle;
+  min-width: 20px;
 }
 
 #dashboard {

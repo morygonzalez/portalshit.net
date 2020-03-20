@@ -73,6 +73,32 @@ describe '/admin/comments' do
     end
   end
 
+  context 'delete /admin/comments/selected' do
+    context 'When single id has been posted' do
+      it 'should delete selected comment' do
+        delete '/admin/comments/selected', selected_comment_ids: @comment.id
+        last_response.should be_redirect
+        Comment.get(@comment.id).should be_nil
+      end
+    end
+
+    context 'When multiple ids have been posted' do
+      before do
+        @another_comment = create(:comment, entry: @post)
+      end
+
+      let :params do
+        { selected_comment_ids: [@comment.id, @another_comment.id].join(',') }
+      end
+
+      it 'should delete selected comments' do
+        delete '/admin/comments/selected', params
+        last_response.should be_redirect
+        Comment.all(id: [@comment.id, @another_comment.id]).should be_blank
+      end
+    end
+  end
+
   context 'when the comment does not exist' do
     before { Comment.destroy }
 

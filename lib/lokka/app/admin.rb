@@ -107,6 +107,13 @@ module Lokka
       redirect to('/admin/comments')
     end
 
+    delete '/admin/comments/selected' do
+      selected = params[:selected_comment_ids]&.split(',')
+      Comment.all(id: selected).destroy
+      flash[:notice] = t('comment_was_successfully_deleted')
+      redirect to('/admin/comments')
+    end
+
     delete '/admin/comments/:id' do |id|
       (comment = Comment.get(id)) || raise(Sinatra::NotFound)
       comment.destroy
