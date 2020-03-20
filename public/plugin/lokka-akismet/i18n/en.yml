@@ -8,3 +8,4 @@ en:
     api_key_created: API KEY was registered successfully.
     api_key_updated: API KEY was updated successfully.
     api_key_db_error: DB error.
+    ng_words: NG Words
