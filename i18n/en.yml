@@ -250,6 +250,9 @@ en:
   comment_spam_successfuly: comment marked as spam successfuly
   continue_reading: Continue reading...
   comment_delete_spam: Delete spam
+  comment_delete_spam_confirmation: Will delete %d spam comments. Is it OK?
+  comment_no_spam: No comments are marked as spam.
   comment_select: Select
   comment_delete_selected: Delete selected
-  comment_delete_confirmation: Will delete selected %d comments. Is it OK?
+  comment_delete_selected_confirmation: Will delete selected %d comments. Is it OK?
+  comment_delete_not_selected: Please select comments which you want to delete.

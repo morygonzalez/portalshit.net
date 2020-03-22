@@ -923,33 +923,33 @@ textarea#category_description
 }
 
 .ql-snow.ql-toolbar:after, .ql-snow .ql-toolbar:after {
-  clear: none !important;
+    clear: none !important;
 }
 
 .bulk_deletion {
-  display: flex;
-  margin-bottom: 15px;
+    display: flex;
+    margin-bottom: 15px;
 }
-.bulk_deletion .spam, .bulk_deletion .selected {
-  height: 30px;
+.bulk_deletion form {
+    height: 30px;
 }
 .bulk_deletion .spam a.button {
-  color: #000 !important;
-  text-shadow: none;
-  display: inline-block;
+    color: #000 !important;
+    text-shadow: none;
+    display: inline-block;
 }
-.bulk_deletion .selected {
-  margin-left: 10px;
+.bulk_deletion .spam {
+    margin-left: 10px;
 }
-.bulk_deletion .selected input[type="button"] {
-  margin: 0;
+.bulk_deletion input[type="button"] {
+    margin: 0;
 }
 #table_wrapper .comments th.checkbox,
 #table_wrapper .comments td.checkbox {
-  text-align: center;
-  padding: 10px;
-  vertical-align: middle;
-  min-width: 20px;
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+    min-width: 20px;
 }
 
 #dashboard {

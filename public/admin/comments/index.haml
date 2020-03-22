@@ -1,14 +1,21 @@
 %h2= t('listing_comments')
+
 .bulk_deletion
-  .spam= link_to t('comment_delete_spam'), url('/admin/comments/spam'), id: 'delete_spam', class: 'button', confirm: t('are_you_sure'), method: :delete
   - form_tag url('/admin/comments/selected'), id: 'comment_select', class: 'selected', method: :delete do
     = hidden_field_tag :selected_comment_ids
-    = button_tag t('comment_delete_selected'), class: 'button', :'data-confirmation' => t('comment_delete_confirmation')
+    = button_tag t('comment_delete_selected'), class: 'button',
+      :'data-confirmation' => t('comment_delete_selected_confirmation'),
+      :'data-no-target-specified-warning' => t('comment_delete_not_selected')
+  - form_tag url('/admin/comments/spam'), id: 'delete_spam', class: 'spam', method: :delete do
+    = button_tag t('comment_delete_spam'), class: 'button',
+      :'data-confirmation' => t('comment_delete_spam_confirmation'),
+      :'data-no-target-specified-warning' => t('comment_no_spam')
+
 #table_wrapper
   %table.comments
     %tr
       %th.checkbox= t('comment_select')
-      %th= t('comment_status')
+      %th.status= t('comment_status')
       %th= t('comment.body')
       %th= t('comment.name')
       %th= t('comment.created_at')
@@ -25,7 +32,7 @@
                      t('comment_spam')
                    end
         %td.checkbox= check_box_tag :comment_select, value: comment.id
-        %td= status
+        %td.status= status
         %td.body= link_to truncate(strip_tags(comment.body)), url(comment.link)
         %td= comment.name
         %td= l(comment.created_at, format: :long)
@@ -40,14 +47,37 @@
 
 :javascript
   const commentSelectForm = document.querySelector('#comment_select')
-  const button = document.querySelector('input[type="button"]');
-  button.addEventListener('click', () => {
-    const nodeList = document.querySelectorAll('input[type="checkbox"][name="comment_select"]');
-    const checkboxes = [].map.call(nodeList, element => element)
-    const selected = checkboxes.filter(element => element.checked).map(element => element.value);
-    const message = button.dataset.confirmation.replace(/\s%d\s/, selected.length);
-    if (selected.length > 0 && window.confirm(message)) {
-      commentSelectForm.selected_comment_ids.setAttribute('value', selected);
-      commentSelectForm.submit();
-    }
-  })
+  const deleteSelected = (form) => {
+    const button = form.querySelector('input[type="button"]');
+    button.addEventListener('click', () => {
+      const nodeList = document.querySelectorAll('input[type="checkbox"][name="comment_select"]');
+      const checkboxes = [].map.call(nodeList, element => element)
+      const selected = checkboxes.filter(element => element.checked).map(element => element.value);
+      const message = button.dataset.confirmation.replace(/\s?%d\s/, selected.length);
+      if (selected.length === 0) {
+        alert(button.dataset.noTargetSpecifiedWarning);
+      }
+      if (selected.length > 0 && window.confirm(message)) {
+        form.selected_comment_ids.setAttribute('value', selected);
+        form.submit();
+      }
+    })
+  }
+  deleteSelected(commentSelectForm);
+
+  const spamDeleteForm = document.querySelector('#delete_spam')
+  const deleteSpam = (form) => {
+    const button = form.querySelector('input[type="button"]');
+    button.addEventListener('click', () => {
+      const nodeList = document.querySelectorAll('td.status');
+      const spam = [].map.call(nodeList, element => element).filter(element => element.textContent === 'SPAM')
+      const message = button.dataset.confirmation.replace(/\s?%d\s/, spam.length);
+      if (spam.length === 0) {
+        alert(button.dataset.noTargetSpecifiedWarning);
+      }
+      if (spam.length > 0 && window.confirm(message)) {
+        form.submit();
+      }
+    })
+  }
+  deleteSpam(spamDeleteForm);
