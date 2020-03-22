@@ -250,9 +250,12 @@ ja:
   comment_spam_successfuly: コメントはSPAM判定されました
   continue_reading: 続きを読む
   comment_delete_spam: スパムを削除
+  comment_delete_spam_confirmation: '%d 件のスパムコメントを削除します。よろしいですか？'
+  comment_no_spam: SPAM判定済のコメントがありません。
   comment_select: 選択
   comment_delete_selected: 選択済を削除
-  comment_delete_confirmation: 選択済の %d 件のコメントを削除します。よろしいですか？
+  comment_delete_selected_confirmation: '選択済の %d 件のコメントを削除します。よろしいですか？'
+  comment_delete_not_selected: 削除対象のコメントが選択されていません。削除したいコメントを選択して下さい。
   date:
     formats:
       long: '%Y年%m月%d日 (%a)'
