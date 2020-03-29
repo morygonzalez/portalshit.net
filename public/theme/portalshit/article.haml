@@ -1,11 +1,11 @@
-%article.article.section.autopagerize_page_element.hentry{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
-  .header
+%article.autopagerize_page_element.hentry{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
+  %header
     %h2.title{ itemprop: 'name' }= link_to post.title, post.link, itemprop: 'url'
-    .meta
+    %section.meta
       %time{ datetime: post.created_at }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
       - if post.category
         == | @#{link_to post.category.title, "/category/#{post.category.slug}/", itemprop: 'articleSection'}
-    %div{ style: 'display: none'}
+    %aside{ style: 'display: none'}
       %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
       %time{ datetime: post.created_at, itemprop: 'datePublished' }= post.created_at
       %time{ datetime: post.updated_at, itemprop: 'dateModified' }= post.updated_at
@@ -26,7 +26,7 @@
         %meta{ itemprop: :height, content: 255 }
   .body{ itemprop: 'articleBody' }
     ~ post.body
-  .footer
+  %footer.footer
     = post.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
     .created_at== #{l post.created_at, format: :long}

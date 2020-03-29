@@ -341,7 +341,7 @@ ul.pager {
   }
 }
 
-ul.comments {
+.comments {
   list-style: none;
   padding: 0;
   margin-top: 3em;
@@ -508,7 +508,7 @@ h4.comment {
           }
         }
 
-        .article .header .title a {
+        article header .title a {
           text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
 
           &:link, &:visited {

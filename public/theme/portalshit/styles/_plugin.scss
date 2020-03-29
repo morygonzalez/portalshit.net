@@ -1,5 +1,5 @@
 #content #main {
-  .article .body {
+  article .body {
     > .highlight,
     > blockquote > .highlight {
       @include _monokai;
