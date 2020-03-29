@@ -48,11 +48,21 @@ describe '/admin/posts' do
   end
 
   context 'POST /admin/posts' do
-    it 'should create a new post' do
-      sample = attributes_for(:post, slug: 'created_now')
+    let(:sample) do
+      attributes_for(:post, slug: 'created_now')
+    end
+
+    before do
       post '/admin/posts', post: sample
-      last_response.should be_redirect
+    end
+
+    it 'should create a new post' do
       Post('created_now').should_not be_nil
+    end
+
+    it 'should redirect to edit page' do
+      expect(last_response).to be_redirect
+      expect(last_response.header['Location']).to match(%r{/admin/posts/\d+/edit})
     end
   end
 
