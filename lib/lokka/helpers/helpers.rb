@@ -125,11 +125,7 @@ module Lokka
 
     def redirect_after_edit(entry)
       name = entry.class.name.downcase.pluralize
-      if entry.draft
-        redirect to("/admin/#{name}?draft=true")
-      else
-        redirect to("/admin/#{name}/#{entry.id}/edit")
-      end
+      redirect to("/admin/#{name}/#{entry.id}/edit")
     end
 
     def render_preview(entry)
