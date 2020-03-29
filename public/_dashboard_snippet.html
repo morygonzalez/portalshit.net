@@ -1,0 +1,116 @@
+<h3>Link to Affiliate Reports and Access Analysis</h3>
+<ul>
+  <li><a href="https://www.google.com/adsense/new/u/0/pub-7665673588234323/home">Google AdSense</a></li>
+  <li><a href="https://affiliate.amazon.co.jp/home/reports">Amazon アソシエイト・セントラル - レポート</a></li>
+  <li><a href="https://analytics.google.com/analytics/web/#/report-home/a1110156w1929564p1949158">Google Analytics</a></li>
+  <li><a href="https://blog-feedback.app/blogs">BlogFeedback</a></li>
+</ul>
+<div class="ranking">
+  <div id="access-ranking">
+    <h3><a href="/access-ranking.txt">Access Ranking</a></h3>
+  </div>
+  <div id="access-ranking-today">
+    <h3><a href="/access-ranking-today.txt">Access Ranking Today</a></h3>
+  </div>
+  <div id="referer-ranking">
+    <h3><a href="/referer-ranking.txt">Referer Ranking</a></h3>
+  </div>
+  <div id="referer-ranking-today">
+    <h3><a href="/referer-ranking-today.txt">Referer Ranking Today</a></h3>
+  </div>
+</div>
+<div class="hit-rate">
+  <div id="cache-hit-rate">
+    <h3><a href="/cache-hit-rate.txt">Cache Hit Rate</a></h3>
+  </div>
+  <div id="cache-hit-rate-today">
+    <h3><a href="/cache-hit-rate-today.txt">Cache Hit Rate Today</a></h3>
+  </div>
+  <div id="spam-block-rate">
+    <h3><a href="/spam-block-rate.txt">Spam Block Rate</a></h3>
+  </div>
+  <div id="spam-block-rate-today">
+    <h3><a href="/spam-block-rate-today.txt">Spam Block Rate Today</a></h3>
+  </div>
+</div>
+
+<script type="text/javascript">
+  const getResponse = async (url) => {
+    const response = await fetch(url);
+    return response;
+  }
+
+  const getText = async (response) => {
+    const text = await response.text();
+    return text;
+  }
+
+  const generateElement = async identifier => {
+    let url = `/${identifier}.txt`;
+    let selector = `#${identifier}`;
+    let response = await getResponse(url);
+    let element = document.createElement('pre');
+    element.style = "overflow: scroll";
+    let content = await createContent(response, identifier);
+    element.innerHTML = content;
+    document.querySelector(selector).appendChild(element);
+  }
+
+  const createContent = async (response, identifier) => {
+    let text = await getText(response);
+    let lastModified = new Date(response.headers.get('last-modified'));
+    let contentArray = text.split("\n").slice(0, 19);
+    if (identifier.match(/ranking/)) {
+      contentArray = contentArray.map(item => {
+        if (!item) {
+          return;
+        }
+        let match= item.split(' ');
+        let count = match[0];
+        let path, href;
+
+        switch(identifier) {
+          case 'access-ranking':
+          case 'access-ranking-today':
+            path = match[1];
+            href = `${location.protocol}//${location.host + path}`;
+            return `${count} <a href="${href}">${path}</a>`;
+          case 'referer-ranking':
+          case 'referer-ranking-today':
+            href = match[1];
+            return `${count} <a href="${href}" rel="noreferrer">${href}</a>`;
+          default:
+            break;
+        }
+      })
+      contentArray.push("");
+    }
+    return contentArray.join("\n") + "\n" + lastModified + "\n\n";
+  }
+
+  Promise.all([
+    new Promise((resolve, reject) => generateElement('access-ranking')),
+    new Promise((resolve, reject) => generateElement('access-ranking-today')),
+    new Promise((resolve, reject) => generateElement('referer-ranking')),
+    new Promise((resolve, reject) => generateElement('referer-ranking-today')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate-today')),
+    new Promise((resolve, reject) => generateElement('spam-block-rate')),
+    new Promise((resolve, reject) => generateElement('spam-block-rate-today'))
+  ]);
+</script>
+
+<style>
+.ranking, .hit-rate {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ranking div, .hit-rate div {
+  width: 50%;
+}
+@media screen and (max-width: 640px) {
+  .ranking div, .hit-rate div {
+    width: 100%;
+  }
+}
+</style>
