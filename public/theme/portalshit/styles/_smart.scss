@@ -110,6 +110,8 @@
             display: block !important;
           }
         }
+      }
+      aside {
         .referrers, .similar {
           width: 100%;
 
@@ -122,21 +124,21 @@
             max-width: 100px;
           }
         }
-      }
-      .comments {
-        margin: auto;
-        .comment {
-          margin: 1em auto;
-          .meta, .body {
-            margin: auto;
-          }
-          .meta {
-            padding-left: 0.5em;
-            width: 30%;
-          }
-          .body {
-            width: 65%;
-            padding: 0 5px 0 3px;
+        .comments {
+          margin: auto;
+          .comment {
+            margin: 1em auto;
+            .meta, .body {
+              margin: auto;
+            }
+            .meta {
+              padding-left: 0.5em;
+              width: 30%;
+            }
+            .body {
+              width: 65%;
+              padding: 0 5px 0 3px;
+            }
           }
         }
       }
