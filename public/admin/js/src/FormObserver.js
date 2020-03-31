@@ -99,8 +99,19 @@ class FormObserver {
   observePreview() {
     let editor;
     const preview = document.querySelector('#preview');
+    const markupSelect = document.querySelector('#post_markup, #page_markup');
     const previewRadio = document.querySelector('input[type="radio"][name="ipreview"][value="preview"]');
     const editRadio = document.querySelector('input[type="radio"][name="ipreview"][value="edit"]');
+    markupSelect.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      e.target.querySelectorAll('option').forEach((option) => {
+        if (option.value == selected) {
+          option.setAttribute('selected', 'selected');
+        } else {
+          option.removeAttribute('selected');
+        }
+      })
+    });
     editRadio.addEventListener('change', (e) => {
       editor = document.querySelector('#editor');
       e.srcElement.parentElement.classList.add('selected');
@@ -109,39 +120,25 @@ class FormObserver {
       editor.style.display = 'block';
       preview.innerHTML = '';
     });
-    previewRadio.addEventListener('change', (e) => {
+    previewRadio.addEventListener('change', async (e) => {
       editor = document.querySelector('#editor');
       e.srcElement.parentElement.classList.add('selected');
       editRadio.parentElement.classList.remove('selected');
       const textarea = document.querySelector('#editor textarea');
-      const body = textarea.value;
-      const markup = document.querySelector('#post_markup option[selected="selected"], #page_markup option[selected="selected"]').value;
-      const self = this;
+      const raw_body = textarea.value;
+      const markup = document.querySelector('#post_markup option:checked, #page_markup option:checked').value || 'redcarpet';
       const ajaxData = new FormData();
-      ajaxData.append('raw_body', body);
+      ajaxData.append('raw_body', raw_body);
       ajaxData.append('markup', markup);
-      let promise = new Promise((resolve, reject) => {
-        let xhr = new XMLHttpRequest();
-        let response;
-        xhr.open('POST', '/admin/previews');
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState != 4) {
-            // waiting response
-          } else if (xhr.status != 201) {
-            response = JSON.parse(xhr.response);
-            reject(response);
-          } else {
-            response = JSON.parse(xhr.response);
-            resolve(response);
-          }
-        }
-        xhr.send(ajaxData);
+      const request = await fetch('/admin/previews', {
+        method: 'POST',
+        body: ajaxData
       });
-      promise.then(response => {
-        const iframe = document.createElement('iframe');
-        preview.appendChild(iframe);
-        const doc = iframe.contentWindow.document;
-        const style = `<style>
+      const response = await request.json();
+      const iframe = document.createElement('iframe');
+      preview.appendChild(iframe);
+      const doc = iframe.contentWindow.document;
+      const style = `<style>
 img { max-width: 100%; }
 img { height: auto; }
 html, body {
@@ -150,22 +147,19 @@ html, body {
   word-wrap: break-word;
 }
 </style>`;
-        const result = new Promise(resolve => { resolve(iframe) });
-        const renderIframe = () => {
-          doc.open();
-          doc.write(style + response.body);
-          doc.close();
-        }
-        const resizeIframe = () => {
-          iframe.style.width = '100%';
-          iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
-        }
-        result.then(renderIframe).then(resizeIframe).catch(setTimeout(resizeIframe, 300));
-        editor.style.display = 'none';
-        preview.style.display = 'block';
-      }).catch(response => {
-        console.error(response.message);
-      });
+      const result = new Promise(resolve => resolve(iframe));
+      const renderIframe = () => {
+        doc.open();
+        doc.write(style + response.body);
+        doc.close();
+      }
+      const resizeIframe = () => {
+        iframe.style.width = '100%';
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+      }
+      result.then(renderIframe).then(resizeIframe).catch(setTimeout(resizeIframe, 300));
+      editor.style.display = 'none';
+      preview.style.display = 'block';
     });
   }
 }
