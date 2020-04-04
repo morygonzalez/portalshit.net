@@ -474,15 +474,17 @@ ul.pager {
     #bread_crumb {
       color: $dark-font-color;
     }
+
+    #category-nav #categories {
+      li {
+        font-weight: bold;
+        text-shadow: #{$light-text-shadow-color} -1px 1px 1px;
+      }
+    }
+
     #content {
       #main {
         background-color: #e8ecef;
-        #categories {
-          li {
-            font-weight: bold;
-            text-shadow: #{$light-text-shadow-color} -1px 1px 1px;
-          }
-        }
         .archives,
         .body,
         .year-list,

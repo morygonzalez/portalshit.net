@@ -51,13 +51,14 @@
       flex-grow: 1;
       margin: 0 auto;
     }
+
+    nav#category-nav {
+      display: none;
+    }
   }
   #content {
     #main {
       padding: .5em 5px;
-      #categories {
-        display: none;
-      }
       article {
         header {
           nav.prevnext {
