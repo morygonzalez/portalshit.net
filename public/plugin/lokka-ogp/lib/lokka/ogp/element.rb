@@ -123,6 +123,7 @@ module Lokka
               <style>
                 body {
                   margin: 0;
+                  max-width: 500px;
                   font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif
                 }
 
