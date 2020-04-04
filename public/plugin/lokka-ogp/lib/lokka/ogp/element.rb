@@ -110,10 +110,11 @@ module Lokka
               <style>
                 body {
                   margin: 0;
+                  font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif
                 }
 
                 a.ogp-link, a.ogp-link:link {
-                  color: #a3a3a2;
+                  color: #8b968d;
                   background: #fffffc;
                   text-decoration: none;
                 }
@@ -127,7 +128,7 @@ module Lokka
                   display: flex;
                   justify-content: space-between;
                   border-radius: 5px;
-                  border: 1px solid #333;
+                  border: 1px solid #8b968d;
                   font-size: .9em;
                   height: 120px;
                 }
@@ -148,7 +149,7 @@ module Lokka
 
                 .ogp-summary {
                   flex-grow: 3;
-                  padding: .2em 1.5em;
+                  padding: .7em 1.2em;
                   display: flex;
                   border-radius: 0 5px 5px 0;
                   flex-direction: column;
@@ -163,9 +164,14 @@ module Lokka
                 }
 
                 .ogp-summary h3 {
+                  max-width: 500px;
+                  font-size: 1em;
                   margin:0 0 .3em;
                   text-overflow: ellipsis;
-                  max-width: 630px;
+                  display: -webkit-box;
+                  overflow: hidden;
+                  -webkit-box-orient: vertical;
+                  -webkit-line-clamp: 1;
                 }
 
                 .ogp-summary h3:link, .ogp-summary h3:visited {
@@ -173,28 +179,25 @@ module Lokka
                 }
 
                 .description {
-                  max-width: 630px;
-                  font-size: 0.9em;
-                  line-height: 1.5em;
+                  max-width: 500px;
+                  font-size: .8em;
+                  line-height: 1.3em;
                   margin: .5em auto .5em 0;
                   border-radius: 0 5px 5px 0;
                   display: -webkit-box;
                   text-overflow: ellipsis;
                   overflow: hidden;
                   -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 3;
+                  -webkit-line-clamp: 2;
                 }
 
                 .host {
                   margin: .3em 0;
                 }
 
-                @media screen and (max-width:640px) {
+                @media screen and (max-width:400px) {
                   .ogp {
                     font-size: 80%;
-                  }
-                  .description {
-                    display: none;
                   }
                   .ogp-summary h3 {
                     float: none;
