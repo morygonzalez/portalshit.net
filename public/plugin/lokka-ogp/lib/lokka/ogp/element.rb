@@ -19,6 +19,10 @@ module Lokka
         @host ||= URI.parse(url).host
       end
 
+      def scheme
+        @scheme ||= URI.parse(url).scheme
+      end
+
       def title
         @title ||= opengraph&.og&.title.presence || title_fallback || url
       end
@@ -79,9 +83,17 @@ module Lokka
       def image_fallback
         og_image_url = doc&.xpath('//head/meta[@property="og:image"]')&.first.try(:[], 'content')
         fallback_og_image_url = '/plugin/lokka-ogp/assets/no-image.png'
-        return og_image_url if og_image_url =~ /^https?:\/\//
-        return URI.parse(url).scheme + ':' + host + og_image_url if og_image_url =~ /^\//
-        fallback_og_image_url
+        parsed_url = URI.parse(og_image_url.to_s)
+        case
+        when parsed_url.absolute?
+          og_image_url
+        when parsed_url.relative? && parsed_url.host.present?
+          %Q(#{scheme}:#{parsed_url})
+        when parsed_url.relative? && parsed_url.host.blank? && parsed_url.path.present?
+          %Q(#{scheme}://#{host}#{parsed_url.path})
+        else
+          fallback_og_image_url
+        end
       end
 
       def description_fallback
