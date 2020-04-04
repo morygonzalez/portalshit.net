@@ -20,9 +20,28 @@ document.addEventListener('DOMContentLoaded', () => {
       d.innerHTML = response;
       d.querySelectorAll('a').forEach(item => {
         item.onclick = (e) => {
-          const productTitle = item.title;
+          const target = e.target.tagName === 'IMG' ? e.target.parentNode : e.target;
+          const productTitle = target.dataset.productTitle;
+          let eventType;
+          switch (target.className) {
+            case 'title':
+              eventType = 'title click';
+              break;
+            case 'price':
+              eventType = 'price click';
+              break;
+            case 'button':
+              eventType = 'button click';
+              break;
+            case 'image':
+              eventType = 'image click';
+              break;
+            default:
+              eventType = 'unknown click';
+              break;
+          }
           if (typeof ga !== 'undefined') {
-            ga('send', 'event', 'Amazon Affiliate', 'click', productTitle);
+            ga('send', 'event', 'Amazon Affiliate', eventType, productTitle);
           }
         };
       });
