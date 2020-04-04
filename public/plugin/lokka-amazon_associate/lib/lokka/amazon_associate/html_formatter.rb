@@ -105,11 +105,11 @@ module Lokka
             <body>
               <div class="amazon">
                 <div class="amazon-image">
-                  <a href="<%= item.link %>"><img src="<%= item.image %>" /></a>
+                  <a class="image" data-product-title="<%= item.title %>" href="<%= item.link %>"><img src="<%= item.image %>" /></a>
                 </div>
                 <div class="amazon-content">
                   <ul>
-                    <li><a href="<%= item.link %>"><%= item.title %></a></li>
+                    <li><a class="title" data-product-title="<%= item.title %>" href="<%= item.link %>"><%= item.title %></a></li>
                     <% if item.manufacturer.present? %>
                     <li><%= item.manufacturer %></li>
                     <% end %>
@@ -119,10 +119,10 @@ module Lokka
                     <% if item.binding.present? %>
                     <li><%= item.binding %></li>
                     <% end %>
-                    <li><a href="<%= item.link %>"><%= item.price %></a></li>
+                    <li><a class="price" data-product-title="<%= item.title %>" href="<%= item.link %>"><%= item.price %></a></li>
                   </ul>
                   <div class="to-amazon">
-                    <a href="<%= item.link %>"></a>
+                    <a class="button" data-product-title="<%= item.title %>" href="<%= item.link %>"></a>
                   </div>
                 </div>
               </div>
