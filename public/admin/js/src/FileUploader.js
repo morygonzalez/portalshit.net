@@ -76,43 +76,36 @@ class FileUploader {
     const ajaxData = new FormData();
     const self = this;
     ajaxData.append('file', file);
-    let promise = new Promise((resolve, reject) => {
-      let xhr = new XMLHttpRequest();
-      let response;
-      xhr.open('POST', '/admin/attachments');
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState != 4) {
+    fetch('/admin/attachments', {
+      method: 'POST',
+      body: ajaxData
+    })
+      .then(response => {
+        if (textarea) {
           editor.classList.add('is-uploading');
           if (textarea) {
             textarea.setAttribute('disabled', true);
           }
-        } else if (xhr.status != 201) {
-          response = JSON.parse(xhr.response);
-          editor.classList.add('is-error');
-          reject(response);
-        } else {
-          response = JSON.parse(xhr.response);
-          editor.classList.add('is-success');
-          resolve(response);
         }
-      }
-      xhr.send(ajaxData);
+        response.json()
+          .then(data => {
+            console.log(data.message);
+            editor.classList.add('is-success');
+            if (textarea) {
+              textarea.removeAttribute('disabled');
+              const imageTag = self.detectImageTag(file, data.url);
+              self.insertImage(imageTag);
+            }
+          })
+          .catch(data => {
+            editor.classList.add('is-error');
+            textarea.removeAttribute('disabled');
+            console.error(data.message);
+          })
+          .finally(() => {
+            editor.classList.remove('is-uploading');
+          });
     });
-    promise.then(response => {
-      console.log(response.message);
-      editor.classList.remove('is-uploading');
-      if (textarea) {
-        textarea.removeAttribute('disabled');
-        const imageTag = self.detectImageTag(file, response.url);
-        self.insertImage(imageTag);
-      }
-    }).catch(response => {
-      if (textarea) {
-        textarea.removeAttribute('disabled');
-        console.error(response.message);
-      }
-    });
-    return promise;
   };
 
   insertImage(imageTag) {
