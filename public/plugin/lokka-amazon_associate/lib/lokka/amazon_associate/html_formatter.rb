@@ -105,7 +105,7 @@ module Lokka
             <body>
               <div class="amazon">
                 <div class="amazon-image">
-                  <a href="<%= item.link %>}"><img src="<%= item.image %>" /></a>
+                  <a href="<%= item.link %>"><img src="<%= item.image %>" /></a>
                 </div>
                 <div class="amazon-content">
                   <ul>
