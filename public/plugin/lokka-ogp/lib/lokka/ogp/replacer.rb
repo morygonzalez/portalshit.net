@@ -26,7 +26,7 @@ module Lokka
               iframe = <<~HTML
                 <iframe
                   src="#{ogp_host}/ogp?url=#{url}" scrolling="no" frameborder="0"
-                  style="display: block; width: 100%; height: 140px; max-width: 800px; margin: 10px 0px;">
+                  style="display: block; width: 100%; height: 140px; max-width: 500px; margin: 10px 0px;">
                 </iframe>
               HTML
               node.replace(iframe)
