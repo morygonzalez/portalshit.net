@@ -22,22 +22,10 @@ class YearSelect extends Component {
     history: PropTypes.object.isRequired
   }
 
-  loadYearSelectFromServer() {
-    let xhr = new XMLHttpRequest()
-    let response
-    xhr.open('GET', '/archives/years.json')
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState != 4) {
-        // still requesting
-      } else if (xhr.status != 200) {
-        response = JSON.parse(xhr.response)
-        this.setState({ data: response })
-      } else {
-        response = JSON.parse(xhr.response)
-        this.setState({ data: response })
-      }
-    }.bind(this)
-    xhr.send()
+  async loadYearSelectFromServer() {
+    const request = await fetch('/archives/years.json')
+    const response = await request.json()
+    this.setState({ data: response })
   }
 
   componentDidMount() {
@@ -45,7 +33,7 @@ class YearSelect extends Component {
   }
 
   handleChange(selectedOption) {
-    let year = selectedOption ? selectedOption.value : null
+    const year = selectedOption ? selectedOption.value : null
     if (year) {
       this.props.history.push(`/archives/${year}`)
     } else {
