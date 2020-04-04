@@ -97,7 +97,8 @@ module Lokka
       end
 
       def description_fallback
-        doc&.xpath('//head/meta[@name="description"]')&.first.try(:[], 'content')&.to_s
+        doc&.xpath('//head/meta[@property="og:description"]')&.first.try(:[], 'content')&.to_s ||
+          doc&.xpath('//head/meta[@name="description"]')&.first.try(:[], 'content')&.to_s
       end
 
       def secure_image
