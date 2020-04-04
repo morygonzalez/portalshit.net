@@ -11,23 +11,11 @@ class Archives extends Component {
     }
   }
 
-  loadArchivesFromServer(year=null) {
-    let xhr = new XMLHttpRequest()
-    let response, data
-    let path = year === null ? '/archives.json' : `/archives/${year}.json`
-    xhr.open('GET', path)
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState != 4) {
-        // still requesting
-      } else if (xhr.status != 200) {
-        data = JSON.parse(xhr.response)
-        this.setState({ data: data })
-      } else {
-        data = JSON.parse(xhr.response)
-        this.setState({ data: data })
-      }
-    }.bind(this)
-    xhr.send()
+  async loadArchivesFromServer(year=null) {
+    const path = year === null ? '/archives.json' : `/archives/${year}.json`
+    const request = await fetch(path)
+    const response = await request.json()
+    this.setState({ data: response })
   }
 
   componentDidMount() {

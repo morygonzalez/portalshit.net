@@ -12,22 +12,10 @@ class CategoryList extends Component {
     this.handleChange = this.handleChange.bind(this)
   }
 
-  loadCategoryListFromServer() {
-    let xhr = new XMLHttpRequest()
-    let response
-    xhr.open('GET', '/archives/categories.json')
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState != 4) {
-        // still requesting
-      } else if (xhr.status != 200) {
-        response = JSON.parse(xhr.response)
-        this.setState({ data: response })
-      } else {
-        response = JSON.parse(xhr.response)
-        this.setState({ data: response })
-      }
-    }.bind(this)
-    xhr.send()
+  async loadCategoryListFromServer() {
+    const request = await fetch('/archives/categories.json')
+    const response = await request.json()
+    this.setState({ data: response })
   }
 
   componentDidMount() {
@@ -38,7 +26,7 @@ class CategoryList extends Component {
     this.setState(
       { selectedOption },
       () => {
-        let category = selectedOption ? selectedOption.value : null
+        const category = selectedOption ? selectedOption.value : null
         this.props.update(category)
       }
     )
