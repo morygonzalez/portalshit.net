@@ -132,6 +132,11 @@
         }
         .comments {
           margin: auto;
+
+          ul {
+            padding-left: 0;
+          }
+
           .comment {
             margin: 1em auto;
             .meta, .body {
