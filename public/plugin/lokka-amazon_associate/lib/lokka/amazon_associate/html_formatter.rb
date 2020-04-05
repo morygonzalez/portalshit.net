@@ -22,84 +22,113 @@ module Lokka
           <!DOCTYPE html>
           <html lang="ja">
             <head>
-              <title><%= item.title %></title>
-              <style>
+            <title><%= item.title %></title>
+            <style>
+              .amazon {
+                display: flex;
+                align-items: start;
+                margin: 2em auto;
+                max-height: 320px;
+                background: #fff;
+                color: #000;
+                font-size: 16px;
+                line-height: 150%;
+                border-radius: 5px;
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+              }
+              .amazon a {
+                text-shadow: none;
+              }
+              .amazon-image, .amazon-content {
+                margin: 2.5em 1em;
+              }
+              .amazon-image {
+                display: flex;
+                align-items: center;
+                flex-grow: 1;
+                width: 300px;
+                max-width: 300px;
+                justify-content: center;
+              }
+              .amazon-image img {
+                filter: brightness(100%);
+                max-height: 280px;
+                max-width: 280px;
+              }
+              .amazon-image img:hover {
+                filter: brightness(105%);
+              }
+              .amazon-content {
+                flex-grow: 4;
+                margin-right: 2em;
+                max-width: 60%;
+              }
+              .amazon-content .item-title {
+                font-size: 1.2em;
+                font-weight: bold;
+                margin: 0 auto;
+              }
+              .amazon-content .item-title:before {
+                content: none;
+                margin: 0;
+              }
+              .amazon-content .item-meta, .amazon-content .item-price {
+                margin: .75em auto;
+              }
+              .amazon-content .item-meta span:not(:last-child):after {
+                content: '/';
+                margin-left: .5em;
+              }
+              .amazon-content .to-amazon a {
+                display: block;
+                width: 328px;
+                height: 52px;
+                background: url("https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4_new.png") no-repeat;
+                background-size: cover;
+                filter: brightness(100%);
+              }
+              .amazon-content .to-amazon a:hover {
+                filter: brightness(95%);
+                transition: all .3s ease;
+              }
+              @media screen and (max-width: 640px) {
                 .amazon {
-                  display: flex;
-                  margin: 2em auto;
-                  max-height: 320px;
-                  background: #fff;
-                  color: #000;
-                  font-size: 16px;
-                  line-height: 150%;
-                }
-                .amazon a {
-                  text-shadow: none;
+                  font-size: 88%;
+                  line-height: 155%;
                 }
                 .amazon-image {
-                  display: flex;
-                  align-items: center;
-                  flex-grow: 1;
-                  width: 300px;
-                  max-width: 300px;
-                  min-width: 300px;
-                  margin: auto;
-                  justify-content: center;
+                  max-width: 40%;
+                  min-width: 120px;
+                  margin: 1em .5em;
                 }
                 .amazon-image img {
-                  max-height: 280px;
-                  max-width: 280px;
-                  filter: brightness(100%);
-                }
-                .amazon-image img:hover {
-                  filter: brightness(105%);
+                  max-height: 120px;
+                  max-width: 120px;
                 }
                 .amazon-content {
-                  margin: 1em 0 1em 2em;
-                  flex-grow: 4;
+                  max-width: 60%;
+                  margin: 1em 1em 1em 0;
                 }
-                .amazon-content ul {
-                  margin: 0 auto;
-                  list-style: disc;
-                  padding-left: 1em;
+                .amazon-content .item-title {
+                  font-size: 1em;
+                }
+                .amazon-content .item-meta {
+                  font-size: .9em;
+                }
+                .amazon-content .item-title, .amazon-content .item-meta {
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  white-space: nowrap;
+                }
+                .amazon-content .item-meta, .amazon-content .item-price {
+                  margin: .25em auto;
                 }
                 .amazon-content .to-amazon a {
-                  display: block;
-                  width: 328px;
-                  height: 52px;
-                  background: url("https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4_new.png") no-repeat;
-                  background-size: cover;
-                  filter: brightness(100%);
+                  width: 152px;
+                  height: 24px;
                 }
-                .amazon-content ul .to-amazon a:hover {
-                  filter: brightness(95%);
-                  transition: all .3s ease;
-                }
-                @media screen and (max-width: 640px) {
-                  .amazon {
-                    font-size: 88%;
-                    line-height: 155%;
-                  }
-                  .amazon-image, .amazon-content {
-                    float: none;
-                  }
-                  .amazon-image {
-                    max-width: 40%;
-                    min-width: 130px;
-                  }
-                  .amazon-image img {
-                    max-height: 130px;
-                    max-width: 130px;
-                  }
-                  .amazon-content {
-                    max-width: 60%;
-                    margin: 0 0 1em;
-                  }
-                  div.to-amazon a {
-                    width: 152px;
-                    height: 24px;
-                  }
-                }
+              }
               </style>
             </head>
             <body>
@@ -108,19 +137,19 @@ module Lokka
                   <a class="image" data-product-title="<%= item.title %>" href="<%= item.link %>"><img src="<%= item.image %>" /></a>
                 </div>
                 <div class="amazon-content">
-                  <ul>
-                    <li><a class="title" data-product-title="<%= item.title %>" href="<%= item.link %>"><%= item.title %></a></li>
+                  <h4 class="item-title"><a class="title" data-product-title="<%= item.title %>" href="<%= item.link %>"><%= item.title %></a></h1>
+                  <div class="item-meta">
                     <% if item.manufacturer.present? %>
-                    <li><%= item.manufacturer %></li>
+                    <span><%= item.manufacturer %></span>
                     <% end %>
                     <% if item.author.present? %>
-                    <li><%= item.author %></li>
+                    <span><%= item.author %></span>
                     <% end %>
                     <% if item.binding.present? %>
-                    <li><%= item.binding %></li>
+                    <span><%= item.binding %></span>
                     <% end %>
-                    <li><a class="price" data-product-title="<%= item.title %>" href="<%= item.link %>"><%= item.price %></a></li>
-                  </ul>
+                  </div>
+                  <div class="item-price"><a class="price" data-product-title="<%= item.title %>" href="<%= item.link %>"><%= item.price %></a></div>
                   <div class="to-amazon">
                     <a class="button" data-product-title="<%= item.title %>" href="<%= item.link %>"></a>
                   </div>
