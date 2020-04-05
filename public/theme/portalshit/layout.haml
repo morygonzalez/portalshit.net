@@ -25,9 +25,8 @@
       });
     = header
   %body
-    - dark_images = %i{amaguri aso beach crossing evening-moon fire heimin night-moon sunset takitate-bento}
-    - light_images = %i{aso black-kite container-ship halo jizou karatsu moss nagatare nanzenji sakura temple-wall}
-    %header#header{ 'data-background-dark-image': "dark-#{dark_images.sample}", 'data-background-light-image': "light-#{light_images.sample}" }
+    - load(File.join(settings.theme, @theme.name, 'config.rb'))
+    %header#header{settings.header_bg_params}
       #header-inner
         %h1= link_to @site.title, '/'
         %nav#global-nav
