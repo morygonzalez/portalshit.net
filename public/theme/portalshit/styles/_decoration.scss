@@ -32,34 +32,34 @@ a {
 
 #header {
   // dark images
-  &[data-background-dark-image="dark-amaguri"] {
+  &[data-bg-dark-image="dark-amaguri"] {
     @include gradient-background('dark-amaguri');
   }
-  &[data-background-dark-image="dark-aso"] {
+  &[data-bg-dark-image="dark-aso"] {
     @include gradient-background('dark-aso');
   }
-  &[data-background-dark-image="dark-beach"] {
+  &[data-bg-dark-image="dark-beach"] {
     @include gradient-background('dark-beach');
   }
-  &[data-background-dark-image="dark-crossing"] {
+  &[data-bg-dark-image="dark-crossing"] {
     @include gradient-background('dark-crossing');
   }
-  &[data-background-dark-image="dark-evening-moon"] {
+  &[data-bg-dark-image="dark-evening-moon"] {
     @include gradient-background('dark-evening-moon');
   }
-  &[data-background-dark-image="dark-fire"] {
+  &[data-bg-dark-image="dark-fire"] {
     @include gradient-background('dark-fire');
   }
-  &[data-background-dark-image="dark-heimin"] {
+  &[data-bg-dark-image="dark-heimin"] {
     @include gradient-background('dark-heimin');
   }
-  &[data-background-dark-image="dark-night-moon"] {
+  &[data-bg-dark-image="dark-night-moon"] {
     @include gradient-background('dark-night-moon');
   }
-  &[data-background-dark-image="dark-sunset"] {
+  &[data-bg-dark-image="dark-sunset"] {
     @include gradient-background('dark-sunset');
   }
-  &[data-background-dark-image="dark-takitate-bento"] {
+  &[data-bg-dark-image="dark-takitate-bento"] {
     @include gradient-background('dark-takitate-bento');
   }
 }
@@ -430,43 +430,43 @@ ul.pager {
 
     #header {
       // light images
-      &[data-background-light-image="light-aso"] {
+      &[data-bg-light-image="light-aso"] {
         @include gradient-background('light-aso');
       }
-      &[data-background-light-image="light-black-kite"] {
+      &[data-bg-light-image="light-black-kite"] {
         @include gradient-background('light-black-kite');
       }
-      &[data-background-light-image="light-container-ship"] {
+      &[data-bg-light-image="light-container-ship"] {
         @include gradient-background('light-container-ship');
       }
-      &[data-background-light-image="light-halo"] {
+      &[data-bg-light-image="light-halo"] {
         @include gradient-background('light-halo');
       }
-      &[data-background-light-image="light-jizou"] {
+      &[data-bg-light-image="light-jizou"] {
         @include gradient-background('light-jizou');
       }
-      &[data-background-light-image="light-karatsu"] {
+      &[data-bg-light-image="light-karatsu"] {
         @include gradient-background('light-karatsu');
       }
-      &[data-background-light-image="light-momiji"] {
+      &[data-bg-light-image="light-momiji"] {
         @include gradient-background('light-momiji');
       }
-      &[data-background-light-image="light-moss"] {
+      &[data-bg-light-image="light-moss"] {
         @include gradient-background('light-moss');
       }
-      &[data-background-light-image="light-nagatare"] {
+      &[data-bg-light-image="light-nagatare"] {
         @include gradient-background('light-nagatare');
       }
-      &[data-background-light-image="light-nanzenji"] {
+      &[data-bg-light-image="light-nanzenji"] {
         @include gradient-background('light-nanzenji');
       }
-      &[data-background-light-image="light-sakura"] {
+      &[data-bg-light-image="light-sakura"] {
         @include gradient-background('light-sakura');
       }
-      &[data-background-light-image="light-temple-wall"] {
+      &[data-bg-light-image="light-temple-wall"] {
         @include gradient-background('light-temple-wall');
       }
-      &[data-background-light-image="light-wave"] {
+      &[data-bg-light-image="light-wave"] {
         @include gradient-background('light-wave');
       }
     }

@@ -1,0 +1,44 @@
+dark:
+  - name: amaguri
+    location: 長崎新地中華街
+  - name: aso
+    location: 阿蘇
+  - name: beach
+    location: 長垂海岸
+  - name: crossing
+    location: 今宿
+  - name: evening-moon
+    location: 今宿
+  - name: fire
+    location: 阿蘇神社
+  - name: heimin
+    location: 門司
+  - name: night-moon
+    location: The Earth
+  - name: sunset
+    location: Hawaii
+  - name: takitate-bento
+    location: 下山門
+light:
+  - name: aso
+    location: 阿蘇
+  - name: black-kite
+    location: 立野
+  - name: container-ship
+    location: 下関
+  - name: halo
+    location: 阿蘇
+  - name: jizou
+    location: 長崎市鳴滝
+  - name: karatsu
+    location: 鏡山展望テラス
+  - name: moss
+    location: 銀閣寺
+  - name: nagatare
+    location: 長垂海浜公園
+  - name: nanzenji
+    locaiotn: 南禅寺
+  - name: sakura
+    location: 熊本城
+  - name: temple-wall
+    location: 聖福寺
