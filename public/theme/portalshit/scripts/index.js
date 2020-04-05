@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkImageSize = (target) => {
     const width = target.naturalWidth;
     const height = target.naturalHeight;
-    const isJpeg = RegExp('\.jpe?g$').test(target.src);
-    if (width > 1279 && width > height && isJpeg) {
+    const isPhoto = RegExp('(lh3\.googleusercontent\.com|\.jpe?g$)').test(target.src);
+    if (width > 1279 && width > height && isPhoto) {
       target.classList.add('large');
     }
   }
@@ -29,7 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const src = image.src;
       image.dataset.src = src;
       if (lazyImages.indexOf(image) === 0) {
-        checkImageSize(image);
+        const promise = new Promise(resolve => resolve(image));
+        promise.then(checkImageSize).catch(setTimeout(checkImageSize, 100))
         continue;
       }
       image.src = "";

@@ -440,7 +440,7 @@
 
 @media screen and (min-width: 1380px) {
   #content #main article .body > p {
-   img[src*="staticflickr.com"], img[src*="lh3.googleusercontent.com"], img[class~="large"] {
+    img[class~="large"] {
       width: 1280px;
       max-width: 1280px;
       margin-left: -250px;
