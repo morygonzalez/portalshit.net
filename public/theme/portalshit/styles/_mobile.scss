@@ -80,6 +80,7 @@
           }
         }
         .body {
+          width: unset;
           blockquote {
             &:before {
               left: -0.15em;
