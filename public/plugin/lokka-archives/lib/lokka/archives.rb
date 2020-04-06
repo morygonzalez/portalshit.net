@@ -9,10 +9,11 @@ module Lokka
         posts = Post.all(
           fields: %i[id category_id slug title created_at],
           draft: false,
-          created_at: (1.year.ago..Time.now)
+          # created_at: (1.year.ago..Time.now)
         )
         month_posts = MonthPosts.generate(posts)
 
+        cache_control :public, :must_revalidate, max_age: 5.minutes
         content_type :json
         month_posts.to_json
       end
