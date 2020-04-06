@@ -27,7 +27,7 @@ module Lokka
               .amazon {
                 display: flex;
                 align-items: start;
-                margin: 2em auto;
+                margin: 0 auto;
                 max-height: 320px;
                 background: #fff;
                 color: #000;
