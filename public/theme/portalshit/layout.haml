@@ -25,7 +25,8 @@
     = header
   %body
     - load(File.join(settings.theme, @theme.name, 'config.rb'))
-    %header#header{settings.header_bg_params}
+    - header_bg = settings.header_bg_params
+    %header#header{header_bg}
       #header-inner
         %h1= link_to @site.title, '/'
         %nav#global-nav
@@ -45,13 +46,18 @@
             %li.search
               %form#search_form(action="/search/" method="get")
                 %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
-        - if index?
-          %nav#category-nav
-            %ul#categories
-              - Category.all.each do |category|
-                %li= link_to category.title, "/category/#{category.slug}/"
-        - else
-          %nav#bread_crumb= bread_crumb
+
+        #header-bottom
+          - if index?
+            %nav#category-nav
+              %ul#categories
+                - Category.all.each do |category|
+                  %li= link_to category.title, "/category/#{category.slug}/"
+          - else
+            %nav#bread_crumb= bread_crumb
+          #header-bg-description
+            %span.header-bg-light-description= header_bg[:'data-bg-light-description']
+            %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
 
     #content
       %article#main.hfeed= yield
