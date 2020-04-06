@@ -98,13 +98,13 @@
           }
         }
 
-        form#search_form input {
+        form#search_form input[type="text"] {
           margin-left: 10px;
           border: none;
           border-radius: 3px;
           padding: 2px 2px 2px 8px;
           height: 16px;
-          width: 120px;
+          width: 150px;
           font-size: 95%;
         }
       }
@@ -249,7 +249,7 @@
         margin-bottom: 1em;
         padding: 0 8px;
         line-height: 180%;
-        width: 780px;
+        max-width: 780px;
         margin: auto;
 
         h3 {

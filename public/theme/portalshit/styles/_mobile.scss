@@ -30,20 +30,29 @@
       height: 35px;
       ul {
         margin: 0;
+        display: flex;
+        justify-content: center;
+
         li {
           padding-left: 3px;
           margin: auto;
-          flex-grow: 1;
+          flex-grow: 2;
+
           a {
             padding: 2px 5px;
           }
+
           &.github, &.twitter {
             display: none;
           }
+
           &.search {
-            #search_form input[type=text] {
-              max-width: 120px;
-              width: 100px;
+            flex-grow: 3;
+            #search_form input[type="text"] {
+              margin-left: unset;
+              min-width: 100px;
+              max-width: 150px;
+              width: 80%;
             }
           }
         }
