@@ -62,6 +62,14 @@ a {
   &[data-bg-dark-image="dark-takitate-bento"] {
     @include gradient-background('dark-takitate-bento');
   }
+
+  #header-inner #header-bottom #header-bg-description {
+    color: #fff;
+
+    .header-bg-light-description {
+      display: none;
+    }
+  }
 }
 
 #main {
@@ -471,14 +479,25 @@ ul.pager {
       }
     }
 
-    #bread_crumb {
-      color: $dark-font-color;
-    }
+    #header #header-inner #header-bottom {
+      #header-bg-description {
+        .header-bg-light-description {
+          display: inline;
+        }
+        .header-bg-dark-description {
+          display: none;
+        }
+      }
 
-    #category-nav #categories {
-      li {
-        font-weight: bold;
-        text-shadow: #{$light-text-shadow-color} -1px 1px 1px;
+      #bread_crumb {
+        color: $dark-font-color;
+      }
+
+      #category-nav #categories {
+        li {
+          font-weight: bold;
+          text-shadow: #{$dark-text-shadow-color} -1px 1px 1px;
+        }
       }
     }
 

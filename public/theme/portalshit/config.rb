@@ -6,9 +6,9 @@ class Lokka::App
       light_image = bg_images['light'].sample
       {
         'data-bg-dark-image': "dark-#{dark_image['name']}",
-        'data-bg-dark-location': dark_image['location'],
+        'data-bg-dark-description': dark_image['description'],
         'data-bg-light-image': "light-#{light_image['name']}",
-        'data-bg-light-location': light_image['location']
+        'data-bg-light-description': light_image['description']
       }
     }
   end

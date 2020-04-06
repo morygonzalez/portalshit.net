@@ -31,136 +31,158 @@
     }
 
     h1 {
-      margin-top: 0;
+      margin: 0;
       margin-right: auto;
       width: 275px;
       height: 62px;
       text-shadow: 1px 1px 2px $various-bg;
     }
 
-    nav#global-nav ul {
-      height: 35px;
-      font-size: 12px;
-      list-style: none;
-      padding-left: 0;
-      border-radius: 5px;
-      background: rgba(234,234,234,0.65);
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
+    #global-nav {
+      height: 100%;
 
-      li {
-        flex: auto;
-        margin: 0px 7px;
+      ul {
+        height: 35px;
+        font-size: 12px;
+        list-style: none;
+        padding-left: 0;
+        border-radius: 5px;
+        background: rgba(234,234,234,0.65);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
-        img {
-          margin: 0px;
-          padding: 0px;
-        }
+        li {
+          flex: auto;
+          margin: 0px 7px;
 
-        a {
-          padding: 2px 5px;
-
-          &:link, &:visited {
-            color: $various-bg;
+          img {
+            margin: 0px;
+            padding: 0px;
           }
 
-          &:hover {
-            color: $dark-font-color;
-            background-color: #444439;
-            border-radius: 5px;
-            text-shadow: 0 -1px 1px #222121;
+          a {
+            padding: 2px 5px;
+
+            &:link, &:visited {
+              color: $various-bg;
+            }
+
+            &:hover {
+              color: $dark-font-color;
+              background-color: #444439;
+              border-radius: 5px;
+              text-shadow: 0 -1px 1px #222121;
+            }
           }
-        }
 
-        &.profile {
-          @include nav-profile;
-        }
-
-        &.github {
-          @include nav-profile;
-        }
-
-        &.twitter {
-          @include nav-profile;
-        }
-
-        &.facebook {
-          @include nav-profile;
-          background: url(images/icons.png) no-repeat -4px -260px;
-        }
-
-        &.archives {
-          @include nav-profile;
-          i {
-            font-size: 20px;
+          &.profile {
+            @include nav-profile;
           }
-        }
 
-        form#search_form input[type="text"] {
-          margin-left: 10px;
-          border: none;
-          border-radius: 3px;
-          padding: 2px 2px 2px 8px;
-          height: 16px;
-          width: 150px;
-          font-size: 95%;
+          &.github {
+            @include nav-profile;
+          }
+
+          &.twitter {
+            @include nav-profile;
+          }
+
+          &.facebook {
+            @include nav-profile;
+            background: url(images/icons.png) no-repeat -4px -260px;
+          }
+
+          &.archives {
+            @include nav-profile;
+            i {
+              font-size: 20px;
+            }
+          }
+
+          form#search_form input[type="text"] {
+            margin-left: 10px;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 2px 2px 8px;
+            height: 16px;
+            width: 150px;
+            font-size: 95%;
+          }
         }
       }
     }
 
-    #bread_crumb {
+    #header-bottom {
+      display: flex;
       width: 100%;
       max-width: $content-max-width;
-      margin: auto 0 1.5em;
-      text-align: left;
+      margin-bottom: 1em;
       align-self: flex-end;
 
-      ol {
-        padding: 0px;
-        margin: 0px;
-        list-style: none;
+      #bread_crumb, #category-nav {
+        flex-grow: 5;
+        height: 100%;
+        align-items: flex-end;
+        align-self: self-end;
+      }
 
-        li {
-          display: inline;
+      #bread_crumb {
+        text-align: left;
 
-          &:before {
-            content: " > ";
-          }
+        ol {
+          padding: 0px;
+          margin: 0px;
+          list-style: none;
 
-          &:first-child:before {
-            content: "";
+          li {
+            display: inline;
+
+            &:before {
+              content: " > ";
+            }
+
+            &:first-child:before {
+              content: "";
+            }
           }
         }
       }
-    }
 
-    nav#category-nav {
-      display: flex;
-      align-items: flex-end;
-      width: 100%;
+      #category-nav {
+        margin: auto;
 
-      #categories {
-        margin: 0px auto;
-        padding-left: 0px;
-        text-align: left;
-        list-style-type: none;
-        font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+        #categories {
+          margin: 0px auto;
+          padding-left: 0px;
+          text-align: left;
+          list-style-type: none;
+          font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 
-        li {
-          float: left;
-          text-shadow: $dark-text-shadow-color 0.1em 0.1em 0.2em;
-          margin-right: 1em;
-          padding: 5px 0 15px;
+          li {
+            float: left;
+            text-shadow: $dark-text-shadow-color 0.1em 0.1em 0.2em;
+            margin-right: 1em;
+            padding: 0;
 
-          a.clicked {
-            color: $dark-font-color;
-            background: $meta-text-color;
-            border-radius: $radius;
-            padding: 1px 3px;
+            a.clicked {
+              color: $dark-font-color;
+              background: $meta-text-color;
+              border-radius: $radius;
+              padding: 1px 3px;
+            }
           }
         }
+      }
+
+      #header-bg-description {
+        flex-grow: 1;
+        font-size: 13px;
+        text-align: right;
+        margin: 0;
+        align-self: center;
+        width: 150px;
       }
     }
   }
@@ -182,6 +204,8 @@
       margin-bottom: 30px;
 
       header {
+        margin-bottom: 2.5em;
+
         .title {
           font-size: 1.2em;
           word-wrap: break-word;
@@ -441,8 +465,8 @@
 @media screen and (min-width: 1422px) {
   #content #main article .body > p {
     img[class~="large"] {
-      width: 1280px;
-      max-width: 1280px;
+      width: $content-max-width;
+      max-width: $content-max-width;
       margin-left: -250px;
     }
   }
