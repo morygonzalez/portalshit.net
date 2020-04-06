@@ -52,10 +52,10 @@ document.body.addEventListener("AutoPagerize_DOMNodeInserted", (e) => {
   }, false
 );
 
-$(function() {
+$(() => {
   if ($(window).width() <= 640) {
-    $('#footer aside dt').on('click', function() {
-      $(this).siblings('dd').slideToggle();
+    $('#footer aside dt').on('click', (event) => {
+      $(event.target).siblings('dd').slideToggle();
     });
   }
 });
