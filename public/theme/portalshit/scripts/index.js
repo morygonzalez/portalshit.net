@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const checkImageSize = (target) => {
+    if (typeof target === 'undefined') {
+      return;
+    }
     const width = target.naturalWidth;
     const height = target.naturalHeight;
     const isPhoto = RegExp('(lh3\.googleusercontent\.com|\.jpe?g$)').test(target.src);
