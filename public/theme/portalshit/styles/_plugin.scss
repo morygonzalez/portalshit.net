@@ -129,15 +129,13 @@
   .amazon-image {
     display: flex;
     align-items: center;
-    flex-grow: 1;
-    width: 300px;
-    max-width: 300px;
     justify-content: center;
+    min-width: 250px;
 
     img {
       filter: brightness(100%);
-      max-height: 280px;
-      max-width: 280px;
+      max-height: 200px;
+      max-width: 200px;
 
       &:hover {
         filter: brightness(105%);
@@ -146,9 +144,7 @@
   }
 
   .amazon-content {
-    flex-grow: 4;
     margin-right: 2em;
-    max-width: 60%;
 
     .item-title {
       &:before {

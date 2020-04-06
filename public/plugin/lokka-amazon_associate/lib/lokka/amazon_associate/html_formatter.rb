@@ -46,23 +46,19 @@ module Lokka
               .amazon-image {
                 display: flex;
                 align-items: center;
-                flex-grow: 1;
-                width: 300px;
-                max-width: 300px;
                 justify-content: center;
+                min-width: 250px;
               }
               .amazon-image img {
                 filter: brightness(100%);
-                max-height: 280px;
-                max-width: 280px;
+                max-height: 200px;
+                max-width: 200px;
               }
               .amazon-image img:hover {
                 filter: brightness(105%);
               }
               .amazon-content {
-                flex-grow: 4;
                 margin-right: 2em;
-                max-width: 60%;
               }
               .amazon-content .item-title {
                 font-size: 1.2em;
