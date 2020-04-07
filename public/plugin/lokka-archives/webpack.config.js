@@ -23,7 +23,7 @@ module.exports = {
               ["minify"],
               ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }]
             ],
-            plugins: ['@babel/plugin-proposal-class-properties']
+            plugins: ['@babel/plugin-proposal-class-properties', 'emotion']
           }
         }
       }

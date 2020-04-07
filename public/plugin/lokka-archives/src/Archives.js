@@ -2,20 +2,30 @@ import React, { Component }  from 'react'
 import Moment from 'react-moment'
 import { render } from 'react-dom'
 import 'moment/locale/ja'
+import { css } from '@emotion/core'
+import MoonLoader from 'react-spinners/MoonLoader'
+
+const override = `
+  display: block;
+  margin: 10em auto;
+  border-color: red;
+`
 
 class Archives extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: []
+      data: [],
+      loading: true
     }
   }
 
   async loadArchivesFromServer(year=null) {
+    this.setState({ data: [], loading: true })
     const path = year === null ? '/archives.json' : `/archives/${year}.json`
     const request = await fetch(path)
     const response = await request.json()
-    this.setState({ data: response })
+    this.setState({ data: response, loading: false })
   }
 
   componentDidMount() {
@@ -35,6 +45,9 @@ class Archives extends Component {
   render() {
     return (
       <div className="archives archive-by-month" id="archives">
+        <div className="sweet-loading">
+          <MoonLoader css={override} size={150} color={'#8c0000'} loading={this.state.loading} />
+        </div>
         <MonthlyBox data={this.state.data} category={this.props.category} />
       </div>
     )
