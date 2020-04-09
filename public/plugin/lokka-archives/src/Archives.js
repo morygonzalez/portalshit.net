@@ -77,24 +77,53 @@ function Entry(props) {
   )
 }
 
-function EntryList(props) {
-  if (props.entries.length === 0)
-    return null
-  let entries = props.entries.map((entry) => {
-    let uniqueKey = `${entry.title}-${entry.created_at}`
-    return (
-      <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
+class EntryList extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      entries: [],
+      date: null
+    }
+  }
+
+  setDate() {
+    this.setState({ date: this.props.monthYear })
+  }
+
+  setEntries() {
+    const entries = this.props.entries.map((entry) => {
+      const uniqueKey = `${entry.title}-${entry.created_at}`
+      return (
+        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
+      )
+    })
+    this.setState({ entries: entries })
+  }
+
+  componentDidMount() {
+    this.setEntries()
+    this.setDate()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.entries.length != this.props.entries.length) {
+      this.setState({ entries: [], date: null })
+      this.setEntries()
+      this.setDate()
+    }
+  }
+
+  render() {
+    if (this.state.entries.length === 0) {
+      return(null)
+    }
+    return(
+      <li className="entryList year-month">
+        <h3><Moment format="YYYY年MMM">{this.state.date}</Moment></h3>
+        <ul className="entries">{this.state.entries}</ul>
+      </li>
     )
-  })
-  let date = props.monthYear.replace(/(\d{4})\-(\d{1,2})/, function() {
-    return `${arguments[1]}-${(0 + arguments[2]).slice(-2)}-01T00:00:00`
-  })
-  return (
-    <li className="entryList year-month">
-      <h3><Moment format="YYYY年MMM">{date}</Moment></h3>
-      <ul className="entries">{entries}</ul>
-    </li>
-  )
+  }
 }
 
 function MonthlyBox(props) {
