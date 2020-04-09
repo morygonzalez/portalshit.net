@@ -141,7 +141,7 @@ module Lokka
       end
 
       def generate(posts)
-        posts.group_by {|post| post.created_at.strftime('%Y-%1m') }.
+        posts.group_by {|post| post.created_at.beginning_of_month }.
           each_with_object({}) do |(month, month_posts), object|
             object[month] ||= []
             month_posts.each do |post|
