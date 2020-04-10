@@ -210,14 +210,25 @@
     }
   }
   // Archive
-  .year-list, .category-list {
-    margin: 0;
-    padding: 0.5em;
-    li {
+  #content #main .archive-filter {
+    flex-wrap: wrap;
+
+    .year-list, .category-list, .entry-length {
+      max-width: 45%;
       margin: 0;
-      font-size: 0.9em;
+      padding: 0.5em;
+
+      li {
+        margin: 0;
+        font-size: 0.9em;
+      }
+    }
+
+    .entry-length {
+      width: 100%;
     }
   }
+
   .archive-by-month {
     ul {
       list-style: disc !important;

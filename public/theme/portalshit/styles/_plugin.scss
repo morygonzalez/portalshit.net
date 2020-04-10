@@ -71,12 +71,23 @@
   .archive-filter {
     display: flex;
 
-    .year-list, .category-list {
+    .year-list, .category-list, .entry-length {
       margin: .25em;
       width: 100%;
       max-width: 250px;
+    }
+
+    .year-list, .category-list {
       color: #000;
       font-size: 16px;
+    }
+
+    .entry-length {
+      display: flex;
+      align-items: center;
+      p {
+        margin: auto 1em;
+      }
     }
   }
 

@@ -16,10 +16,8 @@ class Archives extends Component {
     super(props)
     this.state = {
       data: [],
-      loading: true,
-      length: 0
+      loading: true
     }
-    this.setLength = this.setLength.bind(this)
   }
 
   async loadArchivesFromServer(year=null) {
@@ -44,17 +42,13 @@ class Archives extends Component {
     }
   }
 
-  setLength(length) {
-    this.setState({ length })
-  }
-
   render() {
     return (
-      <div className="archives archive-by-month" id="archives" data-article-length={this.state.length}>
+      <div className="archives archive-by-month" id="archives">
         <div className="sweet-loading">
           <MoonLoader css={override} size={150} color={'#8c0000'} loading={this.state.loading} />
         </div>
-        <MonthlyBox data={this.state.data} category={this.props.category} setLength={this.setLength} />
+        <MonthlyBox data={this.state.data} category={this.props.category} setLength={this.props.setLength} />
       </div>
     )
   }

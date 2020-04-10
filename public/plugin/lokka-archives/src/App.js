@@ -10,18 +10,24 @@ class App extends Component {
     super(props)
     this.state = {
       category: null,
-      year: null
+      year: null,
+      length: 0
     }
     this.updateCategory = this.updateCategory.bind(this)
     this.updateYear = this.updateYear.bind(this)
+    this.setLength = this.setLength.bind(this)
   }
 
   updateCategory(category) {
-    this.setState({ category: category })
+    this.setState({ category })
   }
 
   updateYear(year) {
-    this.setState({ year: year })
+    this.setState({ year })
+  }
+
+  setLength(length) {
+    this.setState({ length })
   }
 
   render() {
@@ -30,10 +36,11 @@ class App extends Component {
         <div className="archive-filter">
           <YearList update={this.updateYear} />
           <CategoryList update={this.updateCategory} activeCategory={this.state.category} />
+          <div className="entry-length"><p>{this.state.length} entries</p></div>
         </div>
         <Switch>
-          <Route exact path="/archives" render={(props) => <Archives category={this.state.category} {...props} />} />
-          <Route path="/archives/:year(\d{4})" render={(props) => <Archives category={this.state.category} year={this.state.year} {...props} />} />
+          <Route exact path="/archives" render={(props) => <Archives category={this.state.category} setLength={this.setLength} {...props} />} />
+          <Route path="/archives/:year(\d{4})" render={(props) => <Archives category={this.state.category} setLength={this.setLength} year={this.state.year} {...props} />} />
         </Switch>
       </Router>
     )
