@@ -137,7 +137,7 @@ module Lokka
 
     class << self
       def categories
-        @categories ||= Category.all(fields: %i[id slug title]).group_by(&:id)
+        @categories ||= Category.all(fields: %i[id slug title]).sort_by {|c| -c.entries.count }.group_by(&:id)
       end
 
       def generate(posts)
