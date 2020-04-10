@@ -16,8 +16,10 @@ class Archives extends Component {
     super(props)
     this.state = {
       data: [],
-      loading: true
+      loading: true,
+      length: 0
     }
+    this.setLength = this.setLength.bind(this)
   }
 
   async loadArchivesFromServer(year=null) {
@@ -42,13 +44,17 @@ class Archives extends Component {
     }
   }
 
+  setLength(length) {
+    this.setState({ length })
+  }
+
   render() {
     return (
-      <div className="archives archive-by-month" id="archives">
+      <div className="archives archive-by-month" id="archives" data-article-length={this.state.length}>
         <div className="sweet-loading">
           <MoonLoader css={override} size={150} color={'#8c0000'} loading={this.state.loading} />
         </div>
-        <MonthlyBox data={this.state.data} category={this.props.category} />
+        <MonthlyBox data={this.state.data} category={this.props.category} setLength={this.setLength} />
       </div>
     )
   }
@@ -97,7 +103,7 @@ class EntryList extends Component {
         <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
       )
     })
-    this.setState({ entries: entries })
+    this.setState({ entries })
   }
 
   componentDidMount() {
@@ -126,25 +132,51 @@ class EntryList extends Component {
   }
 }
 
-function MonthlyBox(props) {
-  let data = props.data
-  let category = props.category
-  let entriesGroupByYearMonth = Object.keys(data).map((monthYear, index) => {
-    let entries = data[monthYear]
-    if (category && typeof category !== 'undefined' && category.length > 0) {
-      entries = entries.filter(function(entry) {
-        return entry.category.title === category
-      })
+class MonthlyBox extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      entriesGroupByYearMonth: [],
+      length: 0
     }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps != this.props) {
+      this.setGroupByMonth()
+    }
+    if (prevState.length != this.state.length) {
+      this.props.setLength(this.state.length)
+    }
+  }
+
+  setGroupByMonth() {
+    const data = this.props.data
+    const category = this.props.category
+    let length = 0
+    const entriesGroupByYearMonth = Object.keys(data).map((monthYear, index) => {
+      let entries = data[monthYear]
+      if (category && typeof category !== 'undefined' && category.length > 0) {
+        entries = entries.filter(entry => entry.category.title === category)
+      }
+      length += entries.length
+      if (entries.length === 0) {
+        return(null)
+      }
+      return(
+        <EntryList key={monthYear} monthYear={monthYear} entries={entries} />
+      )
+    })
+    this.setState({ entriesGroupByYearMonth, length })
+  }
+
+  render() {
     return (
-      <EntryList key={monthYear} monthYear={monthYear} entries={entries} />
+      <ul className="monthlyBox">
+        {this.state.entriesGroupByYearMonth}
+      </ul>
     )
-  })
-  return (
-    <ul className="monthlyBox">
-      {entriesGroupByYearMonth}
-    </ul>
-  )
+  }
 }
 
 export default Archives
