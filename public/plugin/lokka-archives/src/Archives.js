@@ -11,6 +11,8 @@ const override = `
   border-color: red;
 `
 
+const locale = window.navigator.userLanguage || window.navigator.language
+
 class Archives extends Component {
   constructor(props) {
     super(props)
@@ -70,7 +72,7 @@ function Entry(props) {
     <li className="entry">
       <a href={props.link}>{props.title}</a>
       <div className="detail-information">
-        <span className="created_at"><Moment format="LL" date={props.created_at} /></span>
+        <span className="created_at"><Moment format="LL" date={props.created_at} locale={locale} /></span>
         <Category category={props.category} />
       </div>
     </li>
@@ -84,6 +86,7 @@ class EntryList extends Component {
       entries: [],
       date: null
     }
+    this.setYmFormat()
   }
 
   setDate() {
@@ -98,6 +101,14 @@ class EntryList extends Component {
       )
     })
     this.setState({ entries })
+  }
+
+  setYmFormat() {
+    if (/ja/.test(locale)) {
+      this.ymFormat = 'YYYY年MMM'
+    } else {
+      this.ymFormat = 'MMMM YYYY'
+    }
   }
 
   componentDidMount() {
@@ -119,7 +130,7 @@ class EntryList extends Component {
     }
     return(
       <li className="entryList year-month">
-        <h3><Moment format="YYYY年MMM">{this.state.date}</Moment></h3>
+        <h3><Moment format={this.ymFormat} locale={locale}>{this.state.date}</Moment></h3>
         <ul className="entries">{this.state.entries}</ul>
       </li>
     )
