@@ -29,5 +29,6 @@ module.exports = {
       }
     ]
   },
+  plugins: [new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)],
   devtool: 'inline-source-map'
 };
