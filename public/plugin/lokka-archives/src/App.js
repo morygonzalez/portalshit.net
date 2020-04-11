@@ -39,8 +39,27 @@ class App extends Component {
           <div className="entry-length"><p>{this.state.length} entries</p></div>
         </div>
         <Switch>
-          <Route exact path="/archives" render={(props) => <Archives category={this.state.category} setLength={this.setLength} {...props} />} />
-          <Route path="/archives/:year(\d{4})" render={(props) => <Archives category={this.state.category} setLength={this.setLength} year={this.state.year} {...props} />} />
+          <Route
+            exact path="/archives"
+            render={(props) =>
+              <Archives
+                category={this.state.category}
+                setLength={this.setLength}
+                {...props}
+              />
+            }
+          />
+          <Route
+            path="/archives/:year(\d{4})"
+            render={(props) =>
+              <Archives
+                category={this.state.category}
+                setLength={this.setLength}
+                year={this.state.year}
+                {...props}
+              />
+            }
+          />
         </Switch>
       </Router>
     )
