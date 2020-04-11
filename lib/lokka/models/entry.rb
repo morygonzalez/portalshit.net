@@ -136,7 +136,7 @@ class Entry
   end
 
   def images
-    body.scan(%r{https?://[\w/:%#\$&\?\(\)~\.=\+\-]+?\.(?:png|jpe?g|gif)})
+    body.scan(/<img.+?src="(.+?)".+?>/).flatten
   end
 
   def cover_image
