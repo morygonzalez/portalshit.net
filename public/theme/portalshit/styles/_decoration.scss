@@ -477,6 +477,9 @@ ul.pager {
       &[data-bg-light-image="light-wave"] {
         @include gradient-background('light-wave');
       }
+      &[data-bg-light-image="light-mykonos"] {
+        @include gradient-background('light-mykonos');
+      }
     }
 
     #header #header-inner #header-bottom {
