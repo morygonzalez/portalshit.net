@@ -7,7 +7,7 @@ import MoonLoader from 'react-spinners/MoonLoader'
 
 const override = `
   display: block;
-  margin: 10em auto;
+  margin: 20% auto;
   border-color: red;
 `
 
