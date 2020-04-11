@@ -53,7 +53,8 @@
         .image {
           flex-grow: 3;
           img {
-            max-width: none;
+            max-width: 200px;
+            min-width: 200px;
           }
         }
 
