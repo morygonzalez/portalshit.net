@@ -8,8 +8,7 @@ module Lokka
       app.get '/archives.json' do
         posts = Post.all(
           fields: %i[id category_id slug title created_at],
-          draft: false,
-          # created_at: (1.year.ago..Time.now)
+          draft: false
         )
         month_posts = MonthPosts.generate(posts)
 
@@ -57,9 +56,19 @@ module Lokka
 
   module Helpers
     def year_list
-      first_year = Post.published.first.created_at.year
-      last_year  = Post.published.last.created_at.year
-      first_year.downto(last_year).to_a
+      first_year, last_year = Post.published.aggregate(:created_at.min, :created_at.max).map(&:year)
+      last_year.downto(first_year).to_a
+      # Post.published.group_by {|entry| entry.created_at.year }.transform_values(&:length)
+      # result = Post.repository.adapter.select(
+      #   <<~SQL
+      #     SELECT YEAR(created_at) AS year, COUNT(DISTINCT id) AS count
+      #     FROM entries
+      #     WHERE entries.draft = FALSE
+      #     GROUP BY year
+      #     ORDER BY year
+      #   SQL
+      # )
+      # result.each_with_object({}) {|item, result| result[item.year] = item.count }
     end
 
     def categories

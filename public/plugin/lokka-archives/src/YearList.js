@@ -46,6 +46,10 @@ class YearSelect extends Component {
   }
 
   render() {
+    // let options = []
+    // for (let [year, count] of Object.entries(this.state.data)) {
+    //   options.unshift({ value: year, label: `${year} (${count})` })
+    // }
     const options = this.state.data.map(year => {
       return { value: year, label: year }
     })
