@@ -1,5 +1,6 @@
+%script(async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
+
 %section.article-bottom.adsense
-  %script(async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
   %ins(class="adsbygoogle"
     style="display:block"
     data-ad-client="ca-pub-7665673588234323"
@@ -8,13 +9,12 @@
   :javascript
     (adsbygoogle = window.adsbygoogle || []).push({});
 
-- if page? || post? || entry?
-  .article-bottom.related
-    %script(async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
-    %ins(class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-7665673588234323"
-      data-ad-slot="3942164192"
-      data-ad-format="autorelaxed")
-    :javascript
-      (adsbygoogle = window.adsbygoogle || []).push({});
+-# - if page? || post? || entry?
+-#   %section.article-bottom.related
+-#     %ins(class="adsbygoogle"
+-#       style="display:block"
+-#       data-ad-client="ca-pub-7665673588234323"
+-#       data-ad-slot="3942164192"
+-#       data-ad-format="autorelaxed")
+-#     :javascript
+-#       (adsbygoogle = window.adsbygoogle || []).push({});
