@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import YearList from './YearList'
 import CategoryList from './CategoryList'
 import Archives from './Archives'
+import Chart from './Chart'
 
 class App extends Component {
   constructor(props) {
@@ -32,36 +33,39 @@ class App extends Component {
 
   render() {
     return(
-      <Router history={history}>
-        <div className="archive-filter">
-          <YearList update={this.updateYear} />
-          <CategoryList update={this.updateCategory} activeCategory={this.state.category} />
-          <div className="entry-length"><p>{this.state.length} entries</p></div>
-        </div>
-        <Switch>
-          <Route
-            exact path="/archives"
-            render={(props) =>
-              <Archives
-                category={this.state.category}
-                setLength={this.setLength}
-                {...props}
-              />
-            }
-          />
-          <Route
-            path="/archives/:year(\d{4})"
-            render={(props) =>
-              <Archives
-                category={this.state.category}
-                setLength={this.setLength}
-                year={this.state.year}
-                {...props}
-              />
-            }
-          />
-        </Switch>
-      </Router>
+      <article>
+        <Chart />
+        <Router history={history}>
+          <div className="archive-filter">
+            <YearList update={this.updateYear} />
+            <CategoryList update={this.updateCategory} activeCategory={this.state.category} />
+            <div className="entry-length"><p>{this.state.length} entries</p></div>
+          </div>
+          <Switch>
+            <Route
+              exact path="/archives"
+              render={(props) =>
+                <Archives
+                  category={this.state.category}
+                  setLength={this.setLength}
+                  {...props}
+                />
+              }
+            />
+            <Route
+              path="/archives/:year(\d{4})"
+              render={(props) =>
+                <Archives
+                  category={this.state.category}
+                  setLength={this.setLength}
+                  year={this.state.year}
+                  {...props}
+                />
+              }
+            />
+          </Switch>
+        </Router>
+      </article>
     )
   }
 }
