@@ -27,6 +27,31 @@ module Lokka
         categories.to_json
       end
 
+      app.get '/archives/chart.json' do
+        result = Post.repository.adapter.select(
+          <<~SQL
+            SELECT
+              YEAR(entries.created_at) AS year,
+              categories.title as category,
+              COUNT(1) AS count
+            FROM entries
+            INNER JOIN categories ON categories.id = entries.category_id
+            WHERE entries.draft = FALSE AND entries.type = 'Post'
+            GROUP BY year, category
+            ORDER BY year
+          SQL
+        )
+
+        content_type :json
+        grouped = result.map(&:to_h).group_by {|record| record[:year] }
+        grouped.each_with_object([]) {|(year, record), object_1|
+          object_1 << record.each_with_object({ year: year }) {|item, object_2|
+            _, category, count = item.values
+            object_2[category] = count
+          }
+        }.to_json
+      end
+
       app.get '/archives/?:year?.json' do |year|
         posts = Post.all(
           fields: %i[id category_id slug title created_at],
@@ -59,16 +84,6 @@ module Lokka
       first_year, last_year = Post.published.aggregate(:created_at.min, :created_at.max).map(&:year)
       last_year.downto(first_year).to_a
       # Post.published.group_by {|entry| entry.created_at.year }.transform_values(&:length)
-      # result = Post.repository.adapter.select(
-      #   <<~SQL
-      #     SELECT YEAR(created_at) AS year, COUNT(DISTINCT id) AS count
-      #     FROM entries
-      #     WHERE entries.draft = FALSE
-      #     GROUP BY year
-      #     ORDER BY year
-      #   SQL
-      # )
-      # result.each_with_object({}) {|item, result| result[item.year] = item.count }
     end
 
     def categories
