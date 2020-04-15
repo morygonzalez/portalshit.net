@@ -140,7 +140,7 @@ class Entry
   end
 
   def cover_image
-    images.first || 'https://portalshit.net/theme/portalshit/screenshot.png'
+    images.first || 'https://portalshit.net/theme/portalshit/ogp_image.png'
   end
 
   module FinderstWithScope
