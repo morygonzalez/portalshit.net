@@ -21,7 +21,7 @@
       %span{ itemprop: 'author' }= @entry.user.name
       %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Organization' }
         %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-          %meta{ content: 'https://portalshit.net/theme/portalshit/screenshot.png', itemprop: :url }
+          %meta{ content: 'https://portalshit.net/theme/portalshit/ogp_image.png', itemprop: :url }
           %meta{ content: '350', itemprop: :width }
           %meta{ content: '255', itemprop: :height }
         %meta{ content: @entry.user.name, itemprop: :name }
@@ -29,7 +29,7 @@
         - if @entry.images.present?
           %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{@entry.images.first}" }
         - else
-          %meta{ itemprop: :url, content: 'https://portalshit.net/imageproxy/350x/https://portalshit.net/theme/portalshit/screenshot.png' }
+          %meta{ itemprop: :url, content: 'https://portalshit.net/imageproxy/350x/https://portalshit.net/theme/portalshit/ogp_image.png' }
         %meta{ itemprop: :width, content: 350 }
         %meta{ itemprop: :height, content: 255 }
 

@@ -25,7 +25,8 @@ module Lokka
       end
 
       def default_image
-        "#{site_host}#{@theme.path}/screenshot.png"
+        File.exist?("#{Lokka.root}/public/#{@theme.path}/ogp_image.png") ?
+          "#{site_host}#{@theme.path}/ogp_image.png" : "#{site_host}#{@theme.path}/screenshot.png"
       end
 
       def entry_link
