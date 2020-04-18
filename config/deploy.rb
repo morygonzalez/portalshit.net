@@ -29,26 +29,28 @@ set :deploy_to, "/var/www/deploys/#{fetch(:application)}"
 # set :pty, true
 
 # Default value for :linked_files is []
-# set :linked_files, %w{config/database.yml}
-set :linked_files,
-  %w{
-    config/newrelic.yml
-    database.yml
-    .env
-    public/access-ranking.txt
-    public/referer-ranking.txt
-    public/access-ranking-today.txt
-    public/referer-ranking-today.txt
-    public/cache-hit-rate.txt
-    public/cache-hit-rate-today.txt
-    public/spam-block-rate.txt
-    public/spam-block-rate-today.txt
-    public/ads.txt
-  }
+append :linked_files,
+  'config/newrelic.yml',
+  'database.yml',
+  '.env',
+  'public/access-ranking.txt',
+  'public/referer-ranking.txt',
+  'public/access-ranking-today.txt',
+  'public/referer-ranking-today.txt',
+  'public/cache-hit-rate.txt',
+  'public/cache-hit-rate-today.txt',
+  'public/spam-block-rate.txt',
+  'public/spam-block-rate-today.txt',
+  'public/ads.txt'
 
 # Default value for linked_dirs is []
-# set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
-set :linked_dirs, %w{log tmp/pids tmp/sockets tmp/amazon tmp/ogp vendor/bundle}
+append :linked_dirs,
+  'log',
+  'tmp/pids',
+  'tmp/sockets',
+  'tmp/amazon',
+  'tmp/ogp',
+  'vendor/bundle'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
