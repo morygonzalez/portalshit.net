@@ -1,5 +1,5 @@
 # config valid only for Capistrano 3.1
-lock '3.10.1'
+lock '3.13.0'
 
 set :default_shell, '/bin/bash -l'
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} rbenv exec"
