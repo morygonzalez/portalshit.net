@@ -255,16 +255,40 @@
       }
 
       .prevnext {
-        display: block;
-        overflow: hidden;
-        height: 1%;
-        margin-bottom: 15px;
+        margin: .5vh auto 3vh;
+        display: flex;
+        justify-content: space-between;
+
+        .prev, .next {
+          display: flex;
+          max-width: 50%;
+
+          > a {
+            display: -webkit-box;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+          }
+        }
 
         .prev {
-          float: left;
+          text-align: left;
+          &:before {
+            font-family: 'Font Awesome 5 Free';
+            content: '\f100';
+            margin-right: 5px;
+          }
         }
+
         .next {
-          float: right;
+          text-align: right;
+          &:after {
+            font-family: 'Font Awesome 5 Free';
+            content: '\f101';
+            margin-left: 5px;
+          }
         }
       }
 

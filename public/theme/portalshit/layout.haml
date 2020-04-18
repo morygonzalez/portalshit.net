@@ -15,7 +15,7 @@
     %link{ title: "#{@site.title}", rel: "alternate", href: "https://feeds.feedburner.com/portalshit", type: 'application/atom+xml' }
     %link{ rel: 'canonical', href: canonical_url }
     %link{ rel: 'stylesheet', href: asset_path(@theme.path, 'style.css'), type: 'text/css' }
-    %link{ rel: 'stylesheet', href: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', type: 'text/css' }
+    %link{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.12.0/css/all.css', type: 'text/css' }
     %script{ async: true, src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js' }
     :javascript
       (adsbygoogle = window.adsbygoogle || []).push({
@@ -35,13 +35,13 @@
               = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
               = link_to 'About', '/about'
             %li.github
-              %i.fa.fa-github-square
+              %i.fab.fa-github-square
               = link_to 'GitHub', 'http://github.com/morygonzalez'
             %li.twitter
-              %i.fa.fa-twitter-square
+              %i.fab.fa-twitter-square
               = link_to 'Twitter', 'http://twitter.com/morygonzalez'
             %li.archives
-              %i.fa.fa-list
+              %i.fas.fa-list-ul
               = link_to 'Archives', '/archives'
             %li.search
               %form#search_form(action="/search/" method="get")

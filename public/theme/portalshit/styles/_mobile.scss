@@ -138,6 +138,16 @@
           ul li {
             width: 100%;
             margin: .5em;
+
+            .title {
+              display: block;
+              .link {
+                display: block;
+              }
+              .created_at {
+                margin: auto 0;
+              }
+            }
           }
 
           .description .image img {
