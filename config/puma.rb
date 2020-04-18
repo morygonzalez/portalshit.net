@@ -34,7 +34,7 @@ if ENV['RACK_ENV'] == 'production'
 
   on_restart do
     puts 'Refreshing Gemfile'
-    ENV["BUNDLE_GEMFILE"] = "/home/morygonzalez/sites/deploys/portalshit/current/Gemfile"
+    ENV["BUNDLE_GEMFILE"] = "/var/www/deploys/portalshit/current/Gemfile"
   end
 
 else
