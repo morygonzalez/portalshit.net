@@ -140,11 +140,13 @@
             display: inline;
 
             &:before {
-              content: " > ";
+              font-family: 'Font Awesome 5 Free';
+              content: '\f105';
+              margin: 0 .5em;
             }
 
             &:first-child:before {
-              content: "";
+              content: '';
             }
           }
         }
