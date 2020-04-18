@@ -62,7 +62,7 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'capistrano', '3.10.1', require: false
+  gem 'capistrano', '3.13.0', require: false
   gem 'capistrano-bundler', require: false
   gem 'capistrano-rbenv', require: false
   gem 'capistrano-rbenv-install', require: false
