@@ -2,9 +2,10 @@
 
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs)'
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
+APP_DIR='/var/www/app/portalshit'
 
 # Access Ranking
-find /var/www/app/portalshit/log/access.log* \
+find ${APP_DIR}/log/access.log* \
   | xargs zcat -f \
   | grep 'status:200' \
   | grep -vE '\/(about|morygonzalez|author)' \
@@ -13,20 +14,20 @@ find /var/www/app/portalshit/log/access.log* \
   | grep -vE ${REQUEST_PATH_TO_IGNORE} \
   | sed -e 's/corvid/covid/' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-  | tee /var/www/app/portalshit/public/access-ranking.txt
+  | tee ${APP_DIR}/public/access-ranking.txt
 
 # Referer Ranking
-find /var/www/app/portalshit/log/access.log* \
+find ${APP_DIR}/log/access.log* \
   | xargs zcat -f \
   | grep -viE ${UA_TO_IGNORE} \
   | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
   | cut -f12 | sed -e 's/referer://' \
   | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-  | tee /var/www/app/portalshit/public/referer-ranking.txt
+  | tee ${APP_DIR}/public/referer-ranking.txt
 
 # Cache Hit Rate
-find /var/www/app/portalshit/log/access.log* \
+find ${APP_DIR}/log/access.log* \
   | xargs zcat -f \
   | grep 'cache_hit:' | grep -v 'cache_hit:-' \
   | cut -f16 | sort | uniq -c \
@@ -49,10 +50,10 @@ find /var/www/app/portalshit/log/access.log* \
       print "EXPIRE\t" expire "\t(" expired_rate "%)"
       print "MISS\t" miss "\t(" miss_rate "%)"
     }' \
-  | tee /var/www/app/portalshit/public/cache-hit-rate.txt
+  | tee ${APP_DIR}/public/cache-hit-rate.txt
 
 # Spam Block
-find /var/www/app/portalshit/log/access.log* \
+find ${APP_DIR}/log/access.log* \
   | xargs zcat -f \
   | grep "POST" | grep -v "uri:/admin/" \
   | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c | sort -nr \
@@ -71,10 +72,10 @@ find /var/www/app/portalshit/log/access.log* \
       print "BLOCK\t" block "\t(" block_rate "%)"
       print "SLIP\t" slip "\t(" slip_rate "%)"
     }' \
-  | tee /var/www/app/portalshit/public/spam-block-rate.txt
+  | tee ${APP_DIR}/public/spam-block-rate.txt
 
 # Access Ranking Today
-find /var/www/app/portalshit/log/access.log \
+find ${APP_DIR}/log/access.log \
   | xargs zcat -f \
   | grep "time:$(date "+%Y-%m-%d")" \
   | grep 'status:200' \
@@ -84,10 +85,10 @@ find /var/www/app/portalshit/log/access.log \
   | grep -vE ${REQUEST_PATH_TO_IGNORE} \
   | sed -e 's/corvid/covid/' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-  | tee /var/www/app/portalshit/public/access-ranking-today.txt
+  | tee ${APP_DIR}/public/access-ranking-today.txt
 
 # Referer Ranking Today
-find /var/www/app/portalshit/log/access.log \
+find ${APP_DIR}/log/access.log \
   | xargs zcat -f \
   | grep "time:$(date "+%Y-%m-%d")" \
   | grep -viE ${UA_TO_IGNORE} \
@@ -95,10 +96,10 @@ find /var/www/app/portalshit/log/access.log \
   | cut -f12 | sed -e 's/referer://' \
   | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-  | tee /var/www/app/portalshit/public/referer-ranking-today.txt
+  | tee ${APP_DIR}/public/referer-ranking-today.txt
 
 # Cache Hit Rate Today
-find /var/www/app/portalshit/log/access.log \
+find ${APP_DIR}/log/access.log \
   | xargs zcat -f \
   | grep 'cache_hit:' | grep -v 'cache_hit:-' \
   | cut -f16 | sort | uniq -c \
@@ -121,10 +122,10 @@ find /var/www/app/portalshit/log/access.log \
       print "EXPIRE\t" expire "\t(" expired_rate "%)"
       print "MISS\t" miss "\t(" miss_rate "%)"
     }' \
-  | tee /var/www/app/portalshit/public/cache-hit-rate-today.txt
+  | tee ${APP_DIR}/public/cache-hit-rate-today.txt
 
 # Spam Block
-find /var/www/app/portalshit/log/access.log \
+find ${APP_DIR}/log/access.log \
   | xargs zcat -f \
   | grep "POST" | grep -v "uri:/admin/" \
   | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c | sort -nr \
@@ -143,4 +144,4 @@ find /var/www/app/portalshit/log/access.log \
       print "BLOCK\t" block "\t(" block_rate "%)"
       print "SLIP\t" slip "\t(" slip_rate "%)"
     }' \
-  | tee /var/www/app/portalshit/public/spam-block-rate-today.txt
+  | tee ${APP_DIR}/public/spam-block-rate-today.txt
