@@ -143,6 +143,7 @@
               font-family: 'Font Awesome 5 Free';
               content: '\f105';
               margin: 0 .5em;
+              font-weight: 900;
             }
 
             &:first-child:before {
@@ -281,6 +282,7 @@
             font-family: 'Font Awesome 5 Free';
             content: '\f100';
             margin-right: 5px;
+            font-weight: 900;
           }
         }
 
@@ -290,6 +292,7 @@
             font-family: 'Font Awesome 5 Free';
             content: '\f101';
             margin-left: 5px;
+            font-weight: 900;
           }
         }
       }
