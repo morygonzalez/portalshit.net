@@ -22,23 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         item.onclick = (e) => {
           const target = e.target.tagName === 'IMG' ? e.target.parentNode : e.target;
           const productTitle = target.dataset.productTitle;
-          let eventType;
-          switch (target.className) {
-            case 'title':
-              eventType = 'title click';
-              break;
-            case 'price':
-              eventType = 'price click';
-              break;
-            case 'button':
-              eventType = 'button click';
-              break;
-            case 'image':
-              eventType = 'image click';
-              break;
-            default:
-              eventType = 'unknown click';
-              break;
+          let eventType = 'unknown click';
+          if (typeof target.className !== 'undefined') {
+            eventType = `${target.className} click`;
           }
           if (typeof ga !== 'undefined') {
             ga('send', 'event', 'Amazon Affiliate', eventType, productTitle);
