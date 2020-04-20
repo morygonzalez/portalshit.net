@@ -1,7 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+const init = (node = document) => {
   const checkImageSize = (target) => {
     if (typeof target === 'undefined') {
-      return;
+      return false;
     }
     const width = target.naturalWidth;
     const height = target.naturalHeight;
@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const selectors = "#content article .body img, #content article .similar img";
-  const lazyImages = [].slice.call(document.querySelectorAll(selectors));
+  const selectors = '#content article .body img, #content article .similar img';
+  const lazyImages = [].slice.call(node.querySelectorAll(selectors));
 
-  if ("IntersectionObserver" in window) {
+  if ('IntersectionObserver' in window) {
     for (let image of lazyImages) {
       const src = image.src;
       image.dataset.src = src;
@@ -45,15 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     // Possibly fall back to a more compatible method here
   }
-});
+}
 
-document.body.addEventListener("AutoPagerize_DOMNodeInserted", (e) => {
-    const node       = e.target
-    const requestURL = e.newValue
-    const parentNode = e.relatedNode
-    init(node);
-  }, false
-);
+document.addEventListener('DOMContentLoaded', init);
+
+document.body.addEventListener('AutoPagerize_DOMNodeInserted', (e) => {
+  const node       = e.target
+  const requestURL = e.newValue
+  const parentNode = e.relatedNode
+  init(node);
+}, false);
 
 $(() => {
   if ($(window).width() <= 640) {
