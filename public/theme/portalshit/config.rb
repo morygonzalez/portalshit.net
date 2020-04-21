@@ -14,17 +14,17 @@ module Lokka
       }
     end
 
-    before do
-      query = <<~SQL
-        SELECT categories.slug, categories.title, COUNT(1) as count
-        FROM categories
-        INNER JOIN entries ON entries.category_id = categories.id
-        WHERE entries.type = 'Post' AND entries.draft = FALSE
-        GROUP BY categories.slug, categories.title
-        ORDER BY count DESC;
-      SQL
-      @categories = Category.repository.adapter.select(query).map(&:to_h)
-    end
+    # before do
+    #   query = <<~SQL
+    #     SELECT categories.slug, categories.title, COUNT(1) as count
+    #     FROM categories
+    #     INNER JOIN entries ON entries.category_id = categories.id
+    #     WHERE entries.type = 'Post' AND entries.draft = FALSE
+    #     GROUP BY categories.slug, categories.title
+    #     ORDER BY count DESC;
+    #   SQL
+    #   @categories = Category.repository.adapter.select(query).map(&:to_h)
+    # end
   end
 end
 
