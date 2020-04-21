@@ -48,15 +48,14 @@
                 %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
 
         #header-bottom
-          -# - if index?
-          -#   %nav#category-nav
-          -#     %ul#categories
-          -#       - @categories.each do |category|
-          -#         %li= link_to category[:title],
-          -#           "/category/#{category[:slug]}/",
-          -#           title: "#{category[:title]} (#{category[:count]})"
-          -# - else
-          - if entry?
+          - if index?
+            %nav#category-nav
+              %ul#categories
+                - sorted_categories.each do |category|
+                  %li= link_to category[:title],
+                    "/category/#{category[:slug]}/",
+                    title: "#{category[:title]} (#{category[:count]})"
+          - else
             %nav#bread_crumb= bread_crumb
           #header-bg-description
             %span.header-bg-light-description= header_bg[:'data-bg-light-description']
