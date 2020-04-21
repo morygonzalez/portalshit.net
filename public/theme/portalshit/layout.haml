@@ -1,3 +1,4 @@
+- load(File.join(settings.theme, @theme.name, 'config.rb'))
 !!! 5
 %html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja }
   %head
@@ -24,7 +25,6 @@
       });
     = header
   %body
-    - load(File.join(settings.theme, @theme.name, 'config.rb'))
     - header_bg = settings.header_bg_params
     %header#header{header_bg}
       #header-inner
@@ -51,8 +51,10 @@
           - if index?
             %nav#category-nav
               %ul#categories
-                - Category.all.each do |category|
-                  %li= link_to category.title, "/category/#{category.slug}/"
+                - @categories.each do |category|
+                  %li= link_to category[:title],
+                    "/category/#{category[:slug]}/",
+                    title: "#{category[:title]} (#{category[:count]})"
           - else
             %nav#bread_crumb= bread_crumb
           #header-bg-description
