@@ -1,4 +1,4 @@
-const init = (node = document) => {
+const init = (node) => {
   const checkImageSize = (target) => {
     if (typeof target === 'undefined') {
       return false;
@@ -47,8 +47,7 @@ const init = (node = document) => {
   }
 }
 
-document.addEventListener('DOMContentLoaded', init);
-
+document.addEventListener('DOMContentLoaded', () => init(document));
 document.body.addEventListener('AutoPagerize_DOMNodeInserted', (e) => {
   const node       = e.target
   const requestURL = e.newValue
