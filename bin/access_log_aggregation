@@ -21,6 +21,7 @@ find ${APP_DIR}/log/access.log* \
   | xargs zcat -f \
   | grep -viE ${UA_TO_IGNORE} \
   | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+  | sed -e 's/\?amp=1//' \
   | cut -f12 | sed -e 's/referer://' \
   | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
@@ -94,6 +95,7 @@ find ${APP_DIR}/log/access.log \
   | grep -viE ${UA_TO_IGNORE} \
   | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
   | cut -f12 | sed -e 's/referer://' \
+  | sed -e 's/\?amp=1//' \
   | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee ${APP_DIR}/public/referer-ranking-today.txt
