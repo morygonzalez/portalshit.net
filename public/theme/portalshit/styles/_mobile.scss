@@ -87,7 +87,7 @@
             a {
               margin-left: 0.2em;
             }
-            a:before {
+            a::before {
               margin-left: -0.12em;
               font-size: 300%;
             }
@@ -96,7 +96,7 @@
         .body {
           width: unset;
           blockquote {
-            &:before {
+            &::before {
               left: -0.15em;
               font: 400% Georgia, "Times New Roman", Times, serif;
             }
