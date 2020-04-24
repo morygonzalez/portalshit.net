@@ -170,7 +170,7 @@
     margin-right: 2em;
 
     .item-title {
-      &:before {
+      &::before {
         content: none;
         margin: 0;
       }
@@ -185,7 +185,7 @@
     }
 
     .item-meta span:not(:last-child) {
-      &:after {
+      &::after {
         content: '/';
         margin-left: .5em;
       }

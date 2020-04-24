@@ -557,7 +557,7 @@ ul.pager {
           &:visited::before {
             // color: $light-visited-link-color;
           }
-          &:hover:before {
+          &:hover::before {
             color: $light-hover-link-color;
           }
         }

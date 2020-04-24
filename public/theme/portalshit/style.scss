@@ -139,15 +139,16 @@
           li {
             display: inline;
 
-            &:before {
+            &::before {
               font-family: 'Font Awesome 5 Free';
               content: '\f105';
               margin: 0 .5em;
               font-weight: 900;
             }
 
-            &:first-child:before {
-              content: '';
+            &:first-child::before {
+              margin: initial;
+              content: none;
             }
           }
         }
@@ -227,7 +228,7 @@
               text-shadow: $dark-text-shadow-color 0 1px 0;
             }
 
-            &:before {
+            &::before {
               content: "•";
               font-size: 360%;
               text-shadow: none;
@@ -278,7 +279,8 @@
 
         .prev {
           text-align: left;
-          &:before {
+
+          &::before {
             font-family: 'Font Awesome 5 Free';
             content: '\f100';
             margin-right: 5px;
@@ -288,7 +290,8 @@
 
         .next {
           text-align: right;
-          &:after {
+
+          &::after {
             font-family: 'Font Awesome 5 Free';
             content: '\f101';
             margin-left: 5px;
@@ -371,11 +374,11 @@
           li.tag {
             display: inline;
 
-            &:before {
+            &::before {
               content: ", ";
             }
 
-            &:first-child:before {
+            &:first-child::before {
               content: " ";
             }
           }
@@ -433,11 +436,11 @@
             display: inline;
             float: left;
 
-            &:before {
+            &::before {
               content: ", ";
             }
 
-            &:first-child:before {
+            &:first-child::before {
               content: " ";
             }
           }
