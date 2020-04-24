@@ -425,6 +425,20 @@ ul.pager {
   }
 }
 
+#footer {
+  .bookmark_count {
+    font-size: .7em;
+    background-color: pink;
+    font-weight: bold;
+    padding: .1em;
+
+    a {
+      color: red !important;
+      text-decoration: underline;
+    }
+  }
+}
+
 @media (prefers-color-scheme: light) {
   strong {
     color: $light-emphasis-font-color;
