@@ -74,7 +74,8 @@
                 - Post.popular.each do |post|
                   %li
                     = link_to post.title, post.link
-                    %span.created_at= l(post.created_at.to_date, format: :long)
+                    .meta
+                      %span.created_at= l(post.created_at.to_date, format: :long)
           %dl.hotentry
             %dt= t('hotentry')
             %dd
@@ -83,7 +84,8 @@
                   %li
                     =link_to post.title, post.link
                     %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
-                    %span.created_at= l(post.created_at.to_date, format: :long)
+                    .meta
+                      %span.created_at= l(post.created_at.to_date, format: :long)
           %dl.recent_entries
             %dt= t('recent_entries')
             %dd
@@ -91,15 +93,17 @@
                 - Post.recent.each do |post|
                   %li
                     = link_to post.title, post.link
-                    %span.created_at= l(post.created_at.to_date, format: :long)
+                    .meta
+                      %span.created_at= l(post.created_at.to_date, format: :long)
           %dl.recent_comments
             %dt= t('recent_comments')
             %dd
               %ul
                 - Comment.recent.each do |comment|
                   %li
-                    = link_to "#{comment.entry.title} from #{comment.name}", comment.link
-                    %span.created_at= l(comment.created_at.to_date, format: :long)
+                    = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
+                    .meta
+                      %span.created_at= l(comment.created_at.to_date, format: :long)
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
