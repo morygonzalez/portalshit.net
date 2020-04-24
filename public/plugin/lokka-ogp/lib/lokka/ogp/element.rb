@@ -120,6 +120,7 @@ module Lokka
           <html lang="ja">
             <head>
               <title><%= title %></title>
+              <meta name="robots" content="noindex,nofollow" />
               <style>
                 body {
                   margin: 0;
