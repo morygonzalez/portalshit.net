@@ -28,28 +28,8 @@ module Lokka
       end
 
       app.get '/archives/chart.json' do
-        result = Post.repository.adapter.select(
-          <<~SQL
-            SELECT
-              YEAR(entries.created_at) AS year,
-              categories.title as category,
-              COUNT(1) AS count
-            FROM entries
-            INNER JOIN categories ON categories.id = entries.category_id
-            WHERE entries.draft = FALSE AND entries.type = 'Post'
-            GROUP BY year, category
-            ORDER BY year
-          SQL
-        )
-
         content_type :json
-        grouped = result.map(&:to_h).group_by {|record| record[:year] }
-        grouped.each_with_object([]) {|(year, record), object_1|
-          object_1 << record.each_with_object({ year: year }) {|item, object_2|
-            _, category, count = item.values
-            object_2[category] = count
-          }
-        }.to_json
+        chart.to_json
       end
 
       app.get '/archives/?:year?.json' do |year|
@@ -83,16 +63,97 @@ module Lokka
     def year_list
       first_year, last_year = Post.published.aggregate(:created_at.min, :created_at.max).map(&:year)
       last_year.downto(first_year).to_a
-      # Post.published.group_by {|entry| entry.created_at.year }.transform_values(&:length)
     end
 
     def categories
       MonthPosts.categories.values.flatten.map(&:title)
     end
+
+    def chart
+      sql_chart || ruby_chart
+    end
+
+    private
+
+    def sql_chart
+      query = case Lokka.database_config.to_s
+              when /mysql/
+                mysql_query
+              when /postgres/
+                postgres_query
+              when /sqlite/
+                sqlite_query
+              else
+                nil
+              end
+      return nil if query.nil?
+
+      result = Post.repository.adapter.select(query)
+      grouped = result.map(&:to_h).group_by {|record| record[:year] }
+      grouped.each_with_object([]) {|(year, record), outer|
+        outer << record.each_with_object({ year: year }) {|item, inner|
+          _, category, count = item.values
+          inner[category] = count
+        }
+      }
+    end
+
+    def postgres_query
+      <<~SQL
+        SELECT
+          TO_CHAR(entries.created_at, 'YYYY') AS year,
+          categories.title as category,
+          COUNT(1) AS count
+        FROM entries
+        INNER JOIN categories ON categories.id = entries.category_id
+        WHERE entries.draft = FALSE AND entries.type = 'Post'
+        GROUP BY year, category
+        ORDER BY year
+      SQL
+    end
+
+    def mysql_query
+      <<~SQL
+        SELECT
+          YEAR(entries.created_at) AS year,
+          categories.title as category,
+          COUNT(1) AS count
+        FROM entries
+        INNER JOIN categories ON categories.id = entries.category_id
+        WHERE entries.draft = FALSE AND entries.type = 'Post'
+        GROUP BY year, category
+        ORDER BY year
+      SQL
+    end
+
+    def sqlite_query
+      <<~SQL
+        SELECT
+          strftime('%Y', entries.created_at) AS year,
+          categories.title as category,
+          COUNT(1) AS count
+        FROM entries
+        INNER JOIN categories ON categories.id = entries.category_id
+        WHERE entries.draft = 'f' AND entries.type = 'Post'
+        GROUP BY year, category
+        ORDER BY year
+      SQL
+    end
+
+    def ruby_chart
+      posts = Post.all(fields: %i[id category_id created_at], draft: false)
+      grouped = posts.group_by {|post| [post.created_at.year, post.category&.title] }
+      group_by_year = grouped.group_by {|(year, category), entries| year }
+      group_by_year.each_with_object([]) {|(year, records), outer|
+        outer << records.each_with_object({ year: year }) {|((_, category), entries), inner|
+          inner[category] = entries.length
+        }
+      }.reverse
+    end
   end
 
-  module AddDateTimeMethodsToEntry
-    refine Entry do
+  module AddDateTimeMethodsToPost
+    refine Post do
       def year
         created_at.year.to_s.rjust(4, '0')
       end
@@ -157,7 +218,7 @@ module Lokka
   end
 
   class MonthPosts
-    using AddDateTimeMethodsToEntry
+    using AddDateTimeMethodsToPost
 
     class << self
       def categories
