@@ -35,7 +35,7 @@ class App extends Component {
     return(
       <article>
         <Chart />
-        <Router history={history}>
+        <Router>
           <div className="archive-filter">
             <YearList update={this.updateYear} />
             <CategoryList update={this.updateCategory} activeCategory={this.state.category} />
