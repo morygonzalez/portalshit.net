@@ -495,7 +495,7 @@
 }
 
 @media screen and (min-width: 1422px) {
-  #content #main article .body > p {
+  #content #main article .body {
     img[class~="large"] {
       width: $content-max-width;
       max-width: $content-max-width;

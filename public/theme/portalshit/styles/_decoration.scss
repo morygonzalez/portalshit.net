@@ -126,13 +126,12 @@ li {
 }
 
 pre {
-  font-size: 95%;
+  font-size: .8em;
   line-height: 115%;
   padding: 1.0em 1.5em;
   background-color: $various-bg;
   white-space: pre;
   word-wrap: break-word;
-  max-width: $content-max-width * 0.9;
   color: #b5b2b2;
   text-shadow: none;
   font-family: $code-font;
