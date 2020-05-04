@@ -12,7 +12,7 @@ namespace :similar_entries do
   end
 
   def target_entry_exists?
-    Entry.last.id > Similarity.aggregate(:entry_id).max.to_i
+    Entry.last.id > Similarity.maximum(:entry_id)
   end
 
   desc 'Extract term'
@@ -196,20 +196,20 @@ namespace :similar_entries do
     SQL
 
     results = {}
-    Entry.published.all(fields: [:id]).each do |entry|
+    Entry.published.pluck(:id).each do |entry|
       db.execute(extract_similar_entries_sql, [entry.id, entry.id, entry.id])
       db.results_as_hash = true
       similarities = db.execute(search_similar_entries_sql, [entry.id, entry.id, entry.id, entry.id])
       results[entry.id] = similarities
     end
 
-    Similarity.destroy
+    Similarity.delete_all
 
     results.each_value do |similarities|
       next unless similarities.present?
       similarities.each do |s|
         conditions = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'] }
-        similarity = Similarity.first(conditions) || Similarity.new(conditions)
+        similarity = Similarity.find_or_initialize_by(conditions)
         similarity.score = s['score']
         similarity.save
       end

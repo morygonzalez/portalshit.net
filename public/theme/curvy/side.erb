@@ -1,4 +1,4 @@
-<% if about = Snippet("about") %>
+<% if about = Snippet.find_by(name: "about") %>
 <div id="profile" class="side_cont_wrapper first_side_cont_wrapper">
 	<h3 class="side_cont_title">
 	  <%= t('profile') %>

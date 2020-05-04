@@ -1,70 +1,68 @@
 # frozen_string_literal: true
 
-class Entry
-  include DataMapper::Resource
-
-  property :id, Serial
-  property :user_id, Integer
-  property :category_id, Integer
-  property :slug, Slug, length: 255
-  property :title, String, length: 255
-  property :body, Text
-  property :markup, String, length: 255
-  property :type, Discriminator
-  property :draft, Boolean, default: false
-  property :created_at, DateTime
-  property :updated_at, DateTime
+class Entry < ActiveRecord::Base
+  has_many :comments
+  has_many :taggings, as: :taggable
+  has_many :tags, through: :taggings
+  has_many :similarities
+  has_many :similar_entries, through: :similarities
 
   belongs_to :user
-  belongs_to :category, required: false
-  has n, :comments, :status
-  has n, :similarities
-  has n, :similar_entries, through: :similarities, model: 'Entry'
+  belongs_to :category
 
-  has_tags
+  validates :title, presence: true
+  validates :slug, uniqueness: true,
+                   format: %r{\A[_/0-9a-zA-Z-]+\z}, allow_blank: true
 
-  validates_presence_of :title
-  validates_uniqueness_of :slug
-  # validates_uniqueness_of :title
-  validates_with_method :updated_at, method: :validate_confliction
-  validates_format_of :slug, with: %r{^[_/0-9a-zA-Z-]+$}
+  validate :validate_confliction
+  after_save :update_fields
+  after_save :send_ping_to_pubsubhubbub
 
-  before :valid? do
-    self.category_id = nil if category_id == ''
-    self.created_at = Time.now if created_at.blank?
-    self.updated_at = Time.now if updated_at.blank?
+  default_scope { order('created_at DESC') }
+  scope :published,   -> { where(draft: false) }
+  scope :unpublished, -> { where(draft: true) }
+  scope :posts,       -> { where(type: 'Post') }
+  scope :pages,       -> { where(type: 'Page') }
+  scope :recent,
+        ->(count = 5) { limit(count) }
+  scope :between_a_year,
+        ->(time) {
+          where(created_at: time.beginning_of_year..time.end_of_year)
+        }
+  scope :between_a_month,
+        ->(time) {
+          where(created_at: time.beginning_of_month..time.end_of_month)
+        }
+  scope :search,
+        ->(word) {
+          where('title LIKE ?', word.to_s) | where('body LIKE ?', word.to_s)
+        }
+
+  def self.get_by_fuzzy_slug(id_or_slug)
+    where(slug: id_or_slug).first || where(id: id_or_slug).first
   end
 
-  after :save, :update_fields
-  after :save do
-    if Lokka.production? && !draft
-      system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
-    end
+  def raw_body
+    attributes['body']
   end
 
-  alias raw_body body
   def long_body
-    Markup.use_engine(markup, raw_body)
+    @long_body ||= Markup.use_engine(markup, raw_body)
   end
   alias body long_body
 
   def short_body
-    @short_body ||= long_body. \
-                      sub(/<!-- ?more ?-->.*/m, "<a href=\"#{link}\">#{I18n.t('continue_reading')}</a>").html_safe
+    @short_body ||= long_body&.sub(
+      /<!-- ?more ?-->.*/m, %(<a href="#{link}">#{I18n.t('continue_reading')}</a>)
+    )&.html_safe
   end
 
-  def comments
-    @comment = Comment.all(status: Comment::APPROVED, entry_id: id)
-  end
+  def description
+    src = long_body&.tr("\n", '')
+    return if src.nil?
 
-  def tag_collection=(string)
-    reg = /[^\p{Word}._]/iu
-    @tag_list = string.to_s.split(',').map do |name|
-      name.force_encoding(Encoding.default_external).gsub(reg, '').strip
-    end
-    @tag_list = @tag_list.reject(&:blank?).uniq.sort
-
-    update_tags
+    desc = src =~ %r{<p[^>]*>(.+?)</p>}i ? Regexp.last_match(1) : src[0..50]
+    desc.gsub(%r{<[^/]+/>}, ' ').gsub(%r{</[^/]+>}, ' ').gsub(/<[^>]+>/, '').html_safe
   end
 
   def fuzzy_slug
@@ -77,6 +75,22 @@ class Entry
 
   def edit_link
     "/admin/#{self.class.to_s.tableize}/#{id}/edit"
+  end
+
+  def tag_list
+    @tag_list ||= tags.pluck(:name)
+  end
+
+  def tag_collection
+    tag_list.join(', ')
+  end
+
+  def tag_collection=(values)
+    regexp = /[^\p{Word}]/iu
+    new_tag_list = values.to_s.split(',').map do |name|
+      name.force_encoding(Encoding.default_external).gsub(regexp, '').strip
+    end
+    self.tags = new_tag_list.uniq.map {|name| Tag.find_or_create_by(name: name) }
   end
 
   def tags_to_html
@@ -93,6 +107,7 @@ class Entry
 
   def update_fields
     return unless @fields
+
     @fields.each do |k, v|
       send("#{k}=", v)
     end
@@ -100,16 +115,20 @@ class Entry
 
   def validate_confliction
     return true unless id
-    return true if @updated_at == self.class.get(id).updated_at
-    [false, 'The entry is updated while you were editing']
+
+    if @updated_at == self.class.find(id).updated_at
+      true
+    else
+      [false, 'The entry is updated while you were editing']
+    end
   end
 
   def method_missing(method, *args)
     attribute = method.to_s
     if attribute.match?(/=$/)
       column = attribute[0, attribute.size - 1]
-      field_name = fieldname.first(name: column)
-      field = field.first(entry_id: id, field_name_id: field_name.id)
+      field_name = FieldName.where(name: column).first
+      field = Field.where(entry_id: id, field_name_id: field_name.id).first
       if field
         field.value = args.first
       else
@@ -117,116 +136,17 @@ class Entry
       end
       field.save
     else
-      field_name = FieldName.first(name: attribute)
-      field = Field.first(entry_id: id, field_name_id: field_name.id)
+      field_name = FieldName.where(name: attribute).first
+      field = Field.where(entry_id: id, field_name_id: field_name.id).first
       field.try(:value)
     end
   end
 
-  def description
-    src = long_body.tr("\n", '')
-    desc = src =~ %r{<p[^>]*>(.+?)</p>}i ? Regexp.last_match(1) : src[0..50]
+  private
 
-    desc.gsub(%r{<[^/]+/>}, ' ').gsub(%r{</[^/]+>}, ' ').gsub(/<[^>]+>/, '').html_safe
-  end
-
-  module FinderstWithScope
-    def _default_scope
-      { order: :created_at.desc }
-    end
-
-    def first(limit = 1, query = DataMapper::Undefined)
-      query = limit unless limit.is_a? Integer
-      query = _default_scope.update(query) if query.is_a? Hash
-      query = _default_scope if query == DataMapper::Undefined
-      super(query)
-    end
-
-    def all(query = DataMapper::Undefined)
-      query = _default_scope.update(query) if query.is_a? Hash
-      query = _default_scope if query == DataMapper::Undefined
-      super(query)
+  def send_ping_to_pubsubhubbub
+    if Lokka.production? && !draft
+      system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
     end
   end
-
-  class << self
-    prepend FinderstWithScope
-
-    def get_by_fuzzy_slug(str, query = {})
-      query = { draft: false }.update(query)
-      ret = first({ slug: str }.update(query))
-      ret.blank? ? first({ id: str }.update(query)) : ret
-    end
-
-    def search(str)
-      all(:title.like => "%#{str}%") |
-        all(:body.like => "%#{str}%")
-    end
-
-    def recent(count = 5)
-      all(draft: false, limit: count)
-    end
-
-    def published
-      all(draft: false)
-    end
-
-    def unpublished
-      all(draft: true)
-    end
-  end
-end
-
-def Entry(id_or_slug)
-  Entry.get_by_fuzzy_slug(id_or_slug.to_s)
-end
-
-class Post < Entry
-  alias orig_link link
-  def link
-    if Lokka::Helpers.custom_permalink?
-      Lokka::Helpers.custom_permalink_path(
-        year:     created_at.year.to_s.rjust(4,  '0'),
-        monthnum: created_at.month.to_s.rjust(2, '0'),
-        month:    created_at.month.to_s.rjust(2, '0'),
-        day:      created_at.day.to_s.rjust(2,   '0'),
-        hour:     created_at.hour.to_s.rjust(2,  '0'),
-        minute:   created_at.min.to_s.rjust(2,   '0'),
-        second:   created_at.sec.to_s.rjust(2,   '0'),
-        post_id:  id.to_s,
-        id:       id.to_s,
-        slug:     slug || id.to_s,
-        postname: slug || id.to_s,
-        category: category ? (category.slug || category.id.to_s) : ''
-      )
-    else
-      orig_link
-    end
-  end
-
-  def next
-    @next ||= self.class.first(
-      draft: false,
-      :created_at.gt => created_at,
-      order: [:created_at.asc]
-    )
-  end
-
-  def prev
-    @prev ||= self.class.first(
-      draft: false,
-      :created_at.lt => created_at,
-      order: [:created_at.desc]
-    )
-  end
-end
-
-def Post(id_or_slug)
-  Post.get_by_fuzzy_slug(id_or_slug.to_s)
-end
-
-class Page < Entry; end
-
-def Page(id_or_slug)
-  Page.get_by_fuzzy_slug(id_or_slug.to_s)
 end

@@ -11,7 +11,7 @@ jobs:
       #     name: Install Dependencies
       #     command: |
       #       apt-get install -y sqlite3
-      - run: gem i bundler:2.0.2
+      - run: gem i bundler:2.1.2
       - checkout
       - restore_cache:
           key: portalshit-{{ checksum "Gemfile.lock" }}

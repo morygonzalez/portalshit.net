@@ -4,7 +4,6 @@ require 'rubygems'
 require 'pathname'
 require 'erb'
 require 'ostruct'
-require 'digest/sha1'
 require 'csv'
 
 module Lokka
@@ -26,22 +25,17 @@ module Lokka
     ##
     # Data Source Name
     #
-    # @return [String] DSN (Data Source Name) is configuration for database.
+    # @return [Hash] DSN (Data Source Name) is configuration for database.
     def dsn
-      database_config['dsn']
-    end
-
-    ##
-    # Data Source Hash
-    #
-    # @return [Hash] DSH (Data Source Hash) is configuration for database.
-    def dsh
-      database_config.dup.delete_if {|key, _| key == 'dsn' }
+      database_config[env]
     end
 
     def database_config
-      filename = File.exist?("#{Lokka.root}/database.yml") ? 'database.yml' : 'database.default.yml'
-      YAML.safe_load(ERB.new(File.read("#{Lokka.root}/#{filename}")).result(binding))[env]
+      @database_config ||= YAML.safe_load(ERB.new(File.read("#{Lokka.root}/db/#{database_config_file}")).result(binding))
+    end
+
+    def database_config_file
+      @database_config_file ||= File.exist?("#{Lokka.root}/db/database.yml") ? 'database.yml' : 'database.default.yml'
     end
 
     ##
@@ -66,6 +60,7 @@ module Lokka
 
     def parse_http(str)
       return [] if str.nil?
+
       locales = str.split(',')
       locales.map! do |locale|
         locale = locale.split ';q='
@@ -115,20 +110,22 @@ module Lokka
   end
 end
 
+module Rails
+  def self.root
+    Lokka.root
+  end
+end
+
 require 'active_support/all'
+require 'active_record'
 require 'sinatra/base'
 require 'sinatra/reloader'
 require 'sinatra/flash'
 require 'sinatra/cache'
+require 'sinatra/namespace'
+require 'kaminari/activerecord'
+require 'kaminari/sinatra'
 require 'padrino-helpers'
-require 'dm-core'
-require 'dm-timestamps'
-require 'dm-migrations'
-require 'dm-validations'
-require 'dm-types'
-require 'dm-is-tree'
-require 'dm-tags'
-require 'dm-pager'
 require 'dotenv/load'
 require 'coderay'
 require 'kramdown'
@@ -146,22 +143,12 @@ require 'securerandom'
 require 'aws-sdk-s3'
 require 'aws-sdk-sesv2'
 require 'mimemagic'
+require 'lokka/helpers/helpers'
+require 'lokka/helpers/permalink_helper'
+require 'lokka/helpers/render_helper'
 require 'lokka/database'
-require 'lokka/models/theme'
-require 'lokka/models/user'
-require 'lokka/models/site'
-require 'lokka/models/option'
-require 'lokka/models/entry'
-require 'lokka/models/similarity'
-require 'lokka/models/category'
-require 'lokka/models/comment'
-require 'lokka/models/field_name'
-require 'lokka/models/field'
-require 'lokka/models/snippet'
-require 'lokka/models/tag'
-require 'lokka/models/markup'
+require 'lokka/models'
 require 'lokka/importer'
 require 'lokka/before'
-require 'lokka/helpers/helpers'
-require 'lokka/helpers/render_helper'
 require 'lokka/app'
+require 'lokka/version'
