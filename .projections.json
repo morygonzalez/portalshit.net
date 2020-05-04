@@ -1,0 +1,34 @@
+{
+  "lib/lokka/models/*.rb": {
+    "alternate": "spec/unit/{}_spec.rb",
+    "type": "model"
+  },
+  "db/*.rb": {
+    "type": "db"
+  },
+  "lib/lokka/helpers/*.rb": {
+    "alternate": "spec/unit/helpers_spec.rb",
+    "type": "helper"
+  },
+  "lib/lokka/handlers/*.rb": {
+    "alternate": "spec/unit/handler_spec.rb",
+    "type": "handler"
+  },
+  "lib/lokka/app/entries.rb": {
+    "alternate": "spec/integration/app_spec.rb",
+    "type": "entry"
+  },
+  "lib/lokka/app/admin/*.rb": {
+    "alternate": "spec/integration/admin/{}_spec.rb",
+    "type": "admin"
+  },
+  "public/theme/*/": {
+    "type": "theme"
+  },
+  "spec/*_spec.rb": {
+    "type": "spec"
+  },
+  "spec/factories.rb": {
+    "type": "factory"
+  }
+}
