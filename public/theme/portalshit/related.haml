@@ -16,7 +16,7 @@
     %section.similar
       %h3 この記事に似ている記事
       %ul
-        - @entry.similarities.all(order: [:score.desc], limit: 6).each do |similarity|
+        - @entry.similarities.order(score: :desc).limit(6).each do |similarity|
           - similar = similarity.similar_entry
           %li
             .title

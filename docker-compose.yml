@@ -21,8 +21,9 @@ services:
     command: ['bundle', 'exec', 'puma']
     volumes:
       - .:/app
-      - bundle:/app/.bundle
-      - vendor:/app/vendor
+      - bundle:/usr/local/bundle
+      - app_bundle:/app/.bundle
+k     - vendor:/app/vendor
     ports:
       - "3000:3000"
     depends_on:

@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 
-require 'dm-serializer/to_json'
-
 module Lokka
   module Archives
     def self.registered(app)
       app.get '/archives.json' do
-        posts = Post.all(
-          fields: %i[id category_id slug title created_at],
-          draft: false
-        )
+        posts = Post.published.joins(:category)
         month_posts = MonthPosts.generate(posts)
 
         cache_control :public, :must_revalidate, max_age: 5.minutes
@@ -33,9 +28,7 @@ module Lokka
       end
 
       app.get '/archives/?:year?.json' do |year|
-        posts = Post.all(
-          fields: %i[id category_id slug title created_at],
-          draft: false,
+        posts = Post.published.joins(:category).where(
           created_at: (Time.new(year)..Time.new(year).end_of_year)
         )
         month_posts = MonthPosts.generate(posts)
@@ -61,12 +54,13 @@ module Lokka
 
   module Helpers
     def year_list
-      first_year, last_year = Post.published.aggregate(:created_at.min, :created_at.max).map(&:year)
+      first_year = Post.published.minimum(:created_at).year
+      last_year = Post.published.maximum(:created_at).year
       last_year.downto(first_year).to_a
     end
 
     def categories
-      MonthPosts.categories.values.flatten.map(&:title)
+      MonthPosts.categories.map(&:title)
     end
 
     def chart
@@ -88,8 +82,8 @@ module Lokka
               end
       return nil if query.nil?
 
-      result = Post.repository.adapter.select(query)
-      grouped = result.map(&:to_h).group_by {|record| record[:year] }
+      result = ActiveRecord::Base.connection.select_all(query)
+      grouped = result.map(&:to_h).group_by {|record| record['year'] }
       grouped.each_with_object([]) {|(year, record), outer|
         outer << record.each_with_object({ year: year }) {|item, inner|
           _, category, count = item.values
@@ -141,7 +135,7 @@ module Lokka
     end
 
     def ruby_chart
-      posts = Post.all(fields: %i[id category_id created_at], draft: false)
+      posts = Post.unscoped.published.select(%i[id category_id created_at]).includes(:category)
       grouped = posts.group_by {|post| [post.created_at.year, post.category&.title] }
       group_by_year = grouped.group_by {|(year, category), entries| year }
       group_by_year.each_with_object([]) {|(year, records), outer|
@@ -193,7 +187,7 @@ module Lokka
       def clever_link
         if permalink_format
           params = permalink_keys.each_with_object({}) {|key, hash| hash[key] = send(key) }
-          helper.custom_permalink_path(params)
+          permalink_helper.custom_permalink_path(params)
         else
           slug
         end
@@ -201,12 +195,12 @@ module Lokka
 
       private
 
-      def helper
-        Lokka::Helpers
+      def permalink_helper
+        Lokka::PermalinkHelper
       end
 
       def permalink_format
-        @permalink_format ||= helper.custom_permalink_format if helper.custom_permalink?
+        @permalink_format ||= permalink_helper.custom_permalink_format if permalink_helper.custom_permalink?
       end
 
       def permalink_keys
@@ -222,15 +216,19 @@ module Lokka
 
     class << self
       def categories
-        @categories ||= Category.all(fields: %i[id slug title]).sort_by {|c| -c.entries.count }.group_by(&:id)
+        @categories ||= Category.find(
+          Category.joins(:entries).where(entries: Post.published).
+          group(:id).order(count_entries_id: :desc).count(:'entries.id').
+          keys
+        )
       end
 
       def generate(posts)
-        posts.group_by {|post| post.created_at.beginning_of_month }.
+        posts.group_by {|post| post.created_at.beginning_of_month.to_formatted_s(:db) }.
           each_with_object({}) do |(month, month_posts), object|
             object[month] ||= []
             month_posts.each do |post|
-              category = categories[post.category_id]&.first || {}
+              category = categories.find {|c| c.id == post.category_id }
               object[month] << {
                 id: post.id,
                 category: { id: category[:id], title: category[:title], slug: category[:slug] },

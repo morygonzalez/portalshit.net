@@ -18,6 +18,7 @@ module Lokka
       end
 
       return ret if ret.present?
+
       raise Lokka::NoTemplateError, "Template not found. #{[names.join(', ')]}"
     end
 

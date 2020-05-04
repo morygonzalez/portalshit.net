@@ -8,11 +8,11 @@ end
 
 shared_context 'in site' do
   before do
-    create(:site)
+    FactoryGirl.create(:site)
   end
 
   after do
-    Site.destroy
-    User.destroy
+    Site.delete_all
+    User.delete_all
   end
 end

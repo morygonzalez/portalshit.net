@@ -17,17 +17,11 @@ module Lokka
 
   module Helpers
     def sorted_categories
-      @categories ||= begin
-                        query = <<~SQL
-                          SELECT categories.slug, categories.title, COUNT(1) as count
-                          FROM categories
-                          INNER JOIN entries ON entries.category_id = categories.id
-                          WHERE entries.type = 'Post' AND entries.draft = FALSE
-                          GROUP BY categories.slug, categories.title
-                          ORDER BY count DESC;
-                        SQL
-                        Category.repository.adapter.select(query).map(&:to_h)
-                      end
+      @categories ||= Category.find(
+        Category.joins(:entries).where(entries: Post.published).
+          group(:id).order(count_entries_id: :desc).count(:'entries.id').
+          keys
+      )
     end
 
     def bread_crumb
