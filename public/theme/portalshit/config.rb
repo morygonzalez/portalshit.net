@@ -29,6 +29,29 @@ module Lokka
                         Category.repository.adapter.select(query).map(&:to_h)
                       end
     end
+
+    def bread_crumb
+      bread_crumb =
+        @bread_crumbs[0..-2].each.with_index(1).
+        inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, (bread, index)|
+          html += <<~RUBY_HTML
+                      <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="#{bread[:link]}" id="#{bread[:link]}">
+                          <span itemprop="name">#{bread[:name]}</span>
+                        </a>
+                        <meta itemprop="position" content="#{index}" />
+                      </li>
+          RUBY_HTML
+        end + <<~RUBY_HTML
+            <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+              <span itemscope itemtype="http://schema.org/Thing" itemprop="item" id="#{@bread_crumbs[-1][:link]}">
+                <span itemprop="name">#{h(@bread_crumbs[-1][:name])}</span>
+              </span>
+              <meta itemprop="position" content="#{@bread_crumbs.length}" />
+            </li>
+          </ol>
+        RUBY_HTML
+        bread_crumb.html_safe
+    end
   end
 end
-
