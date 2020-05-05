@@ -12,7 +12,7 @@ namespace :similar_entries do
   end
 
   def target_entry_exists?
-    Entry.last.id > Similarity.maximum(:entry_id)
+    Similarity.count.zero? || Entry.maximum(:id) > Similarity.maximum(:entry_id)
   end
 
   desc 'Extract term'
@@ -36,7 +36,7 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    entries = Entry.published.all(fields: %i[id body])
+    entries = Entry.includes(:tags).published
     entry_frequencies = {}
     entries.each do |entry|
       words = []
@@ -196,14 +196,14 @@ namespace :similar_entries do
     SQL
 
     results = {}
-    Entry.published.pluck(:id).each do |entry|
-      db.execute(extract_similar_entries_sql, [entry.id, entry.id, entry.id])
+    Entry.published.pluck(:id).each do |entry_id|
+      db.execute(extract_similar_entries_sql, [entry_id, entry_id, entry_id])
       db.results_as_hash = true
-      similarities = db.execute(search_similar_entries_sql, [entry.id, entry.id, entry.id, entry.id])
-      results[entry.id] = similarities
+      similarities = db.execute(search_similar_entries_sql, [entry_id, entry_id, entry_id, entry_id])
+      results[entry_id] = similarities
     end
 
-    Similarity.delete_all
+    Similarity.connection.execute('TRUNCATE table similarities;')
 
     results.each_value do |similarities|
       next unless similarities.present?
