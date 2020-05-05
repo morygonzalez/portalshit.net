@@ -1,6 +1,6 @@
 %article{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
   %header
-    - if @entry.type == Post
+    - if @entry.type == 'Post'
       %nav.prevnext
         .prev
           - if @entry.next
