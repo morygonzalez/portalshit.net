@@ -5,6 +5,7 @@ ruby '~> 2.4'
 
 gem 'activerecord', '~> 5.0'
 gem 'activesupport', '~> 5.0'
+gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
 gem 'backports'
@@ -26,6 +27,7 @@ gem 'nokogiri'
 gem 'padrino-helpers'
 gem 'puma'
 gem 'puma_worker_killer'
+gem 'pry'
 gem 'rack'
 gem 'rack-flash'
 gem 'rake'
@@ -63,10 +65,8 @@ group :development do
 end
 
 group :development, :test do
-  gem 'awesome_print'
   gem 'database_cleaner-active_record'
   gem 'factory_girl', '~> 4.0'
-  gem 'pry'
   gem 'rack-test', require: 'rack/test'
   gem 'rspec', '~> 2.99'
   gem 'simplecov', require: false
