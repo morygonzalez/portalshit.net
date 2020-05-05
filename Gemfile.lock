@@ -124,6 +124,8 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
+    get_process_mem (0.2.5)
+      ffi (~> 1.0)
     haml (5.1.2)
       temple (>= 0.8.0)
       tilt
@@ -197,6 +199,9 @@ GEM
     public_suffix (4.0.4)
     puma (4.3.3)
       nio4r (~> 2.0)
+    puma_worker_killer (0.1.1)
+      get_process_mem (~> 0.2)
+      puma (>= 2.7, < 5)
     rack (1.6.13)
     rack-flash (0.1.2)
       rack
@@ -343,6 +348,8 @@ DEPENDENCIES
   parallel
   pg
   pry
+  puma
+  puma_worker_killer
   rack
   rack-flash
   rack-recaptcha2
