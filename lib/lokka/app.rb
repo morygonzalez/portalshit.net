@@ -7,7 +7,8 @@ module Lokka
     include Padrino::Helpers::TranslationHelpers
 
     configure do
-      enable :method_override, :raise_errors, :static
+      enable :method_override, :raise_errors, :static, :sessions
+      set :session_secret, ENV['SESSION_SECRET']
       set :app_file, __FILE__
       set :root, File.expand_path('../..', __dir__)
       set public_folder: proc { File.join(root, 'public') }
@@ -28,10 +29,6 @@ module Lokka
         set style, style: :compressed
       end
       ::I18n.load_path += Dir["#{root}/i18n/*.yml"]
-      use Rack::Session::Cookie, {
-        expire_after: 60 * 60 * 24 * 12,
-        secret: SecureRandom.hex(30)
-      }
       use RequestStore::Middleware
       register Sinatra::Flash
       register Padrino::Helpers
