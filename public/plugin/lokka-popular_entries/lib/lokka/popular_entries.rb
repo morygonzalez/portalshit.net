@@ -71,7 +71,7 @@ class Entry
       merged_slugs = merged_slugs.reverse[0..max].to_h
 
       entries = where(slug: merged_slugs.keys).limit(limit)
-      entries.sort_by! {|entry| merged_slugs.keys.index(entry.slug) }
+      entries = entries.sort_by {|entry| merged_slugs.keys.index(entry.slug) }
       entries.map do |entry|
         entry.bookmark_count = merged_slugs[entry.slug][:bookmark_count]
         entry.bookmark_url = merged_slugs[entry.slug][:bookmark_url]
