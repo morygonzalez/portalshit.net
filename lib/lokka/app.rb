@@ -7,7 +7,7 @@ module Lokka
     include Padrino::Helpers::TranslationHelpers
 
     configure do
-      enable :method_override, :raise_errors, :static, :sessions
+      enable :method_override, :raise_errors, :static
       set :app_file, __FILE__
       set :root, File.expand_path('../..', __dir__)
       set public_folder: proc { File.join(root, 'public') }
