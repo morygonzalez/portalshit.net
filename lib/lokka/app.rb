@@ -7,7 +7,7 @@ module Lokka
     include Padrino::Helpers::TranslationHelpers
 
     configure do
-      enable :method_override, :raise_errors, :static, :sessions
+      enable :method_override, :raise_errors, :static
       set :app_file, __FILE__
       set :root, File.expand_path('../..', __dir__)
       set public_folder: proc { File.join(root, 'public') }
@@ -22,7 +22,7 @@ module Lokka
       set :admin_per_page, 200
       set :default_locale, 'en'
       set :haml, attr_wrapper: '"'
-      set :session_secret, 'development' if development?
+      set :session_secret, ENV['SESSION_SECRET'] || SecureRandom.hex(30)
       set :protect_from_csrf, true
       supported_stylesheet_templates.each do |style|
         set style, style: :compressed
@@ -54,6 +54,7 @@ module Lokka
     end
 
     configure :development do
+      set :session_secret, 'development'
       register Sinatra::Reloader
       supported_stylesheet_templates.each do |style|
         set style, style: :expanded
