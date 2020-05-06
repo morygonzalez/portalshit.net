@@ -75,7 +75,7 @@
   }
 
   #content {
-    #main {
+    main {
       padding: .5em 5px;
       article {
         header {
@@ -221,7 +221,7 @@
     }
   }
   // Archive
-  #content #main .archive-filter {
+  #content main .archive-filter {
     flex-wrap: wrap;
 
     .year-list, .category-list, .entry-length {
