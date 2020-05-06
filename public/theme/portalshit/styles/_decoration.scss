@@ -78,7 +78,7 @@ a {
   .year-list,
   .category-list,
   .footer,
-  .pager {
+  .pagination {
     a {
       text-shadow: -1px -1px 1px #180614;
     }
@@ -338,11 +338,10 @@ kbd {
   border-bottom: solid 1px red;
 }
 
-ul.pager {
+.pagination {
   text-align: center;
 
-  li {
-    display: inline;
+  span {
     margin: 0px 5px;
   }
 }
@@ -525,7 +524,7 @@ ul.pager {
         .year-list,
         .category-list,
         .footer,
-        .pager {
+        .pagination {
           a {
             text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px;
 
