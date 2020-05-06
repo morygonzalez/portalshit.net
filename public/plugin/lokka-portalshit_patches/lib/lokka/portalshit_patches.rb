@@ -2,7 +2,19 @@
 
 module Lokka
   module PortalshitPatches
-    def self.registered(app); end
+    def self.registered(app)
+      app.get '/index.atom' do
+        @posts = Post.preload(:category, :user).
+                   published.
+                   page(params[:page] || 1).
+                   per(100).
+                   order(@site.default_order)
+        @posts = apply_continue_reading(@posts)
+
+        content_type 'application/atom+xml', charset: 'utf-8'
+        builder :'lokka/index'
+      end
+    end
   end
 end
 
