@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 desc 'Detect and update similar entries'
-task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
+task :similar_entries, [:force] => %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export] do |task, arguments|
+  @force = arguments[:force].present? && arguments[:force] == 'true'
+end
 
 namespace :similar_entries do
   def db
@@ -12,6 +14,7 @@ namespace :similar_entries do
   end
 
   def target_entry_exists?
+    return false if @force
     Similarity.count.zero? || Entry.maximum(:id) > Similarity.maximum(:entry_id)
   end
 
