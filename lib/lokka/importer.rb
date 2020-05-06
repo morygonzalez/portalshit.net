@@ -12,9 +12,9 @@ module Lokka
       def import
         doc = Nokogiri::XML(@file.read.gsub(//, ''))
         doc.xpath('/rss/channel',
-          'content' => 'http://purl.org/rss/1.0/modules/content/',
-          'wp' => 'http://wordpress.org/export/1.1/',
-          'dc' => 'http://purl.org/dc/elements/1.1/').each do |channel|
+                  'content' => 'http://purl.org/rss/1.0/modules/content/',
+                  'wp' => 'http://wordpress.org/export/1.1/',
+                  'dc' => 'http://purl.org/dc/elements/1.1/').each do |channel|
           Site.first.update(
             title: channel.xpath('title').text,
             description: channel.xpath('description').text

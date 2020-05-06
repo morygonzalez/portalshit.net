@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Post do
   context 'with slug' do
-    subject { build :post_with_slug }
+    subject { create :post_with_slug }
 
     its(:link) { should eq('/welcome-lokka') }
 
@@ -45,18 +45,17 @@ describe Post do
   end
 
   context 'markup' do
-    [:kramdown, :redcloth].each do |markup|
+    %i[kramdown redcloth].each do |markup|
       describe "a post using #{markup}" do
-        let(:post) { create(markup) }
-        let(:regexp) { %r{<h1.*>(<a name.+</a><span .+>)*hi!(</span>)*</h1>\s*<p>#{markup} test</p>} }
-        it { post.body.should_not eq(post.raw_body) }
-        it { post.body.tr("\n", '').should match(regexp) }
+        let(:post) { create(:post, markup) }
+        it { post.body.should_not == post.raw_body }
+        it { post.long_body.should match('<h1') }
       end
     end
 
     context 'default' do
       let(:post) { build :post }
-      it { post.body.should eq(post.raw_body) }
+      it { post.body.should == post.long_body }
     end
   end
 
@@ -91,10 +90,34 @@ describe Post do
   end
 
   describe '#tag_collection=' do
-    let(:entry) { create(:entry) }
-    before { entry.tag_collection = 'foo,bar' }
-    it 'should update tags' do
-      expect { entry.save }.to change { entry.tags }
+    context 'Assign new tags' do
+      let(:entry) { create(:entry) }
+
+      subject do
+        -> {
+          entry.tag_collection = 'foo,bar'
+          entry.save
+        }
+      end
+
+      it 'should update tags' do
+        is_expected.to change { entry.reload.tags.length }.from(0).to(2)
+      end
+    end
+
+    context 'Update tag assignment' do
+      let(:entry) { create(:entry, tag_collection: 'a, b, c') }
+
+      subject do
+        -> {
+          entry.tag_collection = 'foo,bar'
+          entry.save
+        }
+      end
+
+      it 'should update tags' do
+        is_expected.to change { entry.reload.tags.length }.from(3).to(2)
+      end
     end
   end
 

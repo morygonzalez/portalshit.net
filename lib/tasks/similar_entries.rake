@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 desc 'Detect and update similar entries'
-task similar_entries: %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export]
+task :similar_entries, [:force] => %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export] do |task, arguments|
+  @force = arguments[:force].present? && arguments[:force] == 'true'
+end
 
 namespace :similar_entries do
   def db
@@ -12,7 +14,8 @@ namespace :similar_entries do
   end
 
   def target_entry_exists?
-    Entry.last.id > Similarity.aggregate(:entry_id).max.to_i
+    return false if @force
+    Similarity.count.zero? || Entry.maximum(:id) > Similarity.maximum(:entry_id)
   end
 
   desc 'Extract term'
@@ -36,7 +39,7 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    entries = Entry.published.all(fields: %i[id body])
+    entries = Entry.includes(:tags).published
     entry_frequencies = {}
     entries.each do |entry|
       words = []
@@ -196,20 +199,20 @@ namespace :similar_entries do
     SQL
 
     results = {}
-    Entry.published.all(fields: [:id]).each do |entry|
-      db.execute(extract_similar_entries_sql, [entry.id, entry.id, entry.id])
+    Entry.published.pluck(:id).each do |entry_id|
+      db.execute(extract_similar_entries_sql, [entry_id, entry_id, entry_id])
       db.results_as_hash = true
-      similarities = db.execute(search_similar_entries_sql, [entry.id, entry.id, entry.id, entry.id])
-      results[entry.id] = similarities
+      similarities = db.execute(search_similar_entries_sql, [entry_id, entry_id, entry_id, entry_id])
+      results[entry_id] = similarities
     end
 
-    Similarity.destroy
+    Similarity.connection.execute('TRUNCATE table similarities;')
 
     results.each_value do |similarities|
       next unless similarities.present?
       similarities.each do |s|
         conditions = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'] }
-        similarity = Similarity.first(conditions) || Similarity.new(conditions)
+        similarity = Similarity.find_or_initialize_by(conditions)
         similarity.score = s['score']
         similarity.save
       end

@@ -75,7 +75,7 @@
   }
 
   #content {
-    #main {
+    main {
       padding: .5em 5px;
       article {
         header {
@@ -178,9 +178,9 @@
           }
         }
       }
-      .pager {
+      .pagination {
         -webkit-padding-start: 0 !important;
-        li {
+        span {
           margin: 0.15em;
         }
       }
@@ -221,7 +221,7 @@
     }
   }
   // Archive
-  #content #main .archive-filter {
+  #content main .archive-filter {
     flex-wrap: wrap;
 
     .year-list, .category-list, .entry-length {

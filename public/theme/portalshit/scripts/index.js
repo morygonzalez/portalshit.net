@@ -24,7 +24,7 @@ const init = (node) => {
     });
   });
 
-  const selectors = '#content article .body img, #content article .similar img';
+  const selectors = '#content article .body img, #content aside .similar img';
   const lazyImages = [].slice.call(node.querySelectorAll(selectors));
 
   if ('IntersectionObserver' in window) {
