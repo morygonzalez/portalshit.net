@@ -28,7 +28,7 @@ require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.7.0'
+set :rbenv_ruby, '2.7.1'
 set :rbenv_custom_path, '/var/www/app/.rbenv'
 
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
