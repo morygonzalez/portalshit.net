@@ -90,7 +90,7 @@
             %dt= t('recent_entries')
             %dd
               %ul
-                - Post.recent.each do |post|
+                - Post.published.recent.each do |post|
                   %li
                     = link_to post.title, post.link
                     .meta
