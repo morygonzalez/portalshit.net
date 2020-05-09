@@ -14,6 +14,22 @@ module Lokka
         content_type 'application/atom+xml', charset: 'utf-8'
         builder :'lokka/index'
       end
+
+      app.get '/sitemap.xml' do
+        @categories = Category.includes(:entries).where(entries: { draft: false }).all
+        content_type 'application/xml', charset: 'utf-8'
+        builder :'plugin/lokka-portalshit_patches/public/lokka/sitemap'
+      end
+
+      app.get '/sitemap/categories/:slug' do
+        category = Category.get_by_fuzzy_slug(params[:slug]) || halt(404)
+        @posts = category.entries.published.
+                   includes(:category, :tags, :user).
+                   order(@site.default_order)
+        @posts = apply_continue_reading(@posts)
+        content_type 'application/xml', charset: 'utf-8'
+        builder :'plugin/lokka-portalshit_patches/public/lokka/categories/sitemap'
+      end
     end
   end
 end
