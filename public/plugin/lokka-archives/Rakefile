@@ -11,9 +11,15 @@ namespace :'plugin:archives' do
 
   desc 'Build JavaScript'
   task build_js: [:install] do
-    command = <<~SHELL
-      cd #{__dir__} && npm run build
-    SHELL
+    command = if ENV['LOKKA_ENV'] == 'proudction' || ENV['RACK_ENV'] == 'production'
+                <<~SHELL
+                  cd #{__dir__} && npm run production-build
+                SHELL
+              else
+                <<~SHELL
+                  cd #{__dir__} && npm run build
+                SHELL
+              end
     system(command)
   end
 end
