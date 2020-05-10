@@ -12,8 +12,8 @@ namespace :'plugin:archives' do
   desc 'Build JavaScript'
   task build_js: [:install] do
     command = <<~SHELL
-      cd #{__dir__} && npm run build
-    SHELL
+                cd #{__dir__} && env NODE_ENV=production ./node_modules/.bin/webpack --config webpack.production.config.js
+              SHELL
     system(command)
   end
 end

@@ -57,9 +57,21 @@ append :linked_dirs,
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-set :bundle_without, %w{development test postgresql sqlite batch}.join(' ')
+set :bundle_without, %w{test postgresql sqlite batch}.join(' ')
 
 namespace :deploy do
+  desc 'Build JavaScript'
+  task :build_js do
+    on roles(:web) do
+      within release_path do
+        execute :rake, :'admin:build_js'
+        execute :rake, :'theme:portalshit:build_js'
+        execute :rake, :'plugin:archives:build_js'
+      end
+    end
+  end
+  before :restart, :build_js
+
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
@@ -67,7 +79,6 @@ namespace :deploy do
       # execute :touch, release_path.join('tmp/restart.txt')
     end
   end
-
   after :publishing, :restart
 
   after :restart, :clear_cache do
