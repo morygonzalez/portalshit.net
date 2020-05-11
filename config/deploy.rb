@@ -64,7 +64,6 @@ namespace :deploy do
   task :build_js do
     on roles(:web) do
       within release_path do
-        execute :rake, :'admin:build_js'
         execute :rake, :'theme:portalshit:build_js'
         execute :rake, :'plugin:archives:build_js'
       end
