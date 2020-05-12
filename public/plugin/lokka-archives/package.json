@@ -28,12 +28,13 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "webpack-manifest-plugin": "^2.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/.bin/webpack --config webpack.config.js",
-    "production-build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack.production.config.js"
+    "production-build": "./node_modules/.bin/webpack --config webpack.production.config.js"
   },
   "author": "morygonzalez",
   "license": "MIT"
