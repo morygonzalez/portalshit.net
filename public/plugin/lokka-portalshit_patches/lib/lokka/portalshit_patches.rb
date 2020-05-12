@@ -7,7 +7,7 @@ module Lokka
         @posts = Post.preload(:category, :user).
                    published.
                    page(params[:page] || 1).
-                   per(100).
+                   per(20).
                    order(@site.default_order)
         @posts = apply_continue_reading(@posts)
 
