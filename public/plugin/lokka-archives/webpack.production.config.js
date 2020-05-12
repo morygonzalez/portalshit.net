@@ -1,13 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
   mode: 'production',
   entry: {
-    index: './src/index.js',
+    index: './src/index.js'
   },
   output: {
-    filename: 'script.js',
+    filename: '[name]-[hash].js',
     path: path.resolve(__dirname, 'assets')
   },
   performance: {
@@ -33,5 +34,8 @@ module.exports = {
       }
     ]
   },
-  plugins: [new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)],
+  plugins: [
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new ManifestPlugin()
+  ],
 };

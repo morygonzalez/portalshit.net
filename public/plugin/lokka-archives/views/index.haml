@@ -1,7 +1,5 @@
-- assets_path = "/plugin/lokka-archives/assets"
-- script_path = Lokka.env == 'development' ? "/plugin/lokka-archives/build" : "/plugin/lokka-archives/assets"
-%link{ rel: 'stylesheet', type: 'text/css', href: "#{assets_path}/style.css" }
+%link{ rel: 'stylesheet', type: 'text/css', href: "#{archives_assets_path}/style.css" }
 
 #root
 
-%script(src="#{asset_path(:js, "#{script_path}/script.js")}")
+%script(src="#{asset_path(:js, archives_javascript_path('index.js'))}")
