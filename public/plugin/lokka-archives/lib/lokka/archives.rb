@@ -76,17 +76,18 @@ module Lokka
       '/plugin/lokka-archives/assets'
     end
 
-    def manifest
-      @manifest ||= begin
-                      file_path = File.join(Lokka.root, 'public', archives_assets_path, 'manifest.json')
-                      content = File.open(file_path).read
-                      manifest = JSON.parse(content)
-                    end
+    def archives_manifest
+      @archives_manifest ||= \
+        begin
+          file_path = File.join(Lokka.root, 'public', archives_assets_path, 'manifest.json')
+          content = File.open(file_path).read
+          JSON.parse(content)
+        end
     end
 
     def archives_javascript_path(file_name)
       if Lokka.production?
-        "#{archives_assets_path}/#{manifest[file_name]}"
+        "#{archives_assets_path}/#{archives_manifest[file_name]}"
       else
         "/plugin/lokka-archives/build/#{file_name}"
       end
