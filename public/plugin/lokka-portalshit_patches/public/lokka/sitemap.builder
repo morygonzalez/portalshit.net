@@ -6,7 +6,7 @@ xml.sitemapindex(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') do
   @categories.each do |category|
     xml.sitemap do
       xml.loc "#{base_url}/sitemap/categories/#{category.slug}"
-      xml.lastmod category.entries.published.first.updated_at.to_s
+      xml.lastmod category.entries.published.first.updated_at.to_s(:iso8601)
     end
   end
 end

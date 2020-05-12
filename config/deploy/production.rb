@@ -39,8 +39,6 @@ role :db,  %w{app@portalshit.net}
 # setting per server overrides global ssh_options
 
 set :newrelic_enable, true
-
 set :default_env, {
-  'LOKKA_ENV' => 'production',
-  'NODE_ENV' => 'production'
+  'LOKKA_ENV' => 'production'
 }

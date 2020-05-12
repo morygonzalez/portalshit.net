@@ -12,7 +12,7 @@ namespace :'theme:portalshit' do
   desc 'Build JavaScript'
   task build_js: [:install] do
     command = <<~SHELL
-      cd #{__dir__} && npm run build
+      cd #{__dir__} && ./node_modules/.bin/webpack --config webpack.config.js
     SHELL
     system(command)
   end

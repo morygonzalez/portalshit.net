@@ -98,7 +98,7 @@ namespace :admin do
 
   desc 'Build admin js'
   task build_js: [:install_deps] do
-    system('cd public/admin && npm run build')
+    system('cd public/admin && ./node_modules/.bin/webpack --config webpack.config.js')
   end
 end
 

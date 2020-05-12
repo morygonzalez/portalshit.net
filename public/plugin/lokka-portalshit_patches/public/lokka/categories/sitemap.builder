@@ -6,7 +6,7 @@ xml.urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') do
   @posts.each do |post|
     xml.url do
       xml.loc base_url + post.link
-      xml.lastmod post.updated_at.to_s
+      xml.lastmod post.updated_at.to_s(:iso8601)
     end
   end
 end
