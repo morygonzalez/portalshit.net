@@ -7,7 +7,7 @@ module.exports = {
     index: './src/index.js',
   },
   output: {
-    filename: 'script.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'build')
   },
   module: {
@@ -29,6 +29,8 @@ module.exports = {
       }
     ]
   },
-  plugins: [new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)],
+  plugins: [
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+  ],
   devtool: 'inline-source-map'
 };
