@@ -1,13 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
+  mode: 'production',
   entry: {
-    index: './scripts/index.js',
+    index: './src/index.js',
   },
   output: {
-    filename: 'script.js',
-    path: path.resolve(__dirname)
+    filename: '[name]-[hash].js',
+    path: path.resolve(__dirname, 'scripts')
   },
   module: {
     rules: [
@@ -27,7 +29,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
-    })
+    }),
+    new ManifestPlugin()
   ],
-  mode: 'production'
 };

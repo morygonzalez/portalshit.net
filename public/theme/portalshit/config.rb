@@ -47,5 +47,18 @@ module Lokka
         RUBY_HTML
         bread_crumb.html_safe
     end
+
+    def portalshit_manifest
+      @portalshit_manifest ||= \
+        begin
+          file_path = File.join(File.dirname(__FILE__), 'scripts', 'manifest.json')
+          content = File.open(file_path).read
+          manifest = JSON.parse(content)
+        end
+    end
+
+    def portalshit_javascript_path(file_name)
+      "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
+    end
   end
 end
