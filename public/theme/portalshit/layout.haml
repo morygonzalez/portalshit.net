@@ -2,9 +2,7 @@
 !!! 5
 %html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja }
   %head
-    %meta{ 'http-equiv': 'Content-Type', content: 'text/html; charset=utf-8' }
-    %meta{ 'http-equiv': 'Content-Style-Type', content: 'text/css' }
-    %meta{ 'http-equiv': 'Content-Script-Type', content: 'text/javascript' }
+    %meta{ charset: 'utf-8' }
     - if entry?
       %title== #{@entry.title} - #{@site.title}
     - else
@@ -61,8 +59,8 @@
             %span.header-bg-light-description= header_bg[:'data-bg-light-description']
             %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
 
-    #content
-      %main.hfeed= yield
+    %main#content.hfeed
+      = yield
 
     %footer#footer
       %aside

@@ -1,14 +1,14 @@
 %article.autopagerize_page_element.hentry{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
   %header
     %h2.title{ itemprop: 'name' }= link_to post.title, post.link, itemprop: 'url'
-    %section.meta
-      %time{ datetime: post.created_at }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+    .meta
+      %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
       - if post.category
         == | @#{link_to post.category.title, "/category/#{post.category.slug}/", itemprop: 'articleSection'}
     %aside{ style: 'display: none'}
       %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
-      %time{ datetime: post.created_at, itemprop: 'datePublished' }= post.created_at
-      %time{ datetime: post.updated_at, itemprop: 'dateModified' }= post.updated_at
+      %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
+      %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
       %span{ itemprop: 'headline' }= truncate(strip_tags(post.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, ''), length: 100)
       %span{ itemprop: 'author' }= post.user.name
       %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Organization' }
@@ -24,7 +24,7 @@
           %meta{ itemprop: :url, content: 'https://portalshit.net/imageproxy/350x/https://portalshit.net/theme/portalshit/ogp_image.png' }
         %meta{ itemprop: :width, content: 350 }
         %meta{ itemprop: :height, content: 255 }
-  %section.body{ itemprop: 'articleBody' }
+  .body{ itemprop: 'articleBody' }
     ~ post.body
   %footer.footer
     = post.tags_to_html
