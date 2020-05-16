@@ -103,6 +103,7 @@ find ${APP_DIR}/log/access.log \
 # Cache Hit Rate Today
 find ${APP_DIR}/log/access.log \
   | xargs zcat -f \
+  | grep "time:$(date "+%Y-%m-%d")" \
   | grep 'cache_hit:' | grep -v 'cache_hit:-' \
   | cut -f16 | sort | uniq -c \
   | awk '{
@@ -129,6 +130,7 @@ find ${APP_DIR}/log/access.log \
 # Spam Block
 find ${APP_DIR}/log/access.log \
   | xargs zcat -f \
+  | grep "time:$(date "+%Y-%m-%d")" \
   | grep "POST" | grep -v "uri:/admin/" \
   | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c | sort -nr \
   | awk '{
