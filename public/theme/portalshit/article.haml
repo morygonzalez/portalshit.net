@@ -11,12 +11,12 @@
       %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
       %span{ itemprop: 'headline' }= truncate(strip_tags(post.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, ''), length: 100)
       %span{ itemprop: 'author' }= post.user.name
-      %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Organization' }
+      %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
         %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-          %meta{ content: 'https://portalshit.net/theme/portalshit/ogp_image.png', itemprop: :url }
-          %meta{ content: '350', itemprop: :width }
-          %meta{ content: '255', itemprop: :height }
-        %meta{ content: post.user.name, itemprop: :name }
+          %meta{ content: 'https://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
+          %meta{ content: '128', itemprop: :width }
+          %meta{ content: '128', itemprop: :height }
+        %meta{ content: 'morygonzalez', itemprop: :name }
       %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
         - if post.images.present?
           %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.images.first}" }
