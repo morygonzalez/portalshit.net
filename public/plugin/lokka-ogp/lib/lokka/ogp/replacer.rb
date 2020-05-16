@@ -25,8 +25,8 @@ module Lokka
               next if url.blank?
               iframe = <<~HTML
                 <iframe
-                  src="#{ogp_host}/ogp?url=#{url}" scrolling="no" frameborder="0"
-                  style="display: block; width: 100%; height: 140px; max-width: 500px; margin: 10px 0px;">
+                  src="#{ogp_host}/ogp?url=#{url}"
+                  style="display: block; width: 100%; height: 140px; max-width: 500px; margin: 10px 0px; overflow-y: hidden; border: 0;">
                 </iframe>
               HTML
               node.replace(iframe)
