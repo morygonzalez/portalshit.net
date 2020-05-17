@@ -12,11 +12,17 @@
   <div id="access-ranking-today">
     <h3><a href="/access-ranking-today.txt">Access Ranking Today</a></h3>
   </div>
+  <div id="access-ranking-yesterday">
+    <h3><a href="/access-ranking-yesterday.txt">Access Ranking Yesterday</a></h3>
+  </div>
   <div id="referer-ranking">
     <h3><a href="/referer-ranking.txt">Referer Ranking</a></h3>
   </div>
   <div id="referer-ranking-today">
     <h3><a href="/referer-ranking-today.txt">Referer Ranking Today</a></h3>
+  </div>
+  <div id="referer-ranking-yesterday">
+    <h3><a href="/referer-ranking-yesterday.txt">Referer Ranking Yesterday</a></h3>
   </div>
 </div>
 <div class="hit-rate">
@@ -26,11 +32,17 @@
   <div id="cache-hit-rate-today">
     <h3><a href="/cache-hit-rate-today.txt">Cache Hit Rate Today</a></h3>
   </div>
+  <div id="cache-hit-rate-yesterday">
+    <h3><a href="/cache-hit-rate-yesterday.txt">Cache Hit Rate Yesterday</a></h3>
+  </div>
   <div id="spam-block-rate">
     <h3><a href="/spam-block-rate.txt">Spam Block Rate</a></h3>
   </div>
   <div id="spam-block-rate-today">
     <h3><a href="/spam-block-rate-today.txt">Spam Block Rate Today</a></h3>
+  </div>
+  <div id="spam-block-rate-yesterday">
+    <h3><a href="/spam-block-rate-yesterday.txt">Spam Block Rate Yesterday</a></h3>
   </div>
 </div>
 
@@ -72,11 +84,13 @@
         switch(identifier) {
           case 'access-ranking':
           case 'access-ranking-today':
+          case 'access-ranking-yesterday':
             path = match[1];
             href = `${location.protocol}//${location.host + path}`;
             return `${count} <a href="${href}">${path}</a>`;
           case 'referer-ranking':
           case 'referer-ranking-today':
+          case 'referer-ranking-yesterday':
             href = match[1];
             return `${count} <a href="${href}" rel="noreferrer">${href}</a>`;
           default:
@@ -90,13 +104,17 @@
 
   Promise.all([
     new Promise((resolve, reject) => generateElement('access-ranking')),
-    new Promise((resolve, reject) => generateElement('access-ranking-today')),
     new Promise((resolve, reject) => generateElement('referer-ranking')),
-    new Promise((resolve, reject) => generateElement('referer-ranking-today')),
     new Promise((resolve, reject) => generateElement('cache-hit-rate')),
-    new Promise((resolve, reject) => generateElement('cache-hit-rate-today')),
     new Promise((resolve, reject) => generateElement('spam-block-rate')),
-    new Promise((resolve, reject) => generateElement('spam-block-rate-today'))
+    new Promise((resolve, reject) => generateElement('access-ranking-today')),
+    new Promise((resolve, reject) => generateElement('referer-ranking-today')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate-today')),
+    new Promise((resolve, reject) => generateElement('spam-block-rate-today')),
+    new Promise((resolve, reject) => generateElement('access-ranking-yesterday')),
+    new Promise((resolve, reject) => generateElement('referer-ranking-yesterday')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate-yesterday')),
+    new Promise((resolve, reject) => generateElement('spam-block-rate-yesterday'))
   ]);
 </script>
 
@@ -106,7 +124,7 @@
   flex-wrap: wrap;
 }
 .ranking div, .hit-rate div {
-  width: 50%;
+  width: 33%;
 }
 @media screen and (max-width: 640px) {
   .ranking div, .hit-rate div {

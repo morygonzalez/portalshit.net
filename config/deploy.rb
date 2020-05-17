@@ -34,12 +34,16 @@ append :linked_files,
   '.env',
   'public/access-ranking.txt',
   'public/referer-ranking.txt',
+  'public/cache-hit-rate.txt',
+  'public/spam-block-rate.txt',
   'public/access-ranking-today.txt',
   'public/referer-ranking-today.txt',
-  'public/cache-hit-rate.txt',
   'public/cache-hit-rate-today.txt',
-  'public/spam-block-rate.txt',
   'public/spam-block-rate-today.txt',
+  'public/access-ranking-yesterday.txt',
+  'public/referer-ranking-yesterday.txt',
+  'public/cache-hit-rate-yesterday.txt',
+  'public/spam-block-rate-yesterday.txt',
   'public/ads.txt'
 
 # Default value for linked_dirs is []
