@@ -4,32 +4,33 @@ UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladde
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 
-# Access Ranking
-find ${APP_DIR}/log/access.log* \
+ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
   | xargs zcat -f \
+  | grep -viP ${UA_TO_IGNORE}`
+
+CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log* \
+  | xargs zcat -f`
+
+# Access Ranking
+echo "${ACCESS_LOGS}" \
   | grep 'status:200' \
-  | grep -vE '\/(about|morygonzalez|author)' \
-  | grep -viE ${UA_TO_IGNORE} \
+  | grep -vP '\/(about|morygonzalez|author)' \
   | cut -f5 | sed -e 's/request_uri://' \
-  | grep -vE ${REQUEST_PATH_TO_IGNORE} \
-  | sed -e 's/corvid/covid/' \
+  | grep -vP ${REQUEST_PATH_TO_IGNORE} \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee ${APP_DIR}/public/access-ranking.txt
 
 # Referer Ranking
-find ${APP_DIR}/log/access.log* \
-  | xargs zcat -f \
-  | grep -viE ${UA_TO_IGNORE} \
-  | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+echo "${ACCESS_LOGS}" \
+  | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
   | sed -e 's/\?amp=1//' \
   | cut -f12 | sed -e 's/referer://' \
-  | grep -vE '(^-$|portalshit\.net)' \
+  | grep -vP '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee ${APP_DIR}/public/referer-ranking.txt
 
 # Cache Hit Rate
-find ${APP_DIR}/log/access.log* \
-  | xargs zcat -f \
+echo "${CACHE_HIT_LOGS}" \
   | grep 'cache_hit:' | grep -v 'cache_hit:-' \
   | cut -f16 | sort | uniq -c \
   | awk '{
@@ -53,9 +54,8 @@ find ${APP_DIR}/log/access.log* \
     }' \
   | tee ${APP_DIR}/public/cache-hit-rate.txt
 
-# Spam Block
-find ${APP_DIR}/log/access.log* \
-  | xargs zcat -f \
+# Spam Block Rate
+echo "${ACCESS_LOGS}" \
   | grep "POST" | grep -v "uri:/admin/" \
   | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c | sort -nr \
   | awk '{
@@ -76,33 +76,27 @@ find ${APP_DIR}/log/access.log* \
   | tee ${APP_DIR}/public/spam-block-rate.txt
 
 # Access Ranking Today
-find ${APP_DIR}/log/access.log \
-  | xargs zcat -f \
+echo "${ACCESS_LOGS}" \
   | grep "time:$(date "+%Y-%m-%d")" \
   | grep 'status:200' \
-  | grep -vE '\/(about|morygonzalez|author)' \
-  | grep -viE ${UA_TO_IGNORE} \
+  | grep -vP '\/(about|morygonzalez|author)' \
   | cut -f5 | sed -e 's/request_uri://' \
-  | grep -vE ${REQUEST_PATH_TO_IGNORE} \
-  | sed -e 's/corvid/covid/' \
+  | grep -vP ${REQUEST_PATH_TO_IGNORE} \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee ${APP_DIR}/public/access-ranking-today.txt
 
 # Referer Ranking Today
-find ${APP_DIR}/log/access.log \
-  | xargs zcat -f \
+echo "${ACCESS_LOGS}" \
   | grep "time:$(date "+%Y-%m-%d")" \
-  | grep -viE ${UA_TO_IGNORE} \
-  | grep -vE "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+  | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
   | cut -f12 | sed -e 's/referer://' \
+  | grep -vP '(^-$|portalshit\.net)' \
   | sed -e 's/\?amp=1//' \
-  | grep -vE '(^-$|portalshit\.net)' \
   | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
   | tee ${APP_DIR}/public/referer-ranking-today.txt
 
 # Cache Hit Rate Today
-find ${APP_DIR}/log/access.log \
-  | xargs zcat -f \
+echo "${CACHE_HIT_LOGS}" \
   | grep "time:$(date "+%Y-%m-%d")" \
   | grep 'cache_hit:' | grep -v 'cache_hit:-' \
   | cut -f16 | sort | uniq -c \
@@ -127,9 +121,8 @@ find ${APP_DIR}/log/access.log \
     }' \
   | tee ${APP_DIR}/public/cache-hit-rate-today.txt
 
-# Spam Block
-find ${APP_DIR}/log/access.log \
-  | xargs zcat -f \
+# Spam Block Rate Today
+echo "${ACCESS_LOGS}" \
   | grep "time:$(date "+%Y-%m-%d")" \
   | grep "POST" | grep -v "uri:/admin/" \
   | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c | sort -nr \
