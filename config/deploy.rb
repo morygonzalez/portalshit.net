@@ -1,5 +1,5 @@
 # config valid only for Capistrano 3.1
-lock '3.13.0'
+# lock '3.13.0'
 
 set :default_env, { 'RUBYOPT' => '--encoding=UTF-8' }
 
