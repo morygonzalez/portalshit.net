@@ -70,7 +70,7 @@ group :development, :test do
   gem 'rack-test', require: 'rack/test'
   gem 'rspec', '~> 2.99'
   gem 'simplecov', require: false
-  gem 'sqlite3'
+  gem 'sqlite3', group: :batch
 end
 
 group :mysql do
@@ -83,5 +83,4 @@ end
 
 group :batch do
   gem 'natto'
-  gem 'sqlite3'
 end
