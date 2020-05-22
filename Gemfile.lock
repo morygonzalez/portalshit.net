@@ -361,7 +361,7 @@ DEPENDENCIES
   rouge
   rspec (~> 2.99)
   rubocop
-  sass (< 3.5)
+  sass (< 3.7.5)
   simplecov
   sinatra (~> 1.4)
   sinatra-cache!
