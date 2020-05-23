@@ -82,19 +82,27 @@ namespace :deploy do
         ]
         assets_combinations.each do |hash|
           path, command = hash[:path], hash[:command]
-          latest = latest_release_path.join(path, 'manifest.json')
-          release = release_path.join(path, 'manifest.json')
+          latest_assets_dir = latest_release_path.join(path)
+          release_assets_dir = release_path.join(path)
+          latest_manifest = latest_assets_dir.join('manifest.json')
+          release_manifest = release_assets_dir.join('manifest.json')
           # check if directory exist
-          if [release, latest].map{|d| test "[ -e #{d} ]"}.uniq == [false]
-            info "Skip because both directories/files do not exist"
+          if [release_manifest, latest_manifest].map {|d| test "[ -e #{d} ]"}.uniq == [false]
+            info "Skip because both directories/files do not exist #{path}"
             next
           end
           # check manifest diff
-          if !test(:diff, '-Nqr', release, latest)
-            info "Skip because manifest file is the same"
-            next
+          if test(:diff, '-Nqr', release_manifest, latest_manifest)
+            begin
+              execute(:cp, '-r', latest_assets_dir, File.dirname(release_assets_dir))
+              execute(:ls, release_assets_dir.join('*.js'))
+              info "Copying assets dir because the manifest file is not changed #{path}"
+              next
+            rescue SSHKit::Command::Failed
+              info "The manifest file is not changed but copying assets failed. Falling back to building JavaScripts #{path}"
+            end
           end
-          execute *command
+          execute(*command)
         end
       end
     end
