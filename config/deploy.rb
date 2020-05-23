@@ -68,8 +68,34 @@ namespace :deploy do
   task :build_js do
     on roles(:web) do
       within release_path do
-        execute :rake, :'theme:portalshit:build_js'
-        execute :rake, :'plugin:archives:build_js'
+        latest_release = capture(:ls, '-xr', releases_path).split[1]
+        latest_release_path = releases_path.join(latest_release)
+        assets_combinations = [
+          {
+            path: 'public/plugin/lokka-archives/assets',
+            command: %i[rake 'theme:portalshit:build_js']
+          },
+          {
+            path: 'public/theme/portalshit/scripts',
+            command: %i[rake 'plugin:archives:build_js']
+          }
+        ]
+        assets_combinations.each do |hash|
+          path, command = hash[:path], hash[:command]
+          latest = latest_release_path.join(path, 'manifest.json')
+          release = release_path.join(path, 'manifest.json')
+          # check if directory exist
+          if [release, latest].map{|d| test "[ -e #{d} ]"}.uniq == [false]
+            info "Skip because both directories/files do not exist"
+            next
+          end
+          # check manifest diff
+          if !test(:diff, '-Nqr', release, latest)
+            info "Skip because manifest file is the same"
+            next
+          end
+          execute *command
+        end
       end
     end
   end
