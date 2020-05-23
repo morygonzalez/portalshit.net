@@ -50,7 +50,7 @@ class Entry
 end
 
 class Comment
-  after_save :send_notification_to_entry_author
+  after_create :send_notification_to_entry_author
 
   private
 
