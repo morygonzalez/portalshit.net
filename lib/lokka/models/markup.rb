@@ -34,7 +34,8 @@ module Markup
          tables: true,
          superscript: true,
          space_after_headers: true,
-         footnotes: true
+         footnotes: true,
+         strikethrough: true
        ).render(text)
      end]
   ]
