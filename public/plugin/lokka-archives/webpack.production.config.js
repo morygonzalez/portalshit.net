@@ -25,7 +25,6 @@ module.exports = {
           options: {
             presets: [
               ['@babel/preset-react'],
-              ["minify"],
               ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }]
             ],
             plugins: ['@babel/plugin-proposal-class-properties', 'emotion']
