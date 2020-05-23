@@ -48,7 +48,7 @@
   = partial :advertisement
   %section.comments
     %ul
-      - @entry.comments.reverse.each do |comment|
+      - @entry.comments.approved.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}
           %ul.meta
             %li.gravatar= image_tag gravatar_image_url comment.email
