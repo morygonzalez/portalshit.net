@@ -102,20 +102,16 @@
     return contentArray.join("\n") + "\n" + lastModified + "\n\n";
   }
 
-  Promise.all([
-    new Promise((resolve, reject) => generateElement('access-ranking')),
-    new Promise((resolve, reject) => generateElement('referer-ranking')),
-    new Promise((resolve, reject) => generateElement('cache-hit-rate')),
-    new Promise((resolve, reject) => generateElement('spam-block-rate')),
-    new Promise((resolve, reject) => generateElement('access-ranking-today')),
-    new Promise((resolve, reject) => generateElement('referer-ranking-today')),
-    new Promise((resolve, reject) => generateElement('cache-hit-rate-today')),
-    new Promise((resolve, reject) => generateElement('spam-block-rate-today')),
-    new Promise((resolve, reject) => generateElement('access-ranking-yesterday')),
-    new Promise((resolve, reject) => generateElement('referer-ranking-yesterday')),
-    new Promise((resolve, reject) => generateElement('cache-hit-rate-yesterday')),
-    new Promise((resolve, reject) => generateElement('spam-block-rate-yesterday'))
-  ]);
+  let promises = [];
+  ['access-ranking', 'referer-ranking', 'cache-hit-rate', 'spam-block-rate'].forEach(item => {
+    promises.push(
+      new Promise((resolve, reject) => generateElement(item)),
+      new Promise((resolve, reject) => generateElement(`${item}-today`)),
+      new Promise((resolve, reject) => generateElement(`${item}-yesterday`)),
+    )
+  });
+
+  Promise.all(promises);
 </script>
 
 <style>
