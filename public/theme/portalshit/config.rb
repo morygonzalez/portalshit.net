@@ -60,5 +60,10 @@ module Lokka
     def portalshit_javascript_path(file_name)
       "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
     end
+
+    def show_auto_ads?
+      return false if entry? && @entry.created_at > Time.current - 2.day
+      true
+    end
   end
 end

@@ -16,11 +16,12 @@
     %link{ rel: 'stylesheet', href: asset_path(@theme.path, 'style.css'), type: 'text/css' }
     %link{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.12.0/css/all.css', type: 'text/css' }
     %script{ async: true, src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js' }
-    :javascript
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-7665673588234323",
-        enable_page_level_ads: true
-      });
+    - if show_auto_ads?
+      :javascript
+        (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-7665673588234323",
+          enable_page_level_ads: true
+        });
     = header
   %body
     - header_bg = settings.header_bg_params
