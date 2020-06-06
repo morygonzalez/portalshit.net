@@ -7,15 +7,16 @@ environment ENV['RACK_ENV'] || 'development'
 port 3000
 
 if ENV['RACK_ENV'] == 'production'
-  tmp_dir = File.join(get(:directory),'tmp')
-  log_dir = File.join(get(:directory), 'log')
+  deploy_dir = File.path('/var/www/app/portalshit')
+  tmp_dir = File.join(deploy_dir, 'tmp')
+  log_dir = File.join(deploy_dir, 'log')
   pid_dir = File.join(tmp_dir, 'pids')
 
   Dir.mkdir(pid_dir) unless Dir.exists?(pid_dir)
 
   pidfile         File.join(pid_dir, 'puma.pid')
   state_path      File.join(pid_dir, 'puma.state')
-  stdout_redirect File.join(log_dir, 'puma_stdout.log'), File.join(log_dir, 'puma_stderr.log'), true
+  stdout_redirect File.join(log_dir, 'puma_access.log'), File.join(log_dir, 'puma_error.log'), true
   bind            "unix://#{File.join(tmp_dir, 'sockets', 'puma.sock')}"
 
   preload_app!
@@ -38,7 +39,7 @@ if ENV['RACK_ENV'] == 'production'
   end
 
 else
-  stdout_redirect 'log/puma_stdout.log', 'log/puma_stderr.log', true
+  stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true
   workers 0
   prune_bundler
 end
