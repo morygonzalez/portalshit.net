@@ -63,6 +63,8 @@ append :linked_dirs,
 
 set :bundle_without, %w{test postgresql sqlite batch}.join(' ')
 
+set :puma_conf, '/var/www/app/portalshit/config/puma.rb'
+
 namespace :deploy do
   desc 'Build JavaScript'
   task :build_js do
