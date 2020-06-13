@@ -8,7 +8,6 @@ module Lokka
 
     configure do
       enable :method_override, :raise_errors, :static, :sessions
-      set :session_secret, ENV['SESSION_SECRET']
       set :app_file, __FILE__
       set :root, File.expand_path('../..', __dir__)
       set public_folder: proc { File.join(root, 'public') }
