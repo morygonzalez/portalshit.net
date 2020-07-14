@@ -64,6 +64,11 @@ module Lokka
                 font-size: 1.2em;
                 font-weight: bold;
                 margin: 0 auto;
+                display: -webkit-box;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
               }
               .amazon-content .item-title:before {
                 content: none;
