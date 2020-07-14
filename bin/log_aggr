@@ -16,9 +16,10 @@ function access_ranking() {
   echo "${ACCESS_LOGS}" \
     | ( [ -z "$DURATION" ] && cat || grep "time:$(date -d ${DURATION} "+%Y-%m-%d")" ) \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author)' \
+    | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
+    | sed -e 's/\?.*//' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | tee ${APP_DIR}/public/access-ranking${SUFFIX}.txt
 }
