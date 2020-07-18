@@ -56,10 +56,12 @@ class FileUploader {
           return;
         }
         droppedItems = source.items;
-        for (const item of droppedItems) {
-          const file = item.getAsFile();
+        let needLineBreak;
+        for (const index in droppedItems) {
+          const file = droppedItems[index].getAsFile();
+          needLineBreak = index !== droppedItems.length;
           if (file && /^image\//.test(file.type)) {
-            self.upload(file);
+            self.upload(file, needLineBreak);
           }
         }
         droppedItems = null;
@@ -70,7 +72,7 @@ class FileUploader {
     this.editor.dataset.uploadObserved = true;
   };
 
-  upload(file) {
+  upload(file, needLineBreak) {
     const editor = this.editor;
     const textarea = editor.querySelector('textarea');
     const ajaxData = new FormData();
@@ -94,7 +96,7 @@ class FileUploader {
             if (textarea) {
               textarea.removeAttribute('disabled');
               const imageTag = self.detectImageTag(file, data.url);
-              self.insertImage(imageTag);
+              self.insertImage(imageTag, needLineBreak);
             }
           })
           .catch(data => {
@@ -108,7 +110,7 @@ class FileUploader {
     });
   };
 
-  insertImage(imageTag) {
+  insertImage(imageTag, needLineBreak) {
     const textarea = this.editor.querySelector('textarea');
 
     if (!textarea) {
@@ -117,7 +119,13 @@ class FileUploader {
 
     let beforeSelect = textarea.value.substr(0, textarea.selectionStart);
     let afterSelect = textarea.value.substr(textarea.selectionStart, textarea.value.length - 1);
-    textarea.value = `${beforeSelect}${imageTag}${afterSelect}`;
+    if (needLineBreak) {
+      textarea.value = `${beforeSelect}${imageTag}\n${afterSelect}`;
+    } else {
+      textarea.value = `${beforeSelect}${imageTag}${afterSelect}`;
+    }
+    let position = textarea.value.indexOf(afterSelect);
+    textarea.setSelectionRange(position, position);
   };
 
   detectImageTag(file, url) {
