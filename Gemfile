@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 ruby '~> 2.4'
 
 gem 'activerecord', '~> 5.0'
-gem 'activesupport', '~> 5.2'
+gem 'activesupport', '~> 6.0'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
