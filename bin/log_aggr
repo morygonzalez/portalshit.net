@@ -19,7 +19,7 @@ function access_ranking() {
     | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
-    | sed -e 's/\?.*//' \
+    | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | tee ${APP_DIR}/public/access-ranking${SUFFIX}.txt
 }
