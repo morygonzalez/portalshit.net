@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '~> 2.4'
 
 gem 'activerecord', '~> 5.0'
-gem 'activesupport', '~> 5.0'
+gem 'activesupport', '~> 5.2'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
@@ -33,7 +33,7 @@ gem 'rake'
 gem 'redcarpet'
 gem 'RedCloth'
 gem 'request_store'
-gem 'sass', '< 3.5'
+gem 'sass', '< 3.7.5'
 gem 'sinatra', '~> 1.4'
 gem 'sinatra-cache', git: 'https://github.com/morygonzalez/sinatra-cache'
 gem 'sinatra-contrib'
@@ -52,7 +52,7 @@ end
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'capistrano', '3.13.0', require: false
+  gem 'capistrano', '3.14.0', require: false
   gem 'capistrano-bundler', require: false
   gem 'capistrano-rbenv', require: false
   gem 'capistrano-rbenv-install', require: false
@@ -68,7 +68,7 @@ group :development, :test do
   gem 'rack-test', require: 'rack/test'
   gem 'rspec', '~> 2.99'
   gem 'simplecov', require: false
-  gem 'sqlite3'
+  gem 'sqlite3', group: :batch
 end
 
 group :mysql do
@@ -81,7 +81,6 @@ end
 
 group :batch do
   gem 'natto'
-  gem 'sqlite3'
 end
 
 gem 'vacuum'
