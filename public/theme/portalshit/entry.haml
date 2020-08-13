@@ -46,6 +46,7 @@
 %aside
   = partial :related
   %section.comments
+    %h3= t('comments')
     %ul
       - @entry.comments.approved.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}
