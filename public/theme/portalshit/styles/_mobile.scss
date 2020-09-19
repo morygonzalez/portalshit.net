@@ -75,8 +75,9 @@
   }
 
   #content {
-    padding: .5em 5px;
+    padding: .5em 0;
     article {
+      padding: 0 5px;
       header {
         nav.prevnext {
           font-size: 85%;
