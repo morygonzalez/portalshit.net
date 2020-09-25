@@ -13,11 +13,12 @@ class Entry
     def popular(limit = 5)
       access_ranking = File.open(File.join(Lokka.root, 'public', 'access-ranking.txt'))
       slugs = {}
-      access_ranking.each.with_index(1) do |line, index|
+      access_ranking.each do |line|
         access_limit, path = *line.split(' ')
+        next if path =~ %r{^/(category|tags)/}
         slug = path.split('/')[-1]
         slugs[access_limit] = slug
-        break if index == limit
+        break if slugs.length == limit
       end
       where(slug: slugs.values).limit(limit).sort_by {|entry| slugs.values.index(entry.slug) }
     rescue StandardError
