@@ -168,7 +168,7 @@ GEM
     method_source (1.0.0)
     mimemagic (0.3.5)
     mini_portile2 (2.4.0)
-    minitest (5.14.1)
+    minitest (5.14.2)
     multi_json (1.14.1)
     multipart-post (2.1.1)
     mysql2 (0.5.3)
@@ -306,7 +306,7 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth
-  activerecord (~> 5.0)
+  activerecord (~> 5.2)
   activesupport (~> 5.2)
   awesome_print
   aws-sdk-s3
