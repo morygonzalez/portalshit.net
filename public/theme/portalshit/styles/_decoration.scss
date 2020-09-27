@@ -91,6 +91,12 @@ img {
   height: auto;
 }
 
+figcaption {
+  font-size: .85em;
+  color: $meta-text-color;
+  text-align: center;
+}
+
 form {
   margin: 0;
   padding: 0;
