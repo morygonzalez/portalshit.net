@@ -181,7 +181,7 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
-    open_graph_reader (0.7.0)
+    open_graph_reader (0.7.1)
       faraday (>= 0.9.0)
       nokogiri (~> 1.6)
     padrino-helpers (0.14.4)
