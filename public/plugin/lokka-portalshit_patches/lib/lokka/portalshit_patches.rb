@@ -35,24 +35,6 @@ module Lokka
 end
 
 class Entry
-  def long_body
-    @_long_body ||= begin
-                      _body = Markup.use_engine(markup, raw_body)
-                      doc = Nokogiri::HTML.fragment(_body)
-                      doc.css('img').each do |img|
-                        alt = img.attr('alt')
-                        fig = Nokogiri::HTML.fragment <<~FIGURE
-                               <figure>
-                                 <a href="#{img.attr('src')}">#{img}</a>
-                                 <figcaption>#{alt}</figcaption>
-                               </figure>
-                        FIGURE
-                        img.replace(fig)
-                      end
-                      doc.to_s
-                    end
-  end
-
   def long_description
     content = body.strip.
       gsub(%r{<figure>.+?<\/figure>}, '').
