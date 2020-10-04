@@ -24,7 +24,7 @@
     "core-js": "3.6.5",
     "react-dom": "16.13.1",
     "react-router-dom": "5.2.0",
-    "webpack": "4.43.0",
+    "webpack": "4.44.2",
     "webpack-cli": "3.3.11",
     "webpack-manifest-plugin": "2.2.0"
   },
