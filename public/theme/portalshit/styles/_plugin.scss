@@ -125,6 +125,23 @@
 
     .year-month {
       list-style: none;
+
+      h3 {
+        display: flex;
+        justify-content: space-between;
+        margin-right: 1em;
+
+        .month {
+          flex-grow: 3;
+        }
+
+        .entry-count {
+          flex-grow: 1;
+          font-weight: normal;
+          font-size: .85em;
+          text-align: right;
+        }
+      }
     }
   }
 
