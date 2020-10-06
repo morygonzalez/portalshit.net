@@ -15,7 +15,7 @@ class Entry
       slugs = {}
       access_ranking.each do |line|
         access_limit, path = *line.split(' ')
-        next if path =~ %r{^/(category|tags)/}
+        next unless Lokka::PermalinkHelper.custom_permalink_parse(path)
         slug = path.split('/')[-1]
         slugs[access_limit] = slug
         break if slugs.length == limit
