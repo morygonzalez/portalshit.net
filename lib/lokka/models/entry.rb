@@ -100,7 +100,7 @@ class Entry < ActiveRecord::Base
   end
 
   def tag_collection=(values)
-    regexp = /[^\p{Word}]/iu
+    regexp = /[^[:word:][:blank:]]/iu
     new_tag_list = values.to_s.split(',').map do |name|
       name.force_encoding(Encoding.default_external).gsub(regexp, '').strip
     end
