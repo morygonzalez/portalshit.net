@@ -50,7 +50,7 @@ class Entry < ActiveRecord::Base
     @long_body ||= begin
                      _body = Markup.use_engine(markup, raw_body)
                      doc = Nokogiri::HTML.fragment(_body)
-                     doc.css('img').each do |img|
+                     doc.css('img:root, p:root > img').each do |img|
                        alt = img.attr('alt')
                        fig = Nokogiri::HTML.fragment <<~FIGURE
                                <figure>

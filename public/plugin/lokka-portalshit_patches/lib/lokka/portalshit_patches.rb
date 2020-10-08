@@ -37,7 +37,7 @@ end
 class Entry
   def long_description
     content = body.strip.
-      gsub(%r{<figure>*?<\/figure>}m, '').
+      gsub(%r{<figcaption>*?<\/figcaption>}m, '').
       gsub(/<\/?[^>]*>/, '').
       gsub(/[\t]+/, ' ').
       gsub(/[\r\n]/, '')[0..120]
