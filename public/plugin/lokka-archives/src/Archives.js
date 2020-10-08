@@ -67,6 +67,21 @@ function Category(props) {
   )
 }
 
+function Tags(props) {
+  if (props.tags == undefined) {
+    return (null)
+  }
+  return (
+    props.tags.map(tag => {
+      return (
+        <span className="tag" key={`${props.id}-${tag.name}`}>
+          <a href={`/tags/${tag.name}/`}>&nbsp;#{tag.name}</a>
+        </span>
+      )
+    })
+  )
+}
+
 function Entry(props) {
   return (
     <li className="entry">
@@ -74,6 +89,7 @@ function Entry(props) {
       <div className="detail-information">
         <span className="created_at"><Moment format="LL" date={props.created_at} locale={locale} /></span>
         <Category category={props.category} />
+        <Tags tags={props.tags} entry={props.id} />
       </div>
     </li>
   )
@@ -97,7 +113,7 @@ class EntryList extends Component {
     const entries = this.props.entries.map((entry) => {
       const uniqueKey = `${entry.title}-${entry.created_at}`
       return (
-        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} />
+        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} tags={entry.tags} />
       )
     })
     this.setState({ entries })

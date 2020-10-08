@@ -78,7 +78,7 @@ module Lokka
         end
 
         def generate(posts)
-          posts.group_by {|post| post.created_at.beginning_of_month.to_formatted_s(:db) }.
+          posts.includes(:tags).group_by {|post| post.created_at.beginning_of_month.to_formatted_s(:db) }.
             each_with_object({}) do |(month, month_posts), object|
               object[month] ||= []
               month_posts.each do |post|
@@ -86,6 +86,7 @@ module Lokka
                 object[month] << {
                   id: post.id,
                   category: { id: category[:id], title: category[:title], slug: category[:slug] },
+                  tags: post.tags,
                   title: post.title,
                   link: post.clever_link,
                   created_at: post.created_at
