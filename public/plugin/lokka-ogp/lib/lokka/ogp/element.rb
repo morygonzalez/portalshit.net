@@ -12,7 +12,7 @@ module Lokka
       attr_reader :url
 
       def initialize(url)
-        @url = url
+        @url = URI.encode(url)
       end
 
       def host
