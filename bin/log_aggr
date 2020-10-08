@@ -1,7 +1,7 @@
 #!/bin/bash
 
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs|winds)'
-REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
+REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 
 ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
