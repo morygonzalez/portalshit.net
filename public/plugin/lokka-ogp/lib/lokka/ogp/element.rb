@@ -82,17 +82,19 @@ module Lokka
 
       def image_fallback
         og_image_url = doc&.xpath('//head/meta[@property="og:image"]')&.first.try(:[], 'content')
-        fallback_og_image_url = '/plugin/lokka-ogp/assets/no-image.png'
-        parsed_url = URI.parse(og_image_url.to_s)
+        favicon_url = doc&.xpath('//head/link[@rel="icon" or @rel="shortcut icon"]')&.first.try(:[], 'href')
+        target_url = og_image_url.presence || favicon_url.presence
+        fallback_url = '/plugin/lokka-ogp/assets/no-image.png'
+        parsed_url = URI.parse(target_url.to_s)
         case
         when parsed_url.absolute?
-          og_image_url
+          parsed_url
         when parsed_url.relative? && parsed_url.host.present?
           %Q(#{scheme}:#{parsed_url})
         when parsed_url.relative? && parsed_url.host.blank? && parsed_url.path.present?
           %Q(#{scheme}://#{host}#{parsed_url.path})
         else
-          fallback_og_image_url
+          fallback_url
         end
       end
 
