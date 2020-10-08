@@ -84,6 +84,7 @@ namespace :deploy do
         ]
         assets_combinations.each do |hash|
           path, command = hash[:path], hash[:command]
+          info "Start building #{path}"
           latest_assets_dir = latest_release_path.join(path)
           release_assets_dir = release_path.join(path)
           latest_manifest = latest_assets_dir.join('manifest.json')
