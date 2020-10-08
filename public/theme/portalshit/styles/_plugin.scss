@@ -111,15 +111,19 @@
     }
 
     .detail-information {
-      font-size: 0.85em;
+      font-size: .85rem;
 
       .created_at {
         color: #7d7c7c;
       }
 
       .category {
-        font-size: .85em;
-        padding-left: .5em;
+        padding-left: .5rem;
+        font-size: 0.9rem;
+      }
+
+      .tag {
+        font-size: .85rem;
       }
     }
 
