@@ -75,11 +75,11 @@ namespace :deploy do
         assets_combinations = [
           {
             path: 'public/plugin/lokka-archives/assets',
-            command: %i[rake 'theme:portalshit:build_js']
+            command: %i[rake 'plugin:archives:build_js']
           },
           {
             path: 'public/theme/portalshit/scripts',
-            command: %i[rake 'plugin:archives:build_js']
+            command: %i[rake 'theme:portalshit:build_js']
           }
         ]
         assets_combinations.each do |hash|
