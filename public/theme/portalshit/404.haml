@@ -1,0 +1,98 @@
+- load(File.join(settings.theme, @theme.name, 'config.rb'))
+!!! 5
+%html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja }
+  %head
+    %meta{ charset: 'utf-8' }
+    %title= @site.title
+    %meta{ name: 'viewport', content: 'width=device-width' }
+    %meta{ name: 'description', content: "#{ogp['og:description']}" }
+    %meta{ name: 'keywords', content: @site.meta_keywords }
+    %link{ rel: 'shortcut icon', href: url("#{@theme.path}/favicon.ico"), type: 'image/ico' }
+    %link{ title: "#{@site.title}", rel: "alternate", href: "https://feeds.feedburner.com/portalshit", type: 'application/atom+xml' }
+    %link{ rel: 'canonical', href: canonical_url }
+    %link{ rel: 'stylesheet', href: asset_path(@theme.path, 'style.css'), type: 'text/css' }
+    %link{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.12.0/css/all.css', type: 'text/css' }
+    = header
+  %body
+    - header_bg = settings.header_bg_params
+    %header#header{header_bg}
+      #header-inner
+        %h1= link_to @site.title, '/'
+        %nav#global-nav
+          %ul
+            %li.profile
+              = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
+              = link_to 'About', '/about'
+            %li.github
+              %i.fab.fa-github-square
+              = link_to 'GitHub', 'http://github.com/morygonzalez'
+            %li.twitter
+              %i.fab.fa-twitter-square
+              = link_to 'Twitter', 'http://twitter.com/morygonzalez'
+            %li.archives
+              %i.fas.fa-list-ul
+              = link_to 'Archives', '/archives'
+            %li.search
+              %form#search_form(action="/search/" method="get")
+                %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
+
+        #header-bottom
+          %nav#category-nav
+            %ul#categories
+              - sorted_categories.each do |category|
+                %li= link_to category[:title],
+                  "/category/#{category[:slug]}/",
+                  title: "#{category[:title]} (#{category[:count]})"
+          #header-bg-description
+            %span.header-bg-light-description= header_bg[:'data-bg-light-description']
+            %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
+
+    %main#content.hfeed
+      %h2 404 not found
+      %p== Not found: #{request.path_info}
+
+    %footer#footer
+      %aside
+        - cache_fragment :"footer-#{I18n.locale}", shared: true do
+          %dl.popular_entries
+            %dt= t('popular_entries')
+            %dd
+              %ul
+                - Post.popular.each do |post|
+                  %li
+                    = link_to post.title, post.link
+                    .meta
+                      %span.created_at= l(post.created_at.to_date, format: :long)
+          %dl.hotentry
+            %dt= t('hotentry')
+            %dd
+              %ul
+                - Post.hotentry.each do |post|
+                  %li
+                    =link_to post.title, post.link
+                    %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
+                    .meta
+                      %span.created_at= l(post.created_at.to_date, format: :long)
+          %dl.recent_entries
+            %dt= t('recent_entries')
+            %dd
+              %ul
+                - Post.published.recent.each do |post|
+                  %li
+                    = link_to post.title, post.link
+                    .meta
+                      %span.created_at= l(post.created_at.to_date, format: :long)
+          %dl.recent_comments
+            %dt= t('recent_comments')
+            %dd
+              %ul
+                - Comment.recent.each do |comment|
+                  %li
+                    = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
+                    .meta
+                      %span.created_at= l(comment.created_at.to_date, format: :long)
+      .poweredby
+        powered by
+        = link_to 'Lokka', 'http://lokka.org/'
+    = footer
+    %script{ type: 'text/javascript', src: portalshit_javascript_path('index.js') }
