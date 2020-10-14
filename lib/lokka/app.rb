@@ -89,10 +89,10 @@ module Lokka
         status 404
       end
 
-      render404 = render_any('404', layout: false)
-      return render404 if render404
+      render404 = render_any(:'404', layout: false)
+      return render404 if render404.present?
 
-      haml :"404", views: 'public/lokka', layout: false
+      haml :'404', views: 'public/lokka', layout: false
     end
 
     error do
