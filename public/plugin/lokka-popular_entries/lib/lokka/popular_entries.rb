@@ -20,7 +20,7 @@ class Entry
         slugs[access_limit] = slug
         break if slugs.length == limit
       end
-      where(slug: slugs.values).limit(limit).sort_by {|entry| slugs.values.index(entry.slug) }
+      includes(:category).where(slug: slugs.values).limit(limit).sort_by {|entry| slugs.values.index(entry.slug) }
     rescue StandardError
       []
     end
