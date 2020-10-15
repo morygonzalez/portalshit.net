@@ -219,7 +219,7 @@
         a {
           text-decoration: none;
           text-shadow: $dark-text-shadow-color 0 1px 0;
-          z-index: 999;
+          z-index: 2;
           position: relative;
 
           &:link, &:visited {
@@ -506,6 +506,10 @@
       margin-left: -250px;
     }
   }
+}
+
+img.medium-zoom-image--opened {
+  z-index: 3;
 }
 
 @import "styles/mobile";
