@@ -1,3 +1,5 @@
+import mediumZoom from 'medium-zoom';
+
 const init = (node) => {
   const checkImageSize = (target) => {
     if (typeof target === 'undefined') {
@@ -45,6 +47,8 @@ const init = (node) => {
   } else {
     // Possibly fall back to a more compatible method here
   }
+
+  mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
 }
 
 document.addEventListener('DOMContentLoaded', () => init(document));

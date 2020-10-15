@@ -54,7 +54,7 @@ class Entry < ActiveRecord::Base
                        alt = img.attr('alt')
                        fig = Nokogiri::HTML.fragment <<~FIGURE
                                <figure>
-                                 <a href="#{img.attr('src')}">#{img}</a>
+                                 #{img}
                                  <figcaption>#{alt}</figcaption>
                                </figure>
                        FIGURE
