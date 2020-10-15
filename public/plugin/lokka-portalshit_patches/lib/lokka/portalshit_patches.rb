@@ -36,10 +36,11 @@ end
 
 class Entry
   def long_description
-    content = body.strip.
-      gsub(%r{<figcaption>*?<\/figcaption>}m, '').
+    content = body.
+      gsub(%r{<figcaption>.+?</figcaption>}m, '').
       gsub(/<\/?[^>]*>/, '').
       gsub(/[\t]+/, ' ').
+      strip.
       gsub(/[\r\n]/, '')[0..120]
     sprintf '%s...', content
   end
