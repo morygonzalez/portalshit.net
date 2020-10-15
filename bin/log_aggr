@@ -20,6 +20,7 @@ function access_ranking() {
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | tee ${APP_DIR}/public/access-ranking${SUFFIX}.txt
 }
