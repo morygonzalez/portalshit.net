@@ -9,7 +9,7 @@
       %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
       %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
       %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
-      %span{ itemprop: 'headline' }= truncate(strip_tags(post.body).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, ''), length: 100)
+      %span{ itemprop: 'headline' }= post.long_description
       %span{ itemprop: 'author' }= post.user.name
       %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
         %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
@@ -18,10 +18,7 @@
           %meta{ content: '128', itemprop: :height }
         %meta{ content: 'morygonzalez', itemprop: :name }
       %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-        - if post.images.present?
-          %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.images.first}" }
-        - else
-          %meta{ itemprop: :url, content: 'https://portalshit.net/imageproxy/350x/https://portalshit.net/theme/portalshit/ogp_image.png' }
+        %meta{ itemprop: :url, content: post.cover_image }
         %meta{ itemprop: :width, content: 350 }
         %meta{ itemprop: :height, content: 255 }
   .body{ itemprop: 'articleBody' }

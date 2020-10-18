@@ -77,6 +77,61 @@
   #content {
     padding: .5em 0;
 
+    article#site_index {
+      header {
+        .meta {
+          display: block;
+          margin-left: 0;
+          font-size: .8rem;
+        }
+      }
+      section {
+        .new-entry {
+          .content {
+            flex-direction: column;
+            margin: .5em;
+            .image, .body {
+              width: 100%;
+              margin: 0;
+              .default {
+                margin: auto;
+              }
+            }
+          }
+        }
+        .past-entries {
+          .entry {
+            width: 100%;
+            .content {
+              display: flex;
+              margin: .5em;
+              .body {
+                flex-grow: 7;
+                font-size: 90%;
+                margin-left: 1em;
+                padding: 0;
+              }
+              .image {
+                flex-grow: 3;
+                img.mobile {
+                  max-width: 100px;
+                  display: block;
+                }
+                img.desktop {
+                  display: none;
+                }
+              }
+            }
+          }
+        }
+        .entry {
+          .meta {
+            text-align: left;
+          }
+        }
+      }
+    }
+
     article {
       padding: 0 5px;
 

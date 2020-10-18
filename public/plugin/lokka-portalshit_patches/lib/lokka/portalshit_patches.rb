@@ -32,16 +32,53 @@ module Lokka
       end
     end
   end
+
+  class App
+    get '/' do
+      @theme_types << :index
+      @theme_types << :entries
+
+      query = <<~SQL
+        select entries.id
+        from entries
+        inner join (
+          select
+            category_id,
+            group_concat(id order by created_at desc) as entry_ids,
+            count(id) as entry_count,
+            max(created_at) as last_created_at
+          from entries
+          where entries.draft = false
+          group by category_id
+        ) as grouped_entries
+        on grouped_entries.category_id = entries.category_id and find_in_set(id, entry_ids) between 1 and 4
+        inner join categories on categories.id = entries.category_id
+        order by last_created_at desc, entries.id desc;
+      SQL
+      entry_ids = ActiveRecord::Base.connection.select_all(query).rows.flatten
+      entries = Entry.includes(:category, :user, :tags, :comments).where(id: entry_ids)
+      @entries_group_by_category = entries.each_with_object({}) {|entry, result|
+        result[entry.category] ||= []
+        result[entry.category] << entry
+      }
+
+      @title = @site.title
+
+      @bread_crumbs = [{ name: t('home'), link: '/' }]
+
+      render_detect :index, :entries
+    end
+  end
 end
 
 class Entry
-  def long_description
+  def long_description(limit = 120)
     content = body.
       gsub(%r{<figcaption>.+?</figcaption>}m, '').
       gsub(/<\/?[^>]*>/, '').
       gsub(/[\t]+/, ' ').
       strip.
-      gsub(/[\r\n]/, '')[0..120]
+      gsub(/[\r\n]/, '')[0..limit]
     sprintf '%s...', content
   end
 
