@@ -89,11 +89,14 @@
         .new-entry {
           .content {
             flex-direction: column;
-            margin: .5em;
             .image, .body {
               width: 100%;
               margin: 0;
+            }
+            .image {
+              text-align: center;
               .default {
+                max-width: 200px;
                 margin: auto;
               }
             }

@@ -204,6 +204,7 @@
   min-height: 500px;
 
   article.category {
+    margin: 0 .5rem;
     header {
       h2 {
         &.blogging:before {
@@ -253,6 +254,10 @@
         @include _meta;
         font-weight: normal;
         font-size: 1rem;
+        padding-left: 1rem;
+        li {
+          margin: 0;
+        }
       }
     }
     section {
