@@ -34,4 +34,5 @@ plugin_old
 
 public/**/build/*.js
 public/**/dist/*.js
+public/*.txt
 npm-debug.log
