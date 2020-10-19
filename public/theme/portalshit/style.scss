@@ -316,14 +316,14 @@
             display: block;
             width: 100%;
             height: auto;
-            max-width: 407px;
-            max-height: 225px;
+            max-width: 392px;
+            max-height: 220px;
             img.default {
               display: block;
               margin: auto;
               height: auto;
-              max-width: 225px;
-              max-height: 225px;
+              max-width: 220px;
+              max-height: 220px;
             }
           }
           .body {
@@ -360,7 +360,7 @@
         .tags {
           list-style: none;
           padding-left: 0;
-          width: 75%;
+          width: 65%;
           margin: 0;
           text-overflow: ellipsis;
           overflow: hidden;
@@ -370,8 +370,9 @@
           }
         }
         .comment {
-          width: 25%;
+          width: 30%;
           margin: 0;
+          margin-left: .5rem;
         }
       }
     }
