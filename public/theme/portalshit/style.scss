@@ -204,7 +204,7 @@
   min-height: 500px;
 
   article.category {
-    margin: 0 .5rem;
+    margin: 3rem .5rem;
     header {
       h2 {
         &.blogging:before {
@@ -248,20 +248,30 @@
         }
       }
       .description {
-        margin: 2rem 0;
+        margin: 2rem 0 .5rem;
       }
       .meta {
         @include _meta;
         font-weight: normal;
         font-size: 1rem;
-        padding-left: 1rem;
+        padding-left: 0;
+        margin: 0;
+        list-style: none;
         li {
           margin: 0;
+          display: inline;
+          &:not(:last-child) {
+            &::after {
+              content: '/';
+              margin-left: .5em;
+            }
+          }
         }
       }
     }
     section {
       .new-entry {
+        margin-bottom: 3rem;
         .title {
           @include article-title;
         }
@@ -269,8 +279,10 @@
           display: flex;
           align-items: flex-start;
           .body {
-            height: 337px;
+            height: 100%;
+            max-height: 337px;
             text-overflow: ellipsis;
+            overflow: hidden;
           }
           .image, .body {
             width: 50%;
@@ -285,7 +297,7 @@
         display: flex;
         flex-wrap: wrap;
         .entry {
-          width: 32%;
+          width: 31%;
           padding: 0 .5rem;
           .title {
             text-overflow: ellipsis;
@@ -293,20 +305,24 @@
             white-space: nowrap;
           }
           .image {
-            text-align: center;
+            margin-bottom: .5rem;
             img.default {
-              width: 225px;
+              display: block;
+              margin: auto;
+              max-width: 225px;
             }
           }
           .body {
             font-size: .98rem;
             padding: 0;
+            min-height: 140px;
           }
         }
       }
       .entry {
         display: flex;
         flex-direction: column;
+        align-content: space-between;
         .title {
           margin: .5em 0;
         }
@@ -330,10 +346,18 @@
         .tags {
           list-style: none;
           padding-left: 0;
+          width: 75%;
           margin: 0;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
           li {
             display: inline;
           }
+        }
+        .comment {
+          width: 25%;
+          margin: 0;
         }
       }
     }

@@ -3,10 +3,10 @@
     %header
       %h2{ class: category.slug }
         = link_to "#{category.title} ", category.link
-        %ul.meta
-          %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: :long}
-          %li== 記事数 #{Entry.published.where(category: category).length}
       .description= category.description
+      %ul.meta
+        %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: '%Y年%m月%d日 (%a)'}
+        %li== 記事数 #{Entry.published.where(category: category).length}
     %section
       - post = entries.delete_if {|item| entries.index(0) == item }.first
       .new-entry
@@ -37,16 +37,18 @@
               - else
                 = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
             .body{ itemprop: 'articleBody' }
-              = post.long_description(300)
-          .footer
-            = post.tags_to_html
-            .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+              = post.long_description(260)
+              .footer
+                = post.tags_to_html
+                .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
       .past-entries
         - entries.each_with_index do |post, index|
           - next if index == 0
           .entry
             %h3.title{ itemprop: 'name' }
               = link_to post.title, post.link, itemprop: 'url'
+            .meta
+              %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
             %aside{ style: 'display: none'}
               %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
               %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
@@ -73,8 +75,6 @@
               .body{ itemprop: 'articleBody' }
                 = post.long_description
             .footer
-              .meta
-                %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
               = post.tags_to_html
               .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
 %footer
