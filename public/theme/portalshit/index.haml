@@ -1,3 +1,6 @@
+%section#site_description
+  = @site.description.html_safe
+
 - @entries_group_by_category.each do |category, entries|
   %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
     %header
@@ -68,9 +71,9 @@
               .image
                 - if post.images.present?
                   = link_to image_tag("https://portalshit.net/imageproxy/400x225,sc/#{post.cover_image}", class: 'desktop'), post.link
-                  = link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}", class: 'mobile'), post.link
+                  = link_to image_tag("https://portalshit.net/imageproxy/225x225,sc/#{post.cover_image}", class: 'mobile'), post.link
                 - else
-                  = link_to image_tag("https://portalshit.net/imageproxy/200/#{post.cover_image}", class: 'default'), post.link
+                  = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
 
               .body{ itemprop: 'articleBody' }
                 = post.long_description

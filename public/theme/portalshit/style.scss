@@ -203,8 +203,15 @@
   padding: 20px 30px;
   min-height: 500px;
 
+  section#site_description {
+    margin: 1rem .5rem 3rem;
+    h2 {
+      margin-bottom: 2rem;
+    }
+  }
+
   article.category {
-    margin: 3rem .5rem;
+    margin: 2rem .5rem 3rem;
     header {
       h2 {
         &.blogging:before {
@@ -306,10 +313,17 @@
           }
           .image {
             margin-bottom: .5rem;
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 407px;
+            max-height: 225px;
             img.default {
               display: block;
               margin: auto;
+              height: auto;
               max-width: 225px;
+              max-height: 225px;
             }
           }
           .body {
