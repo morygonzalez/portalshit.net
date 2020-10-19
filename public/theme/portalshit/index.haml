@@ -1,7 +1,7 @@
 - @entries_group_by_category.each do |category, entries|
-  %article#site_index{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
+  %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
     %header
-      %h2
+      %h2{ class: category.slug }
         = link_to category.title, category.link
         %span.meta.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: :long}
       .description= category.description
@@ -33,10 +33,9 @@
               - if post.images.present?
                 = link_to image_tag("https://portalshit.net/imageproxy/600x337,sc/#{post.cover_image}"), post.link
               - else
-                = link_to image_tag('https://portalshit.net/imageproxy/330/https://portalshit.net/theme/portalshit/ogp_image.png', class: 'default'), post.link
+                = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
             .body{ itemprop: 'articleBody' }
-              = post.long_description
-              %span.read-more= link_to 'つづきを読む', post.link
+              = post.long_description(300)
           .footer
             = post.tags_to_html
             .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
@@ -46,8 +45,6 @@
           .entry
             %h3.title{ itemprop: 'name' }
               = link_to post.title, post.link, itemprop: 'url'
-            .meta
-              %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
             %aside{ style: 'display: none'}
               %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
               %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
@@ -65,13 +62,18 @@
                 %meta{ itemprop: :height, content: 255 }
             .content
               .image
-                = link_to image_tag("https://portalshit.net/imageproxy/400x225,sc/#{post.cover_image}", class: 'desktop'), post.link
-                = link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}", class: 'mobile'), post.link
+                - if post.images.present?
+                  = link_to image_tag("https://portalshit.net/imageproxy/400x225,sc/#{post.cover_image}", class: 'desktop'), post.link
+                  = link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}", class: 'mobile'), post.link
+                - else
+                  = link_to image_tag("https://portalshit.net/imageproxy/200/#{post.cover_image}", class: 'default'), post.link
+
               .body{ itemprop: 'articleBody' }
                 = post.long_description
-                %span.read-more= link_to 'つづきを読む', post.link
             .footer
+              .meta
+                %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
               = post.tags_to_html
               .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
 %footer
-  = link_to 'もっと読む', '/archives'
+  %p.read-more= link_to 'すべての記事', '/archives'

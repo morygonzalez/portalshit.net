@@ -77,7 +77,7 @@
   #content {
     padding: .5em 0;
 
-    article#site_index {
+    article.category {
       header {
         .meta {
           display: block;
@@ -113,6 +113,7 @@
               }
               .image {
                 flex-grow: 3;
+                min-width: 100px;
                 img.mobile {
                   max-width: 100px;
                   display: block;

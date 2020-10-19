@@ -203,8 +203,52 @@
   padding: 20px 30px;
   min-height: 500px;
 
-  article#site_index {
+  article.category {
     header {
+      h2 {
+        &.blogging:before {
+          content: '📝';
+        }
+        &.misc:before {
+          content: '🤪';
+        }
+        &.shopping:before {
+          content: '💸';
+        }
+        &.work:before {
+          content: '👷🏻‍♂️';
+        }
+        &.mac-iphone:before {
+          content: '📱';
+        }
+        &.travel-and-short-trips:before {
+          content: '🗺';
+        }
+        &.WWW:before {
+          content: '🕸';
+        }
+        &.cooking-and-eating:before {
+          content: '🥘';
+        }
+        &.photo:before {
+          content: '📷';
+        }
+        &.reading:before {
+          content: '📕';
+        }
+        &.tech-and-programming:before {
+          content: '💻';
+        }
+        &.cinema:before {
+          content: '📺';
+        }
+        &.music:before {
+          content: '🎧';
+        }
+      }
+      .description {
+        margin: 2rem 0;
+      }
       .meta {
         @include _meta;
         font-weight: normal;
@@ -213,9 +257,16 @@
     }
     section {
       .new-entry {
+        .title {
+          @include article-title;
+        }
         .content {
           display: flex;
           align-items: flex-start;
+          .body {
+            height: 337px;
+            text-overflow: ellipsis;
+          }
           .image, .body {
             width: 50%;
             margin: auto .75em;
@@ -229,26 +280,36 @@
         display: flex;
         flex-wrap: wrap;
         .entry {
-          width: 33%;
+          width: 32%;
+          padding: 0 .5rem;
           .title {
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
           }
+          .image {
+            text-align: center;
+            img.default {
+              width: 225px;
+            }
+          }
+          .body {
+            font-size: .98rem;
+            padding: 0;
+          }
         }
       }
       .entry {
+        display: flex;
+        flex-direction: column;
         .title {
-          margin: .5em auto;
+          margin: .5em 0;
         }
         .meta {
           @include _meta;
           text-align: right;
           margin-right: 1.5em;
           margin-bottom: 1em;
-        }
-        .read-more {
-          font-size: .95em;
         }
         img.desktop {
           display: block;
@@ -258,16 +319,26 @@
         }
       }
       .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
         .tags {
           list-style: none;
           padding-left: 0;
+          margin: 0;
           li {
             display: inline;
-            text-align: right;
           }
         }
       }
     }
+  }
+
+  .read-more {
+    margin: 1em 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
   }
 
   article {
@@ -277,46 +348,7 @@
       margin-bottom: 2.5em;
 
       .title {
-        font-size: 1.2em;
-        word-wrap: break-word;
-        text-align: left;
-        padding: 0;
-        margin: 1em auto;
-
-        a {
-          text-decoration: none;
-          text-shadow: $dark-text-shadow-color 0 1px 0;
-          z-index: 2;
-          position: relative;
-
-          &:link, &:visited {
-            color: #e6e6e6;
-            text-shadow: $dark-text-shadow-color 0 1px 0;
-          }
-
-          &::before {
-            content: "•";
-            font-size: 360%;
-            text-shadow: none;
-            line-height: 0.1;
-            z-index: -1;
-            position: absolute;
-            margin-top: 0.05em;
-            margin-left: -0.2em;
-          }
-
-          &:link::before {
-            color: $dark-link-color;
-          }
-
-          &:visited::before {
-            color: $dark-visited-link-color;
-          }
-
-          &:hover::before {
-            color: $dark-hover-link-color;
-          }
-        }
+        @include article-title;
       }
       .meta {
         @include _meta;

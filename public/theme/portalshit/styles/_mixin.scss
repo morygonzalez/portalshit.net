@@ -42,3 +42,66 @@
 @mixin gradient-background($image) {
   background-image: linear-gradient(to top, rgba(33,33,33,0.50), transparent, transparent), url("https://resources.portalshit.net/theme-images/header-bg-#{$image}.jpg");
 }
+
+@mixin article-title {
+  font-size: 1.2em;
+  word-wrap: break-word;
+  text-align: left;
+  padding: 0;
+  margin: 1em auto;
+
+  a {
+    text-decoration: none;
+    text-shadow: $dark-text-shadow-color 0 1px 0;
+    z-index: 2;
+    position: relative;
+
+    &:link, &:visited {
+      color: #e6e6e6;
+      text-shadow: $dark-text-shadow-color 0 1px 0;
+    }
+
+    &::before {
+      content: "•";
+      font-size: 360%;
+      text-shadow: none;
+      line-height: 0.1;
+      z-index: -1;
+      position: absolute;
+      margin-top: 0.05em;
+      margin-left: -0.2em;
+    }
+
+    &:link::before {
+      color: $dark-link-color;
+    }
+
+    &:visited::before {
+      color: $dark-visited-link-color;
+    }
+
+    &:hover::before {
+      color: $dark-hover-link-color;
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    a {
+      text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
+
+      &:link, &:visited {
+        color: $light-title-link-color;
+      }
+
+      &:link::before {
+        color: $light-link-color;
+      }
+      &:visited::before {
+        // color: $light-visited-link-color;
+      }
+      &:hover::before {
+        color: $light-hover-link-color;
+      }
+    }
+  }
+}

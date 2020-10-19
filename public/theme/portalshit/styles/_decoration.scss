@@ -546,24 +546,6 @@ kbd {
           text-shadow: #{$dark-text-shadow-color} -0.5px -0.5px 1px;
         }
       }
-
-      article header .title a {
-        text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
-
-        &:link, &:visited {
-          color: $light-title-link-color;
-        }
-
-        &:link::before {
-          color: $light-link-color;
-        }
-        &:visited::before {
-          // color: $light-visited-link-color;
-        }
-        &:hover::before {
-          color: $light-hover-link-color;
-        }
-      }
     }
     #footer {
       color: $dark-font-color;
