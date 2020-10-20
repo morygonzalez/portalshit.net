@@ -5,7 +5,7 @@
   %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
     %header
       %h2{ class: category.slug }
-        = link_to "#{category.title} ", category.link
+        = link_to category.title, category.link
       .description= category.description
       %ul.meta
         %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: '%Y年%m月%d日 (%a)'}
@@ -80,5 +80,8 @@
             .footer
               = post.tags_to_html
               .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+    %footer
+      - title = %Q(<q><span class="#{category.slug}">#{category.title}</span></q>カテゴリーの記事をもっと読む).html_safe
+      %p.read-more= link_to title, category.link
 %footer
   %p.read-more= link_to 'すべての記事', '/archives'

@@ -105,3 +105,45 @@
     }
   }
 }
+
+@mixin category-emoji-decoration {
+  &.blogging:before {
+    content: '📝';
+  }
+  &.misc:before {
+    content: '🤪';
+  }
+  &.shopping:before {
+    content: '💸';
+  }
+  &.work:before {
+    content: '👷🏻‍♂️';
+  }
+  &.mac-iphone:before {
+    content: '📱';
+  }
+  &.travel-and-short-trips:before {
+    content: '🗺';
+  }
+  &.WWW:before {
+    content: '🕸';
+  }
+  &.cooking-and-eating:before {
+    content: '🥘';
+  }
+  &.photo:before {
+    content: '📷';
+  }
+  &.reading:before {
+    content: '📕';
+  }
+  &.tech-and-programming:before {
+    content: '💻';
+  }
+  &.cinema:before {
+    content: '📺';
+  }
+  &.music:before {
+    content: '🎧';
+  }
+}

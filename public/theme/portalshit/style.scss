@@ -214,45 +214,7 @@
     margin: 2rem .5rem 3rem;
     header {
       h2 {
-        &.blogging:before {
-          content: '📝';
-        }
-        &.misc:before {
-          content: '🤪';
-        }
-        &.shopping:before {
-          content: '💸';
-        }
-        &.work:before {
-          content: '👷🏻‍♂️';
-        }
-        &.mac-iphone:before {
-          content: '📱';
-        }
-        &.travel-and-short-trips:before {
-          content: '🗺';
-        }
-        &.WWW:before {
-          content: '🕸';
-        }
-        &.cooking-and-eating:before {
-          content: '🥘';
-        }
-        &.photo:before {
-          content: '📷';
-        }
-        &.reading:before {
-          content: '📕';
-        }
-        &.tech-and-programming:before {
-          content: '💻';
-        }
-        &.cinema:before {
-          content: '📺';
-        }
-        &.music:before {
-          content: '🎧';
-        }
+        @include category-emoji-decoration;
       }
       .description {
         margin: 2rem 0 .5rem;
@@ -371,6 +333,12 @@
         .comment {
           margin-left: 1rem;
         }
+      }
+    }
+    footer .read-more span {
+      @include category-emoji-decoration;
+      &:before {
+        margin: 0 .3rem;
       }
     }
   }
