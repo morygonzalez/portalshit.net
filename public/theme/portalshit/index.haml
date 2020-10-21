@@ -1,6 +1,28 @@
 %section#site_description
   = @site.description.html_safe
 
+%section.popular_entries
+  %h2 人気記事
+  %section
+    - cache_fragment :"index-#{I18n.locale}", shared: true do
+      %section.frequently-read-articles
+        %h3 最近よく読まれている記事
+        %ul
+          - Entry.popular(10).each do |post|
+            %li
+              = link_to post.title, post.link
+              .meta
+                %span.created_at= l(post.created_at.to_date, format: :long)
+      %section.hotentry
+        %h3 はてなブックマークで注目を集めた記事
+        %ul
+          - Entry.hotentry(10).each do |post|
+            %li
+              = link_to post.title, post.link
+              %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
+              .meta
+                %span.created_at= l(post.created_at.to_date, format: :long)
+
 - @entries_group_by_category.each do |category, entries|
   %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
     %header

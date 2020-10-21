@@ -210,6 +210,20 @@
     }
   }
 
+  section.popular_entries > section {
+    display: flex;
+    flex-wrap: wrap;
+    .frequently-read-articles, .hotentry {
+      width: 50%;
+      ul {
+        // list-style: none;
+        // padding-left: none;
+        li {
+        }
+      }
+    }
+  }
+
   article.category {
     margin: 2rem .5rem 3rem;
     header {
