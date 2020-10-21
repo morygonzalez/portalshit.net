@@ -1,74 +1,20 @@
 %section#site_description
+  %h2 このウェブサイトについて
   = @site.description.html_safe
 
-%section.popular_entries
-  %h2 人気記事
-  %section
-    - cache_fragment :"index-#{I18n.locale}", shared: true do
-      %section.frequently-read-articles
-        %h3 最近よく読まれている記事
-        %ul
-          - Entry.popular(10).each do |post|
-            %li
-              = link_to post.title, post.link
-              .meta
-                %span.created_at= l(post.created_at.to_date, format: :long)
-      %section.hotentry
-        %h3 はてなブックマークで注目を集めた記事
-        %ul
-          - Entry.hotentry(10).each do |post|
-            %li
-              = link_to post.title, post.link
-              %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
-              .meta
-                %span.created_at= l(post.created_at.to_date, format: :long)
-
-- @entries_group_by_category.each do |category, entries|
-  %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
-    %header
-      %h2{ class: category.slug }
-        = link_to category.title, category.link
-      .description= category.description
-      %ul.meta
-        %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: '%Y年%m月%d日 (%a)'}
-        %li== 記事数 #{Entry.published.where(category: category).length}
-    %section
-      - post = entries.delete_if {|item| entries.index(0) == item }.first
-      .new-entry
-        .entry
-          %h3.title{ itemprop: 'name' }
-            = link_to post.title, post.link, itemprop: 'url'
-          .meta
-            %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
-          %aside{ style: 'display: none'}
-            %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
-            %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
-            %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
-            %span{ itemprop: 'headline' }= post.long_description
-            %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
-              %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-                %meta{ content: 'https://2.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
-                %meta{ content: '128', itemprop: :width }
-                %meta{ content: '128', itemprop: :height }
-              %meta{ content: 'morygonzalez', itemprop: :name }
-            %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-              %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.cover_image}" }
-              %meta{ itemprop: :width, content: 350 }
-              %meta{ itemprop: :height, content: 255 }
-          .content
-            .image
-              - if post.images.present?
-                = link_to image_tag("https://portalshit.net/imageproxy/600x337,sc/#{post.cover_image}"), post.link
-              - else
-                = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
-            .body{ itemprop: 'articleBody' }
-              = post.long_description(260)
-              .footer
-                = post.tags_to_html
-                .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
-      .past-entries
-        - entries.each_with_index do |post, index|
-          - next if index == 0
+%section#categories
+  - @entries_group_by_category.each do |category, entries|
+    %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
+      %header
+        %h2{ class: category.slug }
+          = link_to category.title, category.link
+        .description= category.description
+        %ul.meta
+          %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: '%Y年%m月%d日 (%a)'}
+          %li== 記事数 #{Entry.published.where(category: category).length}
+      %section
+        - post = entries.delete_if {|item| entries.index(0) == item }.first
+        .new-entry
           .entry
             %h3.title{ itemprop: 'name' }
               = link_to post.title, post.link, itemprop: 'url'
@@ -92,18 +38,82 @@
             .content
               .image
                 - if post.images.present?
-                  = link_to image_tag("https://portalshit.net/imageproxy/400x225,sc/#{post.cover_image}", class: 'desktop'), post.link
-                  = link_to image_tag("https://portalshit.net/imageproxy/225x225,sc/#{post.cover_image}", class: 'mobile'), post.link
+                  = link_to image_tag("https://portalshit.net/imageproxy/600x337,sc/#{post.cover_image}"), post.link
                 - else
-                  = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
-
+                  = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
               .body{ itemprop: 'articleBody' }
-                = post.long_description
-            .footer
-              = post.tags_to_html
-              .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
-    %footer
-      - title = %Q(<q><span class="#{category.slug}">#{category.title}</span></q>カテゴリーの記事をもっと読む).html_safe
-      %p.read-more= link_to title, category.link
+                = post.long_description(260)
+                .footer
+                  = post.tags_to_html
+                  .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+        .past-entries
+          - entries.each_with_index do |post, index|
+            - next if index == 0
+            .entry
+              %h3.title{ itemprop: 'name' }
+                = link_to post.title, post.link, itemprop: 'url'
+              .meta
+                %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+              %aside{ style: 'display: none'}
+                %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
+                %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
+                %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
+                %span{ itemprop: 'headline' }= post.long_description
+                %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
+                  %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
+                    %meta{ content: 'https://2.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
+                    %meta{ content: '128', itemprop: :width }
+                    %meta{ content: '128', itemprop: :height }
+                  %meta{ content: 'morygonzalez', itemprop: :name }
+                %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
+                  %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.cover_image}" }
+                  %meta{ itemprop: :width, content: 350 }
+                  %meta{ itemprop: :height, content: 255 }
+              .content
+                .image
+                  - if post.images.present?
+                    = link_to image_tag("https://portalshit.net/imageproxy/400x225,sc/#{post.cover_image}", class: 'desktop'), post.link
+                    = link_to image_tag("https://portalshit.net/imageproxy/225x225,sc/#{post.cover_image}", class: 'mobile'), post.link
+                  - else
+                    = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
+
+                .body{ itemprop: 'articleBody' }
+                  = post.long_description
+              .footer
+                = post.tags_to_html
+                .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+      %footer
+        - title = %Q(<q><span class="#{category.slug}">#{category.title}</span></q>カテゴリーの記事をもっと読む).html_safe
+        %p.read-more= link_to title, category.link
+
+%section#popular_entries
+  %h2 人気記事
+  %section
+    - cache_fragment :"index-#{I18n.locale}", shared: true do
+      %section.frequently-read-articles
+        %h3 最近よく読まれている記事
+        %ul
+          - Entry.popular(6).each do |post|
+            %li
+              .title
+                %span.link= link_to post.title, post.link
+                %span.created_at= l(post.created_at.to_date, format: :long)
+              .description
+                .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
+                .text= post.long_description
+      %section.hotentry
+        %h3 はてなブックマークで注目を集めた記事
+        %ul
+          - Entry.hotentry(6).each do |post|
+            %li
+              .title
+                %span.link= link_to post.title, post.link
+                %span.created_at= l(post.created_at.to_date, format: :long)
+              -# .bookmark_count
+              -#   = link_to "#{post.bookmark_count} users", post.bookmark_url
+              .description
+                .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
+                .text= post.long_description
+
 %footer
   %p.read-more= link_to 'すべての記事', '/archives'

@@ -431,15 +431,7 @@ kbd {
 
 #footer {
   .bookmark_count {
-    font-size: .7em;
-    background-color: pink;
-    font-weight: bold;
-    padding: .1em;
-
-    a {
-      color: red !important;
-      text-decoration: underline;
-    }
+    @include bookmark-count;
   }
 }
 
