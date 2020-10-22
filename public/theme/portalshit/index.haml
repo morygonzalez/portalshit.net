@@ -3,6 +3,7 @@
   = @site.description.html_safe
 
 %section#categories
+  - entry_lengths = Entry.unscoped.published.group(:category_id).count
   - @entries_group_by_category.each do |category, entries|
     %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
       %header
@@ -11,7 +12,7 @@
         .description= category.description
         %ul.meta
           %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: '%Y年%m月%d日 (%a)'}
-          %li== 記事数 #{Entry.published.where(category: category).length}
+          %li== 記事数 #{entry_lengths[category.id]}
       %section
         - post = entries.delete_if {|item| entries.index(0) == item }.first
         .new-entry
