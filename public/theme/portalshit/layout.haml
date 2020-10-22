@@ -58,7 +58,7 @@
 
     %footer#footer
       %aside
-        - cache_fragment :"footer-#{I18n.locale}", shared: true do
+        - cache_fragment :"footer-#{I18n.locale}", shared: true, expires_in: 1.day do
           %dl.popular_entries
             %dt= t('popular_entries')
             %dd

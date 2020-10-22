@@ -90,7 +90,7 @@
 %section#popular_entries
   %h2 人気記事
   %section
-    - cache_fragment :"index-#{I18n.locale}", shared: true do
+    - cache_fragment :"index-#{I18n.locale}", shared: true, expires_in: 1.day do
       %section.frequently-read-articles
         %h3 最近よく読まれている記事
         %ul
