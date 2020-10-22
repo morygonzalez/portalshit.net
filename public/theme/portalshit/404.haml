@@ -53,7 +53,7 @@
 
     %footer#footer
       %aside
-        - cache_fragment :"footer-#{I18n.locale}", shared: true do
+        - cache_fragment :"footer-#{I18n.locale}", shared: true, expires_in: 1.day do
           %dl.popular_entries
             %dt= t('popular_entries')
             %dd
@@ -73,24 +73,24 @@
                     %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
                     .meta
                       %span.created_at= l(post.created_at.to_date, format: :long)
-          %dl.recent_entries
-            %dt= t('recent_entries')
-            %dd
-              %ul
-                - Post.published.recent.each do |post|
-                  %li
-                    = link_to post.title, post.link
-                    .meta
-                      %span.created_at= l(post.created_at.to_date, format: :long)
-          %dl.recent_comments
-            %dt= t('recent_comments')
-            %dd
-              %ul
-                - Comment.recent.each do |comment|
-                  %li
-                    = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
-                    .meta
-                      %span.created_at= l(comment.created_at.to_date, format: :long)
+        %dl.recent_entries
+          %dt= t('recent_entries')
+          %dd
+            %ul
+              - Post.published.recent.each do |post|
+                %li
+                  = link_to post.title, post.link
+                  .meta
+                    %span.created_at= l(post.created_at.to_date, format: :long)
+        %dl.recent_comments
+          %dt= t('recent_comments')
+          %dd
+            %ul
+              - Comment.recent.each do |comment|
+                %li
+                  = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
+                  .meta
+                    %span.created_at= l(comment.created_at.to_date, format: :long)
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
