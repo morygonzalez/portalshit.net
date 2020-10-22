@@ -198,13 +198,12 @@
   height: auto;
   margin: 0 auto;
   text-align: left;
-
   background-color: $dark-main-background-color;
   padding: 20px 30px;
   min-height: 500px;
 
   > section {
-    margin: 1rem .5rem 3rem;
+    margin: 1rem .5rem 8rem;
   }
 
   section#site_description {
@@ -215,14 +214,17 @@
 
   section#categories {
     article.category {
-      margin: 2rem 0 3rem;
+      margin: 5rem 0 8rem;
+
       header {
         h2 {
           @include category-emoji-decoration;
         }
+
         .description {
           margin: 2rem 0 .5rem;
         }
+
         .meta {
           @include _meta;
           font-weight: normal;
@@ -230,9 +232,11 @@
           padding-left: 0;
           margin: 0;
           list-style: none;
+
           li {
             margin: 0;
             display: inline;
+
             &:not(:last-child) {
               &::after {
                 content: '/';
@@ -242,50 +246,63 @@
           }
         }
       }
+
       section {
         .new-entry {
           margin-bottom: 3rem;
+
           .title {
             @include article-title;
           }
+
           .content {
             display: flex;
             align-items: flex-start;
+
             .body {
               height: 100%;
               max-height: 337px;
               text-overflow: ellipsis;
               overflow: hidden;
             }
+
             .image, .body {
               width: 50%;
-              margin: auto .75em;
+
               .default {
                 margin: auto 25%;
               }
             }
           }
         }
+
         .past-entries {
           display: flex;
           flex-wrap: wrap;
+
           .entry {
-            width: 31%;
-            padding: 0 .5rem;
+            width: 32%;
+            &:not(:last-child) {
+              padding-right: .8em;
+            }
+
             .title {
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;
             }
+
             .image {
               margin-bottom: .5rem;
               display: block;
+
               img.default {
                 display: block;
                 margin: auto;
                 max-height: 220px;
               }
             }
+
             .body {
               font-size: .98rem;
               padding: 0;
@@ -293,36 +310,49 @@
             }
           }
         }
+
         .entry {
           display: flex;
           flex-direction: column;
           align-content: space-between;
+
           .title {
             margin: .5em 0;
           }
+
           .meta {
             @include _meta;
             text-align: right;
-            margin-right: 1.5em;
-            margin-bottom: 1em;
+            margin-right: .5em;
+            margin-bottom: .5em;
           }
+
           .image {
             img.desktop {
               display: block;
             }
+
             img.mobile {
               display: none;
             }
           }
+
+          .body {
+            margin: 0;
+          }
         }
+
         .footer {
           display: flex;
           flex-wrap: wrap;
           justify-content: flex-end;
+          margin: 1em 0;
+
           .tags, .comments {
             margin: 0;
             text-align: right;
           }
+
           .tags {
             list-style: none;
             padding-left: 0;
@@ -334,6 +364,7 @@
               display: inline;
             }
           }
+
           .comment {
             margin-left: 1rem;
           }
@@ -361,10 +392,10 @@
   }
 
   .read-more {
-    margin: 1em 0;
     width: 100%;
-    text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 800%;
+    font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
   }
 
   article {
@@ -427,7 +458,6 @@
     .body {
       text-align: left;
       margin-bottom: 1em;
-      padding: 0 8px;
       line-height: 180%;
       max-width: 780px;
       margin: auto;

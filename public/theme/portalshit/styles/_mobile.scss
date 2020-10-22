@@ -77,6 +77,10 @@
   #content {
     padding: .5em 0;
 
+    > article, > section {
+      padding: 0 5px;
+    }
+
     section#categories {
       article.category {
         header {
@@ -142,8 +146,6 @@
     }
 
     article {
-      padding: 0 5px;
-
       header {
         nav.prevnext {
           font-size: 85%;

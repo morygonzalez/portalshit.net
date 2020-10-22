@@ -116,5 +116,7 @@
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
                 .text= post.long_description
 
-%footer
-  %p.read-more= link_to 'すべての記事', '/archives'
+%section
+  %h2 すべての記事
+  %p 以下のページですべての過去記事一覧を見ることができます。
+  %p.read-more= link_to 'Archives', '/archives'
