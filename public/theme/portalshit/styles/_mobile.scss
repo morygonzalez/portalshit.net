@@ -77,69 +77,63 @@
   #content {
     padding: .5em 0;
 
-    > article, > section {
-      padding: 0 5px;
-    }
-
-    section#categories {
-      article.category {
-        header {
-          .meta {
-            display: block;
-            margin-left: 0;
-            font-size: .8rem;
+    article#recent_entries, article.category {
+      header {
+        .meta {
+          display: block;
+          margin-left: 0;
+          font-size: .8rem;
+        }
+      }
+      section {
+        .new-entry {
+          .content {
+            flex-direction: column;
+            .image, .body {
+              width: 100%;
+              margin: 0;
+            }
+            .image {
+              text-align: center;
+              .default {
+                max-width: 200px;
+                margin: auto;
+              }
+            }
           }
         }
-        section {
-          .new-entry {
+        .past-entries {
+          .entry {
+            width: 100%;
+            padding: initial;
             .content {
-              flex-direction: column;
-              .image, .body {
-                width: 100%;
-                margin: 0;
+              display: flex;
+              .body {
+                flex-grow: 7;
+                font-size: 90%;
+                margin: 0 0 0 1em;
+                padding: 0;
               }
               .image {
-                text-align: center;
-                .default {
-                  max-width: 200px;
-                  margin: auto;
+                flex-grow: 3;
+                min-width: 100px;
+                img.mobile {
+                  max-width: 100px;
+                  display: block;
+                }
+                img.default {
+                  max-width: 100px;
+                }
+                img.desktop {
+                  display: none;
                 }
               }
             }
           }
-          .past-entries {
-            .entry {
-              width: 100%;
-              padding: initial;
-              .content {
-                display: flex;
-                .body {
-                  flex-grow: 7;
-                  font-size: 90%;
-                  margin: 0 0 0 1em;
-                  padding: 0;
-                }
-                .image {
-                  flex-grow: 3;
-                  min-width: 100px;
-                  img.mobile {
-                    max-width: 100px;
-                    display: block;
-                  }
-                  img.default {
-                    max-width: 100px;
-                  }
-                  img.desktop {
-                    display: none;
-                  }
-                }
-              }
-            }
-          }
-          .entry {
-            .meta {
-              text-align: left;
-            }
+        }
+        .entry {
+          .meta {
+            text-align: left;
           }
         }
       }

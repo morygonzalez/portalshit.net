@@ -34,8 +34,7 @@ module Lokka
   end
 
   class App
-    get '/' do
-      @theme_types << :index
+    get '/categories' do
       @theme_types << :entries
 
       query = <<~SQL
@@ -62,11 +61,12 @@ module Lokka
         result[entry.category] << entry
       }
 
-      @title = @site.title
+      @title = %Q(#}{@site.title})
 
-      @bread_crumbs = [{ name: t('home'), link: '/' }]
+      @bread_crumbs = [{ name: t('home'), link: '/' },
+                       { name: t('categories') }]
 
-      render_detect :index, :entries
+      render_detect :categories
     end
   end
 end
