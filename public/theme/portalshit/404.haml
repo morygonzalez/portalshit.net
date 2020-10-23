@@ -37,28 +37,34 @@
                 %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
 
         #header-bottom
-          %nav#category-nav
-            %ul#categories
-              - sorted_categories.each do |category|
-                %li= link_to category[:title],
-                  "/category/#{category[:slug]}/",
-                  title: "#{category[:title]} (#{category[:count]})"
           #header-bg-description
             %span.header-bg-light-description= header_bg[:'data-bg-light-description']
             %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
 
     %main#content.hfeed
-      %h2 404 not found
+      %h2 404 Not Found
       %p== Not found: #{request.path_info}
+
+      %h2= t('recent_entries')
+      %ul
+        - Entry.includes(:category).published.recent(7).each do |post|
+          %li= link_to post.title, post.link
+
+      %h2= t('categories')
+      %ul#categories
+        - sorted_categories.each do |category|
+          %li= link_to category[:title],
+            "/category/#{category[:slug]}/",
+              title: "#{category[:title]} (#{category[:count]})"
 
     %footer#footer
       %aside
-        - cache_fragment :"footer-#{I18n.locale}", shared: true, expires_in: 1.day do
+        - cache_fragment :"footer-404-#{I18n.locale}", shared: true, expires_in: 1.day do
           %dl.popular_entries
             %dt= t('popular_entries')
             %dd
               %ul
-                - Post.popular.each do |post|
+                - Post.includes(:category).popular.each do |post|
                   %li
                     = link_to post.title, post.link
                     .meta
@@ -67,7 +73,7 @@
             %dt= t('hotentry')
             %dd
               %ul
-                - Post.hotentry.each do |post|
+                - Post.includes(:category).hotentry.each do |post|
                   %li
                     =link_to post.title, post.link
                     %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
@@ -77,7 +83,7 @@
           %dt= t('recent_entries')
           %dd
             %ul
-              - Post.published.recent.each do |post|
+              - Post.includes(:category).published.recent.each do |post|
                 %li
                   = link_to post.title, post.link
                   .meta
@@ -86,7 +92,7 @@
           %dt= t('recent_comments')
           %dd
             %ul
-              - Comment.recent.each do |comment|
+              - Comment.includes(entry: :category).recent.each do |comment|
                 %li
                   = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
                   .meta

@@ -63,7 +63,7 @@
             %dt= t('popular_entries')
             %dd
               %ul
-                - Post.popular.each do |post|
+                - Post.includes(:category).popular.each do |post|
                   %li
                     = link_to post.title, post.link
                     .meta
@@ -72,7 +72,7 @@
             %dt= t('hotentry')
             %dd
               %ul
-                - Post.hotentry.each do |post|
+                - Post.includes(:category).hotentry.each do |post|
                   %li
                     =link_to post.title, post.link
                     %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
