@@ -1,9 +1,9 @@
 %section#site_description
-  %h2 このウェブサイトについて
+  %h2= t('about')
   = @site.description.html_safe
 
 %article#recent_entries
-  %h2 最近の記事
+  %h2= t('recent_entries')
   %section.recent
     - post = @posts.first
     .new-entry
@@ -82,10 +82,10 @@
       %section.frequently-read-articles
         %h3 最近よく読まれている記事
         %ul
-          - Entry.popular(6).each do |post|
+          - Entry.includes(:category).popular(6).each do |post|
             %li
               .title
-                %span.link= link_to post.title, post.link
+                %h4.link= link_to post.title, post.link
                 %span.created_at= l(post.created_at.to_date, format: :long)
               .description
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
@@ -93,10 +93,10 @@
       %section.hotentry
         %h3 はてなブックマークで注目を集めた記事
         %ul
-          - Entry.hotentry(6).each do |post|
+          - Entry.includes(:category).hotentry(6).each do |post|
             %li
               .title
-                %span.link= link_to post.title, post.link
+                %h4.link= link_to post.title, post.link
                 %span.created_at= l(post.created_at.to_date, format: :long)
               .bookmark_count
                 = link_to "#{post.bookmark_count} users", post.bookmark_url
@@ -105,11 +105,11 @@
                 .text= post.long_description
 
 %section
-  %h2 カテゴリー一覧
+  %h2= t('listing_categories')
   %p 以下のページでカテゴリーごとの最新記事を確認できます。
-  %p.read-more= link_to 'カテゴリー一覧', '/categories'
+  %p.read-more= link_to t('listing_categories'), '/categories'
 
 %section
-  %h2 すべての記事
+  %h2= t('archives.title')
   %p 以下のページですべての過去記事一覧を見ることができます。
   %p.read-more= link_to 'Archives', '/archives'
