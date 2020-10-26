@@ -1,3 +1,7 @@
+%section
+  %h2= t('listing_categories')
+  %p カテゴリーごとの最新記事を表示しています。各カテゴリーは最近記事が更新された順に並んでいます。
+
 - entry_lengths = Entry.unscoped.published.group(:category_id).count
 - @entries_group_by_category.each do |category, entries|
   %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
@@ -72,7 +76,6 @@
                   = link_to image_tag("https://portalshit.net/imageproxy/225x225,sc/#{post.cover_image}", class: 'mobile'), post.link
                 - else
                   = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
-
               .body{ itemprop: 'articleBody' }
                 = post.long_description
             .footer

@@ -104,12 +104,13 @@
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
                 .text= post.long_description
 
-%section
-  %h2= t('listing_categories')
-  %p 以下のページでカテゴリーごとの最新記事を確認できます。
-  %p.read-more= link_to t('listing_categories'), '/categories'
+%section.more-articles
+  %h2 以前の記事
+  %section.more
+    %section.category-list
+      %h3= link_to t('listing_categories'), '/categories'
+      %p カテゴリーごとの最新記事 4 件ずつを見ることができます。
 
-%section
-  %h2= t('archives.title')
-  %p 以下のページですべての過去記事一覧を見ることができます。
-  %p.read-more= link_to 'Archives', '/archives'
+    %section.entry-list
+      %h3= link_to t('archives.title'), '/archives'
+      %p すべての過去記事一覧を見ることができます。年、カテゴリー別の絞り込み UI 付き。

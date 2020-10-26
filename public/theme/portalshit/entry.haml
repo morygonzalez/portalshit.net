@@ -45,14 +45,15 @@
 
 %aside
   = partial :related
+
   %section.comments
     %h3= t('comments')
-    %ul
+    %ul.comment-list
       - @entry.comments.approved.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}
           %ul.meta
             %li.gravatar= image_tag gravatar_image_url comment.email
             %li.name= link_to comment.name, comment.homepage, unless: comment.homepage.blank?
-            %li.created_at= l comment.created_at, format: :long
           .body~ Markup.use_engine('redcarpet', strip_tags(comment.body)).html_safe
+          .created_at= l comment.created_at, format: :long
     = partial :comment

@@ -203,7 +203,7 @@
   min-height: 500px;
 
   > section, > article {
-    margin: 2rem .5rem 4rem;
+    margin: 1rem .5rem 4rem;
 
     h2 {
       margin-bottom: 1.5em;
@@ -374,6 +374,8 @@
 
     footer .read-more span {
       @include category-emoji-decoration;
+      text-align: center;
+
       &:before {
         margin: 0 .3rem;
       }
@@ -392,6 +394,14 @@
         font-size: 0.7rem;
         max-width: 70px;
       }
+    }
+  }
+
+  section.more {
+    display: flex;
+
+    > section {
+      width: 50%;
     }
   }
 
