@@ -7,7 +7,7 @@ module Lokka
 
   module Helpers
     def referrers
-      Entry.published.where('body like ?', "%#{@entry.link}%")
+      Entry.includes(:category).published.where('body like ?', "%#{@entry.link}%")
     end
   end
 end
