@@ -26,7 +26,7 @@
     %label{for: 'comment_body'}= t('comment.body')
     %br
     %textarea{name: 'comment[body]', id: 'comment_body'}
-  - if Option.recaptcha_public_key && Option.recaptcha_private_key
+  - if ENV['RECAPTCHA_PUBLIC_KEY'] && ENV['RECAPTCHA_PRIVATE_KEY']
     %p
       != recaptcha_javascript
       != recaptcha_widget
