@@ -13,7 +13,7 @@ module Lokka
       {
         message: 'Preview successfull',
         body: body,
-        markup: markup,
+        markup: entry.markup,
         status: 201
       }
     rescue StandardError => e
@@ -25,16 +25,12 @@ module Lokka
 
     private
 
-    def markup
-      @markup = params[:markup] || default_markup
-    end
-
-    def raw_body
-      @raw_body = params[:raw_body] || ''
+    def entry
+      @entry ||= Entry.new(markup: params[:markup], body: params[:raw_body])
     end
 
     def body
-      @body ||= Markup.use_engine(markup, raw_body)
+      Lokka::Helpers.expand_associate_link(entry.body)
     end
   end
 end
