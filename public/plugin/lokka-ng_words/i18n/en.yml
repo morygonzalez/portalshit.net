@@ -1,0 +1,8 @@
+en:
+  ng_words:
+    title: NG Words
+    banner: Once you configured NG Words, all the comments match with NG Words are automatically marked as spam. You can delete them with ease.
+    created: NG Words have been created
+    updated: NG Words have been updated
+    db_error: DB error
+    ng_words: NG Words

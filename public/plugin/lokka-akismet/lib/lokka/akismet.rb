@@ -23,7 +23,6 @@ module Lokka
       app.get '/admin/plugins/akismet' do
         login_required
         @akismet = akismet_key
-        @ng_words = ng_words
         haml :"#{akismet_view}index", layout: :"admin/layout"
       end
 
@@ -31,7 +30,6 @@ module Lokka
         login_required
         posted_key = params[:akismet][:akismet_key].to_s
         Option.akismet_key = params[:akismet][:akismet_key]
-        Option.ng_words = params[:akismet][:ng_words]
         if valid_akismet_key?(posted_key) && Option.akismet_key
           flash[:notice] = t('akismet.api_key_updated')
           redirect to('/admin/plugins/akismet')
@@ -55,8 +53,6 @@ module Lokka
     end
 
     def spam?
-      return true if ng_words&.split(',')&.any? {|word| params[:comment][:body] =~ /#{word.strip}/i }
-
       key = akismet_key
       return false unless key
 
@@ -93,10 +89,6 @@ module Lokka
 
     def akismet_key
       Option.akismet_key
-    end
-
-    def ng_words
-      Option.ng_words
     end
   end
 end

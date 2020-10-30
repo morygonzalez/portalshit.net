@@ -1,0 +1,8 @@
+ja:
+  ng_words:
+    title: NG ワード
+    banner: NG ワードを設定すると、マッチした文字列を含むコメントがスパム判定されるようになります。迷惑コメントの一括削除が簡単に行えます。
+    created: NG ワードを登録しました
+    updated: NG ワードをを更新しました
+    db_error: データベースエラーです
+    ng_words: NG ワード
