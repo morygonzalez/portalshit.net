@@ -28,7 +28,7 @@ module Lokka
                 display: flex;
                 align-items: start;
                 margin: 0 auto;
-                max-height: 320px;
+                max-height: 250px;
                 background: #fff;
                 color: #000;
                 font-size: 16px;
