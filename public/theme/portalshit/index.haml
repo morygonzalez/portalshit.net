@@ -30,7 +30,7 @@
         .content
           .image
             - if post.images.present?
-              = link_to image_tag("https://portalshit.net/imageproxy/600x337,sc/#{post.cover_image}"), post.link
+              = link_to image_tag("https://portalshit.net/imageproxy/600x337/#{post.cover_image}"), post.link
             - else
               = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
           .body{ itemprop: 'articleBody' }
@@ -64,8 +64,8 @@
           .content
             .image
               - if post.images.present?
-                = link_to image_tag("https://portalshit.net/imageproxy/400x225,sc/#{post.cover_image}", class: 'desktop'), post.link
-                = link_to image_tag("https://portalshit.net/imageproxy/225x225,sc/#{post.cover_image}", class: 'mobile'), post.link
+                = link_to image_tag("https://portalshit.net/imageproxy/400x225/#{post.cover_image}", class: 'desktop'), post.link
+                = link_to image_tag("https://portalshit.net/imageproxy/225x225/#{post.cover_image}", class: 'mobile'), post.link
               - else
                 = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
 
@@ -88,7 +88,7 @@
                 %h4.link= link_to post.title, post.link
                 %span.created_at= l(post.created_at.to_date, format: :long)
               .description
-                .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
+                .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
                 .text= post.long_description
       %section.hotentry
         %h3 はてなブックマークで注目を集めた記事
@@ -101,7 +101,7 @@
               .bookmark_count
                 = link_to "#{post.bookmark_count} users", post.bookmark_url
               .description
-                .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{post.cover_image}"), post.link
+                .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
                 .text= post.long_description
 
 %section.more-articles
