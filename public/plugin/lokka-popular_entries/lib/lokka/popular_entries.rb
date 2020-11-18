@@ -10,8 +10,9 @@ class Entry
   attr_accessor :bookmark_count, :bookmark_url
 
   class << self
-    def popular(limit = 5)
-      access_ranking = File.open(File.join(Lokka.root, 'public', 'access-ranking.txt'))
+    def popular(limit: 5, target: 'all')
+      target_file_path = target == 'all' ? 'access-ranking.txt' : "access-ranking-#{target}.txt"
+      access_ranking = File.open(File.join(Lokka.root, 'public', target_file_path))
       slugs = {}
       access_ranking.each do |line|
         access_limit, path = *line.split(' ')
@@ -25,7 +26,7 @@ class Entry
       []
     end
 
-    def hotentry(limit = 5)
+    def hotentry(limit: 5)
       require 'open-uri'
       require 'nokogiri'
 

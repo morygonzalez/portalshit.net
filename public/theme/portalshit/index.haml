@@ -82,7 +82,7 @@
       %section.frequently-read-articles
         %h3 最近よく読まれている記事
         %ul
-          - Entry.includes(:category).popular(6).each do |post|
+          - Entry.includes(:category).popular(limit: 6).each do |post|
             %li
               .title
                 %h4.link= link_to post.title, post.link
@@ -93,7 +93,7 @@
       %section.hotentry
         %h3 はてなブックマークで注目を集めた記事
         %ul
-          - Entry.includes(:category).hotentry(6).each do |post|
+          - Entry.includes(:category).hotentry(limit: 6).each do |post|
             %li
               .title
                 %h4.link= link_to post.title, post.link

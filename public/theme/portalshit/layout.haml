@@ -58,24 +58,23 @@
 
     %footer#footer
       %aside
-        - cache_fragment :"footer-#{I18n.locale}", shared: true, expires_in: 1.day do
+        - cache_fragment :"footer-#{I18n.locale}", shared: true, expires_in: 1.hour do
           %dl.popular_entries
-            %dt= t('popular_entries')
+            %dt= t('popular_entries_today')
             %dd
               %ul
-                - Post.includes(:category).popular.each do |post|
+                - Post.includes(:category).popular(target: 'today').each do |post|
                   %li
                     = link_to post.title, post.link
                     .meta
                       %span.created_at= l(post.created_at.to_date, format: :long)
-          %dl.hotentry
-            %dt= t('hotentry')
+          %dl.popular_entries
+            %dt= t('popular_entries_yesterday')
             %dd
               %ul
-                - Post.includes(:category).hotentry.each do |post|
+                - Post.includes(:category).popular(target: 'yesterday').each do |post|
                   %li
                     =link_to post.title, post.link
-                    %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
                     .meta
                       %span.created_at= l(post.created_at.to_date, format: :long)
         %dl.recent_entries
