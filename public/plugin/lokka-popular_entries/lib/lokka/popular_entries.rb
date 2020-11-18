@@ -14,11 +14,11 @@ class Entry
       target_file_path = target == 'all' ? 'access-ranking.txt' : "access-ranking-#{target}.txt"
       access_ranking = File.open(File.join(Lokka.root, 'public', target_file_path))
       slugs = {}
-      access_ranking.each do |line|
-        access_limit, path = *line.split(' ')
+      access_ranking.each_with_index do |line, index|
+        _, path = *line.split(' ')
         next unless Lokka::PermalinkHelper.custom_permalink_parse(path)
         slug = path.split('/')[-1]
-        slugs[access_limit] = slug
+        slugs[index] = slug
         break if slugs.length == limit
       end
       includes(:category).where(slug: slugs.values).limit(limit).sort_by {|entry| slugs.values.index(entry.slug) }
