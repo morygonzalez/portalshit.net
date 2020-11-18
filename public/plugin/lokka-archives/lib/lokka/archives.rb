@@ -39,12 +39,14 @@ module Lokka
       end
 
       app.get '/archives' do
+        @title = %(#{I18n.t('archives.title')} - #{@site.title})
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('archives.title'), link: '/archives' }
         haml :"plugin/lokka-archives/views/index", layout: :"theme/#{@theme.name}/layout"
       end
 
       app.get '/archives/:year' do |year|
+        @title = %(#{I18n.t('archives.title')} #{year} - #{@site.title})
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('archives.title'), link: '/archives' }
         @bread_crumbs << { name: year, link: "/archives/#{year}" }
