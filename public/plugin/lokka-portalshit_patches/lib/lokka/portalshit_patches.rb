@@ -61,7 +61,7 @@ module Lokka
         result[entry.category] << entry
       }
 
-      @title = %Q(#}{@site.title})
+      @title = %Q(#{t('categories')} - #{@site.title})
 
       @bread_crumbs = [{ name: t('home'), link: '/' },
                        { name: t('categories') }]
