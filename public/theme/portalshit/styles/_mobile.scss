@@ -1,3 +1,53 @@
+@media screen and (max-width: 1112px) {
+  #content {
+    article#recent_entries {
+      section {
+        .new-entry {
+          .content {
+            flex-direction: column;
+
+            .body {
+              margin-left: 0;
+            }
+
+            .image, .body {
+              width: 100%;
+              margin: 1em auto;
+            }
+
+            .image {
+              text-align: center;
+              .default {
+                max-width: 200px;
+                margin: auto;
+              }
+            }
+          }
+        }
+
+        .past-entries {
+          .entry {
+            width: 48%;
+            margin: auto 1%;
+
+            &:not(:last-child) {
+              padding-right: 0;
+            }
+
+            .image {
+              margin: .5em auto 1em;
+
+              img {
+                margin: auto;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 640px) {
   body {
     font-size: 15px;
@@ -288,3 +338,4 @@
     }
   }
 }
+

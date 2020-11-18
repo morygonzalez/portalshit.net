@@ -267,6 +267,10 @@
             overflow: hidden;
           }
 
+          .body {
+            margin-left: 1em;
+          }
+
           .image, .body {
             width: 50%;
 
@@ -283,6 +287,8 @@
 
         .entry {
           width: 32%;
+          margin-bottom: 2em;
+
           &:not(:last-child) {
             padding-right: .8em;
           }
