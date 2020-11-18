@@ -139,6 +139,14 @@
       }
     }
 
+    section.more {
+      display: block;
+
+      > section.category-list, > section.entry-list {
+        width: 100%;
+      }
+    }
+
     article {
       header {
         nav.prevnext {
