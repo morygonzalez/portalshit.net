@@ -4,13 +4,6 @@ UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladde
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 
-ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
-  | xargs zcat -f \
-  | grep -viP ${UA_TO_IGNORE}`
-
-CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log* \
-  | xargs zcat -f`
-
 function access_ranking() {
   echo "Access Ranking ${DURATION}"
   echo "${ACCESS_LOGS}" \
@@ -22,7 +15,7 @@ function access_ranking() {
     | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | tee ${APP_DIR}/public/access-ranking${SUFFIX}.txt
+    | cat 1>${APP_DIR}/public/access-ranking${SUFFIX}.txt 2>/dev/null
 }
 
 function referer_ranking() {
@@ -34,7 +27,7 @@ function referer_ranking() {
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | tee ${APP_DIR}/public/referer-ranking${SUFFIX}.txt
+    | cat 1>${APP_DIR}/public/referer-ranking${SUFFIX}.txt 2>/dev/null
 }
 
 function cache_hit_rate() {
@@ -62,7 +55,7 @@ function cache_hit_rate() {
         print "EXPIRE\t" expire "\t(" expired_rate "%)"
         print "MISS\t" miss "\t(" miss_rate "%)"
       }' \
-    | tee ${APP_DIR}/public/cache-hit-rate${SUFFIX}.txt
+    | cat 1>${APP_DIR}/public/cache-hit-rate${SUFFIX}.txt 2>/dev/null
 }
 
 function spam_block_rate() {
@@ -86,21 +79,36 @@ function spam_block_rate() {
         print "BLOCK\t" block "\t(" block_rate "%)"
         print "SLIP\t" slip "\t(" slip_rate "%)"
       }' \
-    | tee ${APP_DIR}/public/spam-block-rate${SUFFIX}.txt
+    | cat 1>${APP_DIR}/public/spam-block-rate${SUFFIX}.txt 2>/dev/null
 }
 
 case $2 in
   'today' )
     DURATION='today'
     SUFFIX="-${DURATION}"
+    ACCESS_LOGS=`find ${APP_DIR}/log/access.log \
+      | xargs zcat -f \
+      | grep -viP ${UA_TO_IGNORE}`
+    CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log \
+      | xargs zcat -f`
     ;;
   'yesterday' )
     DURATION='yesterday'
     SUFFIX="-${DURATION}"
+    ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
+      | xargs zcat -f \
+      | grep -viP ${UA_TO_IGNORE}`
+    CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log* \
+      | xargs zcat -f`
     ;;
   * )
     DURATION=''
     SUFFIX=''
+    ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
+      | xargs zcat -f \
+      | grep -viP ${UA_TO_IGNORE}`
+    CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log* \
+      | xargs zcat -f`
     ;;
 esac
 
