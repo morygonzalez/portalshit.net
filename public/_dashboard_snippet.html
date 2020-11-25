@@ -6,43 +6,43 @@
   <li><a href="https://blog-feedback.app/blogs">BlogFeedback</a></li>
 </ul>
 <div class="ranking">
-  <div id="access-ranking">
-    <h3><a href="/access-ranking.txt">Access Ranking</a></h3>
-  </div>
   <div id="access-ranking-today">
-    <h3><a href="/access-ranking-today.txt">Access Ranking Today</a></h3>
+    <h3><a href="/log-aggregation/access-ranking-today.txt">Access Ranking Today</a></h3>
   </div>
   <div id="access-ranking-yesterday">
-    <h3><a href="/access-ranking-yesterday.txt">Access Ranking Yesterday</a></h3>
+    <h3><a href="/log-aggregation/access-ranking-yesterday.txt">Access Ranking Yesterday</a></h3>
   </div>
-  <div id="referer-ranking">
-    <h3><a href="/referer-ranking.txt">Referer Ranking</a></h3>
+  <div id="access-ranking-all">
+    <h3><a href="/log-aggregation/access-ranking-all.txt">Access Ranking</a></h3>
   </div>
   <div id="referer-ranking-today">
-    <h3><a href="/referer-ranking-today.txt">Referer Ranking Today</a></h3>
+    <h3><a href="/log-aggregation/referer-ranking-today.txt">Referer Ranking Today</a></h3>
   </div>
   <div id="referer-ranking-yesterday">
-    <h3><a href="/referer-ranking-yesterday.txt">Referer Ranking Yesterday</a></h3>
+    <h3><a href="/log-aggregation/referer-ranking-yesterday.txt">Referer Ranking Yesterday</a></h3>
+  </div>
+  <div id="referer-ranking-all">
+    <h3><a href="/log-aggregation/referer-ranking-all.txt">Referer Ranking</a></h3>
   </div>
 </div>
 <div class="hit-rate">
-  <div id="cache-hit-rate">
-    <h3><a href="/cache-hit-rate.txt">Cache Hit Rate</a></h3>
-  </div>
   <div id="cache-hit-rate-today">
-    <h3><a href="/cache-hit-rate-today.txt">Cache Hit Rate Today</a></h3>
+    <h3><a href="/log-aggregation/cache-hit-rate-today.txt">Cache Hit Rate Today</a></h3>
   </div>
   <div id="cache-hit-rate-yesterday">
-    <h3><a href="/cache-hit-rate-yesterday.txt">Cache Hit Rate Yesterday</a></h3>
+    <h3><a href="/log-aggregation/cache-hit-rate-yesterday.txt">Cache Hit Rate Yesterday</a></h3>
   </div>
-  <div id="spam-block-rate">
-    <h3><a href="/spam-block-rate.txt">Spam Block Rate</a></h3>
+  <div id="cache-hit-rate-all">
+    <h3><a href="/log-aggregation/cache-hit-rate-all.txt">Cache Hit Rate</a></h3>
   </div>
   <div id="spam-block-rate-today">
-    <h3><a href="/spam-block-rate-today.txt">Spam Block Rate Today</a></h3>
+    <h3><a href="/log-aggregation/spam-block-rate-today.txt">Spam Block Rate Today</a></h3>
   </div>
   <div id="spam-block-rate-yesterday">
-    <h3><a href="/spam-block-rate-yesterday.txt">Spam Block Rate Yesterday</a></h3>
+    <h3><a href="/log-aggregation/spam-block-rate-yesterday.txt">Spam Block Rate Yesterday</a></h3>
+  </div>
+  <div id="spam-block-rate-all">
+    <h3><a href="/log-aggregation/spam-block-rate-all.txt">Spam Block Rate</a></h3>
   </div>
 </div>
 
@@ -53,12 +53,14 @@
   }
 
   const getText = async (response) => {
-    const text = await response.text();
-    return text;
+    if (response.ok) {
+      const text = await response.text();
+      return text;
+    }
   }
 
   const generateElement = async identifier => {
-    let url = `/${identifier}.txt`;
+    let url = `/log-aggregation/${identifier}.txt`;
     let selector = `#${identifier}`;
     let response = await getResponse(url);
     let element = document.createElement('pre');
@@ -82,13 +84,13 @@
         let path, href;
 
         switch(identifier) {
-          case 'access-ranking':
+          case 'access-ranking-all':
           case 'access-ranking-today':
           case 'access-ranking-yesterday':
             path = match[1];
             href = `${location.protocol}//${location.host + path}`;
             return `${count} <a href="${href}">${path}</a>`;
-          case 'referer-ranking':
+          case 'referer-ranking-all':
           case 'referer-ranking-today':
           case 'referer-ranking-yesterday':
             href = match[1];
@@ -105,7 +107,7 @@
   let promises = [];
   ['access-ranking', 'referer-ranking', 'cache-hit-rate', 'spam-block-rate'].forEach(item => {
     promises.push(
-      new Promise((resolve, reject) => generateElement(item)),
+      new Promise((resolve, reject) => generateElement(`${item}-all`)),
       new Promise((resolve, reject) => generateElement(`${item}-today`)),
       new Promise((resolve, reject) => generateElement(`${item}-yesterday`)),
     )

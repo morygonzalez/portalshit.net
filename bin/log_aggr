@@ -3,6 +3,7 @@
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs|winds|SlepnirSiteUpdates)'
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
+LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
 
 function access_ranking_today() {
   echo "Access Ranking Today"
@@ -17,7 +18,7 @@ function access_ranking_today() {
     | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/access-ranking-today.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-today.txt 2>/dev/null
 }
 
 function access_ranking_yesterday() {
@@ -33,7 +34,7 @@ function access_ranking_yesterday() {
     | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/access-ranking-yesterday.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-yesterday.txt 2>/dev/null
 }
 
 function access_ranking_all() {
@@ -48,7 +49,7 @@ function access_ranking_all() {
     | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/access-ranking-all.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-all.txt 2>/dev/null
 }
 
 function referer_ranking_today() {
@@ -61,11 +62,11 @@ function referer_ranking_today() {
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/referer-ranking${SUFFIX}.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/referer-ranking-today.txt 2>/dev/null
 }
 
 function referer_ranking_yesterday() {
-  echo "Referer Ranking ${DURATION}"
+  echo "Referer Ranking Yesterday"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")"  \
@@ -74,7 +75,7 @@ function referer_ranking_yesterday() {
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/referer-ranking-yesterday.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/referer-ranking-yesterday.txt 2>/dev/null
 }
 
 function referer_ranking_all() {
@@ -86,64 +87,9 @@ function referer_ranking_all() {
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/referer-ranking-all.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/referer-ranking-all.txt 2>/dev/null
 }
 
-function cache_hit_rate_today() {
-  echo "Cache Hit Rate Today"
-  echo "${CACHE_HIT_LOGS}" \
-    | grep "time:$(date -d today "+%Y-%m-%d")" \
-    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
-    | cut -f16 | sort | uniq -c \
-    | awk '{
-        if ($2 ~ /HIT/) {
-          hit = $1
-        };
-        if ($2 ~ /EXPIRED/) {
-          expire = $1
-        };
-        if ($2 ~ /MISS/) {
-          miss = $1
-        };
-        sum+=$1
-      } END {
-        hit_rate = hit / sum * 100;
-        expired_rate = expire / sum * 100;
-        miss_rate = miss / sum * 100;
-        print "HIT\t" hit "\t(" hit_rate "%)"
-        print "EXPIRE\t" expire "\t(" expired_rate "%)"
-        print "MISS\t" miss "\t(" miss_rate "%)"
-      }' \
-    | cat 1>${APP_DIR}/public/cache-hit-rate${SUFFIX}.txt 2>/dev/null
-}
-
-function cache_hit_rate_yesterday() {
-  echo "Cache Hit Rate ${DURATION}"
-  echo "${CACHE_HIT_LOGS}" \
-    | ( [ -z "$DURATION" ] && cat || grep "time:$(date -d ${DURATION} "+%Y-%m-%d")" ) \
-    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
-    | cut -f16 | sort | uniq -c \
-    | awk '{
-        if ($2 ~ /HIT/) {
-          hit = $1
-        };
-        if ($2 ~ /EXPIRED/) {
-          expire = $1
-        };
-        if ($2 ~ /MISS/) {
-          miss = $1
-        };
-        sum+=$1
-      } END {
-        hit_rate = hit / sum * 100;
-        expired_rate = expire / sum * 100;
-        miss_rate = miss / sum * 100;
-        print "HIT\t" hit "\t(" hit_rate "%)"
-        print "EXPIRE\t" expire "\t(" expired_rate "%)"
-        print "MISS\t" miss "\t(" miss_rate "%)"
-      }' \
-    | cat 1>${APP_DIR}/public/cache-hit-rate${SUFFIX}.txt 2>/dev/null
-}
 
 function cache_hit_rate_today() {
   echo "Cache Hit Rate Today"
@@ -171,7 +117,7 @@ function cache_hit_rate_today() {
         print "EXPIRE\t" expire "\t(" expired_rate "%)"
         print "MISS\t" miss "\t(" miss_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/cache-hit-rate-today.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/cache-hit-rate-today.txt 2>/dev/null
 }
 
 function cache_hit_rate_yesterday() {
@@ -200,7 +146,7 @@ function cache_hit_rate_yesterday() {
         print "EXPIRE\t" expire "\t(" expired_rate "%)"
         print "MISS\t" miss "\t(" miss_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/cache-hit-rate-yesterday.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/cache-hit-rate-yesterday.txt 2>/dev/null
 }
 
 function cache_hit_rate_all() {
@@ -228,7 +174,7 @@ function cache_hit_rate_all() {
         print "EXPIRE\t" expire "\t(" expired_rate "%)"
         print "MISS\t" miss "\t(" miss_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/cache-hit-rate-all.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/cache-hit-rate-all.txt 2>/dev/null
 }
 
 function spam_block_rate_today() {
@@ -246,14 +192,14 @@ function spam_block_rate_today() {
           slip = $1
         };
         sum+=$1
-      } end {
+      } END {
         block_rate = block / sum * 100;
         slip_rate = slip / sum * 100;
         print "TOTAL\t" sum
         print "BLOCK\t" block "\t(" block_rate "%)"
         print "SLIP\t" slip "\t(" slip_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/spam-block-rate-today.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/spam-block-rate-today.txt 2>/dev/null
 }
 
 function spam_block_rate_yesterday() {
@@ -271,15 +217,16 @@ function spam_block_rate_yesterday() {
           slip = $1
         };
         sum+=$1
-      } end {
+      } END {
         block_rate = block / sum * 100;
         slip_rate = slip / sum * 100;
         print "TOTAL\t" sum
         print "BLOCK\t" block "\t(" block_rate "%)"
         print "SLIP\t" slip "\t(" slip_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/spam-block-rate-yesterday.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/spam-block-rate-yesterday.txt 2>/dev/null
 }
+
 function spam_block_rate_all() {
   echo "Spam Block Rate All"
   find ${APP_DIR}/log/access.log* \
@@ -294,14 +241,14 @@ function spam_block_rate_all() {
           slip = $1
         };
         sum+=$1
-      } end {
+      } END {
         block_rate = block / sum * 100;
         slip_rate = slip / sum * 100;
         print "TOTAL\t" sum
         print "BLOCK\t" block "\t(" block_rate "%)"
         print "SLIP\t" slip "\t(" slip_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/spam-block-rate-all.txt 2>/dev/null
+    | cat 1>${LOG_AGGREGATION_DIR}/spam-block-rate-all.txt 2>/dev/null
 }
 
 case $1 in
@@ -313,7 +260,7 @@ case $1 in
       'yesterday' )
         access_ranking_yesterday
         ;;
-      '*' )
+      'all' )
         access_ranking_all
         ;;
       esac
@@ -321,13 +268,13 @@ case $1 in
   'referer_ranking' )
     case $2 in
       'today' )
-        refer_ranking_today
+        referer_ranking_today
         ;;
       'yesterday' )
-        refer_ranking_yesterday
+        referer_ranking_yesterday
         ;;
-      '*' )
-        refer_ranking_all
+      'all' )
+        referer_ranking_all
         ;;
       esac
     ;;
@@ -339,7 +286,7 @@ case $1 in
       'yesterday' )
         cache_hit_rate_yesterday
         ;;
-      '*' )
+      'all' )
         cache_hit_rate_all
         ;;
       esac
@@ -352,7 +299,7 @@ case $1 in
       'yesterday' )
         spam_block_rate_yesterday
         ;;
-      '*' )
+      'all' )
         spam_block_rate_all
         ;;
       esac

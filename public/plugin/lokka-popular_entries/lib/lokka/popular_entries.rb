@@ -11,7 +11,7 @@ class Entry
 
   class << self
     def popular(limit: 5, target: 'all')
-      target_file_path = target == 'all' ? 'access-ranking.txt' : "access-ranking-#{target}.txt"
+      target_file_path = "/log-aggregation/access-ranking-#{target}.txt"
       access_ranking = File.open(File.join(Lokka.root, 'public', target_file_path))
       slugs = {}
       access_ranking.each_with_index do |line, index|
