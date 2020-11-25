@@ -4,10 +4,12 @@ UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladde
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 
-function access_ranking() {
-  echo "Access Ranking ${DURATION}"
-  echo "${ACCESS_LOGS}" \
-    | ( [ -z "$DURATION" ] && cat || grep "time:$(date -d ${DURATION} "+%Y-%m-%d")" ) \
+function access_ranking_today() {
+  echo "Access Ranking Today"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep 'status:200' \
     | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
     | cut -f5 | sed -e 's/request_uri://' \
@@ -15,13 +17,45 @@ function access_ranking() {
     | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${APP_DIR}/public/access-ranking${SUFFIX}.txt 2>/dev/null
+    | cat 1>${APP_DIR}/public/access-ranking-today.txt 2>/dev/null
 }
 
-function referer_ranking() {
-  echo "Referer Ranking ${DURATION}"
-  echo "${ACCESS_LOGS}" \
-    | ( [ -z "$DURATION" ] && cat || grep "time:$(date -d ${DURATION} "+%Y-%m-%d")" ) \
+function access_ranking_yesterday() {
+  echo "Access Ranking Yesterday"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
+    | grep 'status:200' \
+    | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
+    | cut -f5 | sed -e 's/request_uri://' \
+    | grep -vP ${REQUEST_PATH_TO_IGNORE} \
+    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | cat 1>${APP_DIR}/public/access-ranking-yesterday.txt 2>/dev/null
+}
+
+function access_ranking_all() {
+  echo "Access Ranking ALL"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep 'status:200' \
+    | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
+    | cut -f5 | sed -e 's/request_uri://' \
+    | grep -vP ${REQUEST_PATH_TO_IGNORE} \
+    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | cat 1>${APP_DIR}/public/access-ranking-all.txt 2>/dev/null
+}
+
+function referer_ranking_today() {
+  echo "Referer Ranking Today"
+  find ${APP_DIR}/log/access.log \
+    | xargs zcat -f \
+    | grep "time:$(date -d today "+%Y-%m-%d")"  \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
@@ -30,7 +64,60 @@ function referer_ranking() {
     | cat 1>${APP_DIR}/public/referer-ranking${SUFFIX}.txt 2>/dev/null
 }
 
-function cache_hit_rate() {
+function referer_ranking_yesterday() {
+  echo "Referer Ranking ${DURATION}"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep "time:$(date -d yesterday "+%Y-%m-%d")"  \
+    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | sed -e 's/\?amp=1//' \
+    | cut -f12 | sed -e 's/referer://' \
+    | grep -vP '(^-$|portalshit\.net)' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | cat 1>${APP_DIR}/public/referer-ranking-yesterday.txt 2>/dev/null
+}
+
+function referer_ranking_all() {
+  echo "Referer Ranking All"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | sed -e 's/\?amp=1//' \
+    | cut -f12 | sed -e 's/referer://' \
+    | grep -vP '(^-$|portalshit\.net)' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | cat 1>${APP_DIR}/public/referer-ranking-all.txt 2>/dev/null
+}
+
+function cache_hit_rate_today() {
+  echo "Cache Hit Rate Today"
+  echo "${CACHE_HIT_LOGS}" \
+    | grep "time:$(date -d today "+%Y-%m-%d")" \
+    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
+    | cut -f16 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /HIT/) {
+          hit = $1
+        };
+        if ($2 ~ /EXPIRED/) {
+          expire = $1
+        };
+        if ($2 ~ /MISS/) {
+          miss = $1
+        };
+        sum+=$1
+      } END {
+        hit_rate = hit / sum * 100;
+        expired_rate = expire / sum * 100;
+        miss_rate = miss / sum * 100;
+        print "HIT\t" hit "\t(" hit_rate "%)"
+        print "EXPIRE\t" expire "\t(" expired_rate "%)"
+        print "MISS\t" miss "\t(" miss_rate "%)"
+      }' \
+    | cat 1>${APP_DIR}/public/cache-hit-rate${SUFFIX}.txt 2>/dev/null
+}
+
+function cache_hit_rate_yesterday() {
   echo "Cache Hit Rate ${DURATION}"
   echo "${CACHE_HIT_LOGS}" \
     | ( [ -z "$DURATION" ] && cat || grep "time:$(date -d ${DURATION} "+%Y-%m-%d")" ) \
@@ -58,10 +145,97 @@ function cache_hit_rate() {
     | cat 1>${APP_DIR}/public/cache-hit-rate${SUFFIX}.txt 2>/dev/null
 }
 
-function spam_block_rate() {
-  echo "Spam Block Rate ${DURATION}"
-  echo "${ACCESS_LOGS}" \
-    | ( [ -z "$DURATION" ] && cat || grep "time:$(date -d ${DURATION} "+%Y-%m-%d")" ) \
+function cache_hit_rate_today() {
+  echo "Cache Hit Rate Today"
+  find ${APP_DIR}/log/access.log \
+    | xargs zcat -f \
+    | grep "time:$(date -d today "+%Y-%m-%d")" \
+    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
+    | cut -f16 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /HIT/) {
+          hit = $1
+        };
+        if ($2 ~ /EXPIRED/) {
+          expire = $1
+        };
+        if ($2 ~ /MISS/) {
+          miss = $1
+        };
+        sum+=$1
+      } END {
+        hit_rate = hit / sum * 100;
+        expired_rate = expire / sum * 100;
+        miss_rate = miss / sum * 100;
+        print "HIT\t" hit "\t(" hit_rate "%)"
+        print "EXPIRE\t" expire "\t(" expired_rate "%)"
+        print "MISS\t" miss "\t(" miss_rate "%)"
+      }' \
+    | cat 1>${APP_DIR}/public/cache-hit-rate-today.txt 2>/dev/null
+}
+
+function cache_hit_rate_yesterday() {
+  echo "Cache Hit Rate Yesterday"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
+    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
+    | cut -f16 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /HIT/) {
+          hit = $1
+        };
+        if ($2 ~ /EXPIRED/) {
+          expire = $1
+        };
+        if ($2 ~ /MISS/) {
+          miss = $1
+        };
+        sum+=$1
+      } END {
+        hit_rate = hit / sum * 100;
+        expired_rate = expire / sum * 100;
+        miss_rate = miss / sum * 100;
+        print "HIT\t" hit "\t(" hit_rate "%)"
+        print "EXPIRE\t" expire "\t(" expired_rate "%)"
+        print "MISS\t" miss "\t(" miss_rate "%)"
+      }' \
+    | cat 1>${APP_DIR}/public/cache-hit-rate-yesterday.txt 2>/dev/null
+}
+
+function cache_hit_rate_all() {
+  echo "Cache Hit Rate All"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
+    | cut -f16 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /HIT/) {
+          hit = $1
+        };
+        if ($2 ~ /EXPIRED/) {
+          expire = $1
+        };
+        if ($2 ~ /MISS/) {
+          miss = $1
+        };
+        sum+=$1
+      } END {
+        hit_rate = hit / sum * 100;
+        expired_rate = expire / sum * 100;
+        miss_rate = miss / sum * 100;
+        print "HIT\t" hit "\t(" hit_rate "%)"
+        print "EXPIRE\t" expire "\t(" expired_rate "%)"
+        print "MISS\t" miss "\t(" miss_rate "%)"
+      }' \
+    | cat 1>${APP_DIR}/public/cache-hit-rate-all.txt 2>/dev/null
+}
+
+function spam_block_rate_today() {
+  echo "Spam Block Rate Today"
+  find ${APP_DIR}/log/access.log \
+    | xargs zcat -f \
+    | grep "time:$(date -d today "+%y-%m-%d")" \
     | grep "POST" | grep -v "uri:/admin/" \
     | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c \
     | awk '{
@@ -72,58 +246,116 @@ function spam_block_rate() {
           slip = $1
         };
         sum+=$1
-      } END {
+      } end {
         block_rate = block / sum * 100;
         slip_rate = slip / sum * 100;
         print "TOTAL\t" sum
         print "BLOCK\t" block "\t(" block_rate "%)"
         print "SLIP\t" slip "\t(" slip_rate "%)"
       }' \
-    | cat 1>${APP_DIR}/public/spam-block-rate${SUFFIX}.txt 2>/dev/null
+    | cat 1>${APP_DIR}/public/spam-block-rate-today.txt 2>/dev/null
 }
 
-case $2 in
-  'today' )
-    DURATION='today'
-    SUFFIX="-${DURATION}"
-    ACCESS_LOGS=`find ${APP_DIR}/log/access.log \
-      | xargs zcat -f \
-      | grep -viP ${UA_TO_IGNORE}`
-    CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log \
-      | xargs zcat -f`
-    ;;
-  'yesterday' )
-    DURATION='yesterday'
-    SUFFIX="-${DURATION}"
-    ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
-      | xargs zcat -f \
-      | grep -viP ${UA_TO_IGNORE}`
-    CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log* \
-      | xargs zcat -f`
-    ;;
-  * )
-    DURATION=''
-    SUFFIX=''
-    ACCESS_LOGS=`find ${APP_DIR}/log/access.log* \
-      | xargs zcat -f \
-      | grep -viP ${UA_TO_IGNORE}`
-    CACHE_HIT_LOGS=`find ${APP_DIR}/log/access.log* \
-      | xargs zcat -f`
-    ;;
-esac
+function spam_block_rate_yesterday() {
+  echo "Spam Block Rate Yesterday"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep "time:$(date -d yesterday "+%y-%m-%d")" \
+    | grep "POST" | grep -v "uri:/admin/" \
+    | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /402/) {
+          block = $1
+        };
+        if ($2 ~ /302/) {
+          slip = $1
+        };
+        sum+=$1
+      } end {
+        block_rate = block / sum * 100;
+        slip_rate = slip / sum * 100;
+        print "TOTAL\t" sum
+        print "BLOCK\t" block "\t(" block_rate "%)"
+        print "SLIP\t" slip "\t(" slip_rate "%)"
+      }' \
+    | cat 1>${APP_DIR}/public/spam-block-rate-yesterday.txt 2>/dev/null
+}
+function spam_block_rate_all() {
+  echo "Spam Block Rate All"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep "POST" | grep -v "uri:/admin/" \
+    | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /402/) {
+          block = $1
+        };
+        if ($2 ~ /302/) {
+          slip = $1
+        };
+        sum+=$1
+      } end {
+        block_rate = block / sum * 100;
+        slip_rate = slip / sum * 100;
+        print "TOTAL\t" sum
+        print "BLOCK\t" block "\t(" block_rate "%)"
+        print "SLIP\t" slip "\t(" slip_rate "%)"
+      }' \
+    | cat 1>${APP_DIR}/public/spam-block-rate-all.txt 2>/dev/null
+}
 
 case $1 in
   'access_ranking' )
-    access_ranking
+    case $2 in
+      'today' )
+        access_ranking_today
+        ;;
+      'yesterday' )
+        access_ranking_yesterday
+        ;;
+      '*' )
+        access_ranking_all
+        ;;
+      esac
     ;;
   'referer_ranking' )
-    referer_ranking
+    case $2 in
+      'today' )
+        refer_ranking_today
+        ;;
+      'yesterday' )
+        refer_ranking_yesterday
+        ;;
+      '*' )
+        refer_ranking_all
+        ;;
+      esac
     ;;
   'cache_hit_rate' )
-    cache_hit_rate
+    case $2 in
+      'today' )
+        cache_hit_rate_today
+        ;;
+      'yesterday' )
+        cache_hit_rate_yesterday
+        ;;
+      '*' )
+        cache_hit_rate_all
+        ;;
+      esac
     ;;
   'spam_block_rate' )
-    spam_block_rate
+    case $2 in
+      'today' )
+        spam_block_rate_today
+        ;;
+      'yesterday' )
+        spam_block_rate_yesterday
+        ;;
+      '*' )
+        spam_block_rate_all
+        ;;
+      esac
     ;;
   * )
     exit 1
