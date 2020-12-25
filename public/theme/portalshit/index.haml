@@ -39,41 +39,41 @@
                 = post.tags_to_html
                 .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
       .past-entries
-      - @posts.each_with_index do |post, index|
-        - next if index == 0
-        .entry
-          %h3.title{ itemprop: 'name' }
-            = link_to post.title, post.link, itemprop: 'url'
-          .meta
-            %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
-          %aside{ style: 'display: none'}
-            %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
-            %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
-            %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
-            %span{ itemprop: 'headline' }= post.long_description
-            %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
-              %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-                %meta{ content: 'https://2.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
-                %meta{ content: '128', itemprop: :width }
-                %meta{ content: '128', itemprop: :height }
-              %meta{ content: 'morygonzalez', itemprop: :name }
-            %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-              %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.cover_image}" }
-              %meta{ itemprop: :width, content: 350 }
-              %meta{ itemprop: :height, content: 255 }
-          .content
-            .image
-              - if post.images.present?
-                = link_to image_tag("https://portalshit.net/imageproxy/400x225/#{post.cover_image}", class: 'desktop'), post.link
-                = link_to image_tag("https://portalshit.net/imageproxy/225x225/#{post.cover_image}", class: 'mobile'), post.link
-              - else
-                = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
+        - @posts.each_with_index do |post, index|
+          - next if index == 0
+          .entry
+            %h3.title{ itemprop: 'name' }
+              = link_to post.title, post.link, itemprop: 'url'
+            .meta
+              %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+            %aside{ style: 'display: none'}
+              %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
+              %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
+              %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
+              %span{ itemprop: 'headline' }= post.long_description
+              %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
+                %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
+                  %meta{ content: 'https://2.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
+                  %meta{ content: '128', itemprop: :width }
+                  %meta{ content: '128', itemprop: :height }
+                %meta{ content: 'morygonzalez', itemprop: :name }
+              %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
+                %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.cover_image}" }
+                %meta{ itemprop: :width, content: 350 }
+                %meta{ itemprop: :height, content: 255 }
+            .content
+              .image
+                - if post.images.present?
+                  = link_to image_tag("https://portalshit.net/imageproxy/400x225/#{post.cover_image}", class: 'desktop'), post.link
+                  = link_to image_tag("https://portalshit.net/imageproxy/225x225/#{post.cover_image}", class: 'mobile'), post.link
+                - else
+                  = link_to image_tag("https://portalshit.net/imageproxy/225/#{post.cover_image}", class: 'default'), post.link
 
-            .body{ itemprop: 'articleBody' }
-              = post.long_description
-          .footer
-            = post.tags_to_html
-            .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+              .body{ itemprop: 'articleBody' }
+                = post.long_description
+            .footer
+              = post.tags_to_html
+              .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
 
 %section#popular_entries
   %h2 人気記事
