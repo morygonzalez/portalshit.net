@@ -181,7 +181,7 @@ function spam_block_rate_today() {
   echo "Spam Block Rate Today"
   find ${APP_DIR}/log/access.log \
     | xargs zcat -f \
-    | grep "time:$(date -d today "+%y-%m-%d")" \
+    | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep "POST" | grep -v "uri:/admin/" \
     | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c \
     | awk '{
@@ -206,7 +206,7 @@ function spam_block_rate_yesterday() {
   echo "Spam Block Rate Yesterday"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
-    | grep "time:$(date -d yesterday "+%y-%m-%d")" \
+    | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
     | grep "POST" | grep -v "uri:/admin/" \
     | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c \
     | awk '{
