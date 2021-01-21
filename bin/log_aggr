@@ -56,6 +56,7 @@ function referer_ranking_today() {
   echo "Referer Ranking Today"
   find ${APP_DIR}/log/access.log \
     | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")"  \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
@@ -69,6 +70,7 @@ function referer_ranking_yesterday() {
   echo "Referer Ranking Yesterday"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")"  \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
@@ -82,6 +84,7 @@ function referer_ranking_all() {
   echo "Referer Ranking All"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
