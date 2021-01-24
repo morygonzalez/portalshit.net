@@ -34,7 +34,7 @@
         %meta{ itemprop: :height, content: 255 }
 
   .body{ itemprop: 'articleBody' }
-    ~ @entry.body
+    = @entry.body_with_toc
 
   %footer.footer
     = @entry.tags_to_html

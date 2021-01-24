@@ -72,6 +72,10 @@ module Lokka
 end
 
 class Entry
+  def toc
+    @toc ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new).render(raw_body).html_safe
+  end
+
   def long_description(limit = 120)
     content = body.
       gsub(%r{<figcaption>.*?</figcaption>}m, '').
@@ -80,6 +84,11 @@ class Entry
       strip.
       gsub(/[\r\n]/, '')[0..limit]
     sprintf '%s...', content
+  end
+
+  def body_with_toc
+    return body if toc.blank?
+    body.sub(/<!-- ?toc ?-->/, "<h3>Table of Contents</h3>\n#{toc}").html_safe
   end
 
   def images

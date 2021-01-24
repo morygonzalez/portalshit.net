@@ -687,4 +687,8 @@ img.medium-zoom-image--opened {
   z-index: 3;
 }
 
+[id] {
+  scroll-margin-top: 2ex;
+}
+
 @import "styles/mobile";

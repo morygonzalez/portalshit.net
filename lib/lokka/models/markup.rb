@@ -27,7 +27,7 @@ module Markup
     ['redcarpet', 'Markdown (redcarpet)',
      ->(text) do
        Redcarpet::Markdown.new(
-         Redcarpet::Render::HTML,
+         Redcarpet::Render::HTML.new(with_toc_data: true),
          no_intra_emphasis: true,
          fenced_code_blocks: true,
          autolink: true,
