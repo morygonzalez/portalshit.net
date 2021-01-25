@@ -1,0 +1,50 @@
+header_bg:
+  dark:
+    - name: amaguri
+      description: 長崎新地中華街
+    - name: aso
+      description: 阿蘇山から見る雲仙普賢岳
+    - name: beach
+      description: 長垂海岸
+    - name: crossing
+      description: 今宿駅近くの踏切
+    - name: evening-moon
+      description: 夕方の月
+    - name: fire
+      description: 阿蘇神社火振り神事
+    - name: heimin
+      description: 門司港
+    - name: night-moon
+      description: 夜の月
+    - name: sunset
+      description: Queen's Beach, Hawaii
+    - name: takitate-bento
+      description: 下山門のたきたて弁当
+  light:
+    - name: aso
+      description: 熊本地震前の阿蘇山
+    - name: black-kite
+      description: 熊本地震前の立野の鳶
+    - name: container-ship
+      description: 関門海峡のコンテナ船
+    - name: halo
+      description: 阿蘇の朝焼け
+    - name: jizou
+      description: 長崎市鳴滝の地蔵
+    - name: karatsu
+      description: 唐津鏡山展望テラス
+    - name: moss
+      description: 銀閣寺のこけ
+    - name: nagatare
+      description: 長垂海浜公園
+    - name: nanzenji
+      description: 南禅寺三門
+    - name: sakura
+      description: 熊本城の桜
+    - name: temple-wall
+      description: 聖福寺の壁
+    - name: mykonos
+      description: Little Venice, Mykonos
+comment_disallowed_entries:
+  - it-is-meaningless-for-japanese-to-use-us-layout-keyboard-in-japan
+  - useful-vimrc-information

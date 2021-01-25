@@ -1,7 +1,7 @@
 module Lokka
   class App
     configure do
-      bg_images = YAML.load_file(File.join(File.dirname(__FILE__), 'header-bg.yml'))
+      bg_images = YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml'))['header_bg']
       set :header_bg_params, -> {
         dark_image = bg_images['dark'].sample
         light_image = bg_images['light'].sample
@@ -48,6 +48,10 @@ module Lokka
         bread_crumb.html_safe
     end
 
+    def portalshit_config
+      @portalshit_config ||= YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml'))
+    end
+
     def portalshit_manifest
       @portalshit_manifest ||= \
         begin
@@ -59,6 +63,10 @@ module Lokka
 
     def portalshit_javascript_path(file_name)
       "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
+    end
+
+    def comment_disallowed_entries
+      portalshit_config['comment_disallowed_entries']
     end
   end
 end
