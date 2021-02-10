@@ -15,7 +15,7 @@ namespace :similar_entries do
 
   def target_entry_exists?
     return false if @force
-    Similarity.count.zero? || Entry.maximum(:id) > Similarity.maximum(:entry_id)
+    Similarity.count.zero? || Entry.find_by(created_at: Entry.maximum(:created_at)).id > Similarity.maximum(:entry_id)
   end
 
   desc 'Extract term'
