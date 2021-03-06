@@ -1,6 +1,6 @@
 %section#site_description
   %h2= t('about')
-  = @site.description.html_safe
+  .description= @site.description.html_safe
 
 %article#recent_entries
   %h2= t('recent_entries')
@@ -30,11 +30,11 @@
           .content
             .image
               - if post.images.present?
-                = link_to image_tag("https://portalshit.net/imageproxy/600x337/#{post.cover_image}"), post.link
+                = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}"), post.link
               - else
                 = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
             .body{ itemprop: 'articleBody' }
-              = post.long_description(260)
+              = post.long_description(300)
               .footer
                 = post.tags_to_html
                 .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
@@ -89,7 +89,7 @@
                 %span.created_at= l(post.created_at.to_date, format: :long)
               .description
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
-                .text= post.long_description
+                .body= post.long_description
       %section.hotentry
         %h3 はてなブックマークで注目を集めた記事
         %ul
@@ -102,7 +102,7 @@
                 = link_to "#{post.bookmark_count} users", post.bookmark_url
               .description
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
-                .text= post.long_description
+                .body= post.long_description
 
 %section.more-articles
   %h2 以前の記事

@@ -1,6 +1,6 @@
 @media screen and (max-width: 1112px) {
   #content {
-    article#recent_entries {
+    article#recent_entries, article.category {
       section {
         .new-entry {
           .content {
@@ -17,6 +17,7 @@
 
             .image {
               text-align: center;
+
               .default {
                 max-width: 200px;
                 margin: auto;
@@ -27,11 +28,14 @@
 
         .past-entries {
           .entry {
-            width: 48%;
-            margin: auto 1%;
+            width: 47%;
 
-            &:not(:last-child) {
-              padding-right: 0;
+            &:nth-child(odd) {
+              margin-right: 2em;
+            }
+
+            &:nth-child(even) {
+              margin-right: 0;
             }
 
             .image {
@@ -81,6 +85,7 @@
       flex-grow: 1;
       width: 100%;
       height: 35px;
+
       ul {
         margin: 0;
         display: flex;
@@ -135,16 +140,25 @@
           font-size: .8rem;
         }
       }
+
       section {
         .new-entry {
           .content {
             flex-direction: column;
+            margin: auto .5em;
+
             .image, .body {
               width: 100%;
               margin: 0;
             }
+
+            .body {
+              margin-top: 1em;
+            }
+
             .image {
               text-align: center;
+
               .default {
                 max-width: 200px;
                 margin: auto;
@@ -152,28 +166,39 @@
             }
           }
         }
+
         .past-entries {
           .entry {
             width: 100%;
             padding: initial;
+
+            &:nth-child(odd), &:nth-child(even), &:nth-child(3n) {
+              margin: auto .7em;
+            }
+
             .content {
               display: flex;
+
               .body {
                 flex-grow: 7;
                 font-size: 90%;
                 margin: 0 0 0 1em;
                 padding: 0;
               }
+
               .image {
                 flex-grow: 3;
                 min-width: 100px;
+
                 img.mobile {
                   max-width: 100px;
                   display: block;
                 }
+
                 img.default {
                   max-width: 100px;
                 }
+
                 img.desktop {
                   display: none;
                 }
@@ -181,7 +206,10 @@
             }
           }
         }
+
         .entry {
+          margin: auto .7em;
+
           .meta {
             text-align: left;
           }

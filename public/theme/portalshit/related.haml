@@ -9,7 +9,7 @@
             %span.created_at= l(referrer.created_at.to_date, format: :long)
           .description
             .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{referrer.cover_image}"), referrer.link
-            .text= referrer.long_description
+            .body= referrer.long_description
 - if @entry.is_a?(Post) && @entry.similar_entries.present?
   %section.similar
     %h3 この記事に似ている記事
@@ -21,4 +21,4 @@
             %span.created_at= l(similar.created_at.to_date, format: :long)
           .description
             .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{similar.cover_image}"), similar.link
-            .text= similar.long_description
+            .body= similar.long_description

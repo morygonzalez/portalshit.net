@@ -38,11 +38,11 @@
           .content
             .image
               - if post.images.present?
-                = link_to image_tag("https://portalshit.net/imageproxy/600x337,sc/#{post.cover_image}"), post.link
+                = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}"), post.link
               - else
                 = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
             .body{ itemprop: 'articleBody' }
-              = post.long_description(260)
+              = post.long_description(300)
               .footer
                 = post.tags_to_html
                 .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}

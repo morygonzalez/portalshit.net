@@ -23,8 +23,9 @@
 }
 
 @mixin _meta {
-  font-size: 0.85em;
+  font-size: 0.8em;
   color: $meta-text-color;
+
   a {
     &:link, &:visited {
       color: $meta-text-color;
@@ -170,8 +171,8 @@
     flex-flow: row wrap;
 
     li {
-      width: 50%;
-      margin: 1.2em 0;
+      width: 48%;
+      margin: 1.2rem .5rem;
     }
 
     .title {
@@ -211,9 +212,9 @@
         }
       }
 
-      .text {
+      .body {
         flex-grow: 7;
-        font-size: 90%;
+        font-size: .95rem;
         margin: 0 1em;
       }
     }
@@ -225,7 +226,6 @@
 
     ul li {
       width: 100%;
-      margin: .5em 0;
 
       .title {
         display: block;
@@ -237,6 +237,7 @@
           margin: auto 0;
         }
       }
+
       .description .image img {
         max-width: 100px;
         min-width: 100px;
