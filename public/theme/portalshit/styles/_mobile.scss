@@ -173,7 +173,7 @@
             padding: initial;
 
             &:nth-child(odd), &:nth-child(even), &:nth-child(3n) {
-              margin: auto .7em;
+              margin: auto .5em;
             }
 
             .content {
@@ -208,7 +208,7 @@
         }
 
         .entry {
-          margin: auto .7em;
+          margin: auto .5em;
 
           .meta {
             text-align: left;
@@ -234,6 +234,7 @@
 
       .body {
         width: unset;
+        margin: auto .5em;
 
         figure {
           margin: 0;
