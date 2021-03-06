@@ -37,7 +37,7 @@
               = post.long_description(300)
               .footer
                 = post.tags_to_html
-                .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+                .comment== #{link_to "#{t('comments')} (#{post.comments.approved.size})", "#{post.link}#comment_form"}
       .past-entries
         - @posts.each_with_index do |post, index|
           - next if index == 0
@@ -73,7 +73,7 @@
                 = post.long_description
             .footer
               = post.tags_to_html
-              .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+              .comment== #{link_to "#{t('comments')} (#{post.comments.approved.size})", "#{post.link}#comment_form"}
 
 %section#popular_entries
   %h2 人気記事
