@@ -165,7 +165,7 @@
   margin-top: 2.5em;
 
   ul {
-    padding-left: .5em;
+    padding-left: 0;
     list-style: none;
     display: flex;
     flex-flow: row wrap;
@@ -173,6 +173,14 @@
     li {
       width: 48%;
       margin: 1.2rem .5rem;
+
+      &:nth-child(odd) {
+        margin-right: 1rem;
+      }
+
+      &:nth-child(even) {
+        margin-right: 0;
+      }
     }
 
     .title {
@@ -214,8 +222,8 @@
 
       .body {
         flex-grow: 7;
+        margin-left: 1rem;
         font-size: .95rem;
-        margin: 0 1em;
       }
     }
   }
@@ -227,8 +235,13 @@
     ul li {
       width: 100%;
 
+      &:nth-child(odd), &:nth-child(even) {
+        margin-right: 0;
+      }
+
       .title {
         display: block;
+
         .link {
           display: block;
         }
@@ -238,9 +251,16 @@
         }
       }
 
-      .description .image img {
-        max-width: 100px;
-        min-width: 100px;
+      .description {
+        .image img {
+          max-width: 100px;
+          min-width: 100px;
+        }
+
+        .body {
+          margin-right: .7rem;
+        }
+
       }
     }
   }
