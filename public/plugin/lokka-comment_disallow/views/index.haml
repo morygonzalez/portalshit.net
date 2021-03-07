@@ -1,0 +1,12 @@
+%h2= t('comment_disallow.title')
+%p= t('comment_disallow.banner')
+%form{ action: url('/admin/plugins/comment_disallow'), method: :post }
+  %input{ type: :hidden, name: :_method, value: 'put' }
+  .field
+    %label{ for: :comment_disallow_key }= t('comment_disallow.comment_disallow')
+    %br
+    %input{ type: :text, id: :comment_disallow, name: 'comment_disallow[slugs]', value: @comment_disallowed_slugs }
+  %br
+  .field
+    %p
+    %input{ type: :submit, value: t('save') }

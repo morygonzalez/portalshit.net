@@ -1,0 +1,8 @@
+ja:
+  comment_disallow:
+    title: コメント欄を閉鎖
+    banner: コメント欄を閉鎖したい記事の slug をカンマ区切りで入力してください。
+    created: コメント欄を閉鎖する記事の slug を登録しました
+    updated: コメント欄を閉鎖する記事の slug を更新しました
+    db_error: データベースエラーです
+    comment_disallow: コメント欄を閉鎖

@@ -45,8 +45,3 @@ header_bg:
       description: 聖福寺の壁
     - name: mykonos
       description: Little Venice, Mykonos
-comment_disallowed_entries:
-  - it-is-meaningless-for-japanese-to-use-us-layout-keyboard-in-japan
-  - useful-vimrc-information
-  - poor-man-shouldnt-use-happy-hacking-keyboard-pro
-  - finally-got-hhkpro2

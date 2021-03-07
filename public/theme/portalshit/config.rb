@@ -64,9 +64,5 @@ module Lokka
     def portalshit_javascript_path(file_name)
       "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
     end
-
-    def comment_disallowed_entries
-      portalshit_config['comment_disallowed_entries']
-    end
   end
 end
