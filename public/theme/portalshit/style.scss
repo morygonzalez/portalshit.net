@@ -276,7 +276,7 @@
           }
 
           .body {
-            margin: 2rem;
+            margin: 0 2rem 2rem 2rem;
           }
 
           .image, .body {
@@ -310,6 +310,7 @@
           }
 
           .title {
+            font-size: 1em;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
