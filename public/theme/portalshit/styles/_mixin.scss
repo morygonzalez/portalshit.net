@@ -243,6 +243,10 @@
       .title {
         display: block;
 
+        h4 {
+          margin: .5em auto;
+        }
+
         .link {
           display: block;
         }
@@ -256,10 +260,13 @@
         .image img {
           max-width: 100px;
           min-width: 100px;
+          display: block;
+          margin: auto;
         }
 
         .body {
           margin-right: .7rem;
+          font-size: 90%;
         }
 
       }
