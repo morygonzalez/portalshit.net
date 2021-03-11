@@ -363,6 +363,7 @@
 
         .body {
           margin: 0;
+          @include _word-break;
         }
       }
 
