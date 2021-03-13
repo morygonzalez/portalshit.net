@@ -422,8 +422,6 @@
           margin-top: 0;
 
           .title {
-            margin-bottom: 0;
-
             .created_at {
               margin-top: 0;
             }
@@ -445,6 +443,10 @@
 
     > section {
       width: 50%;
+
+      p {
+        margin: auto .5em;
+      }
     }
   }
 
