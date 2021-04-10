@@ -22,6 +22,7 @@ module Lokka
           <!DOCTYPE html>
           <html lang="ja">
             <head>
+            <meta name="robots" content="noindex" />
             <title><%= item.title %></title>
             <style>
               .amazon {
