@@ -26,6 +26,7 @@ module Lokka
       end
 
       def wirite_or_touch_cache
+        raise StandardError if result.nil?
         File.open(path, 'w') {|f| f.print result }
       rescue StandardError
         FileUtils.touch path

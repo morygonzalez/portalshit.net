@@ -12,7 +12,6 @@ module Lokka
       end
 
       def fetch
-        m = Mutex.new
         client = Vacuum.new(
           marketplace: 'JP',
           partner_tag: Option.associate_tag,
@@ -27,18 +26,37 @@ module Lokka
           'Offers.Listings.Price'
         ]
         begin
-          m.lock
-          client.get_items(item_ids: [@item_id], resources: resources)
-          sleep 1
+          lock
+          response = client.get_items(item_ids: [@item_id], resources: resources)
         ensure
-          m.unlock
+          unlock
         end
+        response
       end
 
       private
 
+      def lock
+        sleep 1 while is_not_ready?
+        FileUtils.touch(lockfile_path)
+      end
+
+      def unlock
+        FileUtils.rm(lockfile_path)
+      end
+
+      def lockfile_path
+        File.expand_path('tmp/amazon/lock')
+      end
+
+      def is_not_ready?
+        FileTest.exist?(lockfile_path)
+      end
+
       def result
-        @result ||= fetch.to_h.to_json
+        _result = fetch.to_h.to_json
+        return nil if _result =~ /TooManyRequestsException/
+        _result
       end
     end
   end
