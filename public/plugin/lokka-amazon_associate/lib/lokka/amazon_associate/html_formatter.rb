@@ -162,9 +162,14 @@ module Lokka
         HTML
       end
 
+      private
+
       def result
-        erb = ERB.new(format)
-        erb.result(binding)
+        @result ||= erb.result(binding)
+      end
+
+      def erb
+        ERB.new(format)
       end
     end
   end

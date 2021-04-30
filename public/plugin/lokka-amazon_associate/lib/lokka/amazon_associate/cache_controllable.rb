@@ -15,6 +15,10 @@ module Lokka
 
       private
 
+      def result
+        raise NotImplementedError, 'The method #result should be implemented in an included class'
+      end
+
       def cache_alive?
         return false unless File.exist?(path)
         return false if File.zero?(path)

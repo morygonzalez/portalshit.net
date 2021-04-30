@@ -12,7 +12,7 @@ module Lokka
       end
 
       def fetch
-        sleep 1
+        m = Mutex.new
         client = Vacuum.new(
           marketplace: 'JP',
           partner_tag: Option.associate_tag,
@@ -26,11 +26,19 @@ module Lokka
           'ItemInfo.Title',
           'Offers.Listings.Price'
         ]
-        client.get_items(item_ids: [@item_id], resources: resources)
+        begin
+          m.lock
+          client.get_items(item_ids: [@item_id], resources: resources)
+          sleep 1
+        ensure
+          m.unlock
+        end
       end
 
+      private
+
       def result
-        fetch.to_h.to_json
+        @result ||= fetch.to_h.to_json
       end
     end
   end
