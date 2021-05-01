@@ -26,6 +26,7 @@ module Lokka
               iframe = <<~HTML
                 <iframe
                   src="#{ogp_host}/ogp?url=#{url}"
+                  referrerpolicy="origin"
                   style="display: block; width: 100%; height: 140px; max-width: 500px; margin: 10px 0px; overflow-y: hidden; border: 0;">
                 </iframe>
               HTML

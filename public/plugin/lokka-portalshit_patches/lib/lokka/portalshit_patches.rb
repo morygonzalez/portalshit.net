@@ -12,7 +12,7 @@ module Lokka
         @posts = apply_continue_reading(@posts)
 
         content_type 'application/atom+xml', charset: 'utf-8'
-        builder :'lokka/index'
+        builder :'plugin/lokka-portalshit_patches/public/lokka/index'
       end
 
       app.get '/sitemap.xml' do

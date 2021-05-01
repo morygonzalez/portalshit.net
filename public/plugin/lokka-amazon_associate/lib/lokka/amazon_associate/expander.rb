@@ -20,6 +20,7 @@ module Lokka
             <iframe
                src="#{base_url}/amazon/#{item_id}.html"
                title="#{html.item.title}"
+               referrerpolicy="origin"
                style="display: block; width: 100%; height: 280px; max-width: 800px; margin: 10px 0px; overflow-y: hidden; border: 0;">
             </iframe>
           HTML
