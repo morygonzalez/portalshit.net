@@ -21,8 +21,8 @@ module Lokka
 
       def cache_alive?
         return false unless File.exist?(path)
-        return false if File.zero?(path)
-        File.mtime(path) > Time.now - 60 * 60 * 24
+        return true if File.mtime(path) > Time.now - 60 * 60 * 24
+        !File.zero?(path)
       end
 
       def wirite_or_touch_cache
