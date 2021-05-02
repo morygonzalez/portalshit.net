@@ -19,6 +19,7 @@ module Lokka
     rescue StandardError => e
       {
         message: e.message,
+        backtrace: e.backtrace,
         status: 500
       }
     end

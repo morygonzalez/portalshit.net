@@ -55,7 +55,7 @@ module Lokka
       private
 
       def response
-        @response ||= Fetcher.new(item_id).body
+        @response ||= Fetcher.new(item_id).body.presence || '{}'
       end
 
       def item
