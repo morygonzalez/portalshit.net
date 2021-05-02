@@ -42,7 +42,8 @@ module Lokka
       end
 
       def price
-        @price ||= item.dig('Offers', 'Listings')&.public_send(:[], 0)&.dig('Price', 'DisplayAmount') || 'Amazon で価格を確認'
+        'Amazon で価格を確認'
+        # @price ||= item.dig('Offers', 'Listings')&.public_send(:[], 0)&.dig('Price', 'DisplayAmount') || 'Amazon で価格を確認'
       end
 
       def author
