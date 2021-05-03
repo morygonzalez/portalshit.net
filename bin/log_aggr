@@ -16,7 +16,7 @@ function access_ranking_today() {
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
+    | sed -e 's/I-lost-/i-lost-/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-today.txt 2>/dev/null
 }
@@ -32,7 +32,7 @@ function access_ranking_yesterday() {
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
+    | sed -e 's/I-lost-/i-lost-/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-yesterday.txt 2>/dev/null
 }
@@ -47,7 +47,7 @@ function access_ranking_all() {
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sed -e 's/end-of-plain-text-markdown-era/the-end-of-the-plain-text-markdown-era/' \
+    | sed -e 's/I-lost-/i-lost-/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-all.txt 2>/dev/null
 }
