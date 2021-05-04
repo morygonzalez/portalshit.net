@@ -24,7 +24,7 @@ module Lokka
 
       app.put '/admin/plugins/ng_words' do
         login_required
-        Option.ng_words = params[:ng_words][:ng_words]
+        Option.ng_words = ng_words_params
         if Option.ng_words
           flash[:notice] = t('ng_words.updated')
           redirect to('/admin/plugins/ng_words')
@@ -46,7 +46,11 @@ module Lokka
     end
 
     def ng_words
-      Option.ng_words
+      Option.ng_words&.split(',')&.map(&:strip)
+    end
+
+    def ng_words_params
+      params[:ng_words].values.delete_if {|item| item.blank? }.join(', ')
     end
   end
 end

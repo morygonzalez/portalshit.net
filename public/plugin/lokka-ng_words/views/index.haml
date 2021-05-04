@@ -5,7 +5,9 @@
   .field
     %label{ for: :ng_words_key }= t('ng_words.ng_words')
     %br
-    %input{ type: :text, id: :ng_words, name: 'ng_words[ng_words]', value: @ng_words }
+    - @ng_words.each_with_index do |word, index|
+      %input{ type: :text, name: "ng_words[ng_words_#{index}]", value: word }
+    %input{ type: :text, name: "ng_words[ng_words_#{@ng_words.length}]", placeholder: I18n.t('new') }
   %br
   .field
     %p
