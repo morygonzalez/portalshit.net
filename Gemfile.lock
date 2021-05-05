@@ -165,8 +165,8 @@ GEM
     loofah (2.5.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    marcel (1.0.1)
     method_source (1.0.0)
-    mimemagic (0.3.5)
     mini_portile2 (2.4.0)
     minitest (5.14.2)
     multi_json (1.14.1)
@@ -338,7 +338,7 @@ DEPENDENCIES
   kaminari-activerecord
   kaminari-sinatra
   kramdown
-  mimemagic
+  marcel
   mysql2
   natto
   newrelic_rpm
