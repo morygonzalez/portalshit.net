@@ -1,7 +1,7 @@
 en:
   comment_disallow:
     title: Disallow comment
-    banner: Enter slugs of the entries that you want to disallow comment. The slugs should be split by comma.
+    banner: Enter slugs of the entries that you want to disallow comment.
     created: The configuration created
     updated: The configuration updated
     db_error: Database error has occured

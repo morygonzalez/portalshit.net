@@ -5,7 +5,9 @@
   .field
     %label{ for: :comment_disallow_key }= t('comment_disallow.comment_disallow')
     %br
-    %input{ type: :text, id: :comment_disallow, name: 'comment_disallow[slugs]', value: @comment_disallowed_slugs }
+    - @comment_disallowed_slugs.each_with_index do |slug, index|
+      %input{ type: :text, id: :comment_disallow, name: "comment_disallow[slugs_#{index}]", value: slug }
+    %input{ type: :text, id: :comment_disallow, name: "comment_disallow[slugs_#{@comment_disallowed_slugs.length}]", placeholder: I18n.t('new') }
   %br
   .field
     %p
