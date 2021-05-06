@@ -173,7 +173,7 @@ module Lokka
       if @comment.save
         redirect to(@entry.link)
       else
-        render_any :entry
+        setup_and_render_entry
       end
     end
 
