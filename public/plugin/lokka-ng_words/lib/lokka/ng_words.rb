@@ -42,7 +42,7 @@ module Lokka
     end
 
     def spam?
-      return true if ng_words&.split(',')&.any? {|word| params[:comment][:body] =~ /#{word.strip}/i }
+      ng_words&.split(',')&.any? {|word| params[:comment][:body] =~ /#{word.strip}/i }
     end
 
     def ng_words
