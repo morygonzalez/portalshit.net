@@ -6,3 +6,5 @@ ja:
     updated: コメント欄を閉鎖する記事の slug を更新しました
     db_error: データベースエラーです
     comment_disallow: コメント欄を閉鎖
+  comment:
+    closed: コメントの受付は終了しました。

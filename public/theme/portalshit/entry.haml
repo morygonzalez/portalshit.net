@@ -56,5 +56,4 @@
             %li.name= link_to comment.name, comment.homepage, unless: comment.homepage.blank?
           .body~ Markup.use_engine('redcarpet', strip_tags(comment.body)).html_safe
           .created_at= l comment.created_at, format: :long
-    - unless comment_disallowed_slugs&.include?(@entry.slug)
-      = partial :comment
+    = partial :comment, locals: { disabled: comment_disallowed_slugs&.include?(@entry.slug) }

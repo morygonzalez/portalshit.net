@@ -6,3 +6,5 @@ en:
     updated: The configuration updated
     db_error: Database error has occured
     comment_disallow: Disallow comment
+  comment:
+    closed: Comment form has been closed.
