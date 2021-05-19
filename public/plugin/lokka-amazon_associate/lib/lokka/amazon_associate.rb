@@ -4,6 +4,7 @@ require 'vacuum'
 require 'nokogiri'
 require 'fileutils'
 require 'json'
+require 'logger'
 require_relative 'amazon_associate/cache_controllable'
 require_relative 'amazon_associate/expander'
 require_relative 'amazon_associate/html_formatter'
@@ -41,6 +42,7 @@ module Lokka
         end
       end
     end
+
   end
 
   module Helpers

@@ -11,7 +11,15 @@ module Lokka
         write_or_touch_cache unless cache_alive?
       end
 
+      def logger
+        @logger ||= begin
+                      log_file = File.open(File.join(Lokka.root, 'log/amazon_paapi.log'), 'a')
+                      Logger.new(log_file, 'weekly')
+                    end
+      end
+
       def fetch
+        logger.info(%(Start fetching #{@item_id}))
         client = Vacuum.new(
           marketplace: 'JP',
           partner_tag: Option.associate_tag,
@@ -55,6 +63,7 @@ module Lokka
 
       def result
         _result = fetch.to_h.to_json
+        logger.info(%(Finished fetching #{@item_id}.\n\nResponse:\n#{_result}))
         return nil if _result =~ /TooManyRequestsException/
         _result
       end
