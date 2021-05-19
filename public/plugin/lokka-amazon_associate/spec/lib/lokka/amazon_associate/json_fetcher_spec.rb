@@ -92,7 +92,7 @@ describe Lokka::AmazonAssociate::JsonFetcher do
     end
   end
 
-  describe '#wirite_or_touch_cache' do
+  describe '#write_or_touch_cache' do
     context 'fetch success' do
       before do
         xml = JSON.parse(
@@ -106,7 +106,7 @@ describe Lokka::AmazonAssociate::JsonFetcher do
 
       it 'File.open が呼ばれる' do
         File.should_receive(:open)
-        described_class.new('4341085239').wirite_or_touch_cache
+        described_class.new('4341085239').write_or_touch_cache
       end
     end
 
@@ -117,7 +117,7 @@ describe Lokka::AmazonAssociate::JsonFetcher do
 
       it 'FileUtils.touch が呼ばれる' do
         FileUtils.should_receive(:touch)
-        described_class.new('4341085239').wirite_or_touch_cache
+        described_class.new('4341085239').write_or_touch_cache
       end
     end
   end

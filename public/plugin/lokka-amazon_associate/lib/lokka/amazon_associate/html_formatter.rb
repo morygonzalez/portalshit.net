@@ -10,7 +10,7 @@ module Lokka
       def initialize(item_id)
         @item_id = item_id
         @kind = :html
-        wirite_or_touch_cache unless cache_alive?
+        write_or_touch_cache unless cache_alive?
       end
 
       def item

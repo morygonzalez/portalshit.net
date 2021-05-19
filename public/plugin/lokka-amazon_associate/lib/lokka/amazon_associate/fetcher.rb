@@ -8,7 +8,7 @@ module Lokka
       def initialize(item_id)
         @item_id = item_id
         @kind = :json
-        wirite_or_touch_cache unless cache_alive?
+        write_or_touch_cache unless cache_alive?
       end
 
       def fetch
