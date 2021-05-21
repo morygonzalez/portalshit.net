@@ -45,7 +45,10 @@ module Lokka
       private
 
       def lock
-        sleep 1 while is_not_ready?
+        while is_not_ready?
+          logger.info(%(Blocked fetching #{@item_id}))
+          sleep 1
+        end
         FileUtils.touch(lockfile_path)
       end
 
@@ -62,10 +65,16 @@ module Lokka
       end
 
       def result
-        _result = fetch.to_h.to_json
-        logger.info(%(Finished fetching #{@item_id}.\n\nResponse:\n#{_result}))
-        return nil if _result =~ /TooManyRequestsException/
-        _result
+        @result ||= begin
+                      _result = fetch.to_h.to_json
+                      if _result =~ /error/i
+                        logger.info(%(Failed fetching #{_result}))
+                        _result = nil
+                      else
+                        logger.info(%(Finished fetching #{@item_id}))
+                      end
+                      _result
+                    end
       end
     end
   end
