@@ -30,7 +30,7 @@ module Lokka
       end
 
       def contributors
-        @contributors ||= item_info.dig('ByLineInfo', 'Contributors')
+        @contributors ||= item_info.dig('ByLineInfo', 'Contributors') || []
       end
 
       def binding
@@ -47,9 +47,9 @@ module Lokka
       end
 
       def author
-        @author ||= contributors&.map {|contributor|
+        @author ||= contributors[0..4].map {|contributor|
           Contributor.new(contributor).display_value
-        }&.join(' / ')
+        }.join(' / ')
       end
 
       private
