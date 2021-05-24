@@ -8,6 +8,7 @@ module Lokka
       def initialize(item_id)
         @item_id = item_id
         @kind = :json
+        @retry_amount = 0
         write_or_touch_cache unless cache_alive?
       end
 
@@ -36,6 +37,8 @@ module Lokka
         begin
           lock
           response = client.get_items(item_ids: [@item_id], resources: resources)
+        rescue => e
+          logger.info(%(Failed fetching #{@item_id} due to #{e}))
         ensure
           unlock
         end
@@ -46,7 +49,9 @@ module Lokka
 
       def lock
         while is_not_ready?
-          logger.info(%(Blocked fetching #{@item_id}))
+          logger.info(%(Blocked fetching #{@item_id}, retry_amount: #{@retry_amount}))
+          @retry_amount += 1
+          raise RetryQuotaOver, %(Retry quota exceeded, retry_amount: #{@retry_amount}) if retry_quota_over?
           sleep 1
         end
         FileUtils.touch(lockfile_path)
@@ -64,11 +69,15 @@ module Lokka
         FileTest.exist?(lockfile_path)
       end
 
+      def retry_quota_over?
+        @retry_amount > 2
+      end
+
       def result
         @result ||= begin
-                      _result = fetch.to_h.to_json
+                      _result = fetch&.to_h.to_json
                       if _result =~ /error/i
-                        logger.info(%(Failed fetching #{_result}))
+                        logger.info(%(Failed fetching #{@item_id} due to #{_result}))
                         _result = nil
                       else
                         logger.info(%(Finished fetching #{@item_id}))
@@ -76,6 +85,8 @@ module Lokka
                       _result
                     end
       end
+
+      class RetryQuotaOver < StandardError; end
     end
   end
 end
