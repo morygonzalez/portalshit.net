@@ -13,14 +13,15 @@ namespace :similar_entries do
             end
   end
 
-  def target_entry_exists?
+  def skip_execution?
     return false if @force
-    Similarity.count.zero? || Entry.find_by(updated_at: Entry.maximum(:updated_at)).id > Similarity.maximum(:entry_id)
+    return false if Similarity.count.zero?
+    Entry.find_by(updated_at: Entry.maximum(:updated_at)).id > Similarity.maximum(:entry_id)
   end
 
   desc 'Extract term'
   task :extract_term do
-    next unless target_entry_exists?
+    next if skip_execution?
 
     require 'natto'
     nm = Natto::MeCab.new
@@ -75,7 +76,7 @@ namespace :similar_entries do
 
   desc 'Vector Normalize'
   task :vector_normalize do
-    next unless target_entry_exists?
+    next if skip_execution?
 
     libsqlite_path = if ENV['LIBSQLITE_PATH']
                        ENV['LIBSQLITE_PATH']
@@ -143,7 +144,7 @@ namespace :similar_entries do
 
   desc 'Export calculation result to MySQL'
   task :export do
-    next unless target_entry_exists?
+    next if skip_execution?
 
     create_similar_candidate_sql = <<~SQL
       DROP TABLE IF EXISTS similar_candidate;
