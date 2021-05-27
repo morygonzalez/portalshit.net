@@ -450,6 +450,10 @@ kbd {
     color: $light-emphasis-font-color;
   }
 
+  blockquote strong {
+    color: $dark-emphasis-font-color;
+  }
+
   body {
     background-image: none;
     background-color: #fff;
