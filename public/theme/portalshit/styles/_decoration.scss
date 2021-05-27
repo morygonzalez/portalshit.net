@@ -504,6 +504,12 @@ kbd {
       &[data-bg-light-image="light-mykonos"] {
         @include gradient-background('light-mykonos');
       }
+      &[data-bg-light-image="light-imazu-bay"] {
+        @include gradient-background('light-imazu-bay');
+      }
+      &[data-bg-light-image="light-mt-aso-from-mt-tenzan"] {
+        @include gradient-background('light-mt-aso-from-mt-tenzan');
+      }
     }
 
     #header #header-inner #header-bottom {
