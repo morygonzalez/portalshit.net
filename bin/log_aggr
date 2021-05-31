@@ -1,6 +1,7 @@
 #!/bin/bash
 
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs|winds|slepnirsiteupdates|flipboard)'
+REFERER_TO_IGNORE='referer:.+?(\.ru\/|semalt\.com|153\.126\.135\.20)'
 REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
@@ -10,6 +11,7 @@ function access_ranking_today() {
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep 'status:200' \
     | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
@@ -26,6 +28,7 @@ function access_ranking_yesterday() {
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
     | grep 'status:200' \
     | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
@@ -42,6 +45,7 @@ function access_ranking_all() {
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
     | grep 'status:200' \
     | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
     | cut -f5 | sed -e 's/request_uri://' \
@@ -57,6 +61,7 @@ function referer_ranking_today() {
   find ${APP_DIR}/log/access.log \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")"  \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
@@ -71,6 +76,7 @@ function referer_ranking_yesterday() {
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")"  \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
@@ -85,6 +91,7 @@ function referer_ranking_all() {
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
