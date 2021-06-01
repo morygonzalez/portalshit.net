@@ -49,8 +49,8 @@ module Lokka
 
       def lock
         while is_not_ready?
-          logger.info(%(Blocked fetching #{@item_id}, retry_amount: #{@retry_amount}))
           @retry_amount += 1
+          logger.info(%(Blocked fetching #{@item_id}, retry_amount: #{@retry_amount}))
           raise RetryQuotaOver, %(Retry quota exceeded, retry_amount: #{@retry_amount}) if retry_quota_over?
           sleep 1
         end
@@ -70,7 +70,7 @@ module Lokka
       end
 
       def retry_quota_over?
-        @retry_amount > 2
+        @retry_amount > 3
       end
 
       def result
