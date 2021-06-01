@@ -75,15 +75,39 @@ module Lokka
 
       def result
         @result ||= begin
-                      _result = fetch&.to_h.to_json
-                      if _result =~ /error/i
-                        logger.info(%(Failed fetching #{@item_id} due to #{_result}))
-                        _result = nil
+                      response = ResponseParser.new(fetch)
+                      if response.error?
+                        logger.info(%(Failed fetching #{@item_id} due to #{response.error_messages}))
+                        nil
                       else
                         logger.info(%(Finished fetching #{@item_id}))
+                        response.json
                       end
-                      _result
                     end
+      end
+
+      class ResponseParser
+        def initialize(result)
+          @hash = result&.to_h
+        end
+
+        def error_messages
+          errors.map {|e| e['Message'] }
+        end
+
+        def error?
+          errors.present?
+        end
+
+        def json
+          @hash.to_json
+        end
+
+        private
+
+        def errors
+          @errors ||= @hash['Errors']
+        end
       end
 
       class RetryQuotaOver < StandardError; end
