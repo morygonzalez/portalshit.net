@@ -94,7 +94,7 @@
         li {
           padding-left: 3px;
           margin: auto;
-          flex-grow: 2;
+          font-size: 3vw;
 
           a {
             padding: 2px 5px;
@@ -105,12 +105,14 @@
           }
 
           &.search {
-            flex-grow: 3;
             #search_form input[type="text"] {
+              margin-top: 3px;
               margin-left: unset;
-              min-width: 100px;
-              max-width: 150px;
-              width: 80%;
+              width: 90%;
+              min-width: 80px;
+              max-width: 160px;
+              height: 85%;
+              font-size: 16px;
             }
           }
         }
@@ -298,6 +300,10 @@
       width: 95% !important;
       padding-bottom: 1.5em;
       $comment_form_width: 75% !important;
+
+      input[type="text"], textarea {
+        font-size: 16px;
+      }
 
       #comment_name {
         width: $comment_form_width;
