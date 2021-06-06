@@ -16,7 +16,7 @@ namespace :similar_entries do
   def skip_execution?
     return false if @force
     return false if Similarity.count.zero?
-    Entry.find_by(updated_at: Entry.maximum(:updated_at)).id > Similarity.maximum(:entry_id)
+    Similarity.maximum(:entry_id) > Entry.find_by(updated_at: Entry.maximum(:updated_at)).id
   end
 
   desc 'Extract term'
