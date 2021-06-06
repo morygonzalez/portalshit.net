@@ -34,8 +34,15 @@ class Entry < ActiveRecord::Base
           where(created_at: time.beginning_of_month..time.end_of_month)
         }
   scope :search,
-        ->(word) {
-          where('title LIKE ?', "%#{word}%").or(where('body LIKE ?', "%#{word}%"))
+        ->(words) {
+          words.split(/ |　/).inject(nil) do |query, word|
+            if query.nil?
+              query = where('title LIKE ?', "%#{word}%").or(where('body LIKE ?', "%#{word}%"))
+            else
+              query = query.merge(where('title LIKE ?', "%#{word}%").or(where('body LIKE ?', "%#{word}%")))
+            end
+            query
+          end
         }
 
   def self.get_by_fuzzy_slug(id_or_slug)
