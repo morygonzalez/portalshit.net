@@ -9,7 +9,7 @@
 /tmp/*.log
 /tmp/pids
 /tmp/sockets
-/log/*.log
+/log/*
 /*.csv
 /coverage
 .DS_Store
