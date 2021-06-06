@@ -3,6 +3,7 @@
 desc 'Detect and update similar entries'
 task :similar_entries, [:force] => %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export] do |task, arguments|
   @force = arguments[:force].present? && arguments[:force] == 'true'
+  puts 'This is force execution because the force flag is set true.' if @force
 end
 
 namespace :similar_entries do
@@ -16,7 +17,10 @@ namespace :similar_entries do
   def skip_execution?
     return false if @force
     return false if Similarity.count.zero?
-    Similarity.maximum(:entry_id) > Entry.find_by(updated_at: Entry.maximum(:updated_at)).id
+    if Similarity.maximum(:entry_id) > Entry.find_by(updated_at: Entry.maximum(:updated_at)).id
+      puts 'Skip similarity detection because the latest entry already has similar entries'
+      true
+    end
   end
 
   desc 'Extract term'
