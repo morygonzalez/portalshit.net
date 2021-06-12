@@ -3,7 +3,7 @@
     %h3 この記事を参照している記事
     %ul
       - referrers.each do |referrer|
-        %li
+        %li.item{ title: referrer.title, link: referrer.link, type: 'referrer' }
           .title
             %span.link= link_to referrer.title, referrer.link
             %span.created_at= l(referrer.created_at.to_date, format: :long)
@@ -15,10 +15,24 @@
     %h3 この記事に似ている記事
     %ul
       - @entry.similar_entries.includes(:category).order(:'similarities.score' => :desc).limit(6).each do |similar|
-        %li
+        %li.item{ title: similar.title, link: similar.link, type: 'similar' }
           .title
             %span.link= link_to similar.title, similar.link
             %span.created_at= l(similar.created_at.to_date, format: :long)
           .description
             .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{similar.cover_image}"), similar.link
             .body= similar.long_description
+
+:javascript
+  document.querySelectorAll('section.referrers ul li a, section.similar ul li a').forEach(element => {
+    element.onclick = (e) => {
+      const target = e.target;
+      const item = target.closest('li.item');
+      const title = item.getAttribute('title');
+      const link = item.getAttribute('link');
+      const type = item.getAttribute('type');
+      if (typeof ga !== 'undefined') {
+        ga('send', 'event', 'Related Entry', `${type} click`, title);
+      }
+    }
+  })
