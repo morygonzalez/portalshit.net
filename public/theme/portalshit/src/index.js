@@ -52,15 +52,17 @@ const observeImages = node => {
 const getCurrentColorMode = () => {
   const allCookies = document.cookie.split(';');
   const colorPreference = allCookies.find(item => item.startsWith('preferes-color-scheme'));
+  let mode;
 
   if (typeof colorPreference != undefined && colorPreference != null) {
-    const value = colorPreference.split('=')[1];
-    return value;
+    mode = colorPreference.split('=')[1];
   } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-    return 'light-mode';
+    mode = 'light-mode';
   } else {
-    return 'dark-mode';
+    mode = 'dark-mode';
   }
+
+  return mode;
 }
 
 const observeThemeToggle = () => {
@@ -97,9 +99,9 @@ const setColorMode = () => {
 }
 
 const init = node => {
+  setColorMode();
   observeImages(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
-  setColorMode();
   observeThemeToggle();
 }
 
