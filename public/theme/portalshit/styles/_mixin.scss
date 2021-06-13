@@ -60,14 +60,8 @@
 
   a {
     text-decoration: none;
-    text-shadow: $dark-text-shadow-color 0 1px 0;
     z-index: 2;
     position: relative;
-
-    &:link, &:visited {
-      color: #e6e6e6;
-      text-shadow: $dark-text-shadow-color 0 1px 0;
-    }
 
     &::before {
       content: "•";
@@ -80,22 +74,28 @@
       margin-left: -0.2em;
     }
 
-    &:link::before {
-      color: $dark-link-color;
+    html.dark-mode & {
+      text-shadow: $dark-text-shadow-color 0 1px 0;
+
+      &:link, &:visited {
+        color: #e6e6e6;
+        text-shadow: $dark-text-shadow-color 0 1px 0;
+      }
+
+      &:link::before {
+        color: $dark-link-color;
+      }
+
+      &:visited::before {
+        color: $dark-visited-link-color;
+      }
+
+      &:hover::before {
+        color: $dark-hover-link-color;
+      }
     }
 
-    &:visited::before {
-      color: $dark-visited-link-color;
-    }
-
-    &:hover::before {
-      color: $dark-hover-link-color;
-    }
-  }
-
-  // @media (prefers-color-scheme: light) {
-  html.light-mode {
-    a {
+    html.light-mode & {
       text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
 
       &:link, &:visited {
@@ -106,7 +106,7 @@
         color: $light-link-color;
       }
       &:visited::before {
-        // color: $light-visited-link-color;
+        color: $light-visited-link-color;
       }
       &:hover::before {
         color: $light-hover-link-color;
