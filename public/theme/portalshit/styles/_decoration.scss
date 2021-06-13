@@ -445,7 +445,8 @@ kbd {
   }
 }
 
-@media (prefers-color-scheme: light) {
+// @media (prefers-color-scheme: light) {
+html.light-mode {
   strong {
     color: $light-emphasis-font-color;
   }

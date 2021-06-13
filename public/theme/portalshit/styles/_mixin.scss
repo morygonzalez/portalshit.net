@@ -93,7 +93,8 @@
     }
   }
 
-  @media (prefers-color-scheme: light) {
+  // @media (prefers-color-scheme: light) {
+  html.light-mode {
     a {
       text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
 

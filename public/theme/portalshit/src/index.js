@@ -1,31 +1,31 @@
 import mediumZoom from 'medium-zoom';
 
-const init = (node) => {
-  const checkImageSize = (target) => {
-    if (typeof target === 'undefined') {
-      return false;
-    }
-    const width = target.naturalWidth;
-    const height = target.naturalHeight;
-    const isPhoto = RegExp('(lh3\.googleusercontent\.com|\.jpe?g$)').test(target.src);
-    if (width > 1279 && width > height && isPhoto) {
-      target.classList.add('large');
-    }
+const checkImageSize = target => {
+  if (typeof target === 'undefined') {
+    return false;
   }
+  const width = target.naturalWidth;
+  const height = target.naturalHeight;
+  const isPhoto = RegExp('(lh3\.googleusercontent\.com|\.jpe?g$)').test(target.src);
+  if (width > 1279 && width > height && isPhoto) {
+    target.classList.add('large');
+  }
+}
 
-  const lazyImageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const lazyImage = entry.target;
-        lazyImage.src = lazyImage.dataset.src;
-        // lazyImage.srcset = lazyImage.dataset.srcset;
-        // lazyImage.classList.remove("lazy");
-        lazyImage.addEventListener('load', (event) => checkImageSize(event.target));
-        lazyImageObserver.unobserve(lazyImage);
-      }
-    });
+const lazyImageObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const lazyImage = entry.target;
+      lazyImage.src = lazyImage.dataset.src;
+      // lazyImage.srcset = lazyImage.dataset.srcset;
+      // lazyImage.classList.remove("lazy");
+      lazyImage.addEventListener('load', (event) => checkImageSize(event.target));
+      lazyImageObserver.unobserve(lazyImage);
+    }
   });
+});
 
+const observeImages = node => {
   const selectors = '#content article .body img, #content aside .similar img';
   const lazyImages = [].slice.call(node.querySelectorAll(selectors));
 
@@ -47,8 +47,60 @@ const init = (node) => {
   } else {
     // Possibly fall back to a more compatible method here
   }
+}
 
+const getCurrentColorMode = () => {
+  const allCookies = document.cookie.split(';');
+  const colorPreference = allCookies.find(item => item.startsWith('preferes-color-scheme'));
+
+  if (typeof colorPreference != undefined && colorPreference != null) {
+    const value = colorPreference.split('=')[1];
+    return value;
+  } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light-mode';
+  } else {
+    return 'dark-mode';
+  }
+}
+
+const observeThemeToggle = () => {
+  const button = document.querySelector('#toggle-theme');
+  if (button) {
+    button.onclick = toggleColorPreference;
+  }
+}
+
+const toggleColorPreference = () => {
+  const currentColorMode = getCurrentColorMode();
+  let newColorMode;
+  if (currentColorMode == 'dark-mode') {
+    newColorMode = 'light-mode';
+  } else {
+    newColorMode = 'dark-mode';
+  }
+  document.cookie = `preferes-color-scheme=${newColorMode}`;
+  document.documentElement.classList.remove(currentColorMode);
+  document.documentElement.classList.add(newColorMode);
+}
+
+const setColorMode = () => {
+  const currentColorMode = getCurrentColorMode();
+  document.documentElement.classList.add(currentColorMode);
+
+  // window.matchMedia('(prefers-color-scheme: light)').addListener(e => {
+  //   if (e.matches) {
+  //     prefersColorScheme = 'light';
+  //   } else {
+  //     prefersColorScheme = 'dark';
+  //   }
+  // })
+}
+
+const init = node => {
+  observeImages(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
+  setColorMode();
+  observeThemeToggle();
 }
 
 document.addEventListener('DOMContentLoaded', () => init(document));
