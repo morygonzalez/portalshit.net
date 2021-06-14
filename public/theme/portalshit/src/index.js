@@ -98,9 +98,27 @@ const setColorMode = () => {
   // })
 }
 
+const observeLinkClick = (node) => {
+  const selectors = 'section.referrers ul li a, section.similar ul li a, section.frequently-read-articles ul li a, section.hotentry ul li a';
+  node.querySelectorAll(selectors).forEach(element => {
+    element.onclick = (e) => {
+      const target = e.target;
+      const item = target.closest('li.item');
+      const type = item.getAttribute('type');
+      const category = type.match(/hotentry|frequency/) ? 'Popular Entry' : 'Related Entry';
+      const action = `${type} click`;
+      const label = item.getAttribute('title');
+      if (typeof ga !== 'undefined') {
+        ga('send', 'event', category, action, label);
+      }
+    }
+  })
+}
+
 const init = node => {
   setColorMode();
   observeImages(node);
+  observeLinkClick(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
   observeThemeToggle();
 }
