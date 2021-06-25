@@ -80,7 +80,7 @@ const toggleColorPreference = () => {
   } else {
     newColorMode = 'dark-mode';
   }
-  document.cookie = `preferes-color-scheme=${newColorMode}`;
+  document.cookie = `preferes-color-scheme=${newColorMode};max-age=604800`;
   document.documentElement.classList.remove(currentColorMode);
   document.documentElement.classList.add(newColorMode);
 }
