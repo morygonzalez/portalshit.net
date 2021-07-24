@@ -1,5 +1,21 @@
 import mediumZoom from 'medium-zoom';
 
+const checkTableWidth = node => {
+  node.querySelectorAll('table').forEach(target => {
+    if (needToExpand(target)) {
+      target.classList.add('wide');
+    }
+  })
+}
+
+const needToExpand = table => {
+  return Array.from(table.rows).some(rows => {
+    return rows.children.length > 6 || Array.from(rows.children).some(td => {
+      return td.innerText.length > 20;
+    });
+  })
+}
+
 const checkImageSize = target => {
   if (typeof target === 'undefined') {
     return false;
@@ -121,6 +137,7 @@ const init = node => {
   observeLinkClick(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
   observeThemeToggle();
+  checkTableWidth(node);
 }
 
 document.addEventListener('DOMContentLoaded', () => init(document));
