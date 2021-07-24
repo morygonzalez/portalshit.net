@@ -21,7 +21,8 @@ class Entry
         slugs[index] = slug
         break if slugs.length == limit
       end
-      includes(:category).where(slug: slugs.values).limit(limit).sort_by {|entry| slugs.values.index(entry.slug) }
+      entries = includes(:category).published.where(slug: slugs.values).limit(limit)
+      entries.sort_by {|entry| slugs.values.index(entry.slug) }
     rescue StandardError
       []
     end
@@ -72,7 +73,7 @@ class Entry
       merged_slugs = slugs.merge(www_slugs).sort_by {|_, item| item[:bookmark_count].to_i }
       merged_slugs = merged_slugs.reverse[0..max].to_h
 
-      entries = includes(:category).where(slug: merged_slugs.keys).limit(limit)
+      entries = includes(:category).published.where(slug: merged_slugs.keys).limit(limit)
       entries = entries.sort_by {|entry| merged_slugs.keys.index(entry.slug) }
       entries.map do |entry|
         entry.bookmark_count = merged_slugs[entry.slug][:bookmark_count]
