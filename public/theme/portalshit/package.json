@@ -14,7 +14,7 @@
     "medium-zoom": "^1.0.6",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.11",
-    "webpack-manifest-plugin": "2.2.0"
+    "webpack-manifest-plugin": "3.2.0"
   },
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.config.js",
