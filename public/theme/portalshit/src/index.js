@@ -101,17 +101,17 @@ const toggleColorPreference = () => {
   document.documentElement.classList.add(newColorMode);
 }
 
-const setColorMode = () => {
-  const currentColorMode = getCurrentColorMode();
-  document.documentElement.classList.add(currentColorMode);
-
+const setColorMode = async () => {
+  // let prefersColorScheme;
   // window.matchMedia('(prefers-color-scheme: light)').addListener(e => {
   //   if (e.matches) {
-  //     prefersColorScheme = 'light';
+  //     prefersColorScheme = 'light-mode';
   //   } else {
-  //     prefersColorScheme = 'dark';
+  //     prefersColorScheme = 'dark-mode';
   //   }
   // })
+  const currentColorMode = await getCurrentColorMode();
+  document.documentElement.classList.add(currentColorMode);
 }
 
 const observeLinkClick = (node) => {
