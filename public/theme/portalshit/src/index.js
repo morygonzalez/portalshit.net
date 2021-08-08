@@ -70,7 +70,7 @@ const getCurrentColorMode = () => {
   const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
   let mode;
 
-  if (typeof colorPreference != undefined && colorPreference != null) {
+  if (colorPreference) {
     mode = colorPreference.split('=')[1];
   } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
     mode = 'light-mode';
