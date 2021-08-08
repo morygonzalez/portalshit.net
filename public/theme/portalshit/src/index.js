@@ -67,7 +67,7 @@ const observeImages = node => {
 
 const getCurrentColorMode = () => {
   const allCookies = document.cookie.split(';');
-  const colorPreference = allCookies.find(item => item.startsWith('preferes-color-scheme'));
+  const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
   let mode;
 
   if (typeof colorPreference != undefined && colorPreference != null) {
@@ -96,7 +96,7 @@ const toggleColorPreference = () => {
   } else {
     newColorMode = 'dark-mode';
   }
-  document.cookie = `preferes-color-scheme=${newColorMode};max-age=604800;path=/`;
+  document.cookie = `prefers-color-scheme=${newColorMode};max-age=604800;path=/`;
   document.documentElement.classList.remove(currentColorMode);
   document.documentElement.classList.add(newColorMode);
 }

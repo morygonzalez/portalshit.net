@@ -118,7 +118,7 @@ module Lokka
     end
 
     def color_mode
-      request.cookies['preferes-color-scheme']
+      request.cookies['prefers-color-scheme']
     end
 
     def portalshit_config
