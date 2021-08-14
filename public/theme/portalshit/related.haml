@@ -8,7 +8,7 @@
             %span.link= link_to referrer.title, referrer.link
             %span.created_at= l(referrer.created_at.to_date, format: :long)
           .description
-            .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{referrer.cover_image}"), referrer.link
+            .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{referrer.cover_image}"), referrer.link
             .body= referrer.long_description
 - if @entry.is_a?(Post) && @entry.similar_entries.present?
   %section.similar
@@ -20,5 +20,5 @@
             %span.link= link_to similar.title, similar.link
             %span.created_at= l(similar.created_at.to_date, format: :long)
           .description
-            .image= link_to image_tag("https://portalshit.net/imageproxy/200x200,sc/#{similar.cover_image}"), similar.link
+            .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{similar.cover_image}"), similar.link
             .body= similar.long_description
