@@ -5,7 +5,7 @@
   "main": "script.js",
   "dependencies": {
     "jquery": "^3.5.1",
-    "set-value": "^3.0.2"
+    "set-value": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.11.6",
