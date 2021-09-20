@@ -101,15 +101,24 @@ const toggleColorPreference = () => {
   document.documentElement.classList.add(newColorMode);
 }
 
+const observeColorMode = () => {
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', ()  => {
+    const allCookies = document.cookie.split(';');
+    const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
+    if (colorPreference) {
+      return;
+    }
+    let mode;
+    if (e.matches) {
+      mode = 'light-mode';
+    } else {
+      mode = 'dark-mode';
+    }
+    document.documentElement.classList.add(mode);
+  })
+}
+
 const setColorMode = async () => {
-  // let prefersColorScheme;
-  // window.matchMedia('(prefers-color-scheme: light)').addListener(e => {
-  //   if (e.matches) {
-  //     prefersColorScheme = 'light-mode';
-  //   } else {
-  //     prefersColorScheme = 'dark-mode';
-  //   }
-  // })
   const currentColorMode = await getCurrentColorMode();
   document.documentElement.classList.add(currentColorMode);
 }
@@ -132,11 +141,12 @@ const observeLinkClick = (node) => {
 }
 
 const init = node => {
-  setColorMode();
+  // setColorMode();
   observeImages(node);
   observeLinkClick(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
   observeThemeToggle();
+  observeColorMode();
   checkTableWidth(node);
 }
 
