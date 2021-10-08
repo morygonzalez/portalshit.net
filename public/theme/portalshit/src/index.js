@@ -102,7 +102,7 @@ const toggleColorPreference = () => {
 }
 
 const observeColorMode = () => {
-  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', ()  => {
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e)  => {
     const allCookies = document.cookie.split(';');
     const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
     if (colorPreference) {
@@ -114,12 +114,13 @@ const observeColorMode = () => {
     } else {
       mode = 'dark-mode';
     }
+    document.documentElement.removeAttribute('class');
     document.documentElement.classList.add(mode);
   })
 }
 
-const setColorMode = async () => {
-  const currentColorMode = await getCurrentColorMode();
+const setColorMode = () => {
+  const currentColorMode = getCurrentColorMode();
   document.documentElement.classList.add(currentColorMode);
 }
 
@@ -141,7 +142,7 @@ const observeLinkClick = (node) => {
 }
 
 const init = node => {
-  // setColorMode();
+  setColorMode();
   observeImages(node);
   observeLinkClick(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
