@@ -108,13 +108,15 @@ const observeColorMode = () => {
     if (colorPreference) {
       return;
     }
-    let mode;
+    let newColorMode;
+    const colorModes = ['light-mode', 'dark-mode'];
     if (e.matches) {
-      mode = 'light-mode';
+      newColorMode = 'light-mode';
     } else {
-      mode = 'dark-mode';
+      newColorMode = 'dark-mode';
     }
-    document.documentElement.removeAttribute('class');
+    const currentColorMode = colorModes.find(item => item != newColorMode);
+    document.documentElement.classList.remove(currentColorMode);
     document.documentElement.classList.add(mode);
   })
 }
