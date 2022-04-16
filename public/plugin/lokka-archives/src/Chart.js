@@ -61,9 +61,9 @@ export default class Chart extends PureComponent {
           <Tooltip labelStyle={{ color: '#000', fontWeight: 'bold' }} itemStyle={{ margin: '0 2px 0 4px', padding: '0' }} />
           <Legend onClick={this.selectBar} />
           {this.state.categories.map((category, index) => {
-            let dataKey = this.state.disabled.includes(category) ? `${category} ` : category
+            let disabled = this.state.disabled.includes(category)
             let color = this.colors[index % this.colors.length]
-            return(<Bar key={index} dataKey={dataKey} stackId="a" fill={color} />)
+            return(<Bar key={index} dataKey={category} stackId="a" fill={color} hide={disabled} />)
           })}
         </BarChart>
       </ResponsiveContainer>
