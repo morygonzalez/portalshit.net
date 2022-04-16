@@ -17,7 +17,9 @@ namespace :similar_entries do
   def skip_execution?
     return false if @force
     return false if Similarity.count.zero?
-    if Similarity.maximum(:entry_id) > Entry.find_by(updated_at: Entry.maximum(:updated_at)).id
+    latest_entry_with_similarity = Entry.find_by(updated_at: Similarity.joins(:entry).maximum(:'entries.updated_at'))
+    latest_published_entry = Entry.published.order(updated_at: :desc).first
+    if latest_entry_with_similarity == latest_published_entry
       puts 'Skip similarity detection because the latest entry already has similar entries'
       true
     end
