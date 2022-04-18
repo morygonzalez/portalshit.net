@@ -30,16 +30,16 @@ export default class Chart extends PureComponent {
 
   selectBar(selectedOption) {
     let dataKey = selectedOption.dataKey.trim()
-    let disabled = this.props.disabled
-    if (disabled.includes(dataKey)) {
-      disabled = disabled.filter(item => item !== dataKey)
+    let disabledCategories = this.props.disabledCategories
+    if (disabledCategories.includes(dataKey)) {
+      disabledCategories = disabledCategories.filter(item => item !== dataKey)
     } else {
-      disabled = disabled.concat([dataKey])
+      disabledCategories = disabledCategories.concat([dataKey])
     }
     this.setState(
       { selectedOption },
       () => {
-        this.props.updateDisabled(disabled)
+        this.props.updateDisabledCategories(disabledCategories)
       }
     )
   }
@@ -60,9 +60,9 @@ export default class Chart extends PureComponent {
           <Tooltip labelStyle={{ color: '#000', fontWeight: 'bold' }} itemStyle={{ margin: '0 2px 0 4px', padding: '0' }} />
           <Legend onClick={this.selectBar} />
           {this.props.categories.map((category, index) => {
-            let disabled = this.props.disabled.includes(category)
+            let disabledCategories = this.props.disabledCategories.includes(category)
             let color = this.colors[index % this.colors.length]
-            return(<Bar key={index} dataKey={category} stackId="a" fill={color} hide={disabled} />)
+            return(<Bar key={index} dataKey={category} stackId="a" fill={color} hide={disabledCategories} />)
           })}
         </BarChart>
       </ResponsiveContainer>

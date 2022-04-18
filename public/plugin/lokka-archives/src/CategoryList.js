@@ -12,28 +12,24 @@ class CategoryList extends Component {
     this.handleChange = this.handleChange.bind(this)
   }
 
-  async loadCategoryListFromServer() {
-    const request = await fetch('/archives/categories.json')
-    const response = await request.json()
-    this.setState({ data: response })
-  }
-
-  componentDidMount() {
-    this.loadCategoryListFromServer()
-  }
-
   handleChange(selectedOption) {
     this.setState(
       { selectedOption },
       () => {
-        const category = selectedOption ? selectedOption.value : null
-        this.props.update(category)
+        const selectedCategory = selectedOption ? selectedOption.value : null
+        let disabledCategories
+        if (selectedCategory) {
+          disabledCategories = this.props.categories.filter(item => item != selectedCategory)
+        } else {
+          disabledCategories = []
+        }
+        this.props.update(disabledCategories)
       }
     )
   }
 
   render() {
-    const options = this.state.data.map(category => {
+    const options = this.props.categories.map(category => {
       return { value: category, label: category }
     })
     return (
