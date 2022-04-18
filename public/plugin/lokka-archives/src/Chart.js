@@ -9,8 +9,7 @@ export default class Chart extends PureComponent {
     super(props)
     this.state = {
       data: [],
-      categories: [],
-      disabled: []
+      selectedOption: null
     }
     this.colors = [
       '#E53935', '#D81B60', '#8E24AA', '#5E35B1', '#3949AB', '#1E88E5', '#039BE5',
@@ -25,24 +24,24 @@ export default class Chart extends PureComponent {
     this.setState({ data: response })
   }
 
-  async loadCategoriesFromServer() {
-    const request = await fetch('/archives/categories.json')
-    const response = await request.json()
-    this.setState({ categories: response })
-  }
-
   componentDidMount() {
     this.loadChartFromServer()
-    this.loadCategoriesFromServer()
   }
 
-  selectBar(event) {
-    let dataKey = event.dataKey.trim()
-    if (this.state.disabled.includes(dataKey)) {
-      this.setState({ disabled: this.state.disabled.filter(item => item !== dataKey) })
+  selectBar(selectedOption) {
+    let dataKey = selectedOption.dataKey.trim()
+    let disabled = this.props.disabled
+    if (disabled.includes(dataKey)) {
+      disabled = disabled.filter(item => item !== dataKey)
     } else {
-      this.setState({ disabled: this.state.disabled.concat([dataKey]) })
+      disabled = disabled.concat([dataKey])
     }
+    this.setState(
+      { selectedOption },
+      () => {
+        this.props.updateDisabled(disabled)
+      }
+    )
   }
 
   render() {
@@ -60,8 +59,8 @@ export default class Chart extends PureComponent {
           <YAxis />
           <Tooltip labelStyle={{ color: '#000', fontWeight: 'bold' }} itemStyle={{ margin: '0 2px 0 4px', padding: '0' }} />
           <Legend onClick={this.selectBar} />
-          {this.state.categories.map((category, index) => {
-            let disabled = this.state.disabled.includes(category)
+          {this.props.categories.map((category, index) => {
+            let disabled = this.props.disabled.includes(category)
             let color = this.colors[index % this.colors.length]
             return(<Bar key={index} dataKey={category} stackId="a" fill={color} hide={disabled} />)
           })}

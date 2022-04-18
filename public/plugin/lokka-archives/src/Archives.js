@@ -50,7 +50,7 @@ class Archives extends Component {
         <div className="sweet-loading">
           <MoonLoader css={override} size={150} color={'#8c0000'} loading={this.state.loading} />
         </div>
-        <MonthlyBox data={this.state.data} category={this.props.category} setLength={this.props.setLength} />
+        <MonthlyBox data={this.state.data} categories={this.props.categores} disabled={this.props.disabled} setLength={this.props.setLength} />
       </div>
     )
   }
@@ -176,12 +176,12 @@ class MonthlyBox extends Component {
 
   setGroupByMonth() {
     const data = this.props.data
-    const category = this.props.category
+    const disabled = this.props.disabled
     let length = 0
     const entriesGroupByYearMonth = Object.keys(data).map((monthYear, index) => {
       let entries = data[monthYear]
-      if (category && typeof category !== 'undefined' && category.length > 0) {
-        entries = entries.filter(entry => entry.category.title === category)
+      if (disabled && typeof disabled !== 'undefined' && disabled.length > 0) {
+        entries = entries.filter(entry => !disabled.includes(entry.category.title))
       }
       length += entries.length
       if (entries.length === 0) {

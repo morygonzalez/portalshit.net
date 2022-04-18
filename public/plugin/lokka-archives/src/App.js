@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 
 import YearList from './YearList'
-import CategoryList from './CategoryList'
 import Archives from './Archives'
 import Chart from './Chart'
 
@@ -10,17 +9,18 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      category: null,
+      categories: [],
+      disabled: [],
       year: null,
       length: 0
     }
-    this.updateCategory = this.updateCategory.bind(this)
+    this.updateDisabled = this.updateDisabled.bind(this)
     this.updateYear = this.updateYear.bind(this)
     this.setLength = this.setLength.bind(this)
   }
 
-  updateCategory(category) {
-    this.setState({ category })
+  updateDisabled(disabled) {
+    this.setState({ disabled })
   }
 
   updateYear(year) {
@@ -31,14 +31,23 @@ class App extends Component {
     this.setState({ length })
   }
 
+  async loadCategoriesFromServer() {
+    const request = await fetch('/archives/categories.json')
+    const response = await request.json()
+    this.setState({ categories: response })
+  }
+
+  componentDidMount() {
+    this.loadCategoriesFromServer()
+  }
+
   render() {
     return(
       <article>
-        <Chart />
+        <Chart categories={this.state.categories} disabled={this.state.disabled} updateDisabled={this.updateDisabled} />
         <Router>
           <div className="archive-filter">
             <YearList update={this.updateYear} />
-            <CategoryList update={this.updateCategory} activeCategory={this.state.category} />
             <div className="entry-length"><p>{this.state.length} entries</p></div>
           </div>
           <Switch>
@@ -46,7 +55,8 @@ class App extends Component {
               exact path="/archives"
               render={(props) =>
                 <Archives
-                  category={this.state.category}
+                  categories={this.state.categories}
+                  disabled={this.state.disabled}
                   setLength={this.setLength}
                   {...props}
                 />
@@ -56,7 +66,8 @@ class App extends Component {
               path="/archives/:year(\d{4})"
               render={(props) =>
                 <Archives
-                  category={this.state.category}
+                  categories={this.state.categories}
+                  disabled={this.state.disabled}
                   setLength={this.setLength}
                   year={this.state.year}
                   {...props}
