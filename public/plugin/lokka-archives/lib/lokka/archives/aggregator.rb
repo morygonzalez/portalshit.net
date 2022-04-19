@@ -70,7 +70,7 @@ module Lokka
 
       class << self
         def categories
-          @categories ||= Category.find(
+          RequestStore[:categories] ||= Category.find(
             Category.joins(:entries).where(entries: Post.published).
             group(:id).order(count_entries_id: :desc).count(:'entries.id').
             keys
