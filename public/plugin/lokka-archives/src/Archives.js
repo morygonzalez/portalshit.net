@@ -133,7 +133,7 @@ class EntryList extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.entries.length != this.props.entries.length) {
+    if (prevProps.entries != this.props.entries) {
       this.setState({ entries: [], date: null })
       this.setEntries()
       this.setDate()

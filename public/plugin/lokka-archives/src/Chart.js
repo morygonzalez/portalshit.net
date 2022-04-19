@@ -39,7 +39,7 @@ export default class Chart extends PureComponent {
     this.setState(
       { selectedOption },
       () => {
-        this.props.updateDisabledCategories(disabledCategories)
+        this.props.update(disabledCategories)
       }
     )
   }

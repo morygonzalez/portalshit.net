@@ -45,7 +45,7 @@ class App extends Component {
   render() {
     return(
       <article>
-        <Chart categories={this.state.categories} disabledCategories={this.state.disabledCategories} updateDisabledCategories={this.updateDisabledCategories} />
+        <Chart categories={this.state.categories} disabledCategories={this.state.disabledCategories} update={this.updateDisabledCategories} />
         <Router>
           <div className="archive-filter">
             <YearList update={this.updateYear} />
