@@ -635,7 +635,7 @@
 
     dl {
       width: 25%;
-      padding: 0 .25em;
+      padding: 0 .5em;
 
       a:link {
         color: $dark-font-color;
@@ -684,6 +684,8 @@
       color: $dark-font-color;
 
       li {
+        font-size: .9rem;
+        line-height: 1.5em;
         margin: 5px 0;
         padding: 0;
       }
