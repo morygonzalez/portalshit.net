@@ -12,7 +12,7 @@
     %script{ src: asset_path(:'admin/js', 'index.js'), type: 'text/javascript' }
     - head_last = yield_content :head_last
     - unless head_last.blank?
-      = head_last
+      - head_last
   %body
     #header
       %h1= link_to @site.title, url('/')
