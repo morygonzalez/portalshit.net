@@ -1,9 +1,29 @@
 # frozen_string_literal: true
 
 desc 'Detect and update similar entries'
-task :similar_entries, [:force] => %i[similar_entries:extract_term similar_entries:vector_normalize similar_entries:export] do |task, arguments|
-  @force = arguments[:force].present? && arguments[:force] == 'true'
-  puts 'This is force execution because the force flag is set true.' if @force
+task :similar_entries, :force do |task, arguments|
+  latest_entry_with_similarity = Entry.find_by(updated_at: Similarity.joins(:entry).maximum(:'entries.updated_at'))
+  latest_published_entry = Entry.published.order(updated_at: :desc).first
+
+  run_execution = case
+                  when arguments[:force].present? && arguments[:force] == 'true'
+                    puts 'This is a force execution because the force flag is set true.'
+                    true
+                  when Similarity.count.zero?
+                    puts 'Run execution because there is no similarity records.'
+                    true
+                  when latest_entry_with_similarity == latest_published_entry
+                    puts 'Skip similarity detection because the latest entry already has similar entries'
+                    false
+                  end
+
+  if run_execution
+    Rake::Task[:'similar_entries:extract_term'].invoke
+    Rake::Task[:'similar_entries:vector_normalize'].invoke
+    Rake::Task[:'similar_entries:export'].invoke
+  else
+    next
+  end
 end
 
 namespace :similar_entries do
@@ -14,21 +34,8 @@ namespace :similar_entries do
             end
   end
 
-  def skip_execution?
-    return false if @force
-    return false if Similarity.count.zero?
-    latest_entry_with_similarity = Entry.find_by(updated_at: Similarity.joins(:entry).maximum(:'entries.updated_at'))
-    latest_published_entry = Entry.published.order(updated_at: :desc).first
-    if latest_entry_with_similarity == latest_published_entry
-      puts 'Skip similarity detection because the latest entry already has similar entries'
-      true
-    end
-  end
-
   desc 'Extract term'
   task :extract_term do
-    next if skip_execution?
-
     require 'natto'
     nm = Natto::MeCab.new
     create_table_sql = <<~SQL
@@ -82,8 +89,6 @@ namespace :similar_entries do
 
   desc 'Vector Normalize'
   task :vector_normalize do
-    next if skip_execution?
-
     libsqlite_path = if ENV['LIBSQLITE_PATH']
                        ENV['LIBSQLITE_PATH']
                      elsif RUBY_PLATFORM.match?(/darwin/)
@@ -150,8 +155,6 @@ namespace :similar_entries do
 
   desc 'Export calculation result to MySQL'
   task :export do
-    next if skip_execution?
-
     create_similar_candidate_sql = <<~SQL
       DROP TABLE IF EXISTS similar_candidate;
       DROP INDEX IF EXISTS index_sc_parent_id;
