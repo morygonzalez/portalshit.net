@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import Select from 'react-select'
-import PropTypes from 'prop-types'
-import { withRouter } from 'react-router-dom'
 
-import history from './history'
+import withRouter from './withRouter'
 
 class YearSelect extends Component {
   constructor(props) {
@@ -14,12 +12,6 @@ class YearSelect extends Component {
       selectedOption: null
     }
     this.handleChange = this.handleChange.bind(this)
-  }
-
-  static propTypes = {
-    match: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
   }
 
   async loadYearSelectFromServer() {
@@ -35,9 +27,9 @@ class YearSelect extends Component {
   handleChange(selectedOption) {
     const year = selectedOption ? selectedOption.value : null
     if (year) {
-      this.props.history.push(`/archives/${year}`)
+      this.props.router.navigate(`/archives/${year}`)
     } else {
-      this.props.history.push("/archives")
+      this.props.router.navigate("/archives")
     }
     this.setState(
       { selectedOption },

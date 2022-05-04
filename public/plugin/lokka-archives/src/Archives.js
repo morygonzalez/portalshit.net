@@ -2,8 +2,10 @@ import React, { Component }  from 'react'
 import Moment from 'react-moment'
 import { render } from 'react-dom'
 import 'moment/locale/ja'
-import { css } from '@emotion/core'
+import { css } from '@emotion/react'
 import MoonLoader from 'react-spinners/MoonLoader'
+
+import withRouter from './withRouter'
 
 const override = `
   display: block;
@@ -18,7 +20,7 @@ class Archives extends Component {
     super(props)
     this.state = {
       data: [],
-      loading: true
+      loading: true,
     }
   }
 
@@ -31,16 +33,12 @@ class Archives extends Component {
   }
 
   componentDidMount() {
-    if (typeof this.props.match !== undefined) {
-      this.loadArchivesFromServer(this.props.match.params.year)
-    } else {
-      this.loadArchivesFromServer()
-    }
+    this.loadArchivesFromServer(this.props.router.params.year)
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.match.params.year !== this.props.match.params.year) {
-      this.loadArchivesFromServer(this.props.match.params.year)
+    if (prevProps.router.params.year !== this.props.router.params.year) {
+      this.loadArchivesFromServer(this.props.router.params.year)
     }
   }
 
@@ -203,5 +201,5 @@ class MonthlyBox extends Component {
   }
 }
 
-export default Archives
+export default withRouter(Archives)
 window.Archives = Archives

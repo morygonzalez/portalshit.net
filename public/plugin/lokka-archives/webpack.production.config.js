@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
   mode: 'production',
@@ -8,7 +8,7 @@ module.exports = {
     index: './src/index.js'
   },
   output: {
-    filename: '[name]-[hash].js',
+    filename: '[name]-[fullhash].js',
     path: path.resolve(__dirname, 'assets')
   },
   performance: {
@@ -27,7 +27,7 @@ module.exports = {
               ['@babel/preset-react'],
               ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }]
             ],
-            plugins: ['@babel/plugin-proposal-class-properties', 'emotion']
+            plugins: ['@babel/plugin-proposal-class-properties', '@emotion']
           }
         }
       }
@@ -35,6 +35,8 @@ module.exports = {
   },
   plugins: [
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new ManifestPlugin()
+    new WebpackManifestPlugin({
+      publicPath: ''
+    })
   ],
 };
