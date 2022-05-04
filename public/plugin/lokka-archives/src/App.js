@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Redirect } from 'react-router-dom'
 
 import YearList from './YearList'
 import CategoryList from './CategoryList'
@@ -52,31 +52,16 @@ class App extends Component {
             <CategoryList update={this.updateDisabledCategories} categories={this.state.categories} />
             <div className="entry-length"><p>{this.state.length} entries</p></div>
           </div>
-          <Switch>
+          <Routes>
             <Route
-              exact path="/archives"
-              render={(props) =>
-                <Archives
-                  categories={this.state.categories}
-                  disabledCategories={this.state.disabledCategories}
-                  setLength={this.setLength}
-                  {...props}
-                />
-              }
-            />
-            <Route
-              path="/archives/:year(\d{4})"
-              render={(props) =>
-                <Archives
-                  categories={this.state.categories}
-                  disabledCategories={this.state.disabledCategories}
-                  setLength={this.setLength}
-                  year={this.state.year}
-                  {...props}
-                />
-              }
-            />
-          </Switch>
+              path="/archives"
+              element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} setLength={this.setLength} />} >
+              <Route
+                path=":year"
+                element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} setLength={this.setLength} />}
+              />
+            </Route>
+          </Routes>
         </Router>
       </article>
     )
