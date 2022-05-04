@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV['NEWRELIC_AGENT_ENABLED'] = 'false'
+
 desc 'Detect and update similar entries'
 task :similar_entries, :force do |task, arguments|
   latest_entry_with_similarity = Entry.find_by(updated_at: Similarity.joins(:entry).maximum(:'entries.updated_at'))
@@ -15,6 +17,9 @@ task :similar_entries, :force do |task, arguments|
                   when latest_entry_with_similarity == latest_published_entry
                     puts 'Skip similarity detection because the latest entry already has similar entries'
                     false
+                  else
+                    puts 'Updating simimarity...'
+                    true
                   end
 
   if run_execution
