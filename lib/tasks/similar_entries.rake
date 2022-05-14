@@ -2,27 +2,50 @@
 
 ENV['NEWRELIC_AGENT_ENABLED'] = 'false'
 
+class ExecutionDetector
+  attr_reader :force, :message
+
+  def initialize(arguments: {})
+    @force = arguments[:force]
+  end
+
+  def run_execution?
+    case
+    when force.present? && force == 'true'
+      @message =  'This is a force execution because the force flag is set true.'
+      true
+    when Similarity.count.zero?
+      @message = 'Run execution because there is no similarity records.'
+      true
+    when latest_entry_with_similarity == latest_published_entry
+      @message = 'Skip similarity detection because the latest entry already has similar entries'
+      false
+    else
+      @message = 'Updating simimarity...'
+      true
+    end
+  end
+
+  private
+
+  def latest_updated_at
+    @latest_updated_at ||= Similarity.joins(:entry).maximum(:'entries.updated_at')
+  end
+
+  def latest_entry_with_similarity
+    @latest_entry_with_similarity ||= Entry.find_by(updated_at: latest_updated_at)
+  end
+
+  def latest_published_entry
+    @latest_published_entry ||= Entry.published.order(updated_at: :desc).first
+  end
+end
+
 desc 'Detect and update similar entries'
 task :similar_entries, :force do |task, arguments|
-  latest_entry_with_similarity = Entry.find_by(updated_at: Similarity.joins(:entry).maximum(:'entries.updated_at'))
-  latest_published_entry = Entry.published.order(updated_at: :desc).first
-
-  run_execution = case
-                  when arguments[:force].present? && arguments[:force] == 'true'
-                    puts 'This is a force execution because the force flag is set true.'
-                    true
-                  when Similarity.count.zero?
-                    puts 'Run execution because there is no similarity records.'
-                    true
-                  when latest_entry_with_similarity == latest_published_entry
-                    puts 'Skip similarity detection because the latest entry already has similar entries'
-                    false
-                  else
-                    puts 'Updating simimarity...'
-                    true
-                  end
-
-  if run_execution
+  detector = ExecutionDetector.new(arguments: arguments)
+  puts detector.message
+  if detector.run_execution?
     Rake::Task[:'similar_entries:extract_term'].invoke
     Rake::Task[:'similar_entries:vector_normalize'].invoke
     Rake::Task[:'similar_entries:export'].invoke
