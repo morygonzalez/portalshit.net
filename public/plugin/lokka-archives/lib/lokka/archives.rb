@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'tantiny'
 require_relative 'archives/chart_query_generator'
 require_relative 'archives/aggregator'
 
@@ -7,7 +8,18 @@ module Lokka
   module Archives
     def self.registered(app)
       app.get '/archives.json' do
-        posts = Post.published.joins(:category)
+        posts = if params[:query].present?
+                  search_result = search_index.search(params[:query], limit: 10000)
+                  Post.published.joins(:category).where(id: search_result)
+                else
+                  Post.published.joins(:category)
+                end
+        if params[:year]
+          year = params[:year].to_i
+          posts = posts.where(
+            created_at: (Time.new(year)..Time.new(year).end_of_year)
+          )
+        end
 
         cache_control :public, :must_revalidate, max_age: 5.minutes
         content_type :json
@@ -27,15 +39,6 @@ module Lokka
       app.get '/archives/chart.json' do
         content_type :json
         chart.to_json
-      end
-
-      app.get '/archives/?:year?.json' do |year|
-        posts = Post.published.joins(:category).where(
-          created_at: (Time.new(year)..Time.new(year).end_of_year)
-        )
-
-        content_type :json
-        month_posts(posts).to_json
       end
 
       app.get '/archives' do
@@ -92,6 +95,18 @@ module Lokka
         "#{archives_assets_path}/#{archives_manifest[file_name]}"
       else
         "/plugin/lokka-archives/build/#{file_name}"
+      end
+    end
+
+    def search_index
+      index_path = File.join(Lokka.root, 'tmp', 'index')
+      Tantiny::Index.new index_path do
+        id :id
+        string :category
+        string :title
+        string :tags
+        text :body
+        date :date
       end
     end
   end

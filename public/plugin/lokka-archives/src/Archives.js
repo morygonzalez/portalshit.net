@@ -24,21 +24,36 @@ class Archives extends Component {
     }
   }
 
-  async loadArchivesFromServer(year=null) {
+  async loadArchivesFromServer(params={}) {
     this.setState({ data: [], loading: true })
-    const path = year === null ? '/archives.json' : `/archives/${year}.json`
+    let searchParams = {}
+    if (params.year !== null && typeof params.year !== 'undefined') {
+      searchParams.year = params.year
+    }
+    if (this.props.query !== '') {
+      searchParams.query = this.props.query
+    }
+    let path = '/archives.json'
+    if (searchParams.year !== null || searchParams.query !== null) {
+      const query_params = new URLSearchParams(searchParams)
+      path = `${path}?${query_params}`
+    }
     const request = await fetch(path)
     const response = await request.json()
     this.setState({ data: response, loading: false })
   }
 
   componentDidMount() {
-    this.loadArchivesFromServer(this.props.router.params.year)
+    this.loadArchivesFromServer(this.props.router.params)
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.router.params.year !== this.props.router.params.year) {
-      this.loadArchivesFromServer(this.props.router.params.year)
+    if (
+      prevProps.router.params.year !== this.props.router.params.year
+      ||
+      prevProps.query !== this.props.query
+    ) {
+      this.loadArchivesFromServer(this.props.router.params)
     }
   }
 
