@@ -94,7 +94,10 @@
         li {
           padding-left: 3px;
           margin: auto;
-          font-size: 3vw;
+          font-size: 3.5vw;
+          flex-grow: 1;
+          width: 5vw;
+          min-width: 80px;
 
           a {
             padding: 2px 5px;
@@ -105,10 +108,11 @@
           }
 
           &.search {
+            flex-grow: 2 !important;
             #search_form input[type="text"] {
               margin-top: 3px;
               margin-left: unset;
-              width: 90%;
+              width: calc(100% - 1em);
               min-width: 80px;
               max-width: 160px;
               height: 85%;
@@ -357,7 +361,7 @@
 
     .search-field {
       input {
-        max-width: 173px;
+        max-width: 93%;
       }
     }
 
