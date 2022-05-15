@@ -41,6 +41,7 @@ append :linked_dirs,
   'tmp/sockets',
   'tmp/amazon',
   'tmp/ogp',
+  'tmp/index',
   'vendor/bundle',
   'public/log-aggregation'
 

@@ -43,6 +43,7 @@ gem 'slim'
 gem 'tilt'
 gem 'tux'
 gem 'yard-sinatra'
+gem 'tantiny'
 
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 

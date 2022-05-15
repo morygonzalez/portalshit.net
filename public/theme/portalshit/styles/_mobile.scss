@@ -344,7 +344,7 @@
   #content .archive-filter {
     flex-wrap: wrap;
 
-    .year-list, .category-list, .entry-length {
+    .year-list, .category-list, .search-field, .entry-length {
       max-width: 45%;
       margin: 0;
       padding: 0.5em;
@@ -352,6 +352,12 @@
       li {
         margin: 0;
         font-size: 0.9em;
+      }
+    }
+
+    .search-field {
+      input {
+        max-width: 173px;
       }
     }
 

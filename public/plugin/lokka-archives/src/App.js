@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Redirect } from 'react-router-d
 
 import YearList from './YearList'
 import CategoryList from './CategoryList'
+import SearchField from './SearchField'
 import Archives from './Archives'
 import Chart from './Chart'
 
@@ -13,10 +14,12 @@ class App extends Component {
       categories: [],
       disabledCategories: [],
       year: null,
+      query: '',
       length: 0
     }
     this.updateDisabledCategories = this.updateDisabledCategories.bind(this)
     this.updateYear = this.updateYear.bind(this)
+    this.updateQuery = this.updateQuery.bind(this)
     this.setLength = this.setLength.bind(this)
   }
 
@@ -26,6 +29,10 @@ class App extends Component {
 
   updateYear(year) {
     this.setState({ year })
+  }
+
+  updateQuery(query) {
+    this.setState({ query })
   }
 
   setLength(length) {
@@ -50,15 +57,16 @@ class App extends Component {
           <div className="archive-filter">
             <YearList update={this.updateYear} />
             <CategoryList update={this.updateDisabledCategories} categories={this.state.categories} />
+            <SearchField update={this.updateQuery} />
             <div className="entry-length"><p>{this.state.length} entries</p></div>
           </div>
           <Routes>
             <Route
               path="/archives"
-              element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} setLength={this.setLength} />} >
+              element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} query={this.state.query} setLength={this.setLength} />} >
               <Route
                 path=":year"
-                element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} setLength={this.setLength} />}
+                element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} query={this.state.query} setLength={this.setLength} />}
               />
             </Route>
           </Routes>

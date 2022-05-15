@@ -42,6 +42,7 @@ gem 'slim'
 gem 'tilt'
 gem 'tux'
 gem 'yard-sinatra'
+gem 'tantiny'
 
 
 group :production do

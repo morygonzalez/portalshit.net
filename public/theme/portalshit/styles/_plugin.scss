@@ -21,14 +21,23 @@
   .archive-filter {
     display: flex;
 
-    .year-list, .category-list, .entry-length {
+    .year-list, .category-list, .search-field, .entry-length {
       margin: .25em;
       width: 100%;
       max-width: 250px;
     }
 
-    .year-list, .category-list {
+    .year-list, .category-list, .search-field {
       color: #000;
+      font-size: 16px;
+    }
+
+    .search-field input {
+      width: 15em;
+      height: 36px;
+      border: solid 1px hsl(0, 0%, 80%);
+      padding-left: 10px;
+      border-radius: 4px;
       font-size: 16px;
     }
 
