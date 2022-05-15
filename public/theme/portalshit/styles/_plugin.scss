@@ -32,13 +32,16 @@
       font-size: 16px;
     }
 
-    .search-field input {
-      width: 15em;
-      height: 36px;
-      border: solid 1px hsl(0, 0%, 80%);
-      padding-left: 10px;
-      border-radius: 4px;
-      font-size: 16px;
+    .search-field {
+      input {
+        width: 250px;
+        height: 40px;
+        border: solid 1px hsl(0, 0%, 80%);
+        padding-left: 10px;
+        border-radius: 4px;
+        font-size: 16px;
+        background: #ffffff;
+      }
     }
 
     .entry-length {

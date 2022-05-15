@@ -109,7 +109,7 @@
 
           &.search {
             flex-grow: 2 !important;
-            #search_form input[type="text"] {
+            #search_form input[type="search"] {
               margin-top: 3px;
               margin-left: unset;
               width: calc(100% - 1em);
@@ -361,7 +361,7 @@
 
     .search-field {
       input {
-        max-width: 93%;
+        max-width: 100%;
       }
     }
 

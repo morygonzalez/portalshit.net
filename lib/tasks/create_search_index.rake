@@ -6,7 +6,7 @@ task :create_search_index do
   index = Tantiny::Index.new path do
     id :id
     string :category
-    string :title
+    text :title
     string :tags
     text :body
     date :date

@@ -14,7 +14,7 @@ const SearchField = (props) => {
   return (
     <div className="search-field">
       <input
-        type="text"
+        type="search"
         value={query}
         placeholder="Search"
         onChange={event => setQuery(event.target.value)}

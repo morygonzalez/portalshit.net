@@ -9,7 +9,8 @@ module Lokka
     def self.registered(app)
       app.get '/archives.json' do
         posts = if params[:query].present?
-                  search_result = search_index.search(params[:query], limit: 10000)
+                  search_query = search_index.smart_query(%i[title category tags body], params[:query])
+                  search_result = search_index.search(search_query, limit: 10000)
                   Post.published.joins(:category).where(id: search_result)
                 else
                   Post.published.joins(:category)
@@ -103,7 +104,7 @@ module Lokka
       Tantiny::Index.new index_path do
         id :id
         string :category
-        string :title
+        text :title
         string :tags
         text :body
         date :date

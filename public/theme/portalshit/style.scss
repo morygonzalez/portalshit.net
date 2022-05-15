@@ -101,12 +101,11 @@
             }
           }
 
-          form#search_form input[type="text"] {
+          form#search_form input[type="search"] {
             margin-left: 10px;
             border: none;
             border-radius: 3px;
             padding: 2px 2px 2px 8px;
-            height: 16px;
             width: 150px;
             font-size: 95%;
           }
