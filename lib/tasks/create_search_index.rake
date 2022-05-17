@@ -1,5 +1,4 @@
 require 'tantiny'
-require 'natto'
 
 desc "Create full text search index"
 task :create_search_index do
@@ -54,6 +53,7 @@ def words_to_ignore
 end
 
 def nm
+  require 'natto'
   @nm ||= Natto::MeCab.new
 end
 
