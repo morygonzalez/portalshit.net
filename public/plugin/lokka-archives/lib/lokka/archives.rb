@@ -9,9 +9,8 @@ module Lokka
     def self.registered(app)
       app.get '/archives.json' do
         posts = if params[:query].present?
-                  smart_query = search_index.smart_query(%i[title_tokenized body category_tokenized tags], params[:query])
-                  prefix_query = search_index.prefix_query(%i[title category], params[:query])
-                  search_result = search_index.search(smart_query | prefix_query, limit: 10000)
+                  smart_query = search_index.smart_query(%i[title title_tokenized body category category_tokenized tags], params[:query])
+                  search_result = search_index.search(smart_query, limit: 10000)
                   Post.published.joins(:category).where(id: search_result)
                 else
                   Post.published.joins(:category)
