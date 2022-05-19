@@ -64,8 +64,6 @@ namespace :similar_entries do
 
   desc 'Extract term'
   task :extract_term do
-    require 'natto'
-    nm = Natto::MeCab.new
     create_table_sql = <<~SQL
       DROP TABLE IF EXISTS tfidf;
       CREATE TABLE tfidf (
@@ -81,30 +79,16 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    entries = Entry.includes(:tags).published
+    entries = Entry.includes(:category, :tags).published
     entry_frequencies = {}
     entries.each do |entry|
-      words = []
-      body_cleansed = entry.title + entry.tags.map(&:name).join(' ') +
-        entry.raw_body.
-          gsub(/<.+?>/, '').
-          gsub(/!?\[.+?\)/, '').
-          gsub(%r{(?:```|<code>)(.+?)(?:```|</code>)}m, '\1')
-      begin
-        words_to_ignore = %w[
-          これ こと とき よう そう やつ とこ ところ 用 もの はず みたい たち いま 後 確か 中 気 方
-          頃 上 先 点 前 一 内 lt gt ここ なか どこ まま わけ ため 的 それ あと
-        ]
-        nm.parse(body_cleansed) do |n|
-          next unless n.feature.match?(/名詞/)
-          next if n.feature.match?(/(サ変接続|数)/)
-          next if n.surface.match?(/\A([a-z][0-9]|\p{hiragana}|\p{katakana})\Z/i)
-          next if words_to_ignore.include?(n.surface)
-          words << n.surface
-        end
-      rescue ArgumentError
-        next
-      end
+      text_to_tokenize = <<~HEREDOC.strip_heredoc
+        #{entry.title}
+        #{entry.body})
+        #{entry.category&.title}
+        #{entry.tag_list.join(' ')}
+      HEREDOC
+      words = Tokenizer.run(text_to_tokenize)
       frequency = words.each_with_object(Hash.new(0)) {|word, sum| sum[word] += 1; }
       entry_frequencies[entry.id] = frequency
     end

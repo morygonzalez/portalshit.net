@@ -8,7 +8,7 @@ gem 'activesupport', '~> 5.2'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
-gem 'backports'
+gem 'backports', require: false
 gem 'bcrypt'
 gem 'builder'
 gem 'bundler'
