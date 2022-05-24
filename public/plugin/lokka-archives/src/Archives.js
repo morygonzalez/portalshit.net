@@ -30,11 +30,17 @@ class Archives extends Component {
     if (params.year !== null && typeof params.year !== 'undefined') {
       searchParams.year = params.year
     }
-    if (this.props.query !== '') {
+    if (params.search !== null && typeof params.search !== 'undefined') {
+      searchParams.query = params.search
+    }
+    if (this.props.query && this.props.query !== '') {
       searchParams.query = this.props.query
     }
     let path = '/archives.json'
     if (searchParams.year !== null || searchParams.query !== null) {
+      if (searchParams.query === null) {
+        delete searchParams.query
+      }
       const query_params = new URLSearchParams(searchParams)
       path = `${path}?${query_params}`
     }
@@ -44,16 +50,22 @@ class Archives extends Component {
   }
 
   componentDidMount() {
-    this.loadArchivesFromServer(this.props.router.params)
+    const params = this.props.router.searchParams
+    const year = params.get('year')
+    const search = params.get('query')
+    this.loadArchivesFromServer({ year, search })
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.router.params.year !== this.props.router.params.year
+      prevProps.router.searchParams.get('year') !== this.props.router.searchParams.get('year')
       ||
       prevProps.query !== this.props.query
     ) {
-      this.loadArchivesFromServer(this.props.router.params)
+      const params = this.props.router.searchParams
+      const year = params.get('year')
+      const search = params.get('query')
+      this.loadArchivesFromServer({ year, search })
     }
   }
 

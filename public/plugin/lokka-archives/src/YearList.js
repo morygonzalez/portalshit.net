@@ -9,7 +9,7 @@ class YearSelect extends Component {
     super(props)
     this.state = {
       data: [],
-      selectedOption: null
+      year: null
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -21,19 +21,27 @@ class YearSelect extends Component {
   }
 
   componentDidMount() {
+    const year = this.props.router.searchParams.get('year')
+    if (year && this.state.year === null) {
+      this.setState({ year })
+    }
     this.loadYearSelectFromServer()
   }
 
   handleChange(selectedOption) {
     const year = selectedOption ? selectedOption.value : null
+    let url
     if (year) {
-      this.props.router.navigate(`/archives/${year}`)
+      url = `/archives?year=${year}`
     } else {
-      this.props.router.navigate("/archives")
+      url = '/archives'
     }
     this.setState(
-      { selectedOption },
-      () => { this.props.update(year) }
+      { year },
+      () => {
+        this.props.router.navigate(url)
+        this.props.update(year)
+      }
     )
   }
 
@@ -41,10 +49,12 @@ class YearSelect extends Component {
     const options = this.state.data.map(year => {
       return { value: year, label: year }
     })
+    const year = this.state.year
+    const value = year ? { value: year, label: year } : null
     return (
       <div className="year-list">
         <Select
-          value={this.state.selectedOption}
+          value={value}
           onChange={this.handleChange}
           options={options}
           placeholder="Year"

@@ -57,17 +57,13 @@ class App extends Component {
           <div className="archive-filter">
             <YearList update={this.updateYear} />
             <CategoryList update={this.updateDisabledCategories} categories={this.state.categories} />
-            <SearchField update={this.updateQuery} />
+            <SearchField update={this.updateQuery} query={this.state.query} />
             <div className="entry-length"><p>{this.state.length} entries</p></div>
           </div>
           <Routes>
             <Route
               path="/archives"
-              element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} query={this.state.query} setLength={this.setLength} />} >
-              <Route
-                path=":year"
-                element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} query={this.state.query} setLength={this.setLength} />}
-              />
+              element={<Archives categories={this.state.categories} disabledCategories={this.state.disabledCategories} setLength={this.setLength} query={this.state.query} />} >
             </Route>
           </Routes>
         </Router>
