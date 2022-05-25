@@ -56,7 +56,6 @@ const SearchField = (props) => {
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
-      props.update(query)
       let url
       if (query) {
         url = `/archives?query=${query}`
@@ -64,6 +63,7 @@ const SearchField = (props) => {
         url = '/archives'
       }
       props.router.navigate(url)
+      props.update(query)
     }, 500)
     return () => clearTimeout(timeOutId)
   }, [query])
