@@ -27,8 +27,6 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.8.0)
-      public_suffix (>= 2.0.2, < 5.0)
     airbrussh (1.4.0)
       sshkit (>= 1.6.1, != 1.7.0)
     arel (9.0.0)
@@ -107,44 +105,12 @@ GEM
     debug_inspector (0.0.3)
     diff-lcs (1.3)
     docile (1.3.2)
-    domain_name (0.5.20190701)
-      unf (>= 0.0.5, < 1.0.0)
-    dotenv (2.7.6)
     erubi (1.9.0)
     erubis (2.7.0)
     execjs (2.7.0)
     factory_girl (4.9.0)
       activesupport (>= 3.0.0)
-    faraday (1.10.0)
-      faraday-em_http (~> 1.0)
-      faraday-em_synchrony (~> 1.0)
-      faraday-excon (~> 1.1)
-      faraday-httpclient (~> 1.0)
-      faraday-multipart (~> 1.0)
-      faraday-net_http (~> 1.0)
-      faraday-net_http_persistent (~> 1.0)
-      faraday-patron (~> 1.0)
-      faraday-rack (~> 1.0)
-      faraday-retry (~> 1.0)
-      ruby2_keywords (>= 0.0.4)
-    faraday-em_http (1.0.0)
-    faraday-em_synchrony (1.0.0)
-    faraday-excon (1.1.0)
-    faraday-httpclient (1.0.1)
-    faraday-multipart (1.0.3)
-      multipart-post (>= 1.2, < 3)
-    faraday-net_http (1.0.1)
-    faraday-net_http_persistent (1.2.0)
-    faraday-patron (1.0.0)
-    faraday-rack (1.0.0)
-    faraday-retry (1.0.3)
-    faraday_middleware (1.2.0)
-      faraday (~> 1.0)
-    fastimage (2.2.6)
     ffi (1.15.0)
-    ffi-compiler (1.0.1)
-      ffi (>= 1.0.0)
-      rake
     get_process_mem (0.2.5)
       ffi (~> 1.0)
     haml (5.1.2)
@@ -157,14 +123,6 @@ GEM
       rainbow
       rubocop (>= 0.50.0)
       sysexits (~> 1.1)
-    http (5.0.4)
-      addressable (~> 2.8)
-      http-cookie (~> 1.0)
-      http-form_data (~> 2.2)
-      llhttp-ffi (~> 0.4.0)
-    http-cookie (1.0.4)
-      domain_name (~> 0.5)
-    http-form_data (2.3.0)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     jmespath (1.4.0)
@@ -180,9 +138,6 @@ GEM
       sinatra
     kramdown (2.2.1)
       rexml
-    llhttp-ffi (0.4.0)
-      ffi-compiler (~> 1.0)
-      rake (~> 13.0)
     loofah (2.5.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -192,7 +147,6 @@ GEM
     minitar (0.9)
     minitest (5.14.2)
     multi_json (1.14.1)
-    multipart-post (2.1.1)
     mysql2 (0.5.3)
     natto (1.2.0)
       ffi (>= 1.9.0)
@@ -201,12 +155,9 @@ GEM
     net-ssh (6.0.2)
     newrelic_rpm (8.0.0)
     nio4r (2.5.8)
-    nokogiri (1.13.5)
+    nokogiri (1.13.6)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    open_graph_reader (0.7.2)
-      faraday (>= 0.9.0)
-      nokogiri (~> 1.6)
     padrino-helpers (0.14.4)
       i18n (~> 0.6, >= 0.6.7)
       padrino-support (= 0.14.4)
@@ -219,7 +170,6 @@ GEM
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    public_suffix (4.0.7)
     puma (4.3.12)
       nio4r (~> 2.0)
     puma_worker_killer (0.1.1)
@@ -231,8 +181,6 @@ GEM
       rack
     rack-protection (1.5.5)
       rack
-    rack-recaptcha2 (1.0.0)
-      json
     rack-ssl-enforcer (0.2.9)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -259,7 +207,6 @@ GEM
       rack (>= 1.0)
       rack-test (>= 0.5)
       ripl (>= 0.3.5)
-    rouge (3.28.0)
     rspec (2.99.0)
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
@@ -287,7 +234,6 @@ GEM
     ruby-next-parser (3.1.1.3)
       parser (>= 3.0.3.1)
     ruby-progressbar (1.11.0)
-    ruby2_keywords (0.0.5)
     rutie (0.0.4)
     sass (3.4.25)
     simplecov (0.18.5)
@@ -338,16 +284,10 @@ GEM
       sinatra (>= 1.2.1)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
-    unf (0.1.4)
-      unf_ext
-    unf_ext (0.0.8.1)
     unicode-display_width (2.1.0)
     unparser (0.6.5)
       diff-lcs (~> 1.3)
       parser (>= 3.1.0)
-    vacuum (4.0.0)
-      aws-sigv4 (~> 1.0)
-      http (>= 4.0, < 6.0)
     yard (0.9.25)
     yard-sinatra (1.0.0)
       yard (~> 0.7)
@@ -377,11 +317,8 @@ DEPENDENCIES
   coffee-script
   compass
   database_cleaner-active_record
-  dotenv
   erubis
   factory_girl (~> 4.0)
-  faraday_middleware
-  fastimage
   haml
   haml-lint
   i18n
@@ -394,22 +331,18 @@ DEPENDENCIES
   natto
   newrelic_rpm
   nokogiri
-  open_graph_reader
   padrino-helpers
-  parallel
   pg
   pry
   puma
   puma_worker_killer
   rack
   rack-flash
-  rack-recaptcha2
   rack-ssl-enforcer
   rack-test
   rake
   redcarpet
   request_store
-  rouge
   rspec (~> 2.99)
   rubocop
   sass (< 3.7.5)
@@ -424,7 +357,6 @@ DEPENDENCIES
   tantiny
   tilt
   tux
-  vacuum
   yard-sinatra
 
 RUBY VERSION
