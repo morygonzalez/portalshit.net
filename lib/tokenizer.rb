@@ -26,7 +26,9 @@ class Tokenizer
   end
 
   def preserved_words
-    @preserved_words ||= %w[山と道 ハイキング 縦走 散歩 プログラミング]
+    @preserved_words ||= %w[
+      山と道 ハイキング 縦走 散歩 プログラミング はてブ 鐘撞山 散財 はてなブックマーク はてな
+    ]
   end
 
   def nm
