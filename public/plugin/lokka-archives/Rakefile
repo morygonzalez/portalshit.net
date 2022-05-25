@@ -6,7 +6,7 @@ namespace :'plugin:archives' do
     command = <<~SHELL
       cd #{__dir__} && npm install
     SHELL
-    system(command)
+    fail unless system(command)
   end
 
   desc 'Build JavaScript'
@@ -14,6 +14,6 @@ namespace :'plugin:archives' do
     command = <<~SHELL
                 cd #{__dir__} && env NODE_ENV=production ./node_modules/.bin/webpack --config webpack.production.config.js
               SHELL
-    system(command)
+    fail unless system(command)
   end
 end
