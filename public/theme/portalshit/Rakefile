@@ -4,7 +4,7 @@ namespace :'theme:portalshit' do
   desc 'Install dependencies'
   task :install do
     command = <<~SHELL
-      cd #{__dir__} && npm install
+      cd #{__dir__} && $HOME/.nodenv/shims/npm install --no-optional
     SHELL
     fail unless system(command)
   end
