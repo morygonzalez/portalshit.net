@@ -5,7 +5,6 @@
   "main": "assets/javascripts/script.js",
   "dependencies": {
     "@babel/preset-react": "^7.17.12",
-    "fsevents": "^2.3.2",
     "moment": "^2.29.3",
     "npm-check-updates": "^13.0.3",
     "react": "^17.0.2",
