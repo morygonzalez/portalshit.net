@@ -56,13 +56,16 @@ const SearchField = (props) => {
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
-      let url
+      const currentPath = props.router.location.pathname + props.router.location.search
+      let newPath
       if (query) {
-        url = `/archives?query=${query}`
+        newPath = encodeURI(`/archives?query=${query}`)
       } else {
-        url = '/archives'
+        newPath = '/archives'
       }
-      props.router.navigate(url)
+      if (currentPath !== newPath) {
+        props.router.navigate(newPath)
+      }
       props.update(query)
     }, 500)
     return () => clearTimeout(timeOutId)
