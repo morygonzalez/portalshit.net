@@ -44,12 +44,13 @@ end
 desc 'Detect and update similar entries'
 task :similar_entries, :force do |task, arguments|
   detector = ExecutionDetector.new(arguments: arguments)
-  puts detector.message
   if detector.run_execution?
+    puts detector.message
     Rake::Task[:'similar_entries:extract_term'].invoke
     Rake::Task[:'similar_entries:vector_normalize'].invoke
     Rake::Task[:'similar_entries:export'].invoke
   else
+    puts detector.message
     next
   end
 end
