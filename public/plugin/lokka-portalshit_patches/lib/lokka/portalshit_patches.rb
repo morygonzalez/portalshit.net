@@ -145,6 +145,29 @@ class Entry
     @toc ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new).render(raw_body).html_safe
   end
 
+  alias original_long_body body
+  def long_body_with_figure
+    @long_body_with_figure ||=
+      begin
+        doc = Nokogiri::HTML.fragment(original_long_body)
+        doc.css('img:root, p:root > img').each do |img|
+          caption = img.remove_attribute('title')
+          erb = ERB.new <<~ERUBY
+            <figure>
+              #{img}
+              <% if caption.present? %>
+              <figcaption>#{caption}</figcaption>
+              <% end %>
+            </figure>
+          ERUBY
+          figure = Nokogiri::HTML.fragment(erb.result(binding))
+          img.replace(figure)
+        end
+        doc.to_s
+      end
+  end
+  alias body long_body_with_figure
+
   def long_description(limit = 120)
     content = body.
       gsub(%r{<figcaption>.*?</figcaption>}m, '').
@@ -218,3 +241,4 @@ class Comment
     }
   end
 end
+
