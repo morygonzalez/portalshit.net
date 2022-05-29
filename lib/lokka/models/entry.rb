@@ -35,6 +35,7 @@ class Entry < ActiveRecord::Base
         }
   scope :search,
         ->(words) {
+          return all if words.blank?
           words.split(/ |　/).inject(nil) do |query, word|
             if query.nil?
               query = where('title LIKE ?', "%#{word}%").or(where('body LIKE ?', "%#{word}%"))
