@@ -13,13 +13,14 @@ class Entry
     def popular(limit: 5, target: 'all')
       target_file_path = "/log-aggregation/access-ranking-#{target}.txt"
       access_ranking = File.open(File.join(Lokka.root, 'public', target_file_path))
+      buffer = 2
       slugs = {}
       access_ranking.each_with_index do |line, index|
         _, path = *line.split(' ')
         next unless Lokka::PermalinkHelper.custom_permalink_parse(path)
         slug = path.split('/')[-1]
         slugs[index] = slug
-        break if slugs.length == limit
+        break if slugs.length == limit + buffer
       end
       entries = includes(:category).published.where(slug: slugs.values).limit(limit)
       entries.sort_by {|entry| slugs.values.index(entry.slug) }
