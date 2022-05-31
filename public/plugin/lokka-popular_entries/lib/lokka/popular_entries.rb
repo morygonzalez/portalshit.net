@@ -14,6 +14,7 @@ class Entry
       target_file_path = "/log-aggregation/access-ranking-#{target}.txt"
       access_ranking = File.open(File.join(Lokka.root, 'public', target_file_path))
       buffer = 2
+      before = target == 'yesterday' ? Date.yesterday.end_of_day : Date.today.end_of_day
       slugs = {}
       access_ranking.each_with_index do |line, index|
         _, path = *line.split(' ')
@@ -22,7 +23,11 @@ class Entry
         slugs[index] = slug
         break if slugs.length == limit + buffer
       end
-      entries = includes(:category).published.where(slug: slugs.values).limit(limit)
+      entries = includes(:category).
+        published.
+        where(slug: slugs.values).
+        where('entries.created_at < ?', before).
+        limit(limit)
       entries.sort_by {|entry| slugs.values.index(entry.slug) }
     rescue StandardError
       []
