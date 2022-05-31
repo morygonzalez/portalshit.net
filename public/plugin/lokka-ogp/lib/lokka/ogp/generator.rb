@@ -5,7 +5,7 @@ module Lokka
     module AddImagesToEntry
       refine Entry do
         def images
-          body.scan(/<img.+?src="(.+?)".+?>/).flatten
+          body.scan(/(?:<img.+?src(?:\s)*="(.+?)".+?>|<video.+?poster(?:\s)*="(.+?)".+>)/m).flatten.compact
         end
       end
     end

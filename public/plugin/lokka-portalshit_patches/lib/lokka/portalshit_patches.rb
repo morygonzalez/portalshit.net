@@ -184,7 +184,7 @@ class Entry
   end
 
   def images
-    body.scan(/<img.+?src="(.+?)".+?>/).flatten
+    body.scan(/(?:<img.+?src(?:\s)*="(.+?)".+?>|<video.+?poster(?:\s)*="(.+?)".+>)/m).flatten.compact
   end
 
   def cover_image
