@@ -26,9 +26,8 @@ class Entry
       entries = includes(:category).
         published.
         where(slug: slugs.values).
-        where('entries.created_at < ?', before).
-        limit(limit)
-      entries.sort_by {|entry| slugs.values.index(entry.slug) }
+        where('entries.created_at < ?', before)
+      entries.sort_by {|entry| slugs.values.index(entry.slug) }[0...limit]
     rescue StandardError
       []
     end
