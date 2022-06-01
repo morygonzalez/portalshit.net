@@ -322,7 +322,7 @@
             img.default {
               display: block;
               margin: auto;
-              max-height: 220px;
+              max-height: 300px;
             }
           }
 
@@ -351,8 +351,13 @@
         }
 
         .image {
+          img {
+            @include _border_radius;
+          }
+
           img.desktop {
             display: block;
+            height: 300px;
           }
 
           img.mobile {

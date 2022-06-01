@@ -224,6 +224,7 @@
         img {
           width: 150px;
           max-width: 150px;
+          @include _border_radius;
         }
       }
 
