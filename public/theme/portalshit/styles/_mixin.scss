@@ -195,6 +195,7 @@
       display: flex;
       justify-content: space-between;
       margin: .8em 0;
+      max-width: calc(100% - 1em);
 
       .link {
         display: -webkit-box;

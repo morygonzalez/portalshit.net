@@ -180,7 +180,11 @@
             padding: initial;
 
             &:nth-child(odd), &:nth-child(even), &:nth-child(3n) {
-              margin: auto .5em;
+              margin: auto;
+            }
+
+            .title {
+              max-width: calc(100% - .5em);
             }
 
             .content {
