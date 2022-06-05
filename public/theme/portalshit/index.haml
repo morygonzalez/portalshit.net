@@ -7,80 +7,19 @@
   %section.recent
     - if post = @posts.first
       .new-entry
-        .entry
-          %h3.title{ itemprop: 'name' }
-            = link_to post.title, post.link, itemprop: 'url'
-          .meta
-            %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
-          %aside{ style: 'display: none'}
-            %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
-            %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
-            %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
-            %span{ itemprop: 'headline' }= post.long_description
-            %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
-              %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-                %meta{ content: 'https://2.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
-                %meta{ content: '128', itemprop: :width }
-                %meta{ content: '128', itemprop: :height }
-              %meta{ content: 'morygonzalez', itemprop: :name }
-            %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-              %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.cover_image}" }
-              %meta{ itemprop: :width, content: 350 }
-              %meta{ itemprop: :height, content: 255 }
-          .content
-            .image
-              - if post.images.present?
-                = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}"), post.link
-              - else
-                = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
-            .body{ itemprop: 'articleBody' }
-              = post.long_description(300)
-              .footer
-                = post.tags_to_html
-                .comment== #{link_to "#{t('comments')} (#{post.comments.approved.size})", "#{post.link}#comment_form"}
+        = partial :_main_entry, locals: { post: post }
       .past-entries
         - @posts.each_with_index do |post, index|
           - next if index == 0
-          .entry
-            %h3.title{ itemprop: 'name' }
-              = link_to post.title, post.link, itemprop: 'url'
-            .meta
-              %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
-            %aside{ style: 'display: none'}
-              %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
-              %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
-              %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
-              %span{ itemprop: 'headline' }= post.long_description
-              %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }
-                %div{ itemprop: 'logo', itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-                  %meta{ content: 'https://2.gravatar.com/avatar/aca7b71389633fab164383ed343f080f%3F', itemprop: :url }
-                  %meta{ content: '128', itemprop: :width }
-                  %meta{ content: '128', itemprop: :height }
-                %meta{ content: 'morygonzalez', itemprop: :name }
-              %div{ itemprop: :image, itemscope: true, itemtype: 'https://schema.org/ImageObject' }
-                %meta{ itemprop: :url, content: "https://portalshit.net/imageproxy/350x/#{post.cover_image}" }
-                %meta{ itemprop: :width, content: 350 }
-                %meta{ itemprop: :height, content: 255 }
-            .content
-              .image
-                - if post.images.present?
-                  = link_to image_tag("https://portalshit.net/imageproxy/400x300/#{post.cover_image}", class: 'desktop'), post.link
-                  = link_to image_tag("https://portalshit.net/imageproxy/300x300/#{post.cover_image}", class: 'mobile'), post.link
-                - else
-                  = link_to image_tag("https://portalshit.net/imageproxy/300/#{post.cover_image}", class: 'default'), post.link
-
-              .body{ itemprop: 'articleBody' }
-                = post.long_description
-            .footer
-              = post.tags_to_html
-              .comment== #{link_to "#{t('comments')} (#{post.comments.approved.size})", "#{post.link}#comment_form"}
+          = partial :_other_entries, locals: { post: post }
 
 %section#popular_entries
   %h2 人気記事
   %section
-    - cache_fragment :"index-#{I18n.locale}", shared: true, expires_in: 1.day do
+    - cache_fragment :"index-recent-#{I18n.locale}", expires_in: 1.hour do
       %section.frequently-read-articles
-        %h3 最近よく読まれている記事
+        %h3
+          = link_to '最近よく読まれている記事', '/popular/recent'
         %ul
           - Entry.includes(:category).popular(limit: 6).each do |post|
             %li.item{ title: post.title, link: post.link, type: 'frequency' }
@@ -90,8 +29,11 @@
               .description
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
                 .body= post.long_description
+
+    - cache_fragment :"index-hatena-#{I18n.locale}", expires_in: 1.day do
       %section.hotentry
-        %h3 はてなブックマークで注目を集めた記事
+        %h3
+          = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena'
         %ul
           - Entry.includes(:category).hotentry(limit: 6).each do |post|
             %li.item{ title: post.title, link: post.link, type: 'hotentry' }
@@ -104,17 +46,3 @@
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
                 .body= post.long_description
 
-%section.more-articles
-  %h2 以前の記事
-  %section.more
-    %section.category-list
-      %h3
-        <i class="fas fa-object-group"></i>
-        = link_to t('listing_categories'), '/categories'
-      %p カテゴリーごとの最新記事 4 件ずつを見ることができます。
-
-    %section.entry-list
-      %h3
-        <i class="fas fa-archive"></i>
-        = link_to t('archives.title'), '/archives'
-      %p すべての過去記事一覧を見ることができます。年、カテゴリー別の絞り込み UI 付き。

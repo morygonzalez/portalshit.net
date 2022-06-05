@@ -1,0 +1,10 @@
+%article#recent_entries
+  %section.recent
+    - cache_fragment :"popular-#{request.path_info}-#{I18n.locale}", expires_in: 1.hour do
+      .new-entry
+        - post = @entries.first
+        = partial :_main_entry, locals: { post: post }
+      .past-entries
+        - @entries.each_with_index do |post, index|
+          - next if index == 0
+          = partial :_other_entries, locals: { post: post }

@@ -82,6 +82,38 @@ module Lokka
 
       render_detect :categories
     end
+
+    get '/popular/today' do
+      @theme_types << :entries
+      @bread_crumbs = [{ name: t('home'), link: '/' },
+                       { name: '今日よく読まれている記事' }]
+      @entries = Post.includes(:category, :tags).popular(target: 'today', limit: 26)
+      render_detect :popular_entries
+    end
+
+    get '/popular/yesterday' do
+      @theme_types << :entries
+      @bread_crumbs = [{ name: t('home'), link: '/' },
+                       { name: '昨日よく読まれた記事' }]
+      @entries = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 26)
+      render_detect :popular_entries
+    end
+
+    get '/popular/recent' do
+      @theme_types << :entries
+      @bread_crumbs = [{ name: t('home'), link: '/' },
+                       { name: '最近よく読まれている記事' }]
+      @entries = Post.includes(:category, :tags).popular(target: 'all', limit: 26)
+      render_detect :popular_entries
+    end
+
+    get '/popular/hatena' do
+      @theme_types << :entries
+      @bread_crumbs = [{ name: t('home'), link: '/' },
+                       { name: 'はてなブックマークで注目を集めた記事' }]
+      @entries = Post.includes(:category, :tags).hotentry(limit: 26)
+      render_detect :popular_entries
+    end
   end
 
   module Helpers

@@ -636,68 +636,33 @@
     text-align: left;
     display: flex;
     justify-content: space-around;
+    font-size: 88%;
 
-    dl {
-      width: 25%;
-      padding: 0 .5em;
+    section {
+      width: 33%;
 
-      a:link {
-        color: $dark-font-color;
-      }
-
-      &.tags {
-        ul {
-          li {
-            display: inline;
-            float: left;
-
-            &::before {
-              content: ", ";
-            }
-
-            &:first-child::before {
-              content: " ";
-            }
-          }
-        }
-
-        p.more {
-          text-align: right;
-        }
-      }
-
-      dt {
-        font-size: 1em;
-        font-weight: bold;
-      }
-
-      dd {
-        margin: 14px 0px;
-        font-size: 0.9em;
-      }
-    }
-
-    section a {
-      text-decoration: none;
-    }
-
-    ul {
-      margin: 0;
-      padding: 0;
-      list-style-type: none;
-      color: $dark-font-color;
-
-      li {
-        font-size: .9rem;
-        line-height: 1.5em;
-        margin: 5px 0;
+      ul {
+        margin: auto 0.5rem;
         padding: 0;
+        list-style-type: none;
+        color: $dark-font-color;
+
+        li {
+          margin: 5px 0;
+          padding: .25em 0;
+        }
+      }
+
+      img {
+        vertical-align: middle;
       }
     }
   }
 
   .poweredby {
     text-align: center;
+    margin-top: 2em;
+    font-size: 88%;
   }
 
   a {

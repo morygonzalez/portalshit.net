@@ -51,43 +51,41 @@
 
     %footer#footer
       %aside
-        - cache_fragment :"footer-#{I18n.locale}", shared: true, expires_in: 1.hour do
-          %dl.popular_entries
-            %dt= t('popular_entries_today')
-            %dd
-              %ul
-                - Post.includes(:category).popular(target: 'today').each do |post|
-                  %li
-                    = link_to post.title, post.link
-                    .meta
-                      %span.created_at= l(post.created_at.to_date, format: :long)
-          %dl.popular_entries
-            %dt= t('popular_entries_yesterday')
-            %dd
-              %ul
-                - Post.includes(:category).popular(target: 'yesterday').each do |post|
-                  %li
-                    =link_to post.title, post.link
-                    .meta
-                      %span.created_at= l(post.created_at.to_date, format: :long)
-        %dl.recent_entries
-          %dt= t('recent_entries')
-          %dd
-            %ul
-              - Post.includes(:category).published.recent.each do |post|
-                %li
-                  = link_to post.title, post.link
-                  .meta
-                    %span.created_at= l(post.created_at.to_date, format: :long)
-        %dl.recent_comments
-          %dt= t('recent_comments')
-          %dd
-            %ul
-              - Comment.includes(entry: :category).recent.each do |comment|
-                %li
-                  = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
-                  .meta
-                    %span.created_at= l(comment.created_at.to_date, format: :long)
+        %section.popular-entries
+          %h3 人気の記事
+          %ul.entry-list
+            %li
+              <i class="fas fa-calendar"></i>
+              = link_to '今日よく読まれている記事', '/popular/today'
+            %li
+              <i class="fas fa-calendar-day"></i>
+              = link_to '昨日よく読まれた記事', '/popular/yesterday'
+            %li
+              <i class="fas fa-calendar-alt"></i>
+              = link_to '最近よく読まれている記事', '/popular/recent'
+            %li
+              <i class="fas fa-bookmark"></i>
+              = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena'
+        %section.archives
+          %h3 過去記事・カテゴリー
+          %ul
+            %li
+              <i class="fas fa-archive"></i>
+              = link_to t('archives.title'), '/archives'
+            %li
+              <i class="fas fa-object-group"></i>
+              = link_to t('listing_categories'), '/categories'
+
+        %section.about
+          %h3 このサイトについて
+          %ul
+            %li.about
+              = image_tag 'https://portalshit.net/imageproxy/24/https://portalshit.net/theme/portalshit/ogp_image.png', width: 24
+              = link_to t('about'), '/about'
+            %li.profile
+              = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
+              = link_to t('author', default: '著者について'), '/morygonzalez'
+
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
