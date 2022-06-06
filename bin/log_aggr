@@ -14,7 +14,7 @@ function access_ranking_today() {
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
+    | grep -vP '\/(about|morygonzalez|author|\?page=*|popular|sitemap)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
@@ -31,7 +31,7 @@ function access_ranking_yesterday() {
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
+    | grep -vP '\/(about|morygonzalez|author|\?page=*|popular|sitemap)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
@@ -47,7 +47,7 @@ function access_ranking_all() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author|\?page=*)' \
+    | grep -vP '\/(about|morygonzalez|author|\?page=*|popular|sitemap)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \

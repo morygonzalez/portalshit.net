@@ -33,7 +33,7 @@
     - cache_fragment :"index-hatena-#{I18n.locale}", expires_in: 1.day do
       %section.hotentry
         %h3
-          = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena'
+          = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena-bookmark'
         %ul
           - Entry.includes(:category).hotentry(limit: 6).each do |post|
             %li.item{ title: post.title, link: post.link, type: 'hotentry' }

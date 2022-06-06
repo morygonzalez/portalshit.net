@@ -1,6 +1,8 @@
 %article#recent_entries
+  %h2= @page_title
+  %p= @page_description
   %section.recent
-    - cache_fragment :"popular-#{request.path_info}-#{I18n.locale}", expires_in: 1.hour do
+    - cache_fragment I18n.locale, expires_in: 1.hour do
       .new-entry
         - post = @entries.first
         = partial :_main_entry, locals: { post: post }
