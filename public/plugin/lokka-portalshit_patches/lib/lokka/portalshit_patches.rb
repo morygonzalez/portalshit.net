@@ -182,7 +182,9 @@ end
 
 class Entry
   def toc
-    @toc ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new).render(raw_body).html_safe
+    @toc ||=
+      Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new(nesting_level: 2..4)).
+      render(raw_body).html_safe
   end
 
   alias original_long_body body
