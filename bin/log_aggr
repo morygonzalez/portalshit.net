@@ -2,7 +2,7 @@
 
 UA_TO_IGNORE='useragent:.+?(bot|feed|wget|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|mediapartners-google|subscribe|slurp|phantomjs|winds|slepnirsiteupdates|flipboard)'
 REFERER_TO_IGNORE='referer:.+?(\.ru\/|semalt\.com|153\.126\.135\.20)'
-REQUEST_PATH_TO_IGNORE='(\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
+REQUEST_PATH_TO_IGNORE='(\/about|\/morygonzalez|\/author|\?page=*|popular|sitemap\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
 
@@ -14,7 +14,6 @@ function access_ranking_today() {
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author|\?page=*|popular|sitemap)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
@@ -31,7 +30,6 @@ function access_ranking_yesterday() {
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author|\?page=*|popular|sitemap)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
@@ -47,7 +45,6 @@ function access_ranking_all() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep 'status:200' \
-    | grep -vP '\/(about|morygonzalez|author|\?page=*|popular|sitemap)' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
