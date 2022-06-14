@@ -24,6 +24,7 @@ function access_ranking_today() {
 
 function access_ranking_yesterday() {
   echo "Access Ranking Yesterday"
+  cp ${APP_DIR}/public/log-aggregation/access-ranking-{yesterday,$(date -d "2 days ago" "+%Y-%m-%d")}.txt
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
@@ -70,6 +71,7 @@ function referer_ranking_today() {
 
 function referer_ranking_yesterday() {
   echo "Referer Ranking Yesterday"
+  cp ${APP_DIR}/public/log-aggregation/referer-ranking-{yesterday,$(date -d "2 days ago" "+%Y-%m-%d")}.txt
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
