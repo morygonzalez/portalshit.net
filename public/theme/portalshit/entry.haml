@@ -8,7 +8,7 @@
         .next
           - if @entry.prev
             = link_to @entry.prev.title, @entry.prev.link, rel: :next, title: @entry.prev.title
-    %h2.title{ itemprop: 'name' }= link_to @entry.title, @entry.link, itemprop: 'url'
+    %h1.title{ itemprop: 'name' }= link_to @entry.title, @entry.link, itemprop: 'url'
     %section.meta
       %time{ datetime: @entry.created_at }= l(@entry.created_at, format: :long)
       - if @entry.category

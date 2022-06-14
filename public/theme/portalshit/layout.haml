@@ -20,7 +20,7 @@
     - header_bg = settings.header_bg_params
     %header#header{header_bg}
       #header-inner
-        %h1= link_to @site.title, '/'
+        %div#header-title= link_to @site.title, '/'
         %nav#global-nav
           %ul
             %li.profile

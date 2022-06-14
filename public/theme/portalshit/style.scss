@@ -30,7 +30,7 @@
       text-decoration: none;
     }
 
-    h1 {
+    div#header-title {
       margin: 0;
       margin-right: auto;
       width: 275px;
@@ -225,8 +225,7 @@
 
   article#recent_entries, article.category {
     header {
-      h2 {
-        @include category-emoji-decoration;
+      .title {
       }
 
       .description {
@@ -467,6 +466,7 @@
 
       .title {
         @include article-title;
+        font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
       }
       .meta {
         @include _meta;
@@ -523,7 +523,7 @@
       max-width: 780px;
       margin: auto;
 
-      h3 {
+      h2 {
         font-size: 1.12em;
         margin-top: 2em;
 
@@ -533,7 +533,7 @@
         }
       }
 
-      h4 {
+      h3 {
         font-size: 1.06em;
 
         &::before {
@@ -542,7 +542,7 @@
         }
       }
 
-      h5 {
+      h4 {
         font-size: 1em;
       }
 
