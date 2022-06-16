@@ -11,10 +11,22 @@ class Entry
 
   class << self
     def popular(limit: 5, target: 'all')
-      target_file_path = "/log-aggregation/access-ranking-#{target}.txt"
-      access_ranking = File.open(File.join(Lokka.root, 'public', target_file_path))
+      target_file_path = File.join(
+        Lokka.root,
+        "public/log-aggregation/access-ranking-#{target}.txt"
+      )
+      return [] unless File.exist?(target_file_path)
+      return [] if File.empty?(target_file_path)
+      access_ranking = File.open(target_file_path)
       buffer = 2
-      before = target == 'yesterday' ? Date.yesterday.end_of_day : Date.today.end_of_day
+      before = case
+               when target =~ /\d{4}-\d{2}-\d{2}/
+                 Date.parse(target)
+               when target == 'yesterday'
+                 Date.yesterday.end_of_day
+               else
+                 Date.today.end_of_day
+               end
       slugs = {}
       access_ranking.each_with_index do |line, index|
         _, path = *line.split(' ')
@@ -28,8 +40,6 @@ class Entry
         where(slug: slugs.values).
         where('entries.created_at < ?', before)
       entries.sort_by {|entry| slugs.values.index(entry.slug) }[0...limit]
-    rescue StandardError
-      []
     end
 
     def hotentry(limit: 5)

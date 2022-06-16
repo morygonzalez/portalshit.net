@@ -103,6 +103,16 @@ module Lokka
       render_detect :popular_entries
     end
 
+    get %r{^/popular/(\d{4}\-\d{2}\-\d{2})$} do |date|
+      @theme_types << :entries
+      @page_title = 'その日よく読まれた記事'
+      @page_description = %(#{Date.parse(date)} にアクセス数が多かった記事の一覧です。)
+      @bread_crumbs = [{ name: t('home'), link: '/' },
+                       { name: @page_title }]
+      @entries = Post.includes(:category, :tags).popular(target: date, limit: 25)
+      render_detect :popular_entries
+    end
+
     get '/popular/recent' do
       @theme_types << :entries
       @page_title = '最近よく読まれている記事'

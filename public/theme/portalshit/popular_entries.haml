@@ -4,8 +4,8 @@
   %section.recent
     - cache_fragment I18n.locale, expires_in: 1.hour do
       .new-entry
-        - post = @entries.first
-        = partial :_main_entry, locals: { post: post }
+        - if post = @entries.first
+          = partial :_main_entry, locals: { post: post }
       .past-entries
         - @entries.each_with_index do |post, index|
           - next if index == 0
