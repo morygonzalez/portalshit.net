@@ -17,7 +17,7 @@
     - header_bg = settings.header_bg_params
     %header#header{header_bg}
       #header-inner
-        %h1= link_to @site.title, '/'
+        %div#header-title= link_to @site.title, '/'
         %nav#global-nav
           %ul
             %li.profile
@@ -41,9 +41,14 @@
             %span.header-bg-light-description= header_bg[:'data-bg-light-description']
             %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
 
-    %main#content.hfeed
+    %main#content.hfeed.not_found
       %h2 404 Not Found
       %p== Not found: #{request.path_info}
+
+      %h2= t('search')
+      .search-field
+        %form(action="/archives" method="get")
+          %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
 
       %h2= t('recent_entries')
       %ul
@@ -59,44 +64,41 @@
 
     %footer#footer
       %aside
-        - cache_fragment :"footer-404-#{I18n.locale}", shared: true, expires_in: 1.day do
-          %dl.popular_entries
-            %dt= t('popular_entries')
-            %dd
-              %ul
-                - Post.includes(:category).popular.each do |post|
-                  %li
-                    = link_to post.title, post.link
-                    .meta
-                      %span.created_at= l(post.created_at.to_date, format: :long)
-          %dl.hotentry
-            %dt= t('hotentry')
-            %dd
-              %ul
-                - Post.includes(:category).hotentry.each do |post|
-                  %li
-                    =link_to post.title, post.link
-                    %span.bookmark_count= link_to "#{post.bookmark_count} users", post.bookmark_url
-                    .meta
-                      %span.created_at= l(post.created_at.to_date, format: :long)
-        %dl.recent_entries
-          %dt= t('recent_entries')
-          %dd
-            %ul
-              - Post.includes(:category).published.recent.each do |post|
-                %li
-                  = link_to post.title, post.link
-                  .meta
-                    %span.created_at= l(post.created_at.to_date, format: :long)
-        %dl.recent_comments
-          %dt= t('recent_comments')
-          %dd
-            %ul
-              - Comment.includes(entry: :category).recent.each do |comment|
-                %li
-                  = link_to "From #{comment.name} on #{comment.entry.title}", comment.link
-                  .meta
-                    %span.created_at= l(comment.created_at.to_date, format: :long)
+        %section.popular-entries
+          %h3 人気の記事
+          %ul.entry-list
+            %li
+              <i class="fas fa-calendar"></i>
+              = link_to '今日よく読まれている記事', '/popular/today'
+            %li
+              <i class="fas fa-calendar-day"></i>
+              = link_to '昨日よく読まれた記事', '/popular/yesterday'
+            %li
+              <i class="fas fa-calendar-alt"></i>
+              = link_to '最近よく読まれている記事', '/popular/recent'
+            %li
+              <i class="fas fa-bookmark"></i>
+              = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena-bookmark'
+        %section.archives
+          %h3 過去記事・カテゴリー
+          %ul
+            %li
+              <i class="fas fa-archive"></i>
+              = link_to t('archives.title'), '/archives'
+            %li
+              <i class="fas fa-object-group"></i>
+              = link_to t('listing_categories'), '/categories'
+
+        %section.about
+          %h3 このサイトについて
+          %ul
+            %li.about
+              = image_tag 'https://portalshit.net/imageproxy/24/https://portalshit.net/theme/portalshit/ogp_image.png', width: 24
+              = link_to t('about'), '/about'
+            %li.profile
+              = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
+              = link_to t('author', default: '著者について'), '/morygonzalez'
+
       .poweredby
         powered by
         = link_to 'Lokka', 'http://lokka.org/'
