@@ -703,7 +703,7 @@
       margin-bottom: 1em;
     }
 
-    img[class~="large"], table[class~="wide"] {
+    img[class~="large"], table[class~="wide"], iframe[class~="wide"] {
       width: $content-max-width;
       max-width: $content-max-width;
       margin-left: -250px;
