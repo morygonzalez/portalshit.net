@@ -489,8 +489,8 @@ html.light-mode {
       &[data-bg-light-image="light-moss"] {
         @include gradient-background('light-moss');
       }
-      &[data-bg-light-image="light-nagatare"] {
-        @include gradient-background('light-nagatare');
+      &[data-bg-light-image="light-nokonoshima-from-nagatare-beach"] {
+        @include gradient-background('light-nokonoshima-from-nagatare-beach');
       }
       &[data-bg-light-image="light-nanzenji"] {
         @include gradient-background('light-nanzenji');
