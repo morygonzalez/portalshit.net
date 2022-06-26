@@ -359,10 +359,6 @@ kbd {
 }
 
 .comments {
-  h4 {
-    display: none;
-  }
-
   ul.comment-list {
     list-style: none;
     padding: 0;
@@ -415,8 +411,8 @@ kbd {
 }
 
 #comment_form {
-  margin: 0 30px 0 26%;
-  width: 70%;
+  margin: auto;
+  max-width: 500px;
 
   input, textarea {
     font-size: 14px;
@@ -431,13 +427,13 @@ kbd {
   }
 
   #comment_name {
-    width: 240px;
+    width: 300px;
   }
   #comment_email {
-    width: 240px;
+    width: 300px;
   }
   #comment_homepage {
-    width: 360px;
+    width: 480px;
   }
   #comment_body {
     width: 480px;
