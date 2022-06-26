@@ -513,6 +513,9 @@ html.light-mode {
       &[data-bg-light-image="light-mt-aso-from-mt-tenzan"] {
         @include gradient-background('light-mt-aso-from-mt-tenzan');
       }
+      &[data-bg-light-image="light-hatsuzaki-fukushima"] {
+        @include gradient-background('light-hatsuzaki-fukushima');
+      }
     }
 
     #header #header-inner #header-bottom {
