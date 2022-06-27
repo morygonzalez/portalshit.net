@@ -20,6 +20,8 @@ header_bg:
       description: Queen's Beach, Hawaii
     - name: takitate-bento
       description: 下山門のたきたて弁当
+    - name: kitsune
+      description: 博多どんたくの屋台
   light:
     - name: aso
       description: 熊本地震前の阿蘇山

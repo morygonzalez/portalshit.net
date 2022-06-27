@@ -62,6 +62,9 @@ a {
   &[data-bg-dark-image="dark-takitate-bento"] {
     @include gradient-background('dark-takitate-bento');
   }
+  &[data-bg-dark-image="dark-kitsune"] {
+    @include gradient-background('dark-kitsune');
+  }
 
   #header-inner #header-bottom #header-bg-description {
     color: #fff;
