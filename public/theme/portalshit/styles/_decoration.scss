@@ -3,11 +3,8 @@ body {
   padding: 0;
   text-align: center;
   font-size: 18px;
-  color: $dark-font-color;
   line-height: 26px;
-  text-shadow: -1px -1px -1px #1d1a1a;
   font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
-  background: black url(images/background.jpg) no-repeat fixed;
 }
 
 p {
@@ -16,63 +13,6 @@ p {
 
 a {
   text-decoration: none;
-
-  &:link {
-    color: $dark-link-color;
-  }
-
-  &:visited {
-    color: $dark-visited-link-color;
-  }
-
-  &:hover {
-    color: $dark-hover-link-color;
-  }
-}
-
-#header {
-  // dark images
-  &[data-bg-dark-image="dark-amaguri"] {
-    @include gradient-background('dark-amaguri');
-  }
-  &[data-bg-dark-image="dark-aso"] {
-    @include gradient-background('dark-aso');
-  }
-  &[data-bg-dark-image="dark-beach"] {
-    @include gradient-background('dark-beach');
-  }
-  &[data-bg-dark-image="dark-crossing"] {
-    @include gradient-background('dark-crossing');
-  }
-  &[data-bg-dark-image="dark-evening-moon"] {
-    @include gradient-background('dark-evening-moon');
-  }
-  &[data-bg-dark-image="dark-fire"] {
-    @include gradient-background('dark-fire');
-  }
-  &[data-bg-dark-image="dark-heimin"] {
-    @include gradient-background('dark-heimin');
-  }
-  &[data-bg-dark-image="dark-night-moon"] {
-    @include gradient-background('dark-night-moon');
-  }
-  &[data-bg-dark-image="dark-sunset"] {
-    @include gradient-background('dark-sunset');
-  }
-  &[data-bg-dark-image="dark-takitate-bento"] {
-    @include gradient-background('dark-takitate-bento');
-  }
-  &[data-bg-dark-image="dark-kitsune"] {
-    @include gradient-background('dark-kitsune');
-  }
-
-  #header-inner #header-bottom #header-bg-description {
-    color: #fff;
-
-    .header-bg-light-description {
-      display: none;
-    }
-  }
 }
 
 #content {
@@ -450,6 +390,105 @@ kbd {
   }
 }
 
+html.dark-mode {
+  body {
+    color: $dark-font-color;
+    text-shadow: -1px -1px -1px #1d1a1a;
+    background: black url(images/background.jpg) no-repeat fixed;
+  }
+
+  a {
+    &:link {
+      color: $dark-link-color;
+    }
+
+    &:visited {
+      color: $dark-visited-link-color;
+    }
+
+    &:hover {
+      color: $dark-hover-link-color;
+    }
+  }
+
+  #header {
+    // dark images
+    &[data-bg-dark-image="dark-amaguri"] {
+      @include gradient-background('dark-amaguri');
+    }
+    &[data-bg-dark-image="dark-aso"] {
+      @include gradient-background('dark-aso');
+    }
+    &[data-bg-dark-image="dark-beach"] {
+      @include gradient-background('dark-beach');
+    }
+    &[data-bg-dark-image="dark-crossing"] {
+      @include gradient-background('dark-crossing');
+    }
+    &[data-bg-dark-image="dark-evening-moon"] {
+      @include gradient-background('dark-evening-moon');
+    }
+    &[data-bg-dark-image="dark-fire"] {
+      @include gradient-background('dark-fire');
+    }
+    &[data-bg-dark-image="dark-heimin"] {
+      @include gradient-background('dark-heimin');
+    }
+    &[data-bg-dark-image="dark-night-moon"] {
+      @include gradient-background('dark-night-moon');
+    }
+    &[data-bg-dark-image="dark-sunset"] {
+      @include gradient-background('dark-sunset');
+    }
+    &[data-bg-dark-image="dark-takitate-bento"] {
+      @include gradient-background('dark-takitate-bento');
+    }
+    &[data-bg-dark-image="dark-kitsune"] {
+      @include gradient-background('dark-kitsune');
+    }
+
+    #header-inner #header-bottom #header-bg-description {
+      color: #fff;
+
+      .header-bg-light-description {
+        display: none;
+      }
+      .header-bg-dark-description {
+        display: inline;
+        color: $dark-font-color;
+      }
+    }
+
+    #global-nav {
+      ul li a {
+        &:link, &:visited {
+          color: $various-bg;
+        }
+
+        &:hover {
+          color: $dark-font-color;
+          background-color: #444439;
+          border-radius: 5px;
+          text-shadow: 0 -1px 1px #222121;
+        }
+      }
+    }
+  }
+
+  #content {
+    .archives,
+    .body,
+    .year-list,
+    .category-list,
+    .footer,
+    .pagination {
+      a {
+        text-shadow: -1px -1px 1px #180614;
+      }
+    }
+  }
+}
+
 // @media (prefers-color-scheme: light) {
 html.light-mode {
   strong {
@@ -465,112 +504,135 @@ html.light-mode {
     background-color: #fff;
     color: #000;
     text-shadow: none;
+  }
 
-    #header {
-      // light images
-      &[data-bg-light-image="light-aso"] {
-        @include gradient-background('light-aso');
-      }
-      &[data-bg-light-image="light-black-kite"] {
-        @include gradient-background('light-black-kite');
-      }
-      &[data-bg-light-image="light-container-ship"] {
-        @include gradient-background('light-container-ship');
-      }
-      &[data-bg-light-image="light-halo"] {
-        @include gradient-background('light-halo');
-      }
-      &[data-bg-light-image="light-jizou"] {
-        @include gradient-background('light-jizou');
-      }
-      &[data-bg-light-image="light-karatsu"] {
-        @include gradient-background('light-karatsu');
-      }
-      &[data-bg-light-image="light-momiji"] {
-        @include gradient-background('light-momiji');
-      }
-      &[data-bg-light-image="light-moss"] {
-        @include gradient-background('light-moss');
-      }
-      &[data-bg-light-image="light-nokonoshima-from-nagatare-beach"] {
-        @include gradient-background('light-nokonoshima-from-nagatare-beach');
-      }
-      &[data-bg-light-image="light-nanzenji"] {
-        @include gradient-background('light-nanzenji');
-      }
-      &[data-bg-light-image="light-sakura"] {
-        @include gradient-background('light-sakura');
-      }
-      &[data-bg-light-image="light-temple-wall"] {
-        @include gradient-background('light-temple-wall');
-      }
-      &[data-bg-light-image="light-wave"] {
-        @include gradient-background('light-wave');
-      }
-      &[data-bg-light-image="light-mykonos"] {
-        @include gradient-background('light-mykonos');
-      }
-      &[data-bg-light-image="light-imazu-bay"] {
-        @include gradient-background('light-imazu-bay');
-      }
-      &[data-bg-light-image="light-mt-aso-from-mt-tenzan"] {
-        @include gradient-background('light-mt-aso-from-mt-tenzan');
-      }
-      &[data-bg-light-image="light-hatsuzaki-fukushima"] {
-        @include gradient-background('light-hatsuzaki-fukushima');
-      }
+  a {
+    &:link {
+      color: $dark-link-color;
     }
 
-    #header #header-inner #header-bottom {
-      #header-bg-description {
-        .header-bg-light-description {
-          display: inline;
-        }
-        .header-bg-dark-description {
-          display: none;
-        }
-      }
+    &:visited {
+      color: $dark-visited-link-color;
+    }
 
-      #bread_crumb {
+    &:hover {
+      color: $dark-hover-link-color;
+    }
+  }
+
+  #header {
+    // light images
+    &[data-bg-light-image="light-aso"] {
+      @include gradient-background('light-aso');
+    }
+    &[data-bg-light-image="light-black-kite"] {
+      @include gradient-background('light-black-kite');
+    }
+    &[data-bg-light-image="light-container-ship"] {
+      @include gradient-background('light-container-ship');
+    }
+    &[data-bg-light-image="light-halo"] {
+      @include gradient-background('light-halo');
+    }
+    &[data-bg-light-image="light-jizou"] {
+      @include gradient-background('light-jizou');
+    }
+    &[data-bg-light-image="light-karatsu"] {
+      @include gradient-background('light-karatsu');
+    }
+    &[data-bg-light-image="light-momiji"] {
+      @include gradient-background('light-momiji');
+    }
+    &[data-bg-light-image="light-moss"] {
+      @include gradient-background('light-moss');
+    }
+    &[data-bg-light-image="light-nokonoshima-from-nagatare-beach"] {
+      @include gradient-background('light-nokonoshima-from-nagatare-beach');
+    }
+    &[data-bg-light-image="light-nanzenji"] {
+      @include gradient-background('light-nanzenji');
+    }
+    &[data-bg-light-image="light-sakura"] {
+      @include gradient-background('light-sakura');
+    }
+    &[data-bg-light-image="light-temple-wall"] {
+      @include gradient-background('light-temple-wall');
+    }
+    &[data-bg-light-image="light-wave"] {
+      @include gradient-background('light-wave');
+    }
+    &[data-bg-light-image="light-mykonos"] {
+      @include gradient-background('light-mykonos');
+    }
+    &[data-bg-light-image="light-imazu-bay"] {
+      @include gradient-background('light-imazu-bay');
+    }
+    &[data-bg-light-image="light-mt-aso-from-mt-tenzan"] {
+      @include gradient-background('light-mt-aso-from-mt-tenzan');
+    }
+    &[data-bg-light-image="light-hatsuzaki-fukushima"] {
+      @include gradient-background('light-hatsuzaki-fukushima');
+    }
+  }
+
+  #header #header-inner #header-bottom {
+    #header-bg-description {
+      .header-bg-light-description {
+        display: inline;
         color: $dark-font-color;
       }
-
-      #category-nav #categories {
-        li {
-          font-weight: bold;
-          text-shadow: #{$dark-text-shadow-color} -1px 1px 1px;
-        }
+      .header-bg-dark-description {
+        display: none;
       }
     }
 
-    #content {
-      background-color: #e8ecef;
-      .archives,
-      .body,
-      .year-list,
-      .category-list,
-      .footer,
-      .pagination {
-        a {
-          text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px;
-
-          &:link {
-            // color: $light-link-color;
-          }
-          &:hover {
-            color: $light-hover-link-color;
-          }
-          &:visited {
-          }
-        }
-        blockquote a {
-          text-shadow: #{$dark-text-shadow-color} -0.5px -0.5px 1px;
-        }
-      }
-    }
-
-    #footer {
+    #bread_crumb {
       color: $dark-font-color;
     }
+  }
+
+  #global-nav {
+    ul li a {
+      &:link, &:visited {
+        color: $various-bg;
+      }
+
+      &:hover {
+        color: $dark-font-color;
+        background-color: #444439;
+        border-radius: 5px;
+        text-shadow: 0 -1px 1px #222121;
+      }
+    }
+  }
+
+  #content {
+    background-color: #e8ecef;
+    .archives,
+    .body,
+    .year-list,
+    .category-list,
+    .footer,
+    .pagination {
+      a {
+        text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px;
+
+        &:link {
+          // color: $light-link-color;
+        }
+        &:hover {
+          color: $light-hover-link-color;
+        }
+        &:visited {
+        }
+      }
+      blockquote a {
+        text-shadow: #{$dark-text-shadow-color} -0.5px -0.5px 1px;
+      }
+    }
+  }
+
+  #footer {
+    color: $dark-font-color;
   }
 }
