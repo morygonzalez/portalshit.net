@@ -101,6 +101,21 @@ const toggleColorPreference = () => {
   document.documentElement.classList.add(newColorMode);
 }
 
+const observeThemePreferenceDeletion = () => {
+  const button = document.querySelector('#delete-theme-preference');
+  if (button) {
+    button.onclick = deleteThemePreference;
+  }
+}
+
+const deleteThemePreference = () => {
+  const currentColorMode = getCurrentColorMode();
+  document.documentElement.classList.remove(currentColorMode);
+  document.cookie = 'prefers-color-scheme=;max-age=0;path=/';
+  const newColorMode = getCurrentColorMode();
+  document.documentElement.classList.add(newColorMode);
+}
+
 const observeColorMode = () => {
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e)  => {
     const allCookies = document.cookie.split(';');
@@ -149,6 +164,7 @@ const init = node => {
   observeLinkClick(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
   observeThemeToggle();
+  observeThemePreferenceDeletion();
   observeColorMode();
   checkTableWidth(node);
 }
@@ -160,11 +176,3 @@ document.body.addEventListener('AutoPagerize_DOMNodeInserted', (e) => {
   const parentNode = e.relatedNode
   init(node);
 }, false);
-
-$(() => {
-  if ($(window).width() <= 640) {
-    $('#footer aside dt').on('click', (event) => {
-      $(event.target).siblings('dd').slideToggle();
-    });
-  }
-});
