@@ -171,10 +171,6 @@ module Lokka
       request.cookies['prefers-color-scheme']
     end
 
-    def portalshit_config
-      @portalshit_config ||= YAML.load_file(File.join(File.dirname(__FILE__), '../../', 'config.yml'))
-    end
-
     def portalshit_manifest
       @portalshit_manifest ||= \
         begin
