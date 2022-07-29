@@ -202,14 +202,6 @@ const observeSearchMenu = () => {
   document.querySelector('#global-nav ul li.search span').onclick = () => {
     searchForm.style.display = 'block';
   }
-
-  document.body.onclick = () => {
-    searchForm.style.display = 'none';
-  }
-
-  document.querySelector('#global-nav ul li.search').onclick = (event) => {
-    event.stopPropagation();
-  }
 }
 
 const observeLinkClick = (node) => {
