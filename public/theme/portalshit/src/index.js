@@ -78,11 +78,11 @@ const observeThemeMenu = () => {
     selectedMode = colorPreference.split('=')[1];
     selectedTheme = selectedMode === 'light-mode' ? 'Light' : 'Dark';
     selectedThemeIcon = selectedTheme === 'Light' ? 'sun' : 'moon';
-    button.innerHTML = `<i class="far fa-${selectedThemeIcon}"></i> Theme`;
+    button.innerHTML = `<i class="far fa-${selectedThemeIcon}"></i><span>Theme</span>`;
   } else {
     selectedTheme = 'OS Default';
     selectedThemeIcon = 'adjust';
-    button.innerHTML = '<i class="fas fa-adjust"></i> Theme';
+    button.innerHTML = '<i class="fas fa-adjust"></i><span>Theme</span>';
   }
 
   if (selectedTheme === 'Light') {
@@ -96,6 +96,14 @@ const observeThemeMenu = () => {
   if (button) {
     button.onclick = () => {
       modal.style.display = 'block';
+    }
+
+    document.body.onclick = () => {
+      modal.style.display = 'none';
+    }
+
+    document.querySelector('.theme').onclick = (event) => {
+      event.stopPropagation();
     }
   }
 }

@@ -90,23 +90,29 @@
       ul {
         margin: 0;
         display: flex;
-        justify-content: center;
 
         li {
           padding-left: 3px;
           margin: auto;
-          font-size: 3.5vw;
+          font-size: 3.2vw;
           flex-grow: 1;
-          width: 5vw;
-          min-width: 80px;
+          width: 3.4vw;
+          min-width: 75px;
 
           a {
             padding: 2px 5px;
           }
 
+          button {
+            font-size: 3.2vw;
+          }
+
           &.search {
-            flex-grow: 2 !important;
+            i, span {
+              display: inline;
+            }
             #search_form input[type="search"] {
+              display: none;
               margin-top: 3px;
               margin-left: unset;
               width: calc(100% - 1em);

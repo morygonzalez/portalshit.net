@@ -78,6 +78,18 @@
               background: none;
               cursor: pointer;
               padding: 0;
+
+              span {
+                padding: 2px 5px;
+              }
+
+              span:hover {
+                display: inline-block;
+                color: $dark-font-color;
+                background-color: #444439;
+                border-radius: 5px;
+                text-shadow: 0 -1px 1px #222121;
+              }
             }
 
             .theme-menu {
@@ -129,13 +141,18 @@
             }
           }
 
-          form#search_form input[type="search"] {
-            margin-left: 10px;
-            border: none;
-            border-radius: 3px;
-            padding: 2px 2px 2px 8px;
-            width: 150px;
-            font-size: 95%;
+          &.search {
+            i, span {
+              display: none;
+            }
+            form#search_form input[type="search"] {
+              margin-left: 10px;
+              border: none;
+              border-radius: 3px;
+              padding: 2px 2px 2px 8px;
+              width: 150px;
+              font-size: 95%;
+            }
           }
         }
       }
