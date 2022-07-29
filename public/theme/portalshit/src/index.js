@@ -65,14 +65,12 @@ const observeImages = node => {
   }
 }
 
-const observeThemeMenu = () => {
+const initThemeMenu = () => {
   const button = document.querySelector('.theme button');
   const modal = document.querySelector('.theme-menu');
   const allCookies = document.cookie.split(';');
   const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
-  let selectedMode;
-  let selectedTheme;
-  let selectedThemeIcon;
+  let selectedMode, selectedTheme, selectedThemeIcon;
 
   if (colorPreference) {
     selectedMode = colorPreference.split('=')[1];
@@ -92,6 +90,13 @@ const observeThemeMenu = () => {
   } else {
     modal.querySelector('button.theme-default').parentNode.classList.add('selected');
   }
+}
+
+const observeThemeMenu = () => {
+  const button = document.querySelector('.theme button');
+  const modal = document.querySelector('.theme-menu');
+
+  initThemeMenu();
 
   if (button) {
     button.onclick = () => {
@@ -127,6 +132,7 @@ const getCurrentColorMode = () => {
 const observeThemeSelect = () => {
   const buttons = document.querySelectorAll('.theme-button');
   const modal = document.querySelector('.theme-menu');
+
   if (buttons.length > 0) {
     buttons.forEach(button => {
       button.onclick = () => {
@@ -141,7 +147,7 @@ const observeThemeSelect = () => {
         changeTheme(newColorMode);
         modal.style.display = 'none';
         modal.querySelectorAll('li').forEach(item => { item.classList.remove('selected') });
-        observeThemeMenu();
+        initThemeMenu();
       }
     })
   }
@@ -149,9 +155,10 @@ const observeThemeSelect = () => {
 
 const changeTheme = (newColorMode) => {
   const currentColorMode = getCurrentColorMode();
+  document.documentElement.classList.remove(currentColorMode);
+
   if (newColorMode) {
     document.cookie = `prefers-color-scheme=${newColorMode};max-age=604800;path=/`;
-    document.documentElement.classList.remove(currentColorMode);
     document.documentElement.classList.add(newColorMode);
   } else {
     document.cookie = `prefers-color-scheme=;max-age=0;path=/`;
