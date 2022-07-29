@@ -13,7 +13,7 @@
     %link{ title: "#{@site.title}", rel: "alternate", href: "https://feeds.feedburner.com/portalshit", type: 'application/atom+xml' }
     %link{ rel: 'canonical', href: canonical_url }
     %link{ rel: 'stylesheet', href: asset_path(@theme.path, 'style.css'), type: 'text/css' }
-    %link{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.12.0/css/all.css', type: 'text/css' }
+    %link{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.15.4/css/all.css', type: 'text/css' }
     = header
   %body
     - header_bg = settings.header_bg_params
@@ -25,15 +25,27 @@
           %h1#header-title= link_to @site.title, '/'
         %nav#global-nav
           %ul
+            %li.theme
+              %button
+                %i.fas.fa-adjust
+                Theme
+              .theme-menu
+                %ul
+                  %li
+                    %button.theme-default.theme-button
+                      %i.fas.fa-adjust
+                      OS Default
+                  %li
+                    %button.theme-light.theme-button
+                      %i.far.fa-sun
+                      Light
+                  %li
+                    %button.theme-dark.theme-button
+                      %i.far.fa-moon
+                      Dark
             %li.profile
               = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
               = link_to 'About', '/about'
-            %li.github
-              %i.fab.fa-github-square
-              = link_to 'GitHub', 'http://github.com/morygonzalez'
-            %li.twitter
-              %i.fab.fa-twitter-square
-              = link_to 'Twitter', 'http://twitter.com/morygonzalez'
             %li.archives
               %i.fas.fa-archive
               = link_to 'Archives', '/archives'

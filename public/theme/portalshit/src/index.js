@@ -65,6 +65,41 @@ const observeImages = node => {
   }
 }
 
+const observeThemeMenu = () => {
+  const button = document.querySelector('.theme button');
+  const modal = document.querySelector('.theme-menu');
+  const allCookies = document.cookie.split(';');
+  const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
+  let selectedMode;
+  let selectedTheme;
+  let selectedThemeIcon;
+
+  if (colorPreference) {
+    selectedMode = colorPreference.split('=')[1];
+    selectedTheme = selectedMode === 'light-mode' ? 'Light' : 'Dark';
+    selectedThemeIcon = selectedTheme === 'Light' ? 'sun' : 'moon';
+    button.innerHTML = `<i class="far fa-${selectedThemeIcon}"></i> Theme`;
+  } else {
+    selectedTheme = 'OS Default';
+    selectedThemeIcon = 'adjust';
+    button.innerHTML = '<i class="fas fa-adjust"></i> Theme';
+  }
+
+  if (selectedTheme === 'Light') {
+    modal.querySelector('button.theme-light').parentNode.classList.add('selected');
+  } else if (selectedTheme === 'Dark') {
+    modal.querySelector('button.theme-dark').parentNode.classList.add('selected');
+  } else {
+    modal.querySelector('button.theme-default').parentNode.classList.add('selected');
+  }
+
+  if (button) {
+    button.onclick = () => {
+      modal.style.display = 'block';
+    }
+  }
+}
+
 const getCurrentColorMode = () => {
   const allCookies = document.cookie.split(';');
   const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
@@ -81,37 +116,42 @@ const getCurrentColorMode = () => {
   return mode;
 }
 
-const observeThemeToggle = () => {
-  const button = document.querySelector('#toggle-theme');
-  if (button) {
-    button.onclick = toggleColorPreference;
+const observeThemeSelect = () => {
+  const buttons = document.querySelectorAll('.theme-button');
+  const modal = document.querySelector('.theme-menu');
+  if (buttons.length > 0) {
+    buttons.forEach(button => {
+      button.onclick = () => {
+        let newColorMode;
+        if (button.classList.contains('theme-light')) {
+          newColorMode = 'light-mode';
+        } else if (button.classList.contains('theme-dark')) {
+          newColorMode = 'dark-mode';
+        } else {
+          newColorMode = null;
+        }
+        changeTheme(newColorMode);
+        modal.style.display = 'none';
+        modal.querySelectorAll('li').forEach(item => { item.classList.remove('selected') });
+        observeThemeMenu();
+      }
+    })
   }
 }
 
-const toggleColorPreference = () => {
+const changeTheme = (newColorMode) => {
   const currentColorMode = getCurrentColorMode();
-  let newColorMode;
-  if (currentColorMode == 'dark-mode') {
-    newColorMode = 'light-mode';
+  if (newColorMode) {
+    document.cookie = `prefers-color-scheme=${newColorMode};max-age=604800;path=/`;
+    document.documentElement.classList.remove(currentColorMode);
+    document.documentElement.classList.add(newColorMode);
   } else {
-    newColorMode = 'dark-mode';
-  }
-  document.cookie = `prefers-color-scheme=${newColorMode};max-age=604800;path=/`;
-  document.documentElement.classList.remove(currentColorMode);
-  document.documentElement.classList.add(newColorMode);
-}
-
-const observeThemePreferenceDeletion = () => {
-  const button = document.querySelector('#delete-theme-preference');
-  if (button) {
-    button.onclick = deleteThemePreference;
+    document.cookie = `prefers-color-scheme=;max-age=0;path=/`;
+    fallBackToDefaultTheme();
   }
 }
 
-const deleteThemePreference = () => {
-  const currentColorMode = getCurrentColorMode();
-  document.documentElement.classList.remove(currentColorMode);
-  document.cookie = 'prefers-color-scheme=;max-age=0;path=/';
+const fallBackToDefaultTheme = () => {
   const newColorMode = getCurrentColorMode();
   document.documentElement.classList.add(newColorMode);
 }
@@ -159,12 +199,12 @@ const observeLinkClick = (node) => {
 }
 
 const init = node => {
+  observeThemeMenu();
+  observeThemeSelect();
   setColorMode();
   observeImages(node);
   observeLinkClick(node);
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
-  observeThemeToggle();
-  observeThemePreferenceDeletion();
   observeColorMode();
   checkTableWidth(node);
 }

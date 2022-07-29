@@ -54,7 +54,6 @@
         align-items: center;
 
         li {
-          flex: auto;
           margin: 0px 7px;
 
           img {
@@ -66,21 +65,61 @@
             padding: 2px 5px;
           }
 
+          &.theme {
+            @include nav-profile;
+
+            i {
+              width: 24px;
+              height: 24px;
+            }
+
+            button {
+              border: none;
+              background: none;
+              cursor: pointer;
+              padding: 0;
+            }
+
+            .theme-menu {
+              display: none;
+              position: absolute;
+              z-index: 1;
+              width: 120px;
+              height: 132px;
+              background: rgba(234,234,234,1);
+              border-radius: 5px;
+
+              ul {
+                display: flex;
+                flex-direction: column;
+                background: none;
+
+                li {
+                  margin: 5px 0;
+                  padding: 5px 0;
+                  width: 120px;
+                  height: 24px;
+
+                  &.selected {
+                    background: rgba(93,94,73,0.4);
+                  }
+
+                  &:hover {
+                    background-color: rgba(93,94,73,0.4);
+                    text-shadow: 0 -1px 1px #222121;
+                  }
+
+                  button {
+                    padding-left: 5px;
+                    text-align: left;
+                  }
+                }
+              }
+            }
+          }
+
           &.profile {
             @include nav-profile;
-          }
-
-          &.github {
-            @include nav-profile;
-          }
-
-          &.twitter {
-            @include nav-profile;
-          }
-
-          &.facebook {
-            @include nav-profile;
-            background: url(images/icons.png) no-repeat -4px -260px;
           }
 
           &.archives {
