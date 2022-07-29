@@ -94,7 +94,7 @@
         li {
           padding-left: 3px;
           margin: auto;
-          font-size: 3.2vw;
+          font-size: 3.0vw;
           flex-grow: 1;
           width: 3.4vw;
           min-width: 75px;
@@ -105,21 +105,47 @@
 
           button {
             font-size: 3.2vw;
+            color: $light-font-color;
           }
 
           &.search {
+            @include nav-profile;
+            height: 28px;
+
+            button {
+              display: inline-block;
+            }
+
             i, span {
+              color: $light-font-color;
               display: inline;
             }
-            #search_form input[type="search"] {
+
+            span {
+              padding: 0 5px;
+            }
+
+            span:hover {
+              display: inline-block;
+              color: $dark-font-color;
+              background-color: #444439;
+              border-radius: 5px;
+              text-shadow: 0 -1px 1px #222121;
+            }
+
+            #search_form {
               display: none;
-              margin-top: 3px;
-              margin-left: unset;
-              width: calc(100% - 1em);
-              min-width: 80px;
-              max-width: 160px;
-              height: 85%;
-              font-size: 16px;
+              position: absolute;
+              right: 2.9vw;
+
+              input[type="search"] {
+                margin-top: 3px;
+                margin-left: unset;
+                width: calc(100% - 1em);
+                min-width: 80px;
+                max-width: 160px;
+                font-size: 16px;
+              }
             }
           }
         }

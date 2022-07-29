@@ -196,6 +196,22 @@ const setColorMode = () => {
   document.documentElement.classList.add(currentColorMode);
 }
 
+const observeSearchMenu = () => {
+  const searchForm = document.querySelector('#search_form');
+
+  document.querySelector('#global-nav ul li.search span').onclick = () => {
+    searchForm.style.display = 'block';
+  }
+
+  document.body.onclick = () => {
+    searchForm.style.display = 'none';
+  }
+
+  document.querySelector('#global-nav ul li.search').onclick = (event) => {
+    event.stopPropagation();
+  }
+}
+
 const observeLinkClick = (node) => {
   const selectors = 'section.referrers ul li a, section.similar ul li a, section.frequently-read-articles ul li a, section.hotentry ul li a';
   node.querySelectorAll(selectors).forEach(element => {
@@ -222,6 +238,7 @@ const init = node => {
   mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
   observeColorMode();
   checkTableWidth(node);
+  observeSearchMenu();
 }
 
 document.addEventListener('DOMContentLoaded', () => init(document));

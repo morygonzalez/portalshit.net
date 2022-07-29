@@ -136,16 +136,14 @@
 
           &.archives {
             @include nav-profile;
-            i {
-              font-size: 20px;
-            }
           }
 
           &.search {
             i, span {
               display: none;
             }
-            form#search_form input[type="search"] {
+
+            #search_form form input[type="search"] {
               margin-left: 10px;
               border: none;
               border-radius: 3px;
