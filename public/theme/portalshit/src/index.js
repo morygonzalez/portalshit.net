@@ -91,7 +91,7 @@ const getOSDefaultColorMode = () => {
 }
 
 const getColorPreference = () => {
-  const allCookies = document.cookie.split(';');
+  const allCookies = document.cookie.split('; ');
   const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
   let preference;
 
