@@ -65,15 +65,81 @@ const observeImages = node => {
   }
 }
 
+const getCurrentColorMode = () => {
+  const colorPreference = getColorPreference();
+  let mode;
+
+  if (colorPreference) {
+    mode = colorPreference;
+  } else {
+    mode = getOSDefaultColorMode();
+  }
+
+  return mode;
+}
+
+const getOSDefaultColorMode = () => {
+  let mode;
+
+  if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    mode = 'light-mode';
+  } else {
+    mode = 'dark-mode';
+  }
+
+  return mode;
+}
+
+const getColorPreference = () => {
+  const allCookies = document.cookie.split(';');
+  const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
+  let preference;
+
+  if (colorPreference) {
+    preference = colorPreference.split('=')[1];
+  } else {
+    preference = null;
+  }
+
+  return preference;
+}
+
+const getServerDetectedColorMode = () => {
+  let mode;
+
+  if (document.documentElement.classList.contains('dark-mode')) {
+    mode = 'dark-mode';
+  } else if (document.documentElement.classList.contains('light-mode')) {
+    mode = 'light-mode';
+  } else {
+    mode = null;
+  }
+
+  return mode;
+}
+
+const initColorMode = () => {
+  const colorPreference = getColorPreference();
+  const serverDetectedColorMode = getServerDetectedColorMode();
+
+  if (serverDetectedColorMode) {
+    // do nothing
+  } else if (!serverDetectedColorMode && colorPreference) {
+    document.documentElement.classList.add(colorPreference);
+  } else if (!serverDetectedColorMode && !colorPreference) {
+    const defaultMode = getOSDefaultColorMode();
+    document.documentElement.classList.add(defaultMode);
+  }
+}
+
 const initThemeMenu = () => {
   const button = document.querySelector('.theme button');
   const modal = document.querySelector('.theme-menu');
-  const allCookies = document.cookie.split(';');
-  const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
+  const colorPreference = getColorPreference();
   let selectedMode, selectedTheme, selectedThemeIcon;
 
   if (colorPreference) {
-    selectedMode = colorPreference.split('=')[1];
+    selectedMode = colorPreference;
     selectedTheme = selectedMode === 'light-mode' ? 'Light' : 'Dark';
     selectedThemeIcon = selectedTheme === 'Light' ? 'sun' : 'moon';
     button.innerHTML = `<i class="far fa-${selectedThemeIcon}"></i><span>Theme</span>`;
@@ -119,22 +185,6 @@ const observeCloseModal = () => {
   })
 }
 
-const getCurrentColorMode = () => {
-  const allCookies = document.cookie.split(';');
-  const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
-  let mode;
-
-  if (colorPreference) {
-    mode = colorPreference.split('=')[1];
-  } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-    mode = 'light-mode';
-  } else {
-    mode = 'dark-mode';
-  }
-
-  return mode;
-}
-
 const observeThemeSelect = () => {
   const buttons = document.querySelectorAll('.theme-button');
   const modal = document.querySelector('.theme-menu');
@@ -143,6 +193,7 @@ const observeThemeSelect = () => {
     buttons.forEach(button => {
       button.onclick = () => {
         let newColorMode;
+
         if (button.classList.contains('theme-light')) {
           newColorMode = 'light-mode';
         } else if (button.classList.contains('theme-dark')) {
@@ -150,6 +201,7 @@ const observeThemeSelect = () => {
         } else {
           newColorMode = null;
         }
+
         changeTheme(newColorMode);
         modal.style.display = 'none';
         modal.querySelectorAll('li').forEach(item => { item.classList.remove('selected') });
@@ -173,33 +225,8 @@ const changeTheme = (newColorMode) => {
 }
 
 const fallBackToDefaultTheme = () => {
-  const newColorMode = getCurrentColorMode();
+  const newColorMode = getOSDefaultColorMode();
   document.documentElement.classList.add(newColorMode);
-}
-
-const observeColorMode = () => {
-  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e)  => {
-    const allCookies = document.cookie.split(';');
-    const colorPreference = allCookies.find(item => item.startsWith('prefers-color-scheme'));
-    if (colorPreference) {
-      return;
-    }
-    let newColorMode;
-    const colorModes = ['light-mode', 'dark-mode'];
-    if (e.matches) {
-      newColorMode = 'light-mode';
-    } else {
-      newColorMode = 'dark-mode';
-    }
-    const currentColorMode = colorModes.find(item => item != newColorMode);
-    document.documentElement.classList.remove(currentColorMode);
-    document.documentElement.classList.add(mode);
-  })
-}
-
-const setColorMode = () => {
-  const currentColorMode = getCurrentColorMode();
-  document.documentElement.classList.add(currentColorMode);
 }
 
 const observeSearchMenu = () => {
@@ -228,15 +255,14 @@ const observeLinkClick = (node) => {
 }
 
 const init = node => {
+  initColorMode();
+  observeImages(node);
+  mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
+  checkTableWidth(node);
   observeThemeMenu();
   observeThemeSelect();
-  setColorMode();
-  observeImages(node);
-  observeLinkClick(node);
-  mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
-  observeColorMode();
-  checkTableWidth(node);
   observeSearchMenu();
+  observeLinkClick(node);
   observeCloseModal();
 }
 
@@ -247,3 +273,22 @@ document.body.addEventListener('AutoPagerize_DOMNodeInserted', (e) => {
   const parentNode = e.relatedNode
   init(node);
 }, false);
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e)  => {
+  const colorPreference = getColorPreference();
+  if (colorPreference) {
+    return;
+  }
+
+  let newColorMode;
+  const colorModes = ['light-mode', 'dark-mode'];
+
+  if (e.matches) {
+    newColorMode = 'light-mode';
+  } else {
+    newColorMode = 'dark-mode';
+  }
+
+  const currentColorMode = colorModes.find(item => item != newColorMode);
+  document.documentElement.classList.remove(currentColorMode);
+  document.documentElement.classList.add(mode);
+})
