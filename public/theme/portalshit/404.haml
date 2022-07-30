@@ -1,123 +1,28 @@
-!!! 5
-%html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja }
-  %head
-    %meta{ charset: 'utf-8' }
-    %title= @site.title
-    %meta{ name: 'viewport', content: 'width=device-width' }
-    %meta{ name: 'description', content: "#{ogp['og:description']}" }
-    %meta{ name: 'keywords', content: @site.meta_keywords }
-    %link{ rel: 'shortcut icon', href: url("#{@theme.path}/favicon.ico"), type: 'image/ico' }
-    %link{ title: "#{@site.title}", rel: "alternate", href: "https://feeds.feedburner.com/portalshit", type: 'application/atom+xml' }
-    %link{ rel: 'canonical', href: canonical_url }
-    %link{ rel: 'stylesheet', href: asset_path(@theme.path, 'style.css'), type: 'text/css' }
-    %link{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.12.0/css/all.css', type: 'text/css' }
-    = header
-  %body
-    - header_bg = settings.header_bg_params
-    %header#header{header_bg}
-      #header-inner
-        - if entry?
-          #header-title= link_to @site.title, '/'
-        - else
-          %h1#header-title= link_to @site.title, '/'
-        %nav#global-nav
-          %ul
-            %li.theme
-              %button
-                %i.fas.fa-adjust
-                Theme
-              .theme-menu
-                %ul
-                  %li
-                    %button.theme-default.theme-button
-                      %i.fas.fa-adjust
-                      OS Default
-                  %li
-                    %button.theme-light.theme-button
-                      %i.far.fa-sun
-                      Light
-                  %li
-                    %button.theme-dark.theme-button
-                      %i.far.fa-moon
-                      Dark
-            %li.about
-              = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
-              = link_to 'About', '/about'
-            %li.archives
-              %i.fas.fa-archive
-              = link_to 'Archives', '/archives'
-            %li.search
-              %i.fas.fa-search
-              %span Search
-              #search_form
-                %form(action="/archives" method="get")
-                  %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
+%section#not_found_description
+  %h2 404 Not Found
+  .description
+    %p
+      Not found:
+      %code
+        #{request.path_info}
+    %p Please try searching.
 
-        #header-bottom
-          #header-bg-description
-            %span.header-bg-light-description= header_bg[:'data-bg-light-description']
-            %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
+%section#not_found_search
+  %h2= t('search')
+  .search-field
+    %form(action="/archives" method="get")
+      %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
 
-    %main#content.hfeed.not_found
-      %h2 404 Not Found
-      %p== Not found: #{request.path_info}
+%section
+  %h2= t('recent_entries')
+  %ul
+    - Entry.includes(:category).published.recent(7).each do |post|
+      %li= link_to post.title, post.link
 
-      %h2= t('search')
-      .search-field
-        %form(action="/archives" method="get")
-          %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
-
-      %h2= t('recent_entries')
-      %ul
-        - Entry.includes(:category).published.recent(7).each do |post|
-          %li= link_to post.title, post.link
-
-      %h2= t('categories')
-      %ul#categories
-        - sorted_categories.each do |category|
-          %li= link_to category[:title],
-            "/category/#{category[:slug]}/",
-              title: "#{category[:title]} (#{category[:count]})"
-
-    %footer#footer
-      %aside
-        %section.popular-entries
-          %h3 人気の記事
-          %ul.entry-list
-            %li
-              <i class="fas fa-calendar"></i>
-              = link_to '今日よく読まれている記事', '/popular/today'
-            %li
-              <i class="fas fa-calendar-day"></i>
-              = link_to '昨日よく読まれた記事', '/popular/yesterday'
-            %li
-              <i class="fas fa-calendar-alt"></i>
-              = link_to '最近よく読まれている記事', '/popular/recent'
-            %li
-              <i class="fas fa-bookmark"></i>
-              = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena-bookmark'
-        %section.archives
-          %h3 過去記事・カテゴリー
-          %ul
-            %li
-              <i class="fas fa-archive"></i>
-              = link_to t('archives.title'), '/archives'
-            %li
-              <i class="fas fa-object-group"></i>
-              = link_to t('listing_categories'), '/categories'
-
-        %section.about
-          %h3 このサイトについて
-          %ul
-            %li.about
-              = image_tag 'https://portalshit.net/imageproxy/24/https://portalshit.net/theme/portalshit/ogp_image.png', width: 24
-              = link_to t('about'), '/about'
-            %li.profile
-              = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
-              = link_to t('author', default: '著者について'), '/morygonzalez'
-
-      .poweredby
-        powered by
-        = link_to 'Lokka', 'http://lokka.org/'
-    = footer
-    %script{ type: 'text/javascript', src: portalshit_javascript_path('index.js') }
+%section
+  %h2= t('categories')
+  %ul#categories
+    - sorted_categories.each do |category|
+      %li= link_to category[:title],
+        "/category/#{category[:slug]}/",
+          title: "#{category[:title]} (#{category[:count]})"

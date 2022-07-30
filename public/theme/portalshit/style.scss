@@ -222,7 +222,7 @@
   padding: 20px 30px;
   min-height: 500px;
 
-  &.not_found {
+  #not_found_search {
     .search-field {
       margin: 1em 1em 2em;
 
@@ -250,7 +250,7 @@
     }
   }
 
-  section#site_description {
+  section#site_description, section#not_found_description {
     h2 {
       margin-bottom: 2rem;
     }

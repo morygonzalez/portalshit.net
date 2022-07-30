@@ -60,7 +60,7 @@
                   %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
 
         #header-bottom
-          - unless index?
+          - unless index? || response.status == 404
             %nav#bread_crumb= bread_crumb
           #header-bg-description
             %span.header-bg-light-description= header_bg[:'data-bg-light-description']
