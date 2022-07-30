@@ -102,15 +102,21 @@ const observeThemeMenu = () => {
     button.onclick = () => {
       modal.style.display = 'block';
     }
+  }
+}
 
-    document.body.onclick = () => {
+const observeCloseModal = () => {
+  document.documentElement.onclick = () => {
+    document.querySelectorAll('.modal').forEach(modal => {
       modal.style.display = 'none';
-    }
+    })
+  }
 
-    document.querySelector('.theme').onclick = (event) => {
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.parentNode.onclick = (event) => {
       event.stopPropagation();
     }
-  }
+  })
 }
 
 const getCurrentColorMode = () => {
@@ -231,6 +237,7 @@ const init = node => {
   observeColorMode();
   checkTableWidth(node);
   observeSearchMenu();
+  observeCloseModal();
 }
 
 document.addEventListener('DOMContentLoaded', () => init(document));
