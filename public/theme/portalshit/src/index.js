@@ -275,6 +275,7 @@ document.body.addEventListener('AutoPagerize_DOMNodeInserted', (e) => {
 }, false);
 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e)  => {
   const colorPreference = getColorPreference();
+
   if (colorPreference) {
     return;
   }
@@ -290,5 +291,5 @@ window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e
 
   const currentColorMode = colorModes.find(item => item != newColorMode);
   document.documentElement.classList.remove(currentColorMode);
-  document.documentElement.classList.add(mode);
+  document.documentElement.classList.add(newColorMode);
 })
