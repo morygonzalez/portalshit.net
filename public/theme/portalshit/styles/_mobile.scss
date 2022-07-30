@@ -109,7 +109,7 @@
           }
 
           &.search {
-            @include nav-profile;
+            @include nav-header;
             height: 28px;
 
             button {

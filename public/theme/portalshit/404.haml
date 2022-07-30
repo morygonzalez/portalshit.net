@@ -16,24 +16,42 @@
     - header_bg = settings.header_bg_params
     %header#header{header_bg}
       #header-inner
-        %h1#header-title= link_to @site.title, '/'
+        - if entry?
+          #header-title= link_to @site.title, '/'
+        - else
+          %h1#header-title= link_to @site.title, '/'
         %nav#global-nav
           %ul
-            %li.profile
+            %li.theme
+              %button
+                %i.fas.fa-adjust
+                Theme
+              .theme-menu
+                %ul
+                  %li
+                    %button.theme-default.theme-button
+                      %i.fas.fa-adjust
+                      OS Default
+                  %li
+                    %button.theme-light.theme-button
+                      %i.far.fa-sun
+                      Light
+                  %li
+                    %button.theme-dark.theme-button
+                      %i.far.fa-moon
+                      Dark
+            %li.about
               = image_tag '//1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128', width: 24
               = link_to 'About', '/about'
-            %li.github
-              %i.fab.fa-github-square
-              = link_to 'GitHub', 'http://github.com/morygonzalez'
-            %li.twitter
-              %i.fab.fa-twitter-square
-              = link_to 'Twitter', 'http://twitter.com/morygonzalez'
             %li.archives
-              %i.fas.fa-list-ul
+              %i.fas.fa-archive
               = link_to 'Archives', '/archives'
             %li.search
-              %form#search_form(action="/search/" method="get")
-                %input(type="text" name="query" placeholder="Search" value="#{params[:query]}")
+              %i.fas.fa-search
+              %span Search
+              #search_form
+                %form(action="/archives" method="get")
+                  %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
 
         #header-bottom
           #header-bg-description
