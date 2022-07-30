@@ -203,7 +203,7 @@ const setColorMode = () => {
 }
 
 const observeSearchMenu = () => {
-  const searchForm = document.querySelector('#search_form');
+  const searchForm = document.querySelector('#search_form_modal');
 
   document.querySelector('#global-nav ul li.search span').onclick = () => {
     searchForm.style.display = 'block';

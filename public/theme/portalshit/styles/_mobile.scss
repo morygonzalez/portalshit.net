@@ -135,17 +135,24 @@
 
             #search_form {
               display: none;
+            }
+
+            #search_form_modal {
+              display: none;
               position: absolute;
               right: 2.9vw;
               padding: 2vw;
+              margin-top: 1px;
               background: rgba(234,234,234,1);
               border-radius: 5px;
 
               input[type="search"] {
                 padding: 1vw;
                 margin: 3px;
+                border-radius: 3px;
+                border: solid $light-text-shadow-color 1px;
                 font-size: 16px;
-                width: unset;
+                max-width: 50vw;
               }
             }
           }
@@ -154,13 +161,21 @@
     }
 
     #header-bottom {
+      flex-flow: column;
+
       #bread_crumb {
-        flex-grow: 1;
         margin: 0 auto;
+        width: inherit;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
       }
 
       #header-bg-description {
-        display: none;
+        width: 100%;
+        justify-content: end;
       }
     }
   }
