@@ -97,62 +97,27 @@
           font-size: 3.0vw;
           flex-grow: 1;
           width: 3.4vw;
-          min-width: 75px;
+          min-width: 65px;
 
-          a {
-            padding: 2px 5px;
-          }
-
-          button {
-            font-size: 3.2vw;
-            color: $light-font-color;
+          a, button {
+            padding: 2px;
+            font-size: 3vw;
           }
 
           &.search {
-            @include nav-header;
-            height: 28px;
-
-            button {
-              display: inline-block;
-            }
-
-            i, span {
-              color: $light-font-color;
-              display: inline;
-            }
-
-            span {
-              padding: 0 5px;
-            }
-
-            span:hover {
-              display: inline-block;
-              color: $dark-font-color;
-              background-color: #444439;
-              border-radius: 5px;
-              text-shadow: 0 -1px 1px #222121;
-            }
-
             #search_form {
-              display: none;
-            }
+              top: 140px;
+              width: 70%;
+              height: 15vw;
+              padding: .7vw 2.1vw;
 
-            #search_form_modal {
-              display: none;
-              position: absolute;
-              right: 2.9vw;
-              padding: 2vw;
-              margin-top: 1px;
-              background: rgba(234,234,234,1);
-              border-radius: 5px;
-
-              input[type="search"] {
-                padding: 1vw;
-                margin: 3px;
-                border-radius: 3px;
-                border: solid $light-text-shadow-color 1px;
-                font-size: 16px;
-                max-width: 50vw;
+              form {
+                p {
+                  input[type="search"] {
+                    font-size: 16px;
+                    max-width: 60vw;
+                  }
+                }
               }
             }
           }

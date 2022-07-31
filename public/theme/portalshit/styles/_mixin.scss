@@ -7,12 +7,36 @@
 @mixin nav-header {
   height: 28px;
   color: #000000;
+
   img {
     vertical-align: middle;
   }
+
   i {
     font-size: 24px;
     vertical-align: middle;
+    width: 24px;
+    height: 24px;
+  }
+
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    color: $light-font-color;
+
+    span {
+      padding: 2px 5px;
+
+      &:hover {
+        display: inline-block;
+        color: $dark-font-color;
+        background-color: #444439;
+        border-radius: 5px;
+        text-shadow: 0 -1px 1px #222121;
+      }
+    }
   }
 }
 

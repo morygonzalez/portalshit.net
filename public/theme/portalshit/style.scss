@@ -68,37 +68,13 @@
           &.theme {
             @include nav-header;
 
-            i {
-              width: 24px;
-              height: 24px;
-            }
-
-            button {
-              border: none;
-              background: none;
-              cursor: pointer;
-              padding: 0;
-
-              span {
-                padding: 2px 5px;
-              }
-
-              span:hover {
-                display: inline-block;
-                color: $dark-font-color;
-                background-color: #444439;
-                border-radius: 5px;
-                text-shadow: 0 -1px 1px #222121;
-              }
-            }
-
             .theme-menu {
               display: none;
               position: absolute;
               z-index: 1;
               width: 120px;
               height: 132px;
-              background: rgba(234,234,234,1);
+              background: $modal-bg-color;
               border-radius: 5px;
 
               ul {
@@ -139,21 +115,50 @@
           }
 
           &.search {
-            i, span {
-              display: none;
-            }
+            @include nav-header;
 
-            #search_form input[type="search"] {
-              margin-left: 10px;
-              border: none;
-              border-radius: 3px;
-              padding: 2px 2px 2px 8px;
-              width: 150px;
-              font-size: 95%;
-            }
-
-            #search_form_modal {
+            #search_form {
               display: none;
+              position: absolute;
+              left: 50%; top: 200px;
+              transform: translate(-50%, -50%);
+              margin-top: 1px;
+              background: $modal-bg-color;
+              border-radius: 5px;
+              height: 5vw;
+              width: 30vw;
+
+              form {
+                display: grid;
+                place-items: center;
+                margin: .3vw 1vw;
+                width: 100%;
+              }
+
+              p {
+                width: 100%;
+                display: flex;
+                align-self: center;
+                justify-content: space-between;
+                align-items: center;
+                margin: 0;
+
+                input[type="search"] {
+                  flex: 1 1 auto;
+                  border-radius: 3px;
+                  border: solid #a3a0a0 1px;
+                  font-size: 200%;
+                  padding: 5px;
+
+                  &:focus {
+                    border: none;
+                  }
+                }
+
+                i {
+                  margin-left: .7vw;
+                }
+              }
             }
           }
         }

@@ -50,14 +50,14 @@
               %i.fas.fa-archive
               = link_to 'Archives', '/archives'
             %li.search
-              %i.fas.fa-search
-              %span Search
-              #search_form
+              %button
+                %i.fas.fa-search
+                %span Search
+              #search_form.modal
                 %form(action="/archives" method="get")
-                  %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
-              #search_form_modal.modal
-                %form(action="/archives" method="get")
-                  %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
+                  %p
+                    %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
+                    %i.fas.fa-search
 
         #header-bottom
           - unless index? || response.status == 404

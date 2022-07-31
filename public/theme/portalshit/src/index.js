@@ -230,10 +230,10 @@ const fallBackToDefaultTheme = () => {
 }
 
 const observeSearchMenu = () => {
-  const searchForm = document.querySelector('#search_form_modal');
+  const searchForm = document.querySelector('#search_form');
 
   document.querySelector('#global-nav ul li.search span').onclick = () => {
-    searchForm.style.display = 'block';
+    searchForm.style.display = 'flex';
   }
 }
 
