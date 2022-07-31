@@ -28,6 +28,7 @@ class Tokenizer
   def preserved_words
     @preserved_words ||= %w[
       山と道 ハイキング 縦走 散歩 プログラミング はてブ 鐘撞山 散財 はてなブックマーク はてな
+      転職 退職 がん 癌
     ]
   end
 
