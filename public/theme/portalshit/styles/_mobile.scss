@@ -112,10 +112,18 @@
               padding: .7vw 2.1vw;
 
               form {
+                height: 15vw;
+
                 p {
                   input[type="search"] {
                     font-size: 16px;
+                    width: 60vw;
                     max-width: 60vw;
+                  }
+
+                  i {
+                    margin-left: 2vw;
+                    margin-top: 2.5vw;
                   }
                 }
               }

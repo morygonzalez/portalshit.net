@@ -134,7 +134,7 @@ const initColorMode = () => {
 
 const initThemeMenu = () => {
   const button = document.querySelector('.theme button');
-  const modal = document.querySelector('.theme-menu');
+  const themeMenuModal = document.querySelector('.theme-menu');
   const colorPreference = getColorPreference();
   let selectedMode, selectedTheme, selectedThemeIcon;
 
@@ -150,31 +150,32 @@ const initThemeMenu = () => {
   }
 
   if (selectedTheme === 'Light') {
-    modal.querySelector('button.theme-light').parentNode.classList.add('selected');
+    themeMenuModal.querySelector('button.theme-light').parentNode.classList.add('selected');
   } else if (selectedTheme === 'Dark') {
-    modal.querySelector('button.theme-dark').parentNode.classList.add('selected');
+    themeMenuModal.querySelector('button.theme-dark').parentNode.classList.add('selected');
   } else {
-    modal.querySelector('button.theme-default').parentNode.classList.add('selected');
+    themeMenuModal.querySelector('button.theme-default').parentNode.classList.add('selected');
   }
 }
 
 const observeThemeMenu = () => {
   const button = document.querySelector('.theme button');
-  const modal = document.querySelector('.theme-menu');
+  const themeMenuModal = document.querySelector('.theme-menu');
 
   initThemeMenu();
 
   if (button) {
     button.onclick = () => {
-      modal.style.display = 'block';
+      document.querySelectorAll('.modal.active').forEach(modal => modal.classList.toggle('active'));
+      themeMenuModal.classList.toggle('active')
     }
   }
 }
 
 const observeCloseModal = () => {
   document.documentElement.onclick = () => {
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.style.display = 'none';
+    document.querySelectorAll('.modal.active').forEach(modal => {
+      modal.classList.toggle('active');
     })
   }
 
@@ -187,7 +188,7 @@ const observeCloseModal = () => {
 
 const observeThemeSelect = () => {
   const buttons = document.querySelectorAll('.theme-button');
-  const modal = document.querySelector('.theme-menu');
+  const themeMenuModal = document.querySelector('.theme-menu');
 
   if (buttons.length > 0) {
     buttons.forEach(button => {
@@ -203,8 +204,8 @@ const observeThemeSelect = () => {
         }
 
         changeTheme(newColorMode);
-        modal.style.display = 'none';
-        modal.querySelectorAll('li').forEach(item => { item.classList.remove('selected') });
+        themeMenuModal.classList.toggle('active');
+        themeMenuModal.querySelectorAll('li').forEach(item => { item.classList.remove('selected') });
         initThemeMenu();
       }
     })
@@ -230,10 +231,11 @@ const fallBackToDefaultTheme = () => {
 }
 
 const observeSearchMenu = () => {
-  const searchForm = document.querySelector('#search_form');
+  const searchFormModal = document.querySelector('#search_form');
 
   document.querySelector('#global-nav ul li.search span').onclick = () => {
-    searchForm.style.display = 'flex';
+    document.querySelectorAll('.modal.active').forEach(modal => modal.classList.toggle('active'));
+    searchFormModal.classList.toggle('active');
   }
 }
 
