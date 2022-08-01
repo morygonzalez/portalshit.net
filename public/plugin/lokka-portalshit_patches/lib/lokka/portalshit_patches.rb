@@ -37,8 +37,9 @@ module Lokka
           %i[title title_tokenized body category category_tokenized tags],
           params[:query]
         )
-        search_result = search_index.search(smart_query, limit: 10000)
-        posts = Post.published.joins(:category).where(id: search_result).limit(10)
+        search_result = search_index.search(smart_query, limit: 10000)[0..10]
+        posts = Post.published.joins(:category).where(id: search_result).
+          sort_by {|post| search_result.index(post.id.to_s) }
         posts_hash = posts.each_with_object([]) {|post, result|
           result << {
             id: post.id,
