@@ -42,8 +42,6 @@ module Lokka
         posts_hash = posts.each_with_object([]) {|post, result|
           result << {
             id: post.id,
-            category: post.category.title,
-            tags: post.tag_list,
             title: post.title,
             link: post.link,
             created_at: post.created_at

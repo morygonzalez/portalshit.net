@@ -107,7 +107,7 @@ module Lokka
         text :title_tokenized
         string :category
         text :category_tokenized
-        string :tags
+        text :tags
         text :body
         date :date
       end

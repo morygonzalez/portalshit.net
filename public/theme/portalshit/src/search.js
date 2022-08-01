@@ -80,7 +80,11 @@ class Entries extends Component {
     const entries = this.state.response.map(entry => {
       const uniqueKey = `${entry.title}-${entry.created_at}`
       return (
-        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} tags={entry.tags} />
+        <Entry
+          key={uniqueKey}
+          title={entry.title}
+          link={entry.link}
+          created_at={entry.created_at} />
       )
     })
     this.setState({ entries })

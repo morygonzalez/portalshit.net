@@ -244,6 +244,7 @@ const observeSearchMenu = () => {
   document.querySelector('#global-nav ul li.search button').onclick = () => {
     document.querySelectorAll('.modal.active').forEach(modal => modal.classList.toggle('active'));
     searchFormModal.classList.toggle('active');
+    searchFormModal.querySelector('input').focus();
   }
 }
 
