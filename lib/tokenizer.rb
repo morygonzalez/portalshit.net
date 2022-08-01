@@ -20,15 +20,14 @@ class Tokenizer
 
   def words_to_ignore
     @words_to_ignore ||= %w[
-      これ こと とき よう そう やつ とこ ところ 用 もの はず みたい たち いま 後 確か 中 気 方
-      頃 上 先 点 前 一 内 lt gt ここ なか どこ まま わけ ため 的 それ あと
+      これ こと とき よう そう やつ とこ ところ もの はず みたい たち いま 確か
+      頃 lt gt ここ なか どこ まま わけ ため 的 それ これ あれ まえ あと 以上 以前 以下 以後
     ]
   end
 
   def preserved_words
     @preserved_words ||= %w[
-      山と道 ハイキング 縦走 散歩 プログラミング はてブ 鐘撞山 散財 はてなブックマーク はてな
-      転職 退職 がん 癌
+      山と道 はてブ 鐘撞山 はてなブックマーク はてな 牛丼
     ]
   end
 
@@ -48,7 +47,7 @@ class Tokenizer
 
     nm.parse(cleansed_text) do |n|
       next unless n.feature.match?(/名詞/)
-      next if n.feature.match?(/(サ変接続|数)/)
+      next if n.feature.match?(/数/)
       next if n.surface.match?(/\A([a-z][0-9]|\p{hiragana}|\p{katakana})\Z/i)
       next if words_to_ignore.include?(n.surface)
       words << n.surface
