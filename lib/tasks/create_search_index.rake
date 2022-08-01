@@ -2,20 +2,28 @@ require 'tantiny'
 require_relative '../tokenizer'
 
 desc "Create full text search index"
-task :create_search_index => %i[create_new_index delete_old_index] do
-end
-
-task :create_new_index do
+task :create_search_index, :force do |task, arguments|
   entries = Entry.includes(:category, :tags).published
   index = Lokka::Helpers.search_index
   index_path = index.instance_variable_get("@path")
   index_last_modified = File.mtime(index_path)
   entry_last_updated_at = entries.maximum(:updated_at)
 
-  if index_last_modified > entry_last_updated_at
+  force_executeion = arguments[:force] == 'true'
+  puts force_executeion
+
+  if !force_executeion && index_last_modified > entry_last_updated_at
     puts 'Search index is up-to-date'
     next
   end
+
+  Rake::Task[:create_new_index].invoke
+  Rake::Task[:delete_old_index].invoke
+end
+
+task :create_new_index do
+  entries = Entry.includes(:category, :tags).published
+  index = Lokka::Helpers.search_index
 
   index.transaction do
     entries.each do |entry|
