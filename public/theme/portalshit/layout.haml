@@ -54,10 +54,10 @@
                 %i.fas.fa-search
                 %span Search
               #search_form.modal
-                %form(action="/archives" method="get")
-                  %p
-                    %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
-                    %i.fas.fa-search
+                -# %form(action="/archives" method="get")
+                -#   %p
+                -#     %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
+                -#     %i.fas.fa-search
 
         #header-bottom
           - unless index? || response.status == 404

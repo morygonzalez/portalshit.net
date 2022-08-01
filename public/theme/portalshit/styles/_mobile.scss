@@ -108,11 +108,10 @@
             #search_form {
               top: 140px;
               width: 70%;
-              height: 15vw;
-              padding: .7vw 2.1vw;
+              padding: .7vw 0;
 
-              form {
-                height: 15vw;
+              .search-component {
+                height: 100%;
 
                 p {
                   input[type="search"] {
@@ -124,6 +123,12 @@
                   i {
                     margin-left: 2vw;
                     margin-top: 2.5vw;
+                  }
+                }
+                .search-result {
+                  li {
+                    width: 64vw;
+                    padding: 1vw 3vw;
                   }
                 }
               }

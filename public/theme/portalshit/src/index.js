@@ -1,4 +1,12 @@
 import mediumZoom from 'medium-zoom';
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+
+import SearchApp from './search'
+
+const container = document.getElementById('search_form');
+const root = createRoot(container);
+root.render(<SearchApp />);
 
 const checkTableWidth = node => {
   node.querySelectorAll('table').forEach(target => {
@@ -233,7 +241,7 @@ const fallBackToDefaultTheme = () => {
 const observeSearchMenu = () => {
   const searchFormModal = document.querySelector('#search_form');
 
-  document.querySelector('#global-nav ul li.search span').onclick = () => {
+  document.querySelector('#global-nav ul li.search button').onclick = () => {
     document.querySelectorAll('.modal.active').forEach(modal => modal.classList.toggle('active'));
     searchFormModal.classList.toggle('active');
   }

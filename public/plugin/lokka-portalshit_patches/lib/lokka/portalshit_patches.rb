@@ -30,6 +30,29 @@ module Lokka
         content_type 'application/xml', charset: 'utf-8'
         builder :'plugin/lokka-portalshit_patches/public/lokka/categories/sitemap'
       end
+
+      app.get '/search.json' do
+        return if params[:query].blank?
+        smart_query = search_index.smart_query(
+          %i[title title_tokenized body category category_tokenized tags],
+          params[:query]
+        )
+        search_result = search_index.search(smart_query, limit: 10000)
+        posts = Post.published.joins(:category).where(id: search_result).limit(10)
+        posts_hash = posts.each_with_object([]) {|post, result|
+          result << {
+            id: post.id,
+            category: post.category.title,
+            tags: post.tag_list,
+            title: post.title,
+            link: post.link,
+            created_at: post.created_at
+          }
+        }
+        cache_control :public, :must_revalidate, max_age: 5.minutes
+        content_type :json
+        posts_hash.to_json
+      end
     end
   end
 

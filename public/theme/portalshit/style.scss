@@ -78,7 +78,6 @@
 
             .theme-menu {
               position: absolute;
-              z-index: 1;
               width: 120px;
               height: 132px;
               background: $modal-bg-color;
@@ -124,29 +123,33 @@
           &.search {
             @include nav-header;
 
+            i {
+              font-size: 23px;
+            }
+
             #search_form {
               position: absolute;
               left: 50%; top: 200px;
-              transform: translate(-50%, -50%);
+              transform: translate(-50%, 0);
               margin-top: 1px;
               background: $modal-bg-color;
               border-radius: 5px;
-              width: 30vw;
+              width: 35vw;
+              z-index: 3;
 
-              form {
-                display: grid;
-                place-items: center;
-                width: 95%;
-                height: 5vw;
-                margin-left: 1vw;
+              .search-component {
+                width: 100%;
+                margin: 1vw 0;
+                height: 100%;
 
                 p {
-                  width: 100%;
+                  width: 95%;
                   display: flex;
                   align-self: center;
                   justify-content: space-between;
                   align-items: center;
-                  margin: 0;
+                  margin: auto;
+                  padding-left: .7vw;
 
                   input[type="search"] {
                     flex: 1 1 auto;
@@ -154,6 +157,7 @@
                     border: solid #a3a0a0 1px;
                     font-size: 200%;
                     padding: 5px;
+                    width: 100%;
 
                     &:focus {
                       border: none;
@@ -166,6 +170,39 @@
                     font-size: 200%;
                     width: 40px;
                     height: 40px;
+                  }
+                }
+
+                .search-result {
+                  display: block;
+                  height: 100%;
+                  width: 100%;
+                  background: transparent;
+                  margin-top: 1vw;
+
+                  li {
+                    font-size: 150%;
+                    margin: 0;
+                    padding: .7vw 1vw;
+
+                    &:hover {
+                      background-color: rgba(93,94,73,0.4);
+                    }
+
+                    a {
+                      padding: 0;
+
+                      &:hover {
+                        display: inline;
+                        background: transparent;
+                        text-shadow: none;
+                      }
+                    }
+
+                    &.fulltext-search {
+                      font-size: 130%;
+                      text-align: center;
+                    }
                   }
                 }
               }
