@@ -28,7 +28,6 @@ const SearchField = (props) => {
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
-      const newPath = encodeURI(`/archives?query=${query}`)
       props.update(query)
     }, 500)
     return () => clearTimeout(timeOutId)
@@ -118,9 +117,7 @@ class Entry extends Component {
 
   render() {
     return(
-      <li>
-        <a href={this.props.link}>{this.props.title}</a>
-      </li>
+      <a href={this.props.link}><li>{this.props.title}</li></a>
     )
   }
 }

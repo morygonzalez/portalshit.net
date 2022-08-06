@@ -134,22 +134,21 @@
               margin-top: 1px;
               background: $modal-bg-color;
               border-radius: 5px;
-              width: 35vw;
+              width: 40vw;
               z-index: 3;
 
               .search-component {
                 width: 100%;
-                margin: 1vw 0;
+                margin: .5vw 0;
                 height: 100%;
 
-                p {
+                .search-field {
                   width: 95%;
                   display: flex;
                   align-self: center;
                   justify-content: space-between;
                   align-items: center;
                   margin: auto;
-                  padding-left: .7vw;
 
                   input[type="search"] {
                     flex: 1 1 auto;
@@ -160,7 +159,11 @@
                     width: 100%;
 
                     &:focus {
-                      border: none;
+                      outline-style: none;
+                    }
+
+                    &::-webkit-search-decoration {
+                      display: none;
                     }
                   }
 
@@ -180,6 +183,16 @@
                   background: transparent;
                   margin-top: 1vw;
 
+                  a {
+                    padding: 0;
+
+                    &:hover {
+                      display: inline;
+                      background: transparent;
+                      text-shadow: none;
+                    }
+                  }
+
                   li {
                     font-size: 150%;
                     margin: 0;
@@ -187,16 +200,6 @@
 
                     &:hover {
                       background-color: rgba(93,94,73,0.4);
-                    }
-
-                    a {
-                      padding: 0;
-
-                      &:hover {
-                        display: inline;
-                        background: transparent;
-                        text-shadow: none;
-                      }
                     }
 
                     &.fulltext-search {
