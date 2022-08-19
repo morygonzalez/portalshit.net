@@ -128,8 +128,9 @@
 
                 .search-result {
                   li {
-                    width: calc(100% - 4vw);
-                    padding: 2vw;
+                    width: calc(100% - 6vw);
+                    padding: 1.5vw;
+                    padding-left: 4vw;
                     font-size: 14px;
                   }
                 }
