@@ -258,7 +258,11 @@ class Entry
   end
 
   def cover_image
-    images.first || 'https://portalshit.net/theme/portalshit/ogp_image.png'
+    if images.first && images.first.end_with?('jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF')
+      images.first
+    else
+      'https://portalshit.net/theme/portalshit/ogp_image.png'
+    end
   end
 end
 
