@@ -120,8 +120,12 @@
     line-height: 150%;
     @include _border-radius;
 
-    a {
-      text-shadow: none;
+    .amazon-content {
+      .item-title, .item-meta, .item-price {
+        a {
+          text-shadow: none;
+        }
+      }
     }
   }
 
