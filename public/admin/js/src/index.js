@@ -12,7 +12,9 @@ const initEditorUpload = () => {
 
 const hideNotice = () => {
   const notice = document.querySelector('#notice');
-  setTimeout(() => { notice.style.display = 'none' }, 3000);
+  if (notice) {
+    setTimeout(() => { notice.style.display = 'none' }, 3000);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

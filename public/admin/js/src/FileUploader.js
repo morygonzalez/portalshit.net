@@ -58,10 +58,13 @@ class FileUploader {
         droppedItems = source.items;
         let needLineBreak;
         for (const index in droppedItems) {
-          const file = droppedItems[index].getAsFile();
-          needLineBreak = index !== droppedItems.length;
-          if (file && /^image\//.test(file.type)) {
-            self.upload(file, needLineBreak);
+          const item = droppedItems[index];
+          if (item.kind === 'file' && item.type.match('^image/')) {
+            const file = droppedItems[index].getAsFile();
+            needLineBreak = index !== droppedItems.length;
+            if (file && /^image\//.test(file.type)) {
+              self.upload(file, needLineBreak);
+            }
           }
         }
         droppedItems = null;
