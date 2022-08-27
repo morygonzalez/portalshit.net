@@ -178,7 +178,7 @@ GEM
       kaminari-core (~> 1.0)
       padrino-helpers
       sinatra
-    kramdown (2.2.1)
+    kramdown (2.4.0)
       rexml
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
