@@ -106,7 +106,11 @@ module Lokka
     end
 
     def canonical_url
-      canonical_path = request_path.gsub(/(\?|#).+/, '')
+      canonical_path = if entry?
+                         @entry.link
+                       else
+                         request_path.gsub(/(\?|#).+/, '')
+                       end
       "#{request.scheme}://#{request.host}#{canonical_path}"
     end
 
