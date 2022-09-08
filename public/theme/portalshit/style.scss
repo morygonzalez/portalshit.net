@@ -678,6 +678,18 @@
         }
       }
 
+      figure.two-column {
+        img {
+          max-width: calc(100% / 2 - .3rem);
+        }
+      }
+
+      figure.three-column {
+        img {
+          max-width: calc(100% / 3 - .3rem);
+        }
+      }
+
       hr {
         margin: 2em 0;
       }
