@@ -44,20 +44,8 @@ module Lokka
     end
 
     def custom_permalink_fix(path)
-      result = custom_permalink_parse(path)
-
-      url_changed = false
-      %i[year month monthnum day hour minute second].each do |key|
-        i = (key == :year ? 4 : 2)
-        if result[key] && result[key].size < i
-          result[key] = result[key].rjust(i, '0')
-          url_changed = true
-        end
-      end
-
-      custom_permalink_path(result) if url_changed
-    rescue StandardError => _e
-      nil
+      entry = custom_permalink_entry(path)
+      entry.link if path != entry.link
     end
 
     private
