@@ -5,11 +5,29 @@ REFERER_TO_IGNORE='referer:.+?(\.ru\/|semalt\.com|153\.126\.135\.20)'
 REQUEST_PATH_TO_IGNORE='(\/about|\/morygonzalez|\/author|\?page=*|popular|sitemap|\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
 LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
+IP_TO_IGNORE=`cat ${LOG_AGGREGATION_DIR}/ip-to-ignore.txt`
+
+function ip_to_ignore() {
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
+    | cut -f2 | sed -e 's/remote_addr://' \
+    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | sort | uniq -c | sort -nr | head -200 | sed -r 's/^[ \t]+//g' \
+    | sed -e 's/^[[:digit:]]\+\s//' \
+    | sed -e 's/\./\\./g' \
+    | sed -z -e 's/\n/\|/g' \
+    | sed -r 's/\|$//g' \
+    | cat 1>${LOG_AGGREGATION_DIR}/ip-to-ignore.txt 2>/dev/null
+}
 
 function access_ranking_today() {
   echo "Access Ranking Today"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")" \
@@ -17,7 +35,6 @@ function access_ranking_today() {
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sed -e 's/I-lost-/i-lost-/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-today.txt 2>/dev/null
 }
@@ -27,6 +44,7 @@ function access_ranking_yesterday() {
   cp ${APP_DIR}/public/log-aggregation/access-ranking-{yesterday,$(date -d "2 days ago" "+%Y-%m-%d")}.txt
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
@@ -34,7 +52,6 @@ function access_ranking_yesterday() {
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sed -e 's/I-lost-/i-lost-/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-yesterday.txt 2>/dev/null
 }
@@ -43,13 +60,13 @@ function access_ranking_all() {
   echo "Access Ranking ALL"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep 'status:200' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sed -e 's/I-lost-/i-lost-/' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-all.txt 2>/dev/null
 }
@@ -58,6 +75,7 @@ function referer_ranking_today() {
   echo "Referer Ranking Today"
   find ${APP_DIR}/log/access.log \
     | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")"  \
@@ -74,6 +92,7 @@ function referer_ranking_yesterday() {
   cp ${APP_DIR}/public/log-aggregation/referer-ranking-{yesterday,$(date -d "2 days ago" "+%Y-%m-%d")}.txt
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")"  \
@@ -89,6 +108,7 @@ function referer_ranking_all() {
   echo "Referer Ranking All"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
@@ -312,6 +332,9 @@ case $1 in
         spam_block_rate_all
         ;;
       esac
+    ;;
+  'ip_to_ignore' )
+    ip_to_ignore
     ;;
   * )
     exit 1
