@@ -28,7 +28,7 @@ module Lokka
       end
 
       def image
-        @image ||= opengraph&.og&.image.presence || image_fallback
+        @image ||= opengraph&.og&.images.find {|item| item.url.presence } || image_fallback
       end
 
       def description
