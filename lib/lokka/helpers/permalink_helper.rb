@@ -45,7 +45,7 @@ module Lokka
 
     def custom_permalink_fix(path)
       entry = custom_permalink_entry(path)
-      entry.link if path != entry.link
+      entry.link if entry && path != entry.link
     end
 
     private
