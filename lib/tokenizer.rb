@@ -27,7 +27,7 @@ class Tokenizer
 
   def preserved_words
     @preserved_words ||= %w[
-      山と道 はてブ 鐘撞山 はてなブックマーク はてな 牛丼
+      山と道 はてブ 鐘撞山 はてなブックマーク はてな 牛丼 心拍 心拍数
     ]
   end
 
