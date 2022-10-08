@@ -8,6 +8,12 @@
     - @ng_words.each_with_index do |word, index|
       %input{ type: :text, name: "ng_words[ng_words_#{index}]", value: word }
     %input{ type: :text, name: "ng_words[ng_words_#{@ng_words.length}]", placeholder: I18n.t('new') }
+  .field
+    %label{ for: :ok_languages_key }= t('ng_words.ok_languages')
+    %br
+    - @ok_languages.each_with_index do |lang, index|
+      %input{ type: :text, name: "ok_languages[ok_languages_#{index}]", value: lang }
+    %input{ type: :text, name: "ok_languages[ok_languages_#{@ok_languages.length}]", placeholder: I18n.t('new') }
   %br
   .field
     %p

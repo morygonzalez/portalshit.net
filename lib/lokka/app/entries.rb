@@ -169,7 +169,6 @@ module Lokka
                           else # unless status value is overridden by plugins
                             logged_in? ? Comment::APPROVED : Comment::MODERATED
                           end
-
       if @comment.save
         redirect to(@entry.link)
       else

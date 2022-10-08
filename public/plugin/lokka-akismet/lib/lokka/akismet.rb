@@ -7,18 +7,18 @@ Net::HTTP.version_1_2
 module Lokka
   module Akismet
     def self.registered(app)
-      app.before do
-        path = request.env['PATH_INFO']
-        if params['comment'] && %r{^/admin/comments} !~ path
-          params['comment']['status'] = if logged_in?
-                                          Comment::APPROVED # approved
-                                        elsif spam?
-                                          Comment::SPAM # spam
-                                        else
-                                          Comment::MODERATED # moderated
-                                        end
-        end
-      end
+      # app.before do
+      #   path = request.env['PATH_INFO']
+      #   if params['comment'] && %r{^/admin/comments} !~ path
+      #     params['comment']['status'] = if logged_in?
+      #                                     Comment::APPROVED # approved
+      #                                   elsif spam?
+      #                                     Comment::SPAM # spam
+      #                                   else
+      #                                     Comment::MODERATED # moderated
+      #                                   end
+      #   end
+      # end
 
       app.get '/admin/plugins/akismet' do
         login_required
