@@ -959,10 +959,6 @@ textarea#category_description
         height: auto;
     }
 
-    input {
-        max-width: 100%;
-    }
-
     textarea {
         margin: auto 0;
         width: 100%;
@@ -992,6 +988,7 @@ textarea#category_description
     input[type="tel"],
     input[type="color"] {
         font-size: 16px;
+        max-width: 100%;
     }
 
     #aside {
