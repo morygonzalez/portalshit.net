@@ -43,6 +43,10 @@ input, button, textarea, select, optgroup, option, .button, .toggle-button {
     font-weight:inherit;
 }
 
+textarea {
+    font-size: 1.3em;
+}
+
 input[type="submit"],
 .button {
     cursor:pointer;
