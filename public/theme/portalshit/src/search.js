@@ -101,7 +101,7 @@ class Entries extends Component {
       return(
         <ul className="search-result">
           {this.state.entries}
-          <li className="fulltext-search"><a href={`/archives?query=${this.props.query}`}>全文検索する</a></li>
+          <li className="fulltext-search"><a href={`/search/?query=${this.props.query}`}>全文検索する</a></li>
         </ul>
       )
     } else {
