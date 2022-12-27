@@ -97,7 +97,7 @@ class Entries extends Component {
   }
 
   render() {
-    if (this.state.entries.length > 0) {
+    if (this.props.query) {
       return(
         <ul className="search-result">
           {this.state.entries}
