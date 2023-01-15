@@ -2,23 +2,25 @@
   %section.referrers
     %h3 この記事を参照している記事
     %ul
-      - referrers.each do |referrer|
-        %li.item{ title: referrer.title, link: referrer.link, type: 'referrer' }
-          .title
-            %span.link= link_to referrer.title, referrer.link
-            %span.created_at= l(referrer.created_at.to_date, format: :long)
-          .description
-            .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{referrer.cover_image}"), referrer.link
-            .body= referrer.long_description
+      - cache_fragment %(#{@entry.id}-related-#{I18n.locale}), expires_in: 1.hour do
+        - referrers.each do |referrer|
+          %li.item{ title: referrer.title, link: referrer.link, type: 'referrer' }
+            .title
+              %span.link= link_to referrer.title, referrer.link
+              %span.created_at= l(referrer.created_at.to_date, format: :long)
+            .description
+              .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{referrer.cover_image}"), referrer.link
+              .body= referrer.long_description
 - if @entry.is_a?(Post) && @entry.similar_entries.present?
   %section.similar
     %h3 この記事に似ている記事
     %ul
-      - @entry.similar_entries.includes(:category).order(:'similarities.score' => :desc).limit(6).each do |similar|
-        %li.item{ title: similar.title, link: similar.link, type: 'similar' }
-          .title
-            %span.link= link_to similar.title, similar.link
-            %span.created_at= l(similar.created_at.to_date, format: :long)
-          .description
-            .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{similar.cover_image}"), similar.link
-            .body= similar.long_description
+      - cache_fragment %(#{@entry.id}-similar-#{I18n.locale}), expires_in: 1.hour do
+        - @entry.similar_entries.includes(:category).order(:'similarities.score' => :desc).limit(6).each do |similar|
+          %li.item{ title: similar.title, link: similar.link, type: 'similar' }
+            .title
+              %span.link= link_to similar.title, similar.link
+              %span.created_at= l(similar.created_at.to_date, format: :long)
+            .description
+              .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{similar.cover_image}"), similar.link
+              .body= similar.long_description

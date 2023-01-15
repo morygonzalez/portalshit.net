@@ -2,7 +2,7 @@
   %h2= @page_title
   %p= @page_description
   %section.recent
-    - cache_fragment I18n.locale, expires_in: 1.hour do
+    - cache_fragment %(popular-#{I18n.locale}), expires_in: 1.hour do
       .new-entry
         - if post = @entries.first
           = partial :_main_entry, locals: { post: post }
