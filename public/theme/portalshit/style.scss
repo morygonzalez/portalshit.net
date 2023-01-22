@@ -282,7 +282,8 @@
       margin: 1em 1em 2em;
 
       input {
-        width: 350px;
+        width: 100%;
+        max-width: 350px;
         height: 40px;
         border: solid 1px hsl(0, 0%, 80%);
         padding-left: 10px;

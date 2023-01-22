@@ -1,16 +1,25 @@
+- spell_checker = DidYouMean::SpellChecker.new(dictionary: Entry.pluck(:slug))
+- current_slug = request.path_info.split('/').last
+- slug_candidate = spell_checker.correct(current_slug)
+- candidate = Entry.find_by(slug: slug_candidate)
 %section#not_found_description
   %h2 404 Not Found
   .description
     %p
-      Not found:
-      %code
-        #{request.path_info}
-    %p Please try searching.
+      Not found
+      %code= request.path_info
+      on this site.
+    - if candidate
+      %p
+        Did you mean?
+        = link_to candidate.title, candidate.link
+    - else
+      %p Please try searching.
 
 %section#not_found_search
   %h2= t('search')
   .search-field
-    %form(action="/archives" method="get")
+    %form(action="/search/" method="get")
       %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
 
 %section
