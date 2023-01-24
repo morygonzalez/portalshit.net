@@ -28,4 +28,4 @@
       = post.long_description(300)
       .footer
         = post.tags_to_html
-        .comment== #{link_to "#{t('comments')} (#{post.comments.approved.size})", "#{post.link}#comment_form"}
+        .comment== #{link_to "#{t('comments')} (#{post.approved_comments.size})", "#{post.link}#comment_form"}

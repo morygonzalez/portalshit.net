@@ -8,7 +8,7 @@ module Lokka
       @theme_types << :entries
 
       @posts = Post.published.
-                 includes(:category, :tags, :user, :comments).
+                 includes(:category, :tags, :user, :approved_comments).
                  page(params[:page] || 1).
                  per(@site.per_page).
                  order(@site.default_order)
@@ -40,7 +40,7 @@ module Lokka
 
       @query = params[:query]
       @posts = Post.published.
-                 includes(:category, :tags, :user).
+                 includes(:category, :tags, :user, :approved_comments).
                  search(@query).
                  page(params[:page || 1]).
                  per(@site.per_page).

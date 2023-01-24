@@ -49,7 +49,7 @@
   %section.comments
     %h3= t('comments')
     %ul.comment-list
-      - @entry.comments.approved.reverse.each do |comment|
+      - @entry.approved_comments.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}
           %ul.meta
             %li.gravatar= image_tag gravatar_image_url comment.email

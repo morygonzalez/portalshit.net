@@ -25,7 +25,7 @@
     ~ post.body
   %footer.footer
     = post.tags_to_html
-    .comment== #{link_to "#{t('comments')} (#{post.comments.size})", "#{post.link}#comment_form"}
+    .comment== #{link_to "#{t('comments')} (#{post.approved_comments.size})", "#{post.link}#comment_form"}
     .created_at== #{l post.created_at, format: :long}
     - if logged_in?
       .edit= link_to t('edit'), post.edit_link

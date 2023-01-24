@@ -91,7 +91,7 @@ module Lokka
         order by last_created_at desc, entries.id desc;
       SQL
       entry_ids = ActiveRecord::Base.connection.select_all(query).rows.flatten
-      entries = Entry.includes(:category, :user, :tags, :comments).where(id: entry_ids)
+      entries = Entry.includes(:category, :user, :tags, :approved_comments).where(id: entry_ids)
       @entries_group_by_category = entries.each_with_object({}) {|entry, result|
         result[entry.category] ||= []
         result[entry.category] << entry
