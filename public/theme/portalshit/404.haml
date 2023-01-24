@@ -1,4 +1,5 @@
-- spell_checker = DidYouMean::SpellChecker.new(dictionary: Entry.pluck(:slug))
+- slugs = Entry.where.not('slug REGEXP ?', '^[0-9]+$').pluck(:slug)
+- spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
 - current_slug = request.path_info.split('/').last
 - slug_candidate = spell_checker.correct(current_slug)
 - candidate = Entry.find_by(slug: slug_candidate)
