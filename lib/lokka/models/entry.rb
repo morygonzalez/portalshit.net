@@ -37,14 +37,7 @@ class Entry < ActiveRecord::Base
   scope :search,
         ->(words) {
           return all if words.blank?
-          words.split(/ |　/).inject(nil) do |query, word|
-            if query.nil?
-              query = where('title LIKE ?', "%#{word}%").or(where('body LIKE ?', "%#{word}%"))
-            else
-              query = query.merge(where('title LIKE ?', "%#{word}%").or(where('body LIKE ?', "%#{word}%")))
-            end
-            query
-          end
+          where('MATCH (entries.title, entries.body) AGAINST (? in BOOLEAN MODE)', words)
         }
 
   def self.get_by_fuzzy_slug(id_or_slug)
