@@ -85,7 +85,7 @@ namespace :similar_entries do
     entries.each do |entry|
       text_to_tokenize = <<~HEREDOC.strip_heredoc
         #{entry.title}
-        #{entry.body})
+        #{entry.raw_body})
         #{entry.category&.title}
         #{entry.tag_list.join(' ')}
       HEREDOC

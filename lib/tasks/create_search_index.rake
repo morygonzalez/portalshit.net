@@ -29,7 +29,7 @@ task :create_new_index do
     entries.each do |entry|
       tags_splitted = entry.tag_list.join(' ')
       title_tokenized = Tokenizer.run(entry.title).join(' ')
-      body_tokenized = Tokenizer.run(entry.body).join(' ')
+      body_tokenized = Tokenizer.run(entry.raw_body).join(' ')
       category_tokenized = Tokenizer.run(entry.category.title).join(' ') if entry.category
 
       index << {
