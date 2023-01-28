@@ -11,9 +11,8 @@
       %code= request.path_info
       on this site.
     - if candidate
-      %p
-        Did you mean?
-        = link_to candidate.title, candidate.link
+      %p Did you mean?
+      = Lokka::OGP::Replacer.new(%(<p><a href="#{@request.scheme}://#{@request.host}:#{@request.port}#{candidate.link}">#{candidate.title}</a></p>)).replace
     - else
       %p Please try searching.
 
