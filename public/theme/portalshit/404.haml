@@ -1,8 +1,3 @@
-- slugs = Entry.where.not('slug REGEXP ?', '^[0-9]+$').pluck(:slug)
-- spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
-- current_slug = request.path_info.split('/').last
-- slug_candidate = spell_checker.correct(current_slug)
-- candidate = Entry.find_by(slug: slug_candidate)
 %section#not_found_description
   %h2 404 Not Found
   .description
@@ -10,9 +5,10 @@
       Not found
       %code= request.path_info
       on this site.
-    - if candidate
+    - if not_found_candidates.any?
       %p Did you mean?
-      = Lokka::OGP::Replacer.new(%(<p><a href="#{@request.scheme}://#{@request.host}:#{@request.port}#{candidate.link}">#{candidate.title}</a></p>)).replace
+      - @candidates.each do |candidate|
+        = Lokka::OGP::Replacer.new(%(<p><a href="#{@request.scheme}://#{@request.host}:#{@request.port}#{candidate.link}">#{candidate.title}</a></p>)).replace
     - else
       %p Please try searching.
 

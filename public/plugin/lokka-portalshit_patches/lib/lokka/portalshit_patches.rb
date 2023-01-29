@@ -205,6 +205,14 @@ module Lokka
     def portalshit_javascript_path(file_name)
       "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
     end
+
+    def not_found_candidates
+      slugs = Entry.published.where.not('slug REGEXP ?', '^[0-9]+$').pluck(:slug)
+      spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
+      current_slug = request.path_info.split('/').last
+      slug_candidate = spell_checker.correct(current_slug)
+      @candidates = Entry.published.where(slug: slug_candidate)
+    end
   end
 end
 
