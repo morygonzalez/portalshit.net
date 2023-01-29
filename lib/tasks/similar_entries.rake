@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'activerecord-import'
 
 ENV['NEWRELIC_AGENT_ENABLED'] = 'false'
 
@@ -231,14 +232,15 @@ namespace :similar_entries do
 
     Similarity.connection.execute('TRUNCATE table similarities;')
 
-    results.each_value do |similarities|
-      next unless similarities.present?
-      similarities.each do |s|
-        conditions = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'] }
-        similarity = Similarity.find_or_initialize_by(conditions)
-        similarity.score = s['score']
-        similarity.save
+    similarities = []
+    results.each_value do |_similarities|
+      next unless _similarities.present?
+      _similarities.each do |s|
+        params = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'], score: s['score'] }
+        similarity = Similarity.new(params)
+        similarities << similarity
       end
     end
+    Similarity.import similarities
   end
 end
