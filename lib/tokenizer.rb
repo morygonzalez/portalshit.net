@@ -20,14 +20,15 @@ class Tokenizer
 
   def words_to_ignore
     @words_to_ignore ||= %w[
-      これ こと とき よう そう やつ とこ ところ もの はず みたい たち いま 確か
-      頃 lt gt ここ なか どこ まま わけ ため 的 それ これ あれ まえ あと 以上 以前 以下 以後
+      あと 気 逆 方 （ ）
+      ¥ gt lt ·  —
     ]
   end
 
   def preserved_words
     @preserved_words ||= %w[
-      山と道 はてブ 鐘撞山 高祖山 叶岳 高地山 はてなブックマーク はてな 牛丼 心拍 心拍数
+      山と道 はてブ 鐘撞山 高祖山 叶岳 高地山 はてなブックマーク はてな 牛丼 心拍 心拍数 関連記事
+      情報量 ARC'TERYX 三苫 博多駅
     ]
   end
 
@@ -46,10 +47,11 @@ class Tokenizer
     end
 
     nm.parse(cleansed_text) do |n|
-      next unless n.feature.match?(/名詞/)
-      next if n.feature.match?(/数/)
-      next if n.surface.match?(/\A([a-z][0-9]|\p{hiragana}|\p{katakana})\Z/i)
       next if words_to_ignore.include?(n.surface)
+      ignore_feature_regexp = /記号|動詞|数|助詞|副詞|形容詞|接尾|代名詞|非自立|接続詞|連体詞|接頭詞|BOS\/EOS/
+      next if n.feature.match?(ignore_feature_regexp)
+      next if n.surface.match?(%r{[ -/:-@\[-~]}) # 記号除外
+      next if n.surface.match?(/\A([0-9]+|[a-zA-Z]|\p{hiragana}|\p{katakana})\Z/i) # 数字・アルファベット・平仮名・カタカナ一文字除去
       words << n.surface
     end
 
