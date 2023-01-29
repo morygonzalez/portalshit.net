@@ -15,6 +15,16 @@ module Lokka
         @url = URI.encode(url)
       end
 
+      def url_to_request
+        if @url =~ /wikipedia\.org/
+          parsed = URI.parse(URI.encode(@url))
+          title = @url.split('/').last
+          %(#{parsed.scheme}://#{parsed.hostname}/w/index.php?title=#{title})
+        else
+          @url
+        end
+      end
+
       def host
         @host ||= URI.parse(url).host
       end
@@ -56,7 +66,7 @@ module Lokka
       private
 
       def opengraph
-        @opengraph ||= OpenGraphReader.fetch(URI.encode(url))
+        @opengraph ||= OpenGraphReader.fetch(url_to_request)
       end
 
       def cache_path
@@ -69,7 +79,7 @@ module Lokka
                      builder.response :follow_redirects
                      builder.adapter Faraday.default_adapter
                    end
-                   response = connection.get(URI.encode(@url))
+                   response = connection.get(url_to_request)
                    Nokogiri::HTML(response.body)
                  rescue StandardError
                    nil
