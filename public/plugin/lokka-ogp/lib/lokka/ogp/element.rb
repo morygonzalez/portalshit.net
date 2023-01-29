@@ -126,7 +126,7 @@ module Lokka
               <style>
                 body {
                   margin: 0;
-                  max-width: 500px;
+                  max-width: 550px;
                   font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif
                 }
 
@@ -159,8 +159,8 @@ module Lokka
 
                 .ogp-image img {
                   border-radius: 5px 0 0 5px;
-                  min-height: 120px;
-                  max-width: 120px;
+                  height: 120px;
+                  width: 120px;
                   object-fit: cover;
                 }
 
@@ -181,14 +181,14 @@ module Lokka
                 }
 
                 .ogp-summary h3 {
-                  max-width: 500px;
+                  max-width: 430px;
                   font-size: 1em;
-                  margin:0 0 .3em;
+                  margin: 0;
                   text-overflow: ellipsis;
                   display: -webkit-box;
                   overflow: hidden;
                   -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 1;
+                  -webkit-line-clamp: 2;
                 }
 
                 .ogp-summary h3:link, .ogp-summary h3:visited {
@@ -196,10 +196,10 @@ module Lokka
                 }
 
                 .description {
-                  max-width: 500px;
+                  max-width: 430px;
                   font-size: .8em;
                   line-height: 1.3em;
-                  margin: .5em auto .5em 0;
+                  margin: 0 auto 0 0;
                   border-radius: 0 5px 5px 0;
                   display: -webkit-box;
                   text-overflow: ellipsis;
@@ -209,7 +209,7 @@ module Lokka
                 }
 
                 .host {
-                  margin: .3em 0;
+                  margin: 0 auto 0 0;
                 }
 
                 @media screen and (max-width:400px) {
