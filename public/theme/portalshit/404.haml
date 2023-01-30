@@ -7,7 +7,7 @@
       on this site.
     - if not_found_candidates.any?
       %p Did you mean?
-      - @candidates.each do |candidate|
+      - not_found_candidates.each do |candidate|
         = Lokka::OGP::Replacer.new(%(<p><a href="#{@request.scheme}://#{@request.host}:#{@request.port}#{candidate.link}">#{candidate.title}</a></p>)).replace
     - else
       %p Please try searching.

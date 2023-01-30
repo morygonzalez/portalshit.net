@@ -207,11 +207,14 @@ module Lokka
     end
 
     def not_found_candidates
-      slugs = Entry.published.where.not('slug REGEXP ?', '^[0-9]+$').pluck(:slug)
-      spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
-      current_slug = request.path_info.split('/').last
-      slug_candidate = spell_checker.correct(current_slug)
-      @candidates = Entry.published.where(slug: slug_candidate)
+      @not_found_candidates ||=
+        begin
+          slugs = Entry.published.where.not('slug REGEXP ?', '^[0-9]+$').pluck(:slug)
+          spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
+          current_slug = request.path_info.split('/').last
+          slug_candidate = spell_checker.correct(current_slug)
+          Entry.published.where(slug: slug_candidate)
+        end
     end
   end
 end
