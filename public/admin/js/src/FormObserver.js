@@ -158,7 +158,10 @@ html, body {
         iframe.style.width = '100%';
         iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
       }
-      result.then(renderIframe).then(resizeIframe).catch(setTimeout(resizeIframe, 300));
+      result
+        .then(renderIframe)
+        .then(resizeIframe)
+        .finally(setTimeout(resizeIframe, 300));
       editor.style.display = 'none';
       preview.style.display = 'block';
     });

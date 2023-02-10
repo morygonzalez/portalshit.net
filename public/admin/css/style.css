@@ -46,6 +46,7 @@ input, button, textarea, select, optgroup, option, .button, .toggle-button {
 input#post_title {
     font-size: 1.5em;
     width: 100%;
+    font-weight: bold;
 }
 
 textarea {
@@ -147,9 +148,21 @@ form div.textarea {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"] {
     display:block;
-    width:550px;
+    width: 100%;
 }
 
 ul.preview-edit {
@@ -960,6 +973,23 @@ textarea#category_description
 
 #dashboard {
     display: none;
+}
+
+@media screen and (min-width:1200px) {
+    #entry {
+        display: flex;
+    }
+
+    #form-main {
+        min-width: 650px;
+        max-width: 1000px;
+        width: 100%;
+    }
+
+    #form-aside {
+        min-width: 300px;
+        margin-left: 2em;
+    }
 }
 
 @media screen and (max-width:640px) {
