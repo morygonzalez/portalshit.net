@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('select[id$=_markup]').addEventListener('change', (event) => {
       formObserver.handleMarkupChange(event);
       initEditorUpload();
+      adjustTextareaHeight();
     }, false);
   }
 });
