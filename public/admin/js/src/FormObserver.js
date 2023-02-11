@@ -5,6 +5,7 @@ class FormObserver {
   constructor(textarea) {
     this.textarea = textarea;
     this.selected = document.querySelector('select[id$=_markup] option:checked').value;
+    this.previousMarkup;
     this.setupEditor();
     this.observeSubmit();
     this.observePreview();
@@ -26,9 +27,12 @@ class FormObserver {
     }
   }
 
-  setupQuill() {
-    const content = document.querySelector('#editor textarea').value;
+  async setupQuill() {
+    const raw_body = document.querySelector('#editor textarea').value;
+    const markup = this.previousMarkup;
+    const preview_body = await this.getPreview({raw_body, markup});
     const previewTab = document.querySelector('ul.preview-edit');
+    console.log(preview_body)
     previewTab.style.display = 'none';
     this.quill = new Quill('#editor', {
       modules: {
@@ -41,7 +45,7 @@ class FormObserver {
       },
       theme: 'snow'
     });
-    this.quill.clipboard.dangerouslyPasteHTML(content);
+    this.quill.clipboard.dangerouslyPasteHTML(preview_body);
     this.quill.getModule('toolbar').addHandler('image', () => {
       this.selectLocalImage();
     });
@@ -96,6 +100,18 @@ class FormObserver {
     }
   }
 
+  async getPreview({markup, raw_body}) {
+    const ajaxData = new FormData();
+    ajaxData.append('raw_body', raw_body);
+    ajaxData.append('markup', markup);
+    const request = await fetch('/admin/previews', {
+      method: 'POST',
+      body: ajaxData
+    });
+    const response = await request.json();
+    return response.body;
+  }
+
   observePreview() {
     let editor;
     const preview = document.querySelector('#preview');
@@ -108,6 +124,7 @@ class FormObserver {
         if (option.value == selected) {
           option.setAttribute('selected', 'selected');
         } else {
+          this.previousMarkup = option.value;
           option.removeAttribute('selected');
         }
       })
@@ -127,14 +144,7 @@ class FormObserver {
       const textarea = document.querySelector('#editor textarea');
       const raw_body = textarea.value;
       const markup = document.querySelector('#post_markup option:checked, #page_markup option:checked').value || 'redcarpet';
-      const ajaxData = new FormData();
-      ajaxData.append('raw_body', raw_body);
-      ajaxData.append('markup', markup);
-      const request = await fetch('/admin/previews', {
-        method: 'POST',
-        body: ajaxData
-      });
-      const response = await request.json();
+      const preview_body = await this.getPreview({markup, raw_body});
       const iframe = document.createElement('iframe');
       preview.appendChild(iframe);
       const doc = iframe.contentWindow.document;
@@ -154,7 +164,7 @@ figure {
       const result = new Promise(resolve => resolve(iframe));
       const renderIframe = () => {
         doc.open();
-        doc.write(style + response.body);
+        doc.write(style + preview_body);
         doc.close();
       }
       const resizeIframe = () => {
