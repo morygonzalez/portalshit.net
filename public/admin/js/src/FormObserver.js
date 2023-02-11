@@ -147,6 +147,9 @@ html, body {
   word-wrap: break-word;
   margin: 0;
 }
+figure {
+  margin: 0;
+}
 </style>`;
       const result = new Promise(resolve => resolve(iframe));
       const renderIframe = () => {
