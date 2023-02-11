@@ -242,7 +242,12 @@ class Entry
             </figure>
           ERUBY
           figure = Nokogiri::HTML.fragment(erb.result(binding))
-          img.replace(figure)
+          parent = img.parent
+          if parent.name == 'p' && parent.children.length == 1
+            parent.replace(figure)
+          else
+            img.replace(figure)
+          end
         end
         doc.to_s
       end
