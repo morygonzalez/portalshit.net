@@ -43,15 +43,9 @@ input, button, textarea, select, optgroup, option, .button, .toggle-button {
     font-weight:inherit;
 }
 
-input#post_title {
-    font-size: 1.5em;
-    width: 100%;
-    font-weight: bold;
-}
-
 textarea {
     font-size: 1.3em;
-    width: 100%;
+    width: 550px;
     resize: horizontal;
     height: auto;
 }
@@ -162,6 +156,24 @@ input[type="search"],
 input[type="tel"],
 input[type="color"] {
     display:block;
+    width: 550px;
+}
+
+#entry textarea,
+#entry input[type="text"],
+#entry input[type="password"],
+#entry input[type="datetime"],
+#entry input[type="datetime-local"],
+#entry input[type="date"],
+#entry input[type="month"],
+#entry input[type="time"],
+#entry input[type="week"],
+#entry input[type="number"],
+#entry input[type="email"],
+#entry input[type="url"],
+#entry input[type="search"],
+#entry input[type="tel"],
+#entry input[type="color"] {
     width: 100%;
 }
 
@@ -987,7 +999,7 @@ textarea#category_description
 
     #form-main {
         min-width: 600px;
-        flex-grow: 3;
+        flex-grow: 4;
     }
 
     #form-aside {

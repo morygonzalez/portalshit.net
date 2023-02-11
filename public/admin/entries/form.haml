@@ -12,6 +12,10 @@
       = f.label :title, caption: t("#{@name}.title")
       %br/
       = f.text_field :title
+    .field.markup
+      = f.label :markup, caption: 'Markup'
+      %br/
+      = f.select :markup, options: Markup.engine_list.map {|e| [e[1], e[0]] }
     .field.body
       = f.label :body, caption: t("#{@name}.body")
       %ul.preview-edit
@@ -21,8 +25,9 @@
         %li
           = label_tag :preview, for: 'preview-preview', caption: 'Preview'
           = radio_button_tag :ipreview, value: 'preview', id: 'preview-preview'
-      #editor
-        %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", rows: 15, cols: 50, style: 'position: absolute; height: 100%; width: 100%; padding: 0; margin: 0' }= @entry.raw_body
+      #editor{ 'data-mobile': mobile?.present?.to_s }
+        - style = mobile? ? nil : 'position: absolute; height: 100%; width: 100%; padding: 0; margin: 0'
+        %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", rows: 15, cols: 50, style: style }= @entry.raw_body
       #preview
   #form-aside
     .field.slug
@@ -30,11 +35,7 @@
       %br/
       = f.text_field :slug
       - if @entry.persisted? && @entry.slug?
-        = link_to '実際の URL で確認', @entry.link, target: '_blank'
-    .field.markup
-      = f.label :markup, caption: 'Markup'
-      %br/
-      = f.select :markup, options: Markup.engine_list.map {|e| [e[1], e[0]] }
+        = link_to @entry.link, @entry.link, target: '_blank'
     .field.category
       = f.label :category, caption: t("#{@name}.category")
       %br/

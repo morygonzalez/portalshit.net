@@ -20,6 +20,9 @@ const hideNotice = () => {
 const adjustTextareaHeight = () => {
   const textarea = document.querySelector('#main form textarea');
   const editor = document.querySelector('#editor');
+  if (editor.dataset.mobile === "true") {
+    return;
+  }
   const offset = parseInt(textarea.getBoundingClientRect().top * 1.1);
   let newHeight = document.documentElement.clientHeight - offset;
   editor.style.height = `${newHeight}px`;
