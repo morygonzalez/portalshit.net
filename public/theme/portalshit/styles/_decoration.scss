@@ -218,11 +218,12 @@ kbd {
   color: #333;
   display: inline-block;
   font-family: Arial,Helvetica,sans-serif;
-  font-size: 11px;
+  font-size: .85em;
   line-height: 1.4;
   margin: 0 .5em;
   padding: .1em .3em;
   text-shadow: 0 1px 0 #fff;
+  vertical-align: text-top;
 }
 
 #a_flickr_badge_image {
