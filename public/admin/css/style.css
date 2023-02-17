@@ -177,6 +177,10 @@ input[type="color"] {
     width: 100%;
 }
 
+#entry #form-aside input:not([type="button"]) {
+    max-width: 350px;
+}
+
 .admin_login input[type="text"], .admin_login input[type="password"] {
     display:block;
     width: 300px;
@@ -1007,6 +1011,7 @@ textarea#category_description
 
     #form-aside {
         min-width: 220px;
+        max-width: 350px;
         flex-grow: 1;
         margin-left: 20px;
     }
