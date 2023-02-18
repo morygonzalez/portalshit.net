@@ -6,12 +6,12 @@
   %h2= t('recent_entries')
   %section.recent
     - if post = @posts.first
-      .new-entry
-        = partial :_main_entry, locals: { post: post }
-      .past-entries
-        - @posts.each_with_index do |post, index|
-          - next if index == 0
-          = partial :_other_entries, locals: { post: post }
+      -# .new-entry
+      -#   = partial :_main_entry, locals: { post: post }
+      -# .past-entries
+      -#   - @posts.each_with_index do |post, index|
+      -#     - next if index == 0
+      -#     = partial :_other_entries, locals: { post: post }
 
 %section#popular_entries
   %h2 人気記事
