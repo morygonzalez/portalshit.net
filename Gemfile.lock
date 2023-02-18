@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/morygonzalez/sinatra-cache
-  revision: 92f90c6e922f02491de6dd4b0f43541257fb8c36
+  revision: 60eeea9fbfaf3f23d0b81925d64a823ec81867cc
   specs:
     sinatra-cache (0.3.7)
       sinatra
@@ -333,7 +333,7 @@ GEM
       rake (>= 10)
       tomlrb (~> 1.2)
     thread_safe (0.3.6)
-    tilt (2.0.10)
+    tilt (2.0.11)
     tomlrb (1.3.0)
     tux (0.3.0)
       ripl (>= 0.3.5)
