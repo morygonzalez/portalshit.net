@@ -24,6 +24,7 @@ require 'capistrano/bundler'
 require 'capistrano/puma'
 # require 'capistrano/puma/workers'
 install_plugin Capistrano::Puma
+install_plugin Capistrano::Puma::Systemd
 require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
 
