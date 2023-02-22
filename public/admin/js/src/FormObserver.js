@@ -7,8 +7,13 @@ class FormObserver {
     this.selected = document.querySelector('select[id$=_markup] option:checked').value;
     this.previousMarkup;
     this.setupEditor();
+    this.initializeFields();
+    this.adjustTextareaHeight();
     this.observeSubmit();
     this.observePreview();
+    this.observeTextInput();
+    this.observeWindowResize();
+    this.observeFieldsChange();
   }
 
   setupEditor() {
@@ -68,6 +73,17 @@ class FormObserver {
       editor.appendChild(textarea);
       previewTab.parentNode.insertBefore(editor, previewTab.nextSibling);
     }
+  }
+
+  adjustTextareaHeight() {
+    const textarea = this.textarea;
+    const editor = textarea.parentNode;
+    if (editor.dataset.mobile === "true") {
+      return;
+    }
+    const offset = parseInt(textarea.getBoundingClientRect().top * 1.1);
+    let newHeight = document.documentElement.clientHeight - offset;
+    editor.style.height = `${newHeight}px`;
   }
 
   selectLocalImage() {
@@ -178,6 +194,48 @@ figure {
       editor.style.display = 'none';
       preview.style.display = 'block';
     });
+  }
+
+  observeTextInput() {
+    this.textarea.addEventListener('input', () => {
+      this.adjustTextareaHeight();
+    })
+  }
+
+  observeWindowResize() {
+    window.onresize = () => {
+      this.adjustTextareaHeight();
+    }
+  }
+
+  initializeFields() {
+    const fields = Array.from(document.querySelectorAll('div.field'));
+    for (const field of fields) {
+      const inputElement = field.querySelector('input[type="text"], textarea, input[type="datetime-local"], select option:checked');
+      if (inputElement === null) {
+        continue;
+      }
+      field.dataset.serialize = JSON.stringify(inputElement.value);
+    }
+  }
+
+  observeFieldsChange() {
+    const fields = Array.from(document.querySelectorAll('div.field'));
+    for (const field of fields) {
+      const inputElement = field.querySelector('input[type="text"], textarea, input[type="datetime-local"], select');
+      if (inputElement === null) {
+        continue;
+      }
+      inputElement.addEventListener('input', () => {
+        if (field.dataset.serialize != JSON.stringify(inputElement.value)) {
+          inputElement.dataset.changed = 'true';
+          field.classList.add('edited');
+        } else {
+          inputElement.dataset.changed = 'false';
+          field.classList.remove('edited');
+        }
+      })
+    }
   }
 }
 

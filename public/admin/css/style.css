@@ -957,6 +957,13 @@ textarea#category_description
     position: relative;
 }
 
+.field.edited input,
+.field.edited textarea,
+.field.edited select
+{
+    background-color: #ede4cd;
+}
+
 #editor iframe {
     font-size: 13px;
 }
