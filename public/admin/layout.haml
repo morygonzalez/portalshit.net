@@ -88,5 +88,6 @@
         - if flash[:notice]
           #notice
             %p= flash[:notice]
+        #warn{ style: 'display: none' }
         = yield
     #footer= link_to 'Lokka', 'http://lokka.org'

@@ -307,7 +307,7 @@ h1 {
     text-shadow:#eee 0px 1px 0px;
 }
 
-#notice {
+#notice, #warn {
     display: block;
     position: absolute;
     left: 360px;
@@ -317,7 +317,7 @@ h1 {
     top: 73px;
     line-height: 26px;
 }
-#notice p {
+#notice p, #warn p {
     display: block;
     background-color: #f2813c;
     margin: 0px;
@@ -838,7 +838,6 @@ ul.plugins li a {
 }
 
 #error {
-    width:510px;
     background-color: #e8c5c5;
     margin-bottom: 25px;
     padding-top: 10px;
@@ -1109,7 +1108,7 @@ textarea#category_description
         width: inherit;
     }
 
-    #notice {
+    #notice, #warn {
         left: auto;
         top: 70px;
         right: 11px;

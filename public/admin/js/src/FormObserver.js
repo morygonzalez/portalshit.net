@@ -234,7 +234,23 @@ figure {
           inputElement.dataset.changed = 'false';
           field.classList.remove('edited');
         }
+        this.showChangedWarning();
       })
+    }
+  }
+
+  showChangedWarning() {
+    const warning = document.querySelector('#warn');
+    if (document.querySelectorAll('[data-changed="true"]').length > 0) {
+      if (!warning.hasChildNodes()) {
+        warning.style.display = 'block';
+        const message = document.createElement('p');
+        message.innerHTML = '未保存のフィールドがあります';
+        warning.appendChild(message);
+      }
+    } else {
+      warning.style.display = 'none';
+      warning.removeChild(warning.children[0]);
     }
   }
 }

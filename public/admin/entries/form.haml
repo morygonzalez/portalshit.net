@@ -1,13 +1,13 @@
 %link{ href: 'https://cdn.quilljs.com/1.3.6/quill.snow.css', rel: 'stylesheet' }
 
 - form_for @entry, action, method: method, id: 'entry' do |f|
-  - unless @entry.errors.empty?
-    #error
-      .title= t('error')
-      %ul
-        - @entry.errors.each do |error|
-          %li= error
   #form-main
+    - unless @entry.errors.empty?
+      #error
+        .title= t('error')
+        %ul
+          - @entry.errors.each do |error|
+            %li= error
     .field.title
       = f.label :title, caption: t("#{@name}.title")
       %br/
