@@ -209,6 +209,9 @@ figure {
   }
 
   initializeFields() {
+    if (this.isNewEntry()) {
+      return;
+    }
     const fields = Array.from(document.querySelectorAll('div.field'));
     for (const field of fields) {
       const inputElement = field.querySelector('input[type="text"], textarea, input[type="datetime-local"], select option:checked');
@@ -220,6 +223,9 @@ figure {
   }
 
   observeFieldsChange() {
+    if (this.isNewEntry()) {
+      return;
+    }
     const fields = Array.from(document.querySelectorAll('div.field'));
     for (const field of fields) {
       const inputElement = field.querySelector('input[type="text"], textarea, input[type="datetime-local"], select');
@@ -252,6 +258,10 @@ figure {
       warning.style.display = 'none';
       warning.removeChild(warning.children[0]);
     }
+  }
+
+  isNewEntry() {
+    return document.querySelector('input[name="_method"][value="put"]') === null;
   }
 }
 
