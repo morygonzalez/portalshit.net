@@ -7,16 +7,24 @@ class SearchApp extends Component {
       query: ''
     }
     this.updateQuery = this.updateQuery.bind(this)
+    this.closeModal = this.closeModal.bind(this)
   }
 
   updateQuery(query) {
     this.setState({ query })
   }
 
+  closeModal() {
+    const modal = document.querySelector('.modal.active')
+    if (modal) {
+      modal.classList.toggle('active')
+    }
+  }
+
   render() {
     return(
       <div className="search-component">
-        <SearchField update={this.updateQuery} query={this.state.query} />
+        <SearchField update={this.updateQuery} closeModal={this.closeModal} query={this.state.query} />
         <Entries query={this.state.query} />
       </div>
     )
@@ -27,10 +35,21 @@ const SearchField = (props) => {
   const [query, setQuery] = useState(props.query || '')
 
   useEffect(() => {
+    const close = (e) => {
+      if (e.keyCode === 27) {
+        props.closeModal()
+      }
+    }
+    window.addEventListener('keydown', close)
+
     const timeOutId = setTimeout(() => {
       props.update(query)
     }, 500)
-    return () => clearTimeout(timeOutId)
+
+    return () => {
+      clearTimeout(timeOutId)
+      window.removeEventListener('keydown', close)
+    }
   }, [query])
 
   const handleChange = (event) => {
