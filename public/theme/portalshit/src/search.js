@@ -29,7 +29,11 @@ class SearchApp extends Component {
     if (focus) {
       const selectedIndex = Array.from(document.querySelectorAll('.search-result a')).indexOf(focus)
       currentIndex = selectedIndex - 1
-      document.querySelectorAll('.search-result a')[currentIndex].focus()
+      if (currentIndex < 0) {
+        document.querySelector('input[type="search"]').focus()
+      } else {
+        document.querySelectorAll('.search-result a')[currentIndex].focus()
+      }
     } else {
       document.querySelector('.search-result a').focus()
     }
