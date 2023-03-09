@@ -4,58 +4,90 @@ class SearchApp extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      query: ''
+      query: '',
+      focus: null,
+      length: 0
     }
     this.updateQuery = this.updateQuery.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.moveUp = this.moveUp.bind(this)
     this.moveDown = this.moveDown.bind(this)
+    this.keydown = this.keydown.bind(this)
+    this.modal = React.createRef()
+    this.updateEntryLength = this.updateEntryLength.bind(this)
   }
 
   updateQuery(query) {
     this.setState({ query })
   }
 
+  updateEntryLength(length) {
+    this.setState({ length })
+  }
+
   closeModal() {
-    const modal = document.querySelector('.modal.active')
-    if (modal) {
-      modal.classList.toggle('active')
-    }
+    this.modal.current.parentNode.classList.remove('active')
   }
 
   moveUp() {
-    const focus = document.querySelector('.search-result a:focus')
-    let currentIndex
-    if (focus) {
-      const selectedIndex = Array.from(document.querySelectorAll('.search-result a')).indexOf(focus)
-      currentIndex = selectedIndex - 1
-      if (currentIndex < 0) {
-        document.querySelector('input[type="search"]').focus()
-      } else {
-        document.querySelectorAll('.search-result a')[currentIndex].focus()
-      }
+    let newFocus
+    if (this.state.focus === null) {
+      newFocus = 1
+    } else if (this.state.focus === 0) {
+      // focus text input
+      newFocus = this.state.focus
     } else {
-      document.querySelector('.search-result a').focus()
+      newFocus = this.state.focus - 1
     }
+    this.setState({ focus: newFocus })
   }
 
   moveDown() {
-    const focus = document.querySelector('.search-result a:focus')
-    let currentIndex
-    if (focus) {
-      const selectedIndex = Array.from(document.querySelectorAll('.search-result a')).indexOf(focus)
-      currentIndex = selectedIndex + 1
-      document.querySelectorAll('.search-result a')[currentIndex].focus()
+    let newFocus
+    if (this.state.focus === null) {
+      newFocus = 1
+    } else if (this.state.focus === this.state.length + 1) {
+      // focus fulltext search
+      newFocus = this.state.focus
     } else {
-      document.querySelector('.search-result a').focus()
+      newFocus = this.state.focus + 1
+    }
+    this.setState({ focus: newFocus })
+  }
+
+  keydown(e) {
+    switch (e.keyCode) {
+      case 27:
+        this.closeModal()
+        break
+      case 38:
+        if (this.state.query) {
+          e.preventDefault()
+          this.moveUp()
+        }
+        break
+      case 40:
+        if (this.state.query) {
+          e.preventDefault()
+          this.moveDown()
+        }
+        break
+      default:
+        break
     }
   }
 
   render() {
     return(
-      <div className="search-component">
-        <SearchField update={this.updateQuery} closeModal={this.closeModal} moveUp={this.moveUp} moveDown={this.moveDown} query={this.state.query} />
-        <Entries query={this.state.query} />
+      <div className="search-component" ref={this.modal}>
+        <SearchField
+          update={this.updateQuery}
+          keydown={(e) => { this.keydown(e) }}
+          query={this.state.query} />
+        <Entries
+          query={this.state.query}
+          focus={this.state.focus}
+          updateEntryLength={this.updateEntryLength} />
       </div>
     )
   }
@@ -65,36 +97,14 @@ const SearchField = (props) => {
   const [query, setQuery] = useState(props.query || '')
 
   useEffect(() => {
-    const keydown = (e) => {
-      switch (e.keyCode) {
-        case 27:
-          props.closeModal()
-          break
-        case 38:
-          if (query) {
-            e.preventDefault()
-            props.moveUp()
-          }
-          break
-        case 40:
-          if (query) {
-            e.preventDefault()
-            props.moveDown()
-          }
-          break
-        default:
-          break
-      }
-    }
-    window.addEventListener('keydown', keydown)
-
     const timeOutId = setTimeout(() => {
       props.update(query)
     }, 500)
+    window.addEventListener('keydown', props.keydown)
 
     return () => {
       clearTimeout(timeOutId)
-      window.removeEventListener('keydown', keydown)
+      window.removeEventListener('keydown', props.keydown)
     }
   }, [query])
 
@@ -121,7 +131,7 @@ class Entries extends Component {
     super(props)
     this.state = {
       response: [],
-      entries: []
+      entries: [],
     }
   }
 
@@ -136,7 +146,10 @@ class Entries extends Component {
     }
     this.setState(
       { response },
-      () => { this.setEntries() }
+      () => {
+        this.setEntries()
+        this.props.updateEntryLength(response.length)
+      }
     )
   }
 
@@ -160,6 +173,21 @@ class Entries extends Component {
       this.setState({ entries: [] })
       this.loadEntriesFromServer()
     }
+
+    if (prevProps.focus !== this.props.focus) {
+      let focused
+      if (this.props.focus > 0) {
+        focused = document.querySelector(`li a[tabindex="${this.props.focus}"]`)
+      } else {
+        focused = document.querySelector('input[type="search"]')
+      }
+      const hoveredItems = document.querySelectorAll('li.hovered')
+      Array.from(hoveredItems).forEach(hovered => {
+        hovered.classList.remove('hovered')
+      })
+      focused.parentNode.classList.add('hovered')
+      focused.focus()
+    }
   }
 
   render() {
@@ -167,7 +195,9 @@ class Entries extends Component {
       return(
         <ul className="search-result">
           {this.state.entries}
-          <li className="fulltext-search"><a href={`/search/?query=${this.props.query}`}>全文検索する</a></li>
+          <li className="fulltext-search">
+            <a href={`/search/?query=${this.props.query}`} tabIndex={this.state.entries.length + 1}>全文検索する</a>
+          </li>
         </ul>
       )
     } else {
@@ -183,7 +213,11 @@ class Entry extends Component {
 
   render() {
     return(
-      <a href={this.props.link} tabindex={this.props.index}><li>{this.props.title}</li></a>
+      <li>
+        <a href={this.props.link} tabIndex={this.props.index + 1}
+          >{this.props.title}
+        </a>
+      </li>
     )
   }
 }

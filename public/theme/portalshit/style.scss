@@ -183,28 +183,31 @@
                   background: transparent;
                   margin-top: 1vw;
 
-                  a {
-                    padding: 0;
-
-                    &:hover {
-                      display: inline;
-                      background: transparent;
-                      text-shadow: none;
-                    }
-                  }
 
                   li {
                     font-size: 150%;
                     margin: 0;
                     padding: .7vw 1vw;
 
-                    &:hover {
+                    &:hover, &.hovered {
                       background-color: rgba(93,94,73,0.4);
                     }
 
                     &.fulltext-search {
                       font-size: 130%;
                       text-align: center;
+                    }
+
+                    a {
+                      padding: 0;
+                      display: block;
+
+                      &:hover, &:focus:focus-visible:focus-within {
+                        background: transparent;
+                        text-shadow: none;
+                        outline-style: none;
+                        outline-width: 0;
+                      }
                     }
                   }
                 }
