@@ -57,7 +57,14 @@ export default class Chart extends PureComponent {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis />
-          <Tooltip labelStyle={{ color: '#000', fontWeight: 'bold' }} itemStyle={{ margin: '0 2px 0 4px', padding: '0' }} />
+          <Tooltip
+            labelStyle={{ color: '#000', fontWeight: 'bold' }}
+            itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
+            labelFormatter={(label, payload) => {
+              const total = payload.reduce((sum, item) => { return sum = sum + item.value }, 0);
+              return `${label}年（${total}記事）`
+            }
+          } />
           <Legend onClick={this.selectBar} />
           {this.props.categories.map((category, index) => {
             let disabledCategories = this.props.disabledCategories.includes(category)
