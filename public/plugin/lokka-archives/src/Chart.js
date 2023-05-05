@@ -63,7 +63,9 @@ export default class Chart extends PureComponent {
       const month = date.toLocaleDateString('default', { month: 'short' })
       return `${month} (${total} entries)`
     } else {
-      return `${label} (${total} entries)`
+      const date = new Date(`${label}-01-01`)
+      const year = date.toLocaleDateString('default', { year: 'numeric' })
+      return `${year} (${total} entries)`
     }
   }
 
