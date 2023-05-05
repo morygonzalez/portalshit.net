@@ -39,7 +39,12 @@ module Lokka
 
       app.get '/archives/chart.json' do
         content_type :json
-        chart.to_json
+        if params[:year]
+          year = params[:year].to_i
+          chart(year).to_json
+        else
+          chart.to_json
+        end
       end
 
       app.get '/archives' do
@@ -74,8 +79,8 @@ module Lokka
       Archives::Aggregator.generate(posts)
     end
 
-    def chart
-      Archives::ChartQueryGenerator.run
+    def chart(year=nil)
+      Archives::ChartQueryGenerator.run(year)
     end
 
     def archives_assets_path

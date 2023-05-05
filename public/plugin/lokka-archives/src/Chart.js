@@ -16,16 +16,28 @@ export default class Chart extends PureComponent {
       '#00ACC1', '#00897B', '#43A047', '#7CB342', '#C0CA33', '#FDD835', '#FFB300'
     ]
     this.selectBar = this.selectBar.bind(this)
+    this.formatTooltipLabel = this.formatTooltipLabel.bind(this)
   }
 
   async loadChartFromServer() {
-    const request = await fetch('/archives/chart.json')
+    let request
+    if (this.props.year !== null) {
+      request = await fetch(`/archives/chart.json?year=${this.props.year}`)
+    } else {
+      request = await fetch('/archives/chart.json')
+    }
     const response = await request.json()
     this.setState({ data: response })
   }
 
   componentDidMount() {
     this.loadChartFromServer()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.year !== this.props.year) {
+      this.loadChartFromServer()
+    }
   }
 
   selectBar(selectedOption) {
@@ -44,6 +56,17 @@ export default class Chart extends PureComponent {
     )
   }
 
+  formatTooltipLabel(label, payload) {
+    const total = payload.reduce((sum, item) => { return sum = sum + item.value }, 0);
+    if (this.props.year !== null) {
+      const date = new Date(`${label}-01`)
+      const month = date.toLocaleDateString('default', { month: 'short' })
+      return `${month} (${total} entries)`
+    } else {
+      return `${label} (${total} entries)`
+    }
+  }
+
   render() {
     return (
       <ResponsiveContainer height={500}>
@@ -55,16 +78,13 @@ export default class Chart extends PureComponent {
           style={{ fontSize: '14px' }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
+          <XAxis dataKey="duration" />
           <YAxis />
           <Tooltip
             labelStyle={{ color: '#000', fontWeight: 'bold' }}
             itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
-            labelFormatter={(label, payload) => {
-              const total = payload.reduce((sum, item) => { return sum = sum + item.value }, 0);
-              return `${label}年（${total}記事）`
-            }
-          } />
+            labelFormatter={this.formatTooltipLabel}
+          />
           <Legend onClick={this.selectBar} />
           {this.props.categories.map((category, index) => {
             let disabledCategories = this.props.disabledCategories.includes(category)
