@@ -58,7 +58,7 @@ class App extends Component {
             <YearList update={this.updateYear} />
             <CategoryList update={this.updateDisabledCategories} categories={this.state.categories} />
             <SearchField update={this.updateQuery} query={this.state.query} />
-            <div className="entry-length"><p>{this.state.length} entries</p></div>
+            <div className="entry-length"><p>記事数 : {this.state.length}</p></div>
           </div>
           <Routes>
             <Route

@@ -173,7 +173,6 @@ class EntryList extends Component {
       <li className="entryList year-month">
         <h3>
           <span className="month"><Moment format={this.ymFormat} locale={locale}>{this.state.date}</Moment></span>
-          <span className="entry-count">{this.props.entries.length} {this.props.entries.length > 1 ? "entries" : "entry"}</span>
         </h3>
         <ul className="entries">{this.state.entries}</ul>
       </li>

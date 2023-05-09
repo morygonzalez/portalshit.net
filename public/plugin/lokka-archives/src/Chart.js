@@ -27,7 +27,20 @@ export default class Chart extends PureComponent {
       request = await fetch('/archives/chart.json')
     }
     const response = await request.json()
-    this.setState({ data: response })
+    const data = response.map((item) => {
+      const label = item['duration']
+      if (this.props.year !== null) {
+        const date = new Date(`${label}-01`)
+        const month = date.toLocaleDateString('default', { month: 'short' })
+        item['key'] = month
+      } else {
+        const date = new Date(`${label}-01-01`)
+        const year = date.toLocaleDateString('default', { year: 'numeric' })
+        item['key'] = year
+      }
+      return item
+    })
+    this.setState({ data: data })
   }
 
   componentDidMount() {
@@ -58,15 +71,7 @@ export default class Chart extends PureComponent {
 
   formatTooltipLabel(label, payload) {
     const total = payload.reduce((sum, item) => { return sum = sum + item.value }, 0);
-    if (this.props.year !== null) {
-      const date = new Date(`${label}-01`)
-      const month = date.toLocaleDateString('default', { month: 'short' })
-      return `${month} (${total} entries)`
-    } else {
-      const date = new Date(`${label}-01-01`)
-      const year = date.toLocaleDateString('default', { year: 'numeric' })
-      return `${year} (${total} entries)`
-    }
+    return `${label} : ${total}`
   }
 
   render() {
@@ -80,7 +85,7 @@ export default class Chart extends PureComponent {
           style={{ fontSize: '14px' }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="duration" />
+          <XAxis dataKey="key" />
           <YAxis />
           <Tooltip
             labelStyle={{ color: '#000', fontWeight: 'bold' }}
