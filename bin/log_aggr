@@ -119,6 +119,21 @@ function referer_ranking_all() {
     | cat 1>${LOG_AGGREGATION_DIR}/referer-ranking-all.txt 2>/dev/null
 }
 
+function query_term_ranking_all() {
+  echo "Search Query Ranking"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
+    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | cut -f5 | grep 'query=' \
+    | grep -vP '(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#)' \
+    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | tr -s "\n" \
+    | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | cat 1>${LOG_AGGREGATION_DIR}/query-term-ranking-all.txt 2>/dev/null
+}
 
 function cache_hit_rate_today() {
   echo "Cache Hit Rate Today"
@@ -304,6 +319,13 @@ case $1 in
         ;;
       'all' )
         referer_ranking_all
+        ;;
+      esac
+    ;;
+  'query_term_ranking' )
+    case $2 in
+      'all' )
+        query_term_ranking_all
         ;;
       esac
     ;;

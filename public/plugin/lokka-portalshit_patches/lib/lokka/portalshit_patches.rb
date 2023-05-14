@@ -216,6 +216,14 @@ module Lokka
           Entry.published.where(slug: slug_candidate)
         end
     end
+
+    def popular_keywords
+      @popular_keywords ||=
+        begin
+          lines = open(File.join(Lokka.root, '/public/log-aggregation/query-term-ranking-all.txt')).read
+          lines.split("\n").map {|line| line.sub(/\A\d+?\s/, '').sub(/('|#|@|{|}|")\Z/, '') }.uniq
+        end
+    end
   end
 end
 
