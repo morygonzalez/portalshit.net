@@ -123,7 +123,6 @@ function query_term_ranking_all() {
   echo "Search Query Ranking"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
-    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
