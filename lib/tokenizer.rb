@@ -21,7 +21,7 @@ class Tokenizer
   def preserved_words
     @preserved_words ||= %w[
       山と道 はてブ 鐘撞山 高祖山 叶岳 高地山 はてなブックマーク はてな 牛丼 心拍 心拍数 関連記事
-      情報量 ARC'TERYX 三苫 博多駅
+      情報量 ARC'TERYX 三苫 博多駅 低温調理
     ]
   end
 
