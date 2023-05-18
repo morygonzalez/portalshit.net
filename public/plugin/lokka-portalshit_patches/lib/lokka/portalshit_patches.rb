@@ -221,16 +221,21 @@ module Lokka
       @popular_keywords ||=
         begin
           lines = open(File.join(Lokka.root, '/public/log-aggregation/query-term-ranking-all.txt')).read
-          lines.
+          keywords = lines.
             split("\n").
-            map {|line|
-              line.downcase.
-                sub(/\A\d+?\s/, '').
-                gsub(/[[:punct:]]/, '').
-                gsub(/\A[[:space:]]+\Z/, '')
-            }.
-            reject(&:blank?).
-            uniq[0..7]
+            inject({}) {|result, line|
+              line.match(/\A(\d+)?\s(.+)?\Z/)
+              count = $1.to_i
+              keyword = $2
+              result[keyword] = count
+              result
+            }
+          keywords.keys.inject({}) {|result, keyword|
+            original = keyword
+            modified = keyword.gsub(/[[:punct:]]/, '').gsub(/\A[[:space:]]+\Z/, '').downcase
+            result[modified] = keywords[modified].to_i + keywords[original]
+            result
+          }.reject {|key, _| key.blank? }.sort_by {|_, value| -value }.to_h.keys[0..7]
         end
     end
   end
