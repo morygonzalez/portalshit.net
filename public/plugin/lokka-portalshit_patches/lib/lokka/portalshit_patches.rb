@@ -221,7 +221,16 @@ module Lokka
       @popular_keywords ||=
         begin
           lines = open(File.join(Lokka.root, '/public/log-aggregation/query-term-ranking-all.txt')).read
-          lines.split("\n").map {|line| line.sub(/\A\d+?\s/, '').sub(/('|#|@|{|}|")\Z/, '') }.uniq
+          lines.
+            split("\n").
+            map {|line|
+              line.downcase.
+                sub(/\A\d+?\s/, '').
+                gsub(/[[:punct:]]/, '').
+                gsub(/\A[[:space:]]+\Z/, '')
+            }.
+            reject(&:blank?).
+            uniq
         end
     end
   end

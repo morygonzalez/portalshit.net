@@ -20,7 +20,7 @@
     %p
       よく検索されているキーワード:
       - popular_keywords.each do |keyword|
-        = link_to keyword, %(/search/?query=#{keyword})
+        %span.keyword= link_to keyword, %(/search/?query=#{keyword})
 
 %section
   %h2= t('recent_entries')

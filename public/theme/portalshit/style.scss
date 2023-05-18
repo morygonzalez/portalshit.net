@@ -176,6 +176,11 @@
                   }
                 }
 
+                .popular-keywords {
+                  width: 95%;
+                  margin: auto;
+                }
+
                 .search-result {
                   display: block;
                   height: 100%;
@@ -293,6 +298,10 @@
         border-radius: 4px;
         font-size: 16px;
         background: #ffffff;
+      }
+
+      span.keyword {
+        margin: auto .3em;
       }
     }
   }

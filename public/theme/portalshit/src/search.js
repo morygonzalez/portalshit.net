@@ -82,19 +82,22 @@ class SearchApp extends Component {
       <div className="search-component" ref={this.modal}>
         <SearchField
           update={this.updateQuery}
-          keydown={(e) => { this.keydown(e) }}
+          keydown={this.keydown}
           query={this.state.query} />
         <Entries
           query={this.state.query}
           focus={this.state.focus}
           updateEntryLength={this.updateEntryLength} />
+        <PopularKeywords
+          updateQuery={this.updateQuery}
+          query={this.state.query} />
       </div>
     )
   }
 }
 
 const SearchField = (props) => {
-  const [query, setQuery] = useState(props.query || '')
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -109,21 +112,64 @@ const SearchField = (props) => {
   }, [query])
 
   const handleChange = (event) => {
-    let query = event.target.value
-    setQuery(query)
+    const query = event.currentTarget.value
+    props.update(query)
   }
 
   return (
     <p className="search-field">
       <input
         type="search"
-        value={query}
+        value={props.query}
         placeholder="Search"
         onChange={handleChange}
       />
       <i className="fas fa-search" />
     </p>
   )
+}
+
+class PopularKeywords extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    const attrKeywords = document.querySelector('#search_form').dataset.popularKeywords
+    if (attrKeywords !== undefined && (this.props.query === '' || this.props.query === null)) {
+      const keywords = JSON.parse(attrKeywords)
+      const popularKeywords = keywords.map(keyword => {
+        return <Keyword keyword={keyword} updateQuery={this.props.updateQuery} />
+      })
+      return (
+        <p className="popular-keywords">よく検索されているキーワード: {popularKeywords}</p>
+      )
+    } else {
+      return null
+    }
+  }
+}
+
+class Keyword extends Component {
+  constructor(props) {
+    super(props)
+    this.clickLink = this.clickLink.bind(this)
+  }
+
+  clickLink(event) {
+    const keyword = event.target.innerText
+    this.props.updateQuery(keyword)
+  }
+
+  render() {
+    return (
+      <span className="keyword">
+        <a href onClick={this.clickLink}>
+          {this.props.keyword}
+        </a>
+      </span>
+    )
+  }
 }
 
 class Entries extends Component {

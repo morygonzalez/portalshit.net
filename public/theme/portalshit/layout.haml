@@ -54,11 +54,7 @@
               %button{ accesskey: 's' }
                 %i.fas.fa-search
                 %span Search
-              #search_form.modal
-                -# %form(action="/archives" method="get")
-                -#   %p
-                -#     %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
-                -#     %i.fas.fa-search
+              #search_form.modal{'data-popular-keywords': popular_keywords }
 
         #header-bottom
           - unless index? || response.status == 404
