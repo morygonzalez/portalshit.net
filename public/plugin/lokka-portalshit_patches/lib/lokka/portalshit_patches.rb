@@ -230,7 +230,7 @@ module Lokka
                 gsub(/\A[[:space:]]+\Z/, '')
             }.
             reject(&:blank?).
-            uniq
+            uniq[0..7]
         end
     end
   end
