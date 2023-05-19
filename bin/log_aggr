@@ -126,7 +126,6 @@ function query_term_ranking_all() {
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
-    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | cut -f5 | grep 'query=' \
     | grep -vP '(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#)' \
     | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | tr -s "\n" \

@@ -233,9 +233,8 @@ module Lokka
           keywords.keys.inject({}) {|result, keyword|
             original = keyword
             modified = keyword.gsub(/[[:punct:]]/, '').gsub(/\A[[:space:]]+\Z/, '').downcase
-            count = if keywords[modified] && keywords[original]
-                      keywords[modified].to_i + keywords[original]
-                      keywords.delete(original)
+            count = if (keywords[modified] && keywords[original]) && (keywords[modified] != keywords[original])
+                      keywords[modified].to_i + keywords.delete(original)
                     else
                       keywords[modified]
                     end
