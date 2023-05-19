@@ -121,6 +121,7 @@ function referer_ranking_all() {
 
 function query_term_ranking_all() {
   echo "Search Query Ranking"
+  cd ${APP_DIR}
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -viP ${UA_TO_IGNORE} \
