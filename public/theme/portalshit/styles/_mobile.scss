@@ -113,7 +113,7 @@
           &.search {
             #search_form {
               top: 120px;
-              width: 70%;
+              width: 88%;
 
               .search-component {
                 height: 100%;
@@ -123,21 +123,24 @@
 
                   input[type="search"] {
                     font-size: 16px;
-                    max-width: 60vw;
+                    max-width: 70vw;
                   }
 
                   i {
                     margin-left: 2vw;
-                    margin-top: 2vw;
+                    margin-top: 4vw;
                   }
                 }
 
                 .search-result {
                   li {
                     width: calc(100% - 6vw);
-                    padding: 1.5vw;
+                    padding: 1.4vw;
                     padding-left: 4vw;
-                    font-size: 14px;
+
+                    a {
+                      font-size: 3.5vw;
+                    }
                   }
                 }
               }
