@@ -54,7 +54,8 @@
               %button{ accesskey: 's' }
                 %i.fas.fa-search
                 %span Search
-              #search_form.modal{'data-popular-keywords': popular_keywords }
+              - cache_fragment :modal_popular_query_term, shared: true, expires_in: 2.hours do
+                #search_form.modal{'data-popular-keywords': popular_keywords }
 
         #header-bottom
           - unless index? || response.status == 404

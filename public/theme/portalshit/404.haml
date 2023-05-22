@@ -19,8 +19,9 @@
       %input(type="search" name="query" placeholder="Search" value="#{params[:query]}")
     %p
       よく検索されているキーワード:
-      - popular_keywords.each do |keyword|
-        %span.keyword= link_to keyword, %(/search/?query=#{keyword})
+      - cache_fragment :not_found_frequently_search_term, shared: true, expires_in: 2.hours do
+        - popular_keywords.each do |keyword|
+          %span.keyword= link_to keyword, %(/search/?query=#{keyword})
 
 %section
   %h2= t('recent_entries')
