@@ -18,16 +18,9 @@ class Tokenizer
       gsub(%r{(?:```|<code>)(.+?)(?:```|</code>)}m, '\1')
   end
 
-  def preserved_words
-    @preserved_words ||= %w[
-      山と道 はてブ 鐘撞山 高祖山 叶岳 高地山 はてなブックマーク はてな 牛丼 心拍 心拍数 関連記事
-      情報量 ARC'TERYX 三苫 博多駅 低温調理
-    ]
-  end
-
   def nm
     require 'natto'
-    @nm ||= Natto::MeCab.new
+    @nm ||= Natto::MeCab.new(userdic: File.expand_path('lib/tokenizer/userdic.dic'))
   end
 
   def words
@@ -35,10 +28,6 @@ class Tokenizer
   end
 
   def tokenize
-    preserved_words.each do |word|
-      words << word if cleansed_text.match?(word)
-    end
-
     nm.parse(cleansed_text) do |n|
       ignore_feature_regexp = /記号|動詞|数|助詞|副詞|形容詞|接尾|代名詞|非自立|接続詞|連体詞|接頭詞|BOS\/EOS/
       next if n.feature.match?(ignore_feature_regexp)
