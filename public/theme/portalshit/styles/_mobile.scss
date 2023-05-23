@@ -114,9 +114,11 @@
             #search_form {
               top: 120px;
               width: 88%;
+              min-width: 88%;
 
               .search-component {
                 height: 100%;
+                margin: .1rem 0;
 
                 .search-field {
                   margin-left: 3vw;

@@ -135,11 +135,12 @@
               background: $modal-bg-color;
               border-radius: 5px;
               width: 40vw;
+              min-width: 640px;
               z-index: 3;
 
               .search-component {
                 width: 100%;
-                margin: .5vw 0;
+                margin: .7rem 0 .5rem;
                 height: 100%;
 
                 .search-field {
