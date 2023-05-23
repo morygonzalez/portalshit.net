@@ -56,9 +56,12 @@ task :delete_old_index do
     key = File.basename(item, '.idx')
     files[key] = ctime
   end
-  latest_key = index_keys.sort_by {|k, v| v }.reverse.first[0]
-  puts "The latest key is #{latest_key}"
-  index_keys.delete(latest_key)
+  meta_json = File.open('tmp/index/meta.json').read
+  meta = JSON.parse(meta_json)
+  used_indices = meta['segments'].map {|segment| segment['segment_id'].gsub(/\-/, '') }
+  used_indices.each do |index|
+    index_keys.delete(index)
+  end
   if index_keys.blank?
     puts "No older index"
     next
