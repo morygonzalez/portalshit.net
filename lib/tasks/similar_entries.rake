@@ -30,15 +30,15 @@ class ExecutionDetector
   private
 
   def latest_updated_at
-    @latest_updated_at ||= Similarity.joins(:entry).maximum(:'entries.updated_at')
+    @latest_updated_at = Similarity.joins(:entry).maximum(:'entries.updated_at')
   end
 
   def latest_entry_with_similarity
-    @latest_entry_with_similarity ||= Entry.find_by(updated_at: latest_updated_at)
+    @latest_entry_with_similarity = Entry.find_by(updated_at: latest_updated_at)
   end
 
   def latest_published_entry
-    @latest_published_entry ||= Entry.published.order(updated_at: :desc).first
+    @latest_published_entry = Entry.published.order(updated_at: :desc).first
   end
 end
 
