@@ -46,8 +46,9 @@ input, button, textarea, select, optgroup, option, .button, .toggle-button {
 textarea {
     font-size: 1.3em;
     width: 550px;
-    resize: horizontal;
+    resize: both;
     height: auto;
+    min-height: 200px;
 }
 
 input[type="submit"],
@@ -243,13 +244,6 @@ ul.preview-edit li > input[type='radio'] {
 textarea {
     display: block;
     top: -3px;
-}
-textarea#site_description {
-    height:50px;
-}
-
-textarea#site_meta_description {
-    height: 50px;
 }
 
 html,body {
@@ -869,7 +863,9 @@ textarea.editor {
 }
 textarea#post_body,
 textarea#page_body,
+textarea#site_description,
 textarea#site_dashboard,
+textarea#site_meta_description,
 textarea#snippet_body,
 textarea#category_description
 {
