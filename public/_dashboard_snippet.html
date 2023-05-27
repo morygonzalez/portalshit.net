@@ -1,9 +1,8 @@
 <h3>Link to Affiliate Reports and Access Analysis</h3>
 <ul>
-  <li><a href="https://www.google.com/adsense/new/u/0/pub-7665673588234323/home">Google AdSense</a></li>
-  <li><a href="https://affiliate.amazon.co.jp/home/reports">Amazon アソシエイト・セントラル - レポート</a></li>
+  <li><a href="https://affiliate.amazon.co.jp/home">Amazon アソシエイト・セントラル - レポート</a></li>
   <li><a href="https://analytics.google.com/analytics/web/#/report-home/a1110156w1929564p1949158">Google Analytics</a></li>
-  <li><a href="https://blog-feedback.app/blogs">BlogFeedback</a></li>
+  <li><a href="https://blog-feedback.app/blogs/https%3A%2F%2Fportalshit.net%2F">BlogFeedback</a></li>
 </ul>
 <div class="ranking">
   <div id="access-ranking-today">
@@ -23,6 +22,12 @@
   </div>
   <div id="referer-ranking-all">
     <h3><a href="/log-aggregation/referer-ranking-all.txt">Referer Ranking</a></h3>
+  </div>
+  <div id="query-term-ranking-all">
+    <h3><a href="/log-aggregation/query-term-ranking-all.txt">Query Term Ranking All</a></h3>
+  </div>
+  <div id="query-term-ranking-visitor">
+    <h3><a href="/log-aggregation/query-term-ranking-visitor.txt">Query Term Ranking Visitor</a></h3>
   </div>
 </div>
 <div class="hit-rate">
@@ -90,6 +95,11 @@
             path = match[1];
             href = `${location.protocol}//${location.host + path}`;
             return `${count} <a href="${href}">${path}</a>`;
+          case 'query-term-ranking-all':
+          case 'query-term-ranking-visitor':
+            path = match.slice(1).join(' ');
+            href = `${location.protocol}//${location.host}/search/?query=${path}`;
+            return `${count} <a href="${href}">${path}</a>`;
           case 'referer-ranking-all':
           case 'referer-ranking-today':
           case 'referer-ranking-yesterday':
@@ -112,6 +122,10 @@
       new Promise((resolve, reject) => generateElement(`${item}-yesterday`)),
     )
   });
+  promises.push(
+    new Promise((resolve, reject) => generateElement('query-term-ranking-all')),
+    new Promise((resolve, reject) => generateElement('query-term-ranking-visitor')),
+  )
 
   Promise.all(promises);
 </script>
