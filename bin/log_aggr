@@ -78,7 +78,7 @@ function referer_ranking_today() {
     | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
-    | grep "time:$(date -d today "+%Y-%m-%d")"  \
+    | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
@@ -95,7 +95,7 @@ function referer_ranking_yesterday() {
     | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
-    | grep "time:$(date -d yesterday "+%Y-%m-%d")"  \
+    | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
     | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
@@ -127,8 +127,9 @@ function query_term_ranking_all() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | cut -f5 | grep 'query=' \
-    | grep -vP '(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#)' \
-    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | tr -s "\n" \
+    | grep -vP "(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#|nvOpzp|'|\.\.\/)" \
+    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' |sed -e "s/\'//" \
+    | tr -s "\n" \
     | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/query-term-ranking-all.txt 2>/dev/null
@@ -143,8 +144,9 @@ function query_term_ranking_visitor() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | cut -f5 | grep 'query=' \
-    | grep -vP '(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#)' \
-    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | tr -s "\n" \
+    | grep -vP "(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#|nvOpzp|\'|\.\.\/)" \
+    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' |sed -e "s/\'//" \
+    | tr -s "\n" \
     | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/query-term-ranking-visitor.txt 2>/dev/null
