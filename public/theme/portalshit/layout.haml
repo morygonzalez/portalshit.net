@@ -1,5 +1,5 @@
 !!! 5
-%html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja, class: color_mode }
+%html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja, class: color_mode, 'data-logged-in': logged_in?.to_s }
   %head
     %meta{ charset: 'utf-8' }
     - if entry?

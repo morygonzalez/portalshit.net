@@ -262,7 +262,9 @@ class Entry extends Component {
   }
 
   sendSearchEventToGoogleAnalytics() {
-    ReactGA.event('search', { search_term: this.props.query })
+    if (document.querySelector('html').dataset.loggedIn === "false") {
+      ReactGA.event('search', { search_term: this.props.query })
+    }
   }
 
   render() {
