@@ -1,4 +1,6 @@
 import React, { Component, useState, useEffect } from 'react'
+import ReactGA from 'react-ga4'
+ReactGA.initialize('G-0XJ0QC4XVN')
 
 class SearchApp extends Component {
   constructor(props) {
@@ -57,16 +59,16 @@ class SearchApp extends Component {
 
   keydown(e) {
     switch (e.keyCode) {
-      case 27:
+      case 27: // Escape
         this.closeModal()
         break
-      case 38:
+      case 38: // Arrow Up
         if (this.state.query) {
           e.preventDefault()
           this.moveUp()
         }
         break
-      case 40:
+      case 40: // Arrow Down
         if (this.state.query) {
           e.preventDefault()
           this.moveDown()
@@ -208,6 +210,7 @@ class Entries extends Component {
           title={entry.title}
           link={entry.link}
           index={index}
+          query={this.props.query}
           created_at={entry.created_at} />
       )
     })
@@ -255,13 +258,18 @@ class Entries extends Component {
 class Entry extends Component {
   constructor(props) {
     super(props)
+    this.sendSearchEventToGoogleAnalytics = this.sendSearchEventToGoogleAnalytics.bind(this)
+  }
+
+  sendSearchEventToGoogleAnalytics() {
+    ReactGA.event('search', { search_term: this.props.query })
   }
 
   render() {
     return(
       <li>
-        <a href={this.props.link} tabIndex={this.props.index + 1}
-          >{this.props.title}
+        <a href={this.props.link} tabIndex={this.props.index + 1} onClick={this.sendSearchEventToGoogleAnalytics}>
+          {this.props.title}
         </a>
       </li>
     )
