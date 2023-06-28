@@ -24,16 +24,10 @@ RUN apk add --no-cache bash ${build_deps} \
   && make \
   && make install \
   && cd \
-  # Install IPA dic
-  && curl -SL -o mecab-ipadic-${IPADIC_VERSION}.tar.gz ${ipadic_url} \
-  && tar zxf mecab-ipadic-${IPADIC_VERSION}.tar.gz \
-  && cd mecab-ipadic-${IPADIC_VERSION} \
-  && ./configure --with-charset=utf8 \
-  && make \
-  && make install \
-  && cd \
   # Install Neologd
   && git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git \
+  && mkdir mecab-ipadic-neologd/build && curl -SL -o mecab-ipadic-neologd/build/mecab-ipadic-${IPADIC_VERSION}.tar.gz ${ipadic_url} \
+  && echo `openssl sha1 mecab-ipadic-neologd/build/mecab-ipadic-${IPADIC_VERSION}.tar.gz | cut -d $' ' -f 2,2` \
   && mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -a -y \
   && cp /usr/local/etc/mecabrc /usr/local/etc/mecabrc.backup \
   && sed -i -r 's/^(dicdir =.+?\/)ipadic/\1mecab-ipadic-neologd/' /usr/local/etc/mecabrc \
