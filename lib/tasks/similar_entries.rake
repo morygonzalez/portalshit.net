@@ -18,7 +18,7 @@ class ExecutionDetector
     when Similarity.count.zero?
       @message = 'Run execution because there is no similarity records.'
       true
-    when latest_entry_with_similarity == latest_published_entry
+    when latest_entry_with_similarity.updated_at > latest_published_entry.updated_at
       @message = 'Skip similarity detection because the latest entry already has similar entries'
       false
     else
@@ -30,15 +30,15 @@ class ExecutionDetector
   private
 
   def latest_updated_at
-    @latest_updated_at = Similarity.joins(:entry).maximum(:'entries.updated_at')
+    @latest_updated_at ||= Similarity.joins(:entry).maximum(:'entries.updated_at')
   end
 
   def latest_entry_with_similarity
-    @latest_entry_with_similarity = Entry.find_by(updated_at: latest_updated_at)
+    @latest_entry_with_similarity ||= Entry.find_by(updated_at: latest_updated_at)
   end
 
   def latest_published_entry
-    @latest_published_entry = Entry.published.order(updated_at: :desc).first
+    @latest_published_entry ||= Entry.published.order(updated_at: :desc).first
   end
 end
 
