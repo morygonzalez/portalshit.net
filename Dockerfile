@@ -1,4 +1,4 @@
-FROM ruby:2.7-alpine
+FROM ruby:2.7.3-alpine
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -25,8 +25,9 @@ RUN apk add --no-cache bash ${build_deps} \
   && make install \
   && cd \
   # Install Neologd
-  && git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git \
+  && git clone --depth 1 https://github.com/shugyosha89/mecab-ipadic-neologd.git \
   && mkdir mecab-ipadic-neologd/build && curl -SL -o mecab-ipadic-neologd/build/mecab-ipadic-${IPADIC_VERSION}.tar.gz ${ipadic_url} \
+  && echo 'Hash値' \
   && echo `openssl sha1 mecab-ipadic-neologd/build/mecab-ipadic-${IPADIC_VERSION}.tar.gz | cut -d $' ' -f 2,2` \
   && mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -a -y \
   && cp /usr/local/etc/mecabrc /usr/local/etc/mecabrc.backup \

@@ -115,7 +115,7 @@ module Lokka
 
       def secure_image
         if use_proxy?
-          "/imageproxy/120/#{image}"
+          "https://portalshit.net/imageproxy/120/#{image}"
         else
           image
         end
@@ -123,130 +123,25 @@ module Lokka
 
       def use_proxy?
         exclude_regexp = /(githubusercontent|=\d|token=\w+)/
-        Lokka.production? && image.to_s.start_with?('http') && !image.to_s.match(exclude_regexp)
+        image.to_s.start_with?('http') && !image.to_s.match(exclude_regexp)
       end
 
       def html
         template = <<~ERUBY
-          <!DOCTYPE html>
-          <html lang="ja">
-            <head>
-              <title><%= title %></title>
-              <meta name="robots" content="noindex,nofollow" />
-              <style>
-                body {
-                  margin: 0;
-                  max-width: 550px;
-                  font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif
-                }
-
-                a.ogp-link, a.ogp-link:link {
-                  color: #8b968d;
-                  background: #fffffc;
-                  text-decoration: none;
-                }
-
-                a.ogp-link:hover {
-                  color: #a3a3a2;
-                  background: #212121;
-                }
-
-                .ogp {
-                  display: flex;
-                  justify-content: space-between;
-                  border-radius: 5px;
-                  border: 1px solid #8b968d;
-                  font-size: .9em;
-                  height: 120px;
-                }
-
-                .ogp-image {
-                  max-width: 120px;
-                  flex-grow: 1;
-                  background-color: #fffffc;
-                  border-radius: 5px 0 0 5px;
-                }
-
-                .ogp-image img {
-                  border-radius: 5px 0 0 5px;
-                  height: 120px;
-                  width: 120px;
-                  object-fit: cover;
-                }
-
-                .ogp-summary {
-                  flex-grow: 3;
-                  padding: .7em 1.2em;
-                  display: flex;
-                  border-radius: 0 5px 5px 0;
-                  flex-direction: column;
-                  justify-content: space-between;
-                  background: #fffffc;
-                  overflow: hidden;
-                }
-
-                .ogp-link:hover .ogp-summary {
-                  color: #a3a3a2;
-                  background: #212121;
-                }
-
-                .ogp-summary h3 {
-                  max-width: 430px;
-                  font-size: 1em;
-                  margin: 0;
-                  text-overflow: ellipsis;
-                  display: -webkit-box;
-                  overflow: hidden;
-                  -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 2;
-                }
-
-                .ogp-summary h3:link, .ogp-summary h3:visited {
-                  color: #e8ecef;
-                }
-
-                .description {
-                  max-width: 430px;
-                  font-size: .8em;
-                  line-height: 1.3em;
-                  margin: 0 auto 0 0;
-                  border-radius: 0 5px 5px 0;
-                  display: -webkit-box;
-                  text-overflow: ellipsis;
-                  overflow: hidden;
-                  -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 2;
-                }
-
-                .host {
-                  margin: 0 auto 0 0;
-                }
-
-                @media screen and (max-width:400px) {
-                  .ogp {
-                    font-size: 80%;
-                  }
-                  .ogp-summary h3 {
-                    float: none;
-                  }
-                }
-              </style>
-            </head>
-            <body>
-              <a href="<%= url %>" class="ogp-link" target="_parent">
-                <div class="ogp">
-                  <div class="ogp-image">
-                    <img src="<%= secure_image %>" alt="<%= html_escape(title) %>" />
-                  </div>
-                  <div class="ogp-summary">
-                    <h3><%= html_escape(title) %></h3>
-                    <p class="description"><%= html_escape(description) %></p>
-                    <p class="host"><%= host %></p>
-                  </div>
+          <div class="ogp-element">
+            <a href="<%= url %>" class="ogp-link" target="_parent">
+              <div class="ogp">
+                <div class="ogp-image">
+                  <img src="<%= secure_image %>" alt="<%= html_escape(title) %>" />
                 </div>
-              </a>
-            </body>
-          </html>
+                <div class="ogp-summary">
+                  <h3><%= html_escape(title) %></h3>
+                  <p class="description"><%= html_escape(description) %></p>
+                  <p class="host"><%= host %></p>
+                </div>
+              </div>
+            </a>
+          </div>
         ERUBY
         erb = ERB.new(template)
         erb.result(binding)

@@ -20,18 +20,6 @@ module Lokka
           ogp.merge(twitter_card).to_meta_tags
         end
       end
-
-      app.get '/ogp' do
-        url = params['url']
-        fetcher = Lokka::OGP::Fetcher.new(url)
-        if fetcher.fetch
-          element = fetcher.element
-          path = "#{Lokka.root}/tmp/ogp/#{element.uname}"
-          html = File.open(path).read
-          cache_control :public, :must_revalidate, max_age: 12.hours
-          html
-        end
-      end
     end
   end
 end

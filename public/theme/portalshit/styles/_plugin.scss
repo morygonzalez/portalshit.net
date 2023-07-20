@@ -230,4 +230,117 @@
       }
     }
   }
+
+  // OGP
+  .ogp-element {
+    max-width: 552px;
+    height: 125px;
+    margin: 1.5em 0px;
+    overflow-y: hidden;
+    font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
+    font-size: 16px;
+
+    a.ogp-link, a.ogp-link:link {
+      color: #8b968d;
+      background: #fffffc;
+      text-decoration: none;
+      text-shadow: none;
+    }
+
+    a.ogp-link:hover {
+      color: #a3a3a2;
+      background: #212121;
+      text-shadow: none;
+    }
+
+    .ogp {
+      display: flex;
+      justify-content: space-between;
+      border-radius: 5px;
+      border: 1px solid #8b968d;
+      font-size: .9em;
+      height: 120px;
+    }
+
+    .ogp-image {
+      flex-grow: 1;
+      width: 120px;
+      background-color: #fffffc;
+      border-radius: 5px 0 0 5px;
+      overflow: hidden;
+    }
+
+    .ogp-image img {
+      border-radius: 5px 0 0 5px;
+      height: 120px;
+      width: 120px;
+      object-fit: cover;
+    }
+
+    .ogp-summary {
+      flex-grow: 3;
+      padding: .7em 1.1em;
+      display: flex;
+      border-radius: 0 5px 5px 0;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #fffffc;
+      overflow: hidden;
+    }
+
+    .ogp-link:hover .ogp-summary {
+      color: #a3a3a2;
+      background: #212121;
+    }
+
+    .ogp-summary h3 {
+      max-width: 400px;
+      font-size: 1em;
+      margin: 0;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+
+      &:before {
+        content: "";
+        margin: 0;
+      }
+    }
+
+    .ogp-summary h3:link, .ogp-summary h3:visited {
+      color: #e8ecef;
+    }
+
+    .description {
+      max-width: 400px;
+      font-size: .8em;
+      line-height: 1.3em;
+      margin: 0 auto 0 0;
+      border-radius: 0 5px 5px 0;
+      display: -webkit-box;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .host {
+      margin: 0 auto 0 0;
+    }
+
+    @media screen and (max-width:414px) {
+      .ogp {
+        font-size: 80%;
+      }
+      .ogp-summary {
+        max-width: 233px;
+
+        h3 {
+          float: none;
+        }
+      }
+    }
+  }
 }
