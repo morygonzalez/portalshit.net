@@ -5,7 +5,15 @@ module Lokka
     module AddImagesToEntry
       refine Entry do
         def images
-          body.scan(/(?:<img.+?src(?:\s)*="(.+?)".+?>|<video.+?poster(?:\s)*="(.+?)".+>)/m).flatten.compact
+          doc = Nokogiri::HTML.fragment(body)
+          doc.css('img:root, figure:root > img, p:root > video').map {|item|
+            case item.name
+            when "img"
+              item.attributes["src"].value
+            when "video"
+              item.attributes["poster"].value
+            end
+          }
         end
       end
     end

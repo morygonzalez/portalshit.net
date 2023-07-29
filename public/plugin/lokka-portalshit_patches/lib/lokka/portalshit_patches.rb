@@ -332,7 +332,15 @@ class Entry
   end
 
   def images
-    body.scan(/(?:<img.+?src(?:\s)*="(.+?)".+?>|<video.+?poster(?:\s)*="(.+?)".+>)/m).flatten.compact
+    doc = Nokogiri::HTML.fragment(body)
+    doc.css('img:root, figure:root > img, p:root > video, p:root img').map {|item|
+      case item.name
+      when "img"
+        item.attributes["src"].value
+      when "video"
+        item.attributes["poster"].value
+      end
+    }
   end
 
   def cover_image
