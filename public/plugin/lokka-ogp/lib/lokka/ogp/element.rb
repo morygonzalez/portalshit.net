@@ -128,9 +128,9 @@ module Lokka
 
       def html
         template = <<~ERUBY
-          <div class="ogp-element">
+          <div class="ogp">
             <a href="<%= url %>" class="ogp-link" target="_parent">
-              <div class="ogp">
+              <div class="ogp-element">
                 <div class="ogp-image">
                   <img src="<%= secure_image %>" alt="<%= html_escape(title) %>" />
                 </div>

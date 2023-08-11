@@ -232,7 +232,7 @@
   }
 
   // OGP
-  .ogp-element {
+  .ogp {
     max-width: 552px;
     height: 125px;
     margin: 1.5em 0px;
@@ -253,7 +253,7 @@
       text-shadow: none;
     }
 
-    .ogp {
+    .ogp-element {
       display: flex;
       justify-content: space-between;
       border-radius: 5px;
@@ -331,7 +331,7 @@
     }
 
     @media screen and (max-width:414px) {
-      .ogp {
+      .ogp-element {
         font-size: 80%;
       }
       .ogp-summary {
