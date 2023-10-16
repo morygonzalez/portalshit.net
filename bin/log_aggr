@@ -127,12 +127,12 @@ function query_term_ranking_all() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | cut -f5 | grep 'query=' \
-    | grep -vP "(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#|nvOpzp|'|\.\.\/)" \
-    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' |sed -e "s/\'//" \
+    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | sed -r "s/\'//g" \
+    | grep -vP "(^-$|\.cn|alert|ORDER%20BY%201|nvOpzp|\(|\)|\.\.\/|%3d|%27)" \
     | tr -s "\n" \
     | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${LOG_AGGREGATION_DIR}/query-term-ranking-all.txt 2>/dev/null
+    | tee ${LOG_AGGREGATION_DIR}/query-term-ranking-all.txt 2>/dev/null
 }
 
 function query_term_ranking_visitor() {
@@ -144,12 +144,12 @@ function query_term_ranking_visitor() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | cut -f5 | grep 'query=' \
-    | grep -vP "(^-$|dongguanyumiaochang\.cn|alert|ORDER BY 1#|nvOpzp|\'|\.\.\/)" \
-    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' |sed -e "s/\'//" \
+    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | sed -r "s/\'//g" \
+    | grep -vP "(^-$|\.cn|alert|ORDER%20BY%201|nvOpzp|\(|\)|\.\.\/|%3d|%27)" \
     | tr -s "\n" \
     | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | cat 1>${LOG_AGGREGATION_DIR}/query-term-ranking-visitor.txt 2>/dev/null
+    | tee ${LOG_AGGREGATION_DIR}/query-term-ranking-visitor.txt 2>/dev/null
 }
 
 function cache_hit_rate_today() {
