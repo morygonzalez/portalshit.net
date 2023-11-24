@@ -34,5 +34,6 @@ plugin_old
 
 public/**/build/*.js
 public/**/dist/*.js
+public/ogp/*
 public/log-aggregation
 npm-debug.log

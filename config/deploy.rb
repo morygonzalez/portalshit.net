@@ -31,8 +31,7 @@ set :deploy_to, "/var/www/deploys/#{fetch(:application)}"
 append :linked_files,
   'config/newrelic.yml',
   'db/database.yml',
-  '.env',
-  'public/ads.txt'
+  '.env'
 
 # Default value for linked_dirs is []
 append :linked_dirs,
@@ -44,7 +43,8 @@ append :linked_dirs,
   'tmp/index',
   'tmp/popular_entries',
   'vendor/bundle',
-  'public/log-aggregation'
+  'public/log-aggregation',
+  'public/og-image'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }

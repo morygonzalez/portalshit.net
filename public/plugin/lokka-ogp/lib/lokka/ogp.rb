@@ -7,6 +7,7 @@ require_relative 'ogp/fetcher'
 require_relative 'ogp/helpers'
 require_relative 'ogp/replacer'
 require_relative 'ogp/element'
+require_relative 'ogp/creator'
 
 module Lokka
   module OGP

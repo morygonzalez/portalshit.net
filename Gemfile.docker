@@ -92,6 +92,7 @@ gem 'fastimage'
 gem 'open_graph_reader'
 gem 'faraday_middleware'
 gem 'parallel'
+gem 'mini_magick'
 
 gem 'dotenv'
 gem 'rack-recaptcha2', require: 'rack/recaptcha'

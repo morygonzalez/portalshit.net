@@ -29,12 +29,48 @@ module Lokka
       end
 
       def site_host
-        "#{@request.scheme}://#{@request.host}"
+        if [443, 80].include?(@request.port)
+          "#{@request.scheme}://#{@request.host}"
+        else
+          "#{@request.scheme}://#{@request.host}:#{@request.port}"
+        end
       end
 
       def default_image
-        File.exist?("#{Lokka.root}/public/#{@theme.path}/ogp_image.png") ?
+        @default_image ||= File.exist?("#{Lokka.root}/public/#{@theme.path}/ogp_image.png") ?
           "#{site_host}#{@theme.path}/ogp_image.png" : "#{site_host}#{@theme.path}/screenshot.png"
+      end
+
+      def og_image_path
+        @og_image_path ||= begin
+                             cache_dir = FileUtils.mkdir_p("#{Lokka.root}/public/og-image")
+                             File.join(cache_dir, og_cache_name)
+                           end
+      end
+
+      def og_cache_name
+        @og_cache_name ||= "#{@entry.slug}-og-image.jpeg"
+      end
+
+      def og_image
+        @og_image ||= begin
+                        if @entry.present?
+                          if @entry.images.present?
+                            @entry.cover_image
+                          else
+                            if !File.exist?(og_image_path) || test('M', File.open(og_image_path)) < 1.month.ago
+                              image_path = "#{Lokka.root}/public/plugin/lokka-ogp/assets/portalshit-og-base.jpg"
+                              image = Lokka::OGP::Creator.build(text: @entry&.title, image: image_path)
+                              image.format 'jpeg'
+                              image.write(og_image_path)
+                              FileUtils.chmod(0644, og_image_path)
+                            end
+                            "#{site_host}/og-image/#{og_cache_name}"
+                          end
+                        else
+                          default_image
+                        end
+                      end
       end
 
       def entry_link
@@ -67,7 +103,7 @@ module Lokka
           'og:url'                    => entry_link,
           'og:title'                  => @entry.title,
           'og:description'            => extract_description,
-          'og:image'                  => @entry.images.first || default_image,
+          'og:image'                  => og_image,
           'og:article:published_time' => @entry.created_at,
           'og:article:author'         => @entry.user.name
         }
@@ -92,7 +128,7 @@ module Lokka
           'twitter:creator'     => "@#{User.first&.name}",
           'twitter:title'       => @site.title,
           'twitter:description' => @site.meta_description,
-          'twitter:image'       => default_image,
+          'twitter:image'       => og_image,
           'twitter:url'         => site_host
         }
       end
@@ -104,7 +140,7 @@ module Lokka
           'twitter:creator'     => "@#{@entry.user.name}",
           'twitter:title'       => @entry.title.to_s,
           'twitter:description' => extract_description,
-          'twitter:image'       => default_image,
+          'twitter:image'       => og_image,
           'twitter:url'         => entry_link
         }
       end
@@ -141,16 +177,17 @@ module Lokka
       end
 
       def detect_card_type
-        image = @entry.images.first
-        width, height = FastImage.size(image)
-        if width > 639 || height > 639
-          # return 'gallery' if @entry.images.length > 1
-          'summary_large_image'
-        else
-          'summary'
-        end
-      rescue StandardError
-        'summary'
+        'summary_large_image'
+      #   image = @entry.images.first
+      #   width, height = FastImage.size(image)
+      #   if width > 639 || height > 639
+      #     # return 'gallery' if @entry.images.length > 1
+      #     'summary_large_image'
+      #   else
+      #     'summary'
+      #   end
+      # rescue StandardError
+      #   'summary'
       end
     end
 
