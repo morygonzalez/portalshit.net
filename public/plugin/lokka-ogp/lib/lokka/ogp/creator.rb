@@ -1,6 +1,7 @@
 module Lokka::OGP
   class Creator
     require 'mini_magick'
+    require 'natto'
 
     GRAVITY = 'Center'
     TEXT_POSITION = '0,0'
@@ -19,14 +20,39 @@ module Lokka::OGP
           config.resize '1200x675'
           config.gravity GRAVITY
           config.pointsize FONT_SIZE
-          config.draw "text #{TEXT_POSITION} '#{text}'"
+          config.draw %(text #{TEXT_POSITION} "#{text}")
         end
       end
 
       private
 
+      def nm
+        @nm ||= Natto::MeCab.new(userdic: File.expand_path('lib/tokenizer/userdic.dic'))
+      end
+
       def prepare_text(text:)
-        text = text.to_s.scan(/.{1,#{INDENTION_COUNT}}/)[0...ROW_LIMIT].join("\n")
+        splitted_text = nm.enum_parse(text).map(&:surface)
+        row_length = 0
+        result = []
+        do_loop = true
+        while do_loop do
+          splitted_text.each.with_index(1) do |item, i|
+            result[row_length] ||= ''
+            if result[row_length].length > INDENTION_COUNT
+              row_length += 1
+              result[row_length] = ''
+            end
+            result[row_length] += item
+            do_loop = false if splitted_text.length == i
+          end
+          do_loop = false if ROW_LIMIT - 1 > row_length
+        end
+        result.delete_if(&:blank?)
+        if result[-1].length == 1
+          result[-2] += result[-1]
+          result.pop
+        end
+        result.join("\n")
       end
     end
   end

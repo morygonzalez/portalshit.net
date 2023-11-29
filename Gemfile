@@ -45,6 +45,7 @@ gem 'tilt'
 gem 'tux'
 gem 'yard-sinatra'
 gem 'tantiny'
+gem 'natto'
 
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 
@@ -81,8 +82,4 @@ end
 
 group :postgresql do
   gem 'pg'
-end
-
-group :batch do
-  gem 'natto'
 end
