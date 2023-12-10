@@ -27,11 +27,15 @@ module Lokka::OGP
       private
 
       def nm
-        @nm ||= Natto::MeCab.new(userdic: File.expand_path('lib/tokenizer/userdic.dic'))
+        @nm ||= Natto::MeCab.new(
+          userdic: File.expand_path('lib/tokenizer/userdic.dic'),
+          node_format: "%M\t%H\n",
+          unk_format: "%M\t%H\n"
+        )
       end
 
       def prepare_text(text:)
-        splitted_text = nm.enum_parse(text).map(&:surface)
+        splitted_text = nm.enum_parse(text).map(&:feature)
         row_length = 0
         result = []
         do_loop = true
@@ -47,12 +51,12 @@ module Lokka::OGP
           end
           do_loop = false if ROW_LIMIT - 1 > row_length
         end
-        result.delete_if(&:blank?)
+        result.delete_if {|item| item =~ /EOS/ }
         if result[-1].length == 1
           result[-2] += result[-1]
           result.pop
         end
-        result.join("\n")
+        result.map(&:strip).join("\n")
       end
     end
   end
