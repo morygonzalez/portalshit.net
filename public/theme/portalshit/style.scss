@@ -692,6 +692,10 @@
         }
       }
 
+      figure.one-column {
+        text-align: center;
+      }
+
       figure.two-column {
         img {
           max-width: calc(100% / 2 - .3rem);
