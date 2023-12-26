@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '~> 2.4'
+ruby '~> 3.0'
 
 gem 'activerecord', '~> 5.2'
 gem 'activerecord-import'
