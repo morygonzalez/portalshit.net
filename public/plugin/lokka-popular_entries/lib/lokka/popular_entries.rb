@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'open-uri'
+require 'nokogiri'
 
 module Lokka
   module PopularEntries
@@ -11,13 +13,21 @@ class Entry
 
   class << self
     def popular(limit: 5, target: 'all')
-      target_file_path = File.join(
-        Lokka.root,
-        "public/log-aggregation/access-ranking-#{target}.txt"
-      )
-      return [] unless File.exist?(target_file_path)
-      return [] if File.empty?(target_file_path)
-      access_ranking = File.open(target_file_path)
+      access_ranking = case target
+                       when 'all', 'today', 'yesterday'
+                         path = File.join(
+                           Lokka.root,
+                           "public/log-aggregation/access-ranking-#{target}.txt"
+                         )
+                         File.open(path)
+                       when /\d{4}-\d{2}-\d{2}/
+                         url = "https://s3.ap-northeast-1.amazonaws.com/backup.portalshit.net/log/access-ranking-#{target}.txt"
+                         OpenURI.open_uri(url)
+                       else
+                         nil
+                       end
+
+      return [] unless access_ranking
       buffer = 2
       before = case
                when target =~ /\d{4}-\d{2}-\d{2}/
@@ -69,9 +79,6 @@ class Entry
     end
 
     def retrieve_bookmarks
-      require 'open-uri'
-      require 'nokogiri'
-
       ua = 'AppleWebKit/604.5.6 (KHTML, like Gecko) Reeder/3.1.2 Safari/604.5.6'
       url = 'https://b.hatena.ne.jp/site/portalshit.net/?sort=count&mode=rss'
       content = URI.open(url, 'User-Agent' => ua).read
