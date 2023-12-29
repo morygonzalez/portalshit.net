@@ -18,7 +18,7 @@ class ExecutionDetector
     when Similarity.count.zero?
       @message = 'Run execution because there is no similarity records.'
       true
-    when latest_entry_with_similarity.updated_at > latest_published_entry.updated_at
+    when latest_entry_with_similarity.updated_at >= latest_published_entry.updated_at
       @message = 'Skip similarity detection because the latest entry already has similar entries'
       false
     else
