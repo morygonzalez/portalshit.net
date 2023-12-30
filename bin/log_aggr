@@ -1,9 +1,9 @@
 #!/bin/bash
 
-UA_TO_IGNORE='useragent:.+?(bot|feed|wget|curl|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|media|subscribe|slurp|phantomjs|winds|slepnirsiteupdates|flipboard|guzzlehttp|go-http-client|dataprovider|sermush|woorank|parser)'
-REFERER_TO_IGNORE='referer:.+?(\.ru\/|semalt\.com|153\.126\.135\.20)'
-REQUEST_PATH_TO_IGNORE='(\/about|\/morygonzalez|\/author|\?page=*|popular|sitemap|\/yamap-widget-demo-page|\/imageproxy|\/api|favicon\.ico|index\.atom|\.js|\.json|\.css|\.jpe?g|\.png|\.gif|\.txt|\.php|\/admin|\/archives|\/tags|\/category/|^\-$|^\/$|\/ogp.+|\/amazon.+\.html|\/imageproxy/)'
 APP_DIR='/var/www/app/portalshit'
+UA_TO_IGNORE=`cat ${APP_DIR}/bin/conf/ua_to_ignore.txt`
+REFERER_TO_IGNORE=`cat ${APP_DIR}/bin/conf/referer_to_ignore.txt`
+REQUEST_PATH_TO_IGNORE=`cat ${APP_DIR}/bin/conf/request_path_to_ignore.txt`
 LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
 IP_TO_IGNORE=`cat ${LOG_AGGREGATION_DIR}/ip-to-ignore.txt`
 

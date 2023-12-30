@@ -1,0 +1,1 @@
+useragent:.+?(bot|feed|wget|curl|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|media|subscribe|slurp|phantomjs|winds|slepnirsiteupdates|flipboard|guzzlehttp|go-http-client|dataprovider|sermush|woorank|parser)

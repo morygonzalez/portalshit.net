@@ -4,7 +4,16 @@ files=`find /var/www/deploys/portalshit/shared/public/log-aggregation/ -type f -
 
 for file in ${files} ; do
   aws s3 cp ${file} s3://backup.portalshit.net/log/
-  rm ${file}
+  case $? in
+    0 )
+      echo "Seccessfully backup the file. Now remove the file."
+      rm ${file}
+      ;;
+    * )
+      echo "Backup of the file has failed. The file remains in it's original location."
+      exit 1
+      ;;
+  esac
 done
 
 exit 0

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+APP_DIR='/var/www/app/portalshit'
+UA_TO_IGNORE=`cat ${APP_DIR}/bin/conf/ua_to_ignore.txt`
+REFERER_TO_IGNORE=`cat ${APP_DIR}/bin/conf/referer_to_ignore.txt`
+REQUEST_PATH_TO_IGNORE=`cat ${APP_DIR}/bin/conf/request_path_to_ignore.txt`
+LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
+IP_TO_IGNORE=`cat ${LOG_AGGREGATION_DIR}/ip-to-ignore.txt`
+
+function access_ranking() {
+  target_date=$1
+  echo "Access Ranking ${target_date}"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
+    | grep "time:${target_date}" \
+    | grep 'status:200' \
+    | cut -f5 | sed -e 's/request_uri://' \
+    | grep -vP ${REQUEST_PATH_TO_IGNORE} \
+    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | tee ${LOG_AGGREGATION_DIR}/access-ranking-${target_date}.txt
+}
+
+function referer_ranking() {
+  target_date=$1
+  echo "Referer Ranking ${target_date}"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
+    | grep "time:${target_date}" \
+    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | sed -e 's/\?amp=1//' \
+    | cut -f12 | sed -e 's/referer://' \
+    | grep -vP '(^-$|portalshit\.net)' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | tee ${LOG_AGGREGATION_DIR}/referer-ranking-${target_date}.txt
+}
+
+case $1 in
+  'access' )
+    access_ranking $2
+    ;;
+  'referer' )
+    referer_ranking $2
+    ;;
+esac
+
