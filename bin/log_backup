@@ -1,0 +1,10 @@
+#!/bin/bash
+
+files=`find /var/www/deploys/portalshit/shared/public/log-aggregation/ -type f -regextype posix-egrep -regex '.+/(access|referer)-ranking-[0-9]{4}-[0-9]{2}-[0-9]{2}\.txt'`
+
+for file in ${files} ; do
+  aws s3 cp ${file} s3://backup.portalshit.net/log/
+  rm ${file}
+done
+
+exit 0
