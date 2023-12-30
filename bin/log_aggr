@@ -73,7 +73,7 @@ function access_ranking_all() {
 
 function referer_ranking_today() {
   echo "Referer Ranking Today"
-  find ${APP_DIR}/log/access.log \
+  find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
