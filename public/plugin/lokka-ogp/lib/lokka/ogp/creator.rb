@@ -42,7 +42,7 @@ module Lokka::OGP
         while do_loop do
           splitted_text.each.with_index(1) do |item, i|
             result[row_length] ||= ''
-            if result[row_length].length > INDENTION_COUNT
+            if (result[row_length].length + item.length) > INDENTION_COUNT
               row_length += 1
               result[row_length] = ''
             end
@@ -51,12 +51,12 @@ module Lokka::OGP
           end
           do_loop = false if ROW_LIMIT - 1 > row_length
         end
-        result.delete_if {|item| item =~ /EOS/ }
+        result.each {|item| item.gsub!(/EOS\n\z/, '') }
         if result[-1].length == 1
           result[-2] += result[-1]
           result.pop
         end
-        result.map(&:strip).join("\n")
+        result.map(&:strip).join("\n").chomp
       end
     end
   end
