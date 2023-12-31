@@ -35,7 +35,11 @@ module Lokka
     end
 
     def upload
-      bucket.object(filename).upload_file(tempfile.path, content_type: content_type)
+      bucket.object(filename).upload_file(
+        tempfile.path,
+        content_type: content_type,
+        cache_control: 'max-age=2592000,s-maxage=31536000'
+      )
     end
 
     private
