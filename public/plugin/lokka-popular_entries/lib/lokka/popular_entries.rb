@@ -13,30 +13,34 @@ class Entry
 
   class << self
     def popular(limit: 5, target: 'all')
-      access_ranking = case target
-                       when 'all', 'today', 'yesterday'
-                         path = File.join(
-                           Lokka.root,
-                           "public/log-aggregation/access-ranking-#{target}.txt"
-                         )
-                         File.open(path)
-                       when /\d{4}-\d{2}-\d{2}/
-                         url = "https://s3.ap-northeast-1.amazonaws.com/backup.portalshit.net/log/access-ranking-#{target}.txt"
-                         OpenURI.open_uri(url)
-                       else
-                         nil
-                       end
+      case target
+      when 'all', 'today', 'yesterday'
+        path = File.join(
+          Lokka.root,
+          "public/log-aggregation/access-ranking-#{target}.txt"
+        )
+        access_ranking = File.open(path)
+        before = if target == 'yesterday'
+                   Date.yesterday.end_of_day
+                 else
+                   Date.today.end_of_day
+                 end
+      when /\d{4}-\d{2}-\d{2}/
+        target_date = Date.parse(target)
+        access_ranking = if target_date < Date.new(2022, 6, 13) || target_date > Date.yesterday
+                           nil
+                         else
+                           url = "https://s3.ap-northeast-1.amazonaws.com/backup.portalshit.net/log/access-ranking-#{target}.txt"
+                           OpenURI.open_uri(url) rescue nil
+                         end
+        before = target_date
+      else
+        access_ranking = nil
+      end
 
-      return [] unless access_ranking
+      raise Sinatra::NotFound unless access_ranking
+
       buffer = 2
-      before = case
-               when target =~ /\d{4}-\d{2}-\d{2}/
-                 Date.parse(target)
-               when target == 'yesterday'
-                 Date.yesterday.end_of_day
-               else
-                 Date.today.end_of_day
-               end
       slugs = {}
       access_ranking.each_with_index do |line, index|
         _, path = *line.split(' ')
