@@ -3,6 +3,7 @@
 require 'open-uri'
 require 'fileutils'
 require 'faraday_middleware'
+require 'addressable'
 
 module Lokka
   module OGP
@@ -12,12 +13,12 @@ module Lokka
       attr_reader :url
 
       def initialize(url)
-        @url = URI.encode(url)
+        @url = Addressable::URI.escape(url)
       end
 
       def url_to_request
         if @url =~ /wikipedia\.org/
-          parsed = URI.parse(URI.encode(@url))
+          parsed = URI.parse(Addressable::URI.escape(@url))
           title = @url.split('/').last
           %(#{parsed.scheme}://#{parsed.hostname}/w/index.php?title=#{title})
         else
