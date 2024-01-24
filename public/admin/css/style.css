@@ -441,6 +441,7 @@ label {
     -moz-border-radius:8px;
     border-radius:8px;
 }
+
 #main a:link,
 #main a:visited {
     color: #4367c5;
@@ -1286,3 +1287,70 @@ textarea#category_description
         text-shadow:#222 1px 1px 0px;
     }
 }
+
+@media (prefers-color-scheme: dark) {
+    #aside {
+        li.parent {
+            h3.title {
+                background-color: #444444;
+            }
+            ul {
+                background-color: #303033;
+            }
+            a {
+                color: #CBCBCC;
+            }
+            a:hover {
+                color: #000000;
+            }
+        }
+    }
+    #main {
+        background-color: #303033;
+        color: #CBCBCC;
+
+        h2 {
+            background: linear-gradient(#444444, #303033);
+            border-bottom-color: #444444;
+            text-shadow: #727272 0px 1px 0px;
+        }
+
+        a:link, a:visited {
+            color: #bd605c;
+        }
+
+        a:hover {
+            color: #f0d9e1;
+        }
+
+        table {
+            tr.odd {
+                background-color: #444444;
+            }
+
+            tr {
+                border-bottom-color: #727272;
+            }
+        }
+
+        textarea, input, select, ul.preview-edit li.selected {
+            background-color: #444444;
+            color: #CBCBCC;
+        }
+
+        input[type="submit"] {
+            color: #000000;
+        }
+
+        #preview {
+            background: #444444;
+        }
+
+        .bulk_deletion {
+            .spam a.button, input[type="button"] {
+                color: #000000;
+            }
+        }
+    }
+}
+
