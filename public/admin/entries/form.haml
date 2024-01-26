@@ -25,9 +25,8 @@
         %li
           = label_tag :preview, for: 'preview-preview', caption: 'Preview'
           = radio_button_tag :ipreview, value: 'preview', id: 'preview-preview'
-      #editor{ 'data-mobile': mobile?.present?.to_s }
-        - style = mobile? ? nil : 'position: absolute; height: 100%; width: 100%; padding: 0; margin: 0'
-        %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", rows: 15, cols: 50, style: style }= @entry.raw_body
+      #editor
+        %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", cols: 50 }= @entry.raw_body
       #preview
   #form-aside
     .field.slug

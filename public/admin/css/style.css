@@ -1006,15 +1006,15 @@ textarea#category_description
     color:#eee;
 }
 
-#editor {
-    position: relative;
-}
-
 .field.edited input,
 .field.edited textarea,
 .field.edited select
 {
     background-color: #ede4cd;
+}
+
+#editor textarea {
+    height: 100%;
 }
 
 #editor iframe {
@@ -1129,9 +1129,16 @@ textarea#category_description
         width: 100%;
     }
 
+    #content {
+        padding-top: 52px;
+    }
+
+    .admin_login #main {
+        margin-top: 10px;
+    }
+
     #aside {
         float: none;
-        margin-top: 60px;
 
         #hamburger-checkbox {
             opacity: 0;
@@ -1272,7 +1279,7 @@ textarea#category_description
 
     #notice, #warn {
         left: auto;
-        top: 70px;
+        top: 16px;
         right: 11px;
     }
 }
