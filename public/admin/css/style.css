@@ -629,8 +629,57 @@ label {
     background: url(../images/plugin.png);
 }
 
-#aside li.setting h3 a {
+#aside li.field_names h3 {
+    display: inline-block;
+    position: relative;
+}
+
+#aside li.field_names h3::before {
+    content: '📝';
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    font-size: 1.15em;
+}
+
+#aside li.setting h3 {
     background: url(../images/setting.png);
+}
+
+#aside li.website h3 {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    font-size: 1.15em;
+}
+
+#aside li.website h3::before {
+    content: '';
+    background-image: var(--favicon-url);
+    background-size: 16px 16px;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 9px;
+    left: 8px;
+}
+
+#aside li.current_user h3 {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    font-size: 1.15em;
+}
+
+#aside li.current_user h3::before {
+    content: '';
+    background-image: var(--avatar-url);
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 7px;
+    left: 7px;
 }
 
 #aside li.parent h3.title {
@@ -668,6 +717,14 @@ label {
     -o-radius: 6px;
     text-decoration:none;
 }
+
+
+#aside li.parent h3.title > a {
+    padding-left: 0;
+    display: inline;
+    border: none;
+}
+
 #aside li.parent h3 a:link,
 #aside li.parent h3 a:visited {
     background-color: #444;
@@ -998,7 +1055,7 @@ textarea#category_description
     min-width: 20px;
 }
 
-#dashboard {
+#hamburger-checkbox {
     display: none;
 }
 
@@ -1059,21 +1116,129 @@ textarea#category_description
         max-width: 100%;
     }
 
+    #header {
+        h1, #nav {
+            display: none;
+        }
+
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
     #aside {
         float: none;
-    }
-    #aside ul li.parent {
-        display: none;
-    }
-    #aside ul li.parent.dashboard {
-        display: block;
-    }
-    #aside ul li.parent.dashboard h3 a {
-        border: none;
-    }
-    #aside ul li.parent.dashboard a:link {
-        background-color: transparent;
-        font-size: 14px;
+        margin-top: 60px;
+
+        #hamburger-checkbox {
+            opacity: 0;
+        }
+
+        #hamburger-checkbox:checked + #menu-button > span {
+            transform: rotate(45deg);
+        }
+
+        #hamburger-checkbox:checked + #menu-button > span::before {
+            top: 0;
+            transform: rotate(0deg);
+        }
+
+        #hamburger-checkbox:checked + #menu-button > span::after {
+            top: 0;
+            transform: rotate(90deg);
+        }
+
+        #hamburger-checkbox:checked ~ #menu-box {
+            left: 0 !important;
+        }
+
+        #menu-box {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 220px;
+            height: 100%;
+            margin: 0;
+            padding: 50px 0;
+            list-style: none;
+            background-color: #444444;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+            transition-duration: .25s;
+
+            li.parent {
+                margin-bottom: 0px;
+
+                &.website {
+
+                }
+
+                h3 {
+                    padding-top: 8px;
+                    padding-bottom: 8px;
+                }
+
+                h3 > a {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+
+                h3, h3.title, h3 > a {
+                    border-radius: 0px;
+                    border: none;
+                    clear: both;
+                    background-color: transparent;
+                    font-size: 1.15em;
+                }
+
+                h3:hover {
+                    color: #444444;
+                    background-color: #CBCBCC;
+                    text-shadow: none;
+
+                    > a:hover {
+                        color: #444444;
+                        text-shadow: none;
+                    }
+                }
+
+                > ul {
+                    display: none;
+                }
+            }
+        }
+
+        #menu-button {
+            position: fixed;
+            top: 25px;
+            left: 20px;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            z-index: 1;
+
+            > span, > span::before, > span::after {
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                background-color: #CBCBCC;
+                transition-duration: .25s;
+            }
+
+            > span::before {
+                content: '';
+                top: -8px;
+            }
+
+            > span::after {
+                content: '';
+                top: 8px;
+            }
+        }
     }
 
     #nav {
@@ -1109,182 +1274,6 @@ textarea#category_description
         left: auto;
         top: 70px;
         right: 11px;
-    }
-
-    ul#dashboard {
-        display: block;
-        margin-left: 0;
-        list-style: none;
-    }
-
-    #dashboard h3 {
-        margin: 0;
-        padding: 0;
-        font-size: 14px;
-    }
-
-    #dashboard ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-
-    #dashboard li.theme {
-        float: none;
-        margin: inherit;
-        margin-bottom: 0.8em;
-        width: inherit;
-        padding: inherit;
-    }
-
-    #dashboard ul li.parent {
-        line-height: 22px;
-        font-weight: bold;
-        display: block;
-        margin-bottom: 10px;
-    }
-    #dashboard li.parent ul {
-        background-color: #eee;
-        -webkit-border-radius: 0px 0px 6px 6px;
-        -moz-border-radius: 0px 0px 6px 6px;
-        border-radius: 0px 0px 6px 6px;
-        border-right-width: 1px;
-        border-bottom-width: 1px;
-        border-left-width: 1px;
-        border-right-style: solid;
-        border-bottom-style: solid;
-        border-left-style: solid;
-        border-right-color: #333;
-        border-bottom-color: #333;
-        border-left-color: #333;
-        padding-left: 12px;
-        padding-bottom: 3px;
-        clear: both;
-        padding-top: 5px;
-        display: block;
-        padding-right: 12px;
-        font-size: 13px;
-    }
-    #dashboard ul li ul li {
-        font-weight: normal;
-    }
-    #dashboard li.list {
-        /*
-        background: url(../images/files.png) no-repeat scroll 10px 50% transparent;
-         */
-    }
-    #dashboard ul li ul li a {
-        padding-left: 23px;
-        display:block;
-        margin-bottom: 3px;
-        padding-right: 10px;
-        line-height: 22px;
-        height: 22px;
-        background-repeat: no-repeat;
-    }
-    #dashboard ul li ul li a:hover,
-    #dashboard ul li ul li a:active {
-        -webkit-border-radius:6px;
-        -moz-border-radius:6px;
-        border-radius:6px;
-        background-color:#ddd;
-        background-image: url(../images/dashboard_arrow.png);
-        background-position: 10px center;
-    }
-
-    #dashboard li.new {
-        /*
-        background: url(../images/add.png) no-repeat scroll 10px 50% transparent;
-         */
-    }
-
-    #dashboard li.dashboard h3 a {
-        background: url(../images/dashboard.png);
-    }
-
-    #dashboard li.post h3 {
-        background: url(../images/post.png);
-    }
-
-    #dashboard li.page h3 {
-        background: url(../images/file.png);
-    }
-
-    #dashboard li.comment h3 {
-        background: url(../images/comment.png);
-    }
-
-    #dashboard li.category h3 {
-        background: url(../images/category.png);
-    }
-
-    #dashboard li.tag h3 {
-        background: url(../images/tag.png);
-    }
-
-    #dashboard li.user h3 {
-        background: url(../images/user.png);
-    }
-
-    #dashboard li.snippet h3 {
-        background: url(../images/file.png);
-    }
-
-    #dashboard li.theme h3 {
-        background: url(../images/theme.png);
-    }
-
-    #dashboard li.plugin h3 a {
-        background: url(../images/plugin.png);
-    }
-
-    #dashboard li.setting h3 a {
-        background: url(../images/setting.png);
-    }
-
-    #dashboard li.parent h3.title {
-        padding-left: 28px;
-        background-color: #444;
-        display: block;
-        background-repeat: no-repeat;
-        background-position: 8px 50%;
-        background-attachment: scroll;
-        padding-top: 4px;
-        padding-right: 8px;
-        padding-bottom: 4px;
-        color: #fff;
-        border: 1px solid #333;
-        -webkit-border-radius: 6px 6px 0px 0px  ;
-        -moz-border-radius: 6px 6px 0px 0px ;
-        border-radius: 6px 6px 0px 0px ;
-        -o-radius: 6px 6px 0px 0px ;
-    }
-    #dashboard li.parent h3 a {
-        color: #fff;
-        padding-left: 28px;
-        display: block;
-        background-repeat: no-repeat;
-        background-position: 8px 50%;
-        background-attachment: scroll;
-        padding-top: 4px;
-        padding-right: 8px;
-        padding-bottom: 4px;
-        color: #fff;
-        border: 1px solid #333;
-        -webkit-border-radius: 6px;
-        -moz-border-radius: 6px;
-        border-radius: 6px;
-        -o-radius: 6px;
-        text-decoration:none;
-    }
-    #dashboard li.parent h3 a:link,
-    #dashboard li.parent h3 a:visited {
-        background-color: #444;
-    }
-    #dashboard li.parent h3 a:hover,
-    #dashboard li.parent h3 a:active {
-        background-color: #525252;
-        text-shadow:#222 1px 1px 0px;
     }
 }
 

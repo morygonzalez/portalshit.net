@@ -25,62 +25,71 @@
             %li= link_to t('login'), url('/admin/login')
     #content
       #aside
-        %ul
+        %input#hamburger-checkbox{ type: "checkbox", name: 'hamburger-checkbox' }
+        %label#menu-button{ for: 'hamburger-checkbox' }
+          %span
+        %ul#menu-box
           %li.dashboard.parent
             %h3= link_to t('dashboard'), url('/admin/')
           %li.post.parent
-            %h3.title= t('posts')
+            %h3.title= link_to t('posts'), url('/admin/posts')
             %ul
               %li.list= link_to t('list'), url('/admin/posts')
               %li.new= link_to t('new'), url('/admin/posts/new')
           %li.page.parent
-            %h3.title= t('pages')
+            %h3.title= link_to t('pages'), url('/admin/pages')
             %ul
               %li.list= link_to t('list'), url('/admin/pages')
               %li.new= link_to t('new'), url('/admin/pages/new')
           %li.comment.parent
-            %h3.title= t('comments')
+            %h3.title= link_to t('comments'), url('/admin/comments')
             %ul
               %li.list= link_to t('list'), url('/admin/comments')
               %li.new= link_to t('new'), url('/admin/comments/new')
           %li.category.parent
-            %h3.title= t('categories')
+            %h3.title= link_to t('categories'), url('/admin/categories')
             %ul
               %li.list= link_to t('list'), url('/admin/categories')
               %li.new= link_to t('new'), url('/admin/categories/new')
           %li.tag.parent
-            %h3.title= t('tags')
+            %h3.title= link_to t('tags'), url('/admin/tags')
             %ul
               %li.list= link_to t('list'), url('/admin/tags')
           %li.user.parent
-            %h3.title= t('users')
+            %h3.title= link_to t('users'), url('/admin/users')
             %ul
               %li.list= link_to t('list'), url('/admin/users')
               %li.new= link_to t('new'), url('/admin/users/new')
           %li.snippet.parent
-            %h3.title= t('snippets')
+            %h3.title= link_to t('snippets'), url('/admin/snippets')
             %ul
               %li.list= link_to t('list'), url('/admin/snippets')
               %li.new= link_to t('new'), url('/admin/snippets/new')
           %li.theme.parent
-            %h3.title= t('themes')
+            %h3.title= link_to t('themes'), url('/admin/themes')
             %ul
               %li.list= link_to t('default_themes'), url('/admin/themes')
               %li.list= link_to t('mobile_themes'), url('/admin/mobile_themes')
           %li.plugin.parent
             %h3= link_to t('plugins'), url('/admin/plugins')
           %li.field_names.parent
-            %h3.title= t('field_names')
+            %h3.title= link_to t('field_names'), url('/admin/field_names')
             %ul
               %li.list= link_to t('list'), url('/admin/field_names')
               %li.list= link_to t('new'), url('/admin/field_names/new')
           %li.setting.parent
-            %h3.title= t('settings')
+            %h3.title= link_to t('settings'), url('/admin/site/edit')
             %ul
               %li.list= link_to t('sites'), url('/admin/site/edit')
               %li.list= link_to t('permalink.title'), url('/admin/permalink')
               %li.list= link_to t('import'), url('/admin/import')
               %li.list= link_to t('file_upload.name'), url('/admin/file_upload')
+          %li.website.parent{ style: "--favicon-url: url('#{@theme.path}/favicon.ico')" }
+            %h3= link_to @site.title, url('/')
+          %li.current_user.parent{ style: "--avatar-url: url('https://resources.portalshit.net/1b8859e855467088db590129c9d90922.svg')"}
+            %h3= link_to current_user.name, url("/admin/users/#{current_user.id}/edit")
+          %li.parent
+            %h3= link_to t('logout'), url('/admin/logout')
           - admin_aside = yield_content :admin_aside
           - unless admin_aside.blank?
             = admin_aside
