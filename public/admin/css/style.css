@@ -304,7 +304,7 @@ h1 {
 #notice, #warn {
     display: block;
     position: absolute;
-    left: 360px;
+    right: 2em;
     z-index: 1000;
     text-align: center;
     margin: 0px;
@@ -401,6 +401,28 @@ label {
 #nav ul li {
     margin: 0 6px;
     display: inline;
+}
+
+
+#nav li.current_user {
+    display: inline-block;
+    position: relative;
+    margin: 0;
+
+    a {
+        padding-left: 30px;
+    }
+}
+
+#nav li.current_user::before {
+    content: '';
+    background-image: var(--avatar-url);
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 2px;
+    left: 5px;
 }
 
 #content {
@@ -646,40 +668,8 @@ label {
     background: url(../images/setting.png);
 }
 
-#aside li.website h3 {
-    display: inline-block;
-    position: relative;
-    width: 100%;
-    font-size: 1.15em;
-}
-
-#aside li.website h3::before {
-    content: '';
-    background-image: var(--favicon-url);
-    background-size: 16px 16px;
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    top: 9px;
-    left: 8px;
-}
-
-#aside li.current_user h3 {
-    display: inline-block;
-    position: relative;
-    width: 100%;
-    font-size: 1.15em;
-}
-
-#aside li.current_user h3::before {
-    content: '';
-    background-image: var(--avatar-url);
-    background-size: 20px 20px;
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    top: 7px;
-    left: 7px;
+#aside li.website.parent {
+    display: none;
 }
 
 #aside li.parent h3.title {
@@ -694,10 +684,10 @@ label {
     padding-bottom: 4px;
     color: #fff;
     border: 1px solid #333;
-    -webkit-border-radius: 6px 6px 0px 0px  ;
-    -moz-border-radius: 6px 6px 0px 0px ;
-    border-radius: 6px 6px 0px 0px ;
-    -o-radius: 6px 6px 0px 0px ;
+    -webkit-border-radius: 6px 6px 0px 0px;
+    -moz-border-radius: 6px 6px 0px 0px;
+    border-radius: 6px 6px 0px 0px;
+    -o-radius: 6px 6px 0px 0px;
 }
 #aside li.parent h3 a {
     color: #fff;
@@ -1117,7 +1107,7 @@ textarea#category_description
     }
 
     #header {
-        h1, #nav {
+        h1 {
             display: none;
         }
 
@@ -1130,7 +1120,7 @@ textarea#category_description
     }
 
     #content {
-        padding-top: 52px;
+        padding-top: 4.5em;
     }
 
     .admin_login #main {
@@ -1170,18 +1160,15 @@ textarea#category_description
             width: 220px;
             height: 100%;
             margin: 0;
-            padding: 50px 0;
+            padding: 55px 0;
             list-style: none;
             background-color: #444444;
             box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
             transition-duration: .25s;
 
             li.parent {
-                margin-bottom: 0px;
-
-                &.website {
-
-                }
+                margin-bottom: 0;
+                padding-left: 10px;
 
                 h3 {
                     padding-top: 8px;
@@ -1201,19 +1188,36 @@ textarea#category_description
                     font-size: 1.15em;
                 }
 
-                h3:hover {
+                &:hover {
                     color: #444444;
                     background-color: #CBCBCC;
                     text-shadow: none;
-
-                    > a:hover {
-                        color: #444444;
-                        text-shadow: none;
-                    }
                 }
 
                 > ul {
                     display: none;
+                }
+
+                &.website {
+                    display: block;
+
+                    h3 {
+                        display: inline-block;
+                        position: relative;
+                        width: 100%;
+                        font-size: 1.15em;
+
+                        &::before {
+                            content: '';
+                            background-image: var(--favicon-url);
+                            background-size: 18px 18px;
+                            width: 18px;
+                            height: 18px;
+                            position: absolute;
+                            top: 12px;
+                            left: 8px;
+                        }
+                    }
                 }
             }
         }
@@ -1250,7 +1254,7 @@ textarea#category_description
 
     #nav {
         position: relative;
-        left: 1em;
+        right: 10px;
     }
 
     #nav ul li {
@@ -1279,8 +1283,8 @@ textarea#category_description
 
     #notice, #warn {
         left: auto;
-        top: 16px;
-        right: 11px;
+        top: 6em;
+        right: 1.5em;
     }
 }
 
