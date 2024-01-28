@@ -17,9 +17,20 @@ const hideNotice = () => {
   }
 }
 
+const handleHamburgerClose = () => {
+  document.querySelector('#main').onclick = () => {
+    const checkbox = document.querySelector('#hamburger-checkbox');
+    if (!checkbox.checked) {
+      return;
+    }
+    checkbox.checked = false;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initEditorUpload();
   hideNotice();
+  handleHamburgerClose();
 
   const textarea = document.querySelector('#editor textarea');
 
