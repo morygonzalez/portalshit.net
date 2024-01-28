@@ -1305,6 +1305,7 @@ textarea#category_description
             }
         }
     }
+
     #main {
         background-color: #303033;
         color: #CBCBCC;
@@ -1336,6 +1337,12 @@ textarea#category_description
         textarea, input, select, ul.preview-edit li.selected {
             background-color: #444444;
             color: #CBCBCC;
+        }
+
+        .field.edited {
+            input, textarea, select {
+                background-color: #554b44;
+            }
         }
 
         input[type="submit"] {
