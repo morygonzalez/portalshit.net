@@ -71,7 +71,7 @@ group :development, :test do
   gem 'database_cleaner-active_record'
   gem 'factory_girl', '~> 4.0'
   gem 'rack-test', require: 'rack/test'
-  gem 'rspec', '~> 2.99'
+  gem 'rspec', '~> 3.0'
   gem 'simplecov', require: false
   gem 'sqlite3', group: :batch
 end
