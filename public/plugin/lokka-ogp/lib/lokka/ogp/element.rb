@@ -13,7 +13,14 @@ module Lokka
       attr_reader :url
 
       def initialize(url)
-        @url = Addressable::URI.escape(url)
+        @url = begin
+                 url = url.force_encoding('utf-8')
+                 if url =~ /%/ || Addressable::URI.unescape(url) == url
+                   url
+                 else
+                   Addressable::URI.encode(url)
+                 end
+               end
       end
 
       def url_to_request
