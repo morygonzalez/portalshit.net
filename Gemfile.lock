@@ -193,7 +193,7 @@ GEM
     marcel (1.0.1)
     method_source (1.0.0)
     mini_magick (4.12.0)
-    mini_portile2 (2.8.0)
+    mini_portile2 (2.8.7)
     minitar (0.9)
     minitest (5.14.2)
     multi_json (1.14.1)
@@ -205,7 +205,7 @@ GEM
       net-ssh (>= 2.6.5, < 8.0.0)
     net-ssh (7.0.1)
     newrelic_rpm (8.0.0)
-    nio4r (2.5.8)
+    nio4r (2.7.3)
     nokogiri (1.13.5)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
@@ -225,7 +225,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.7)
-    puma (5.6.5)
+    puma (5.6.8)
       nio4r (~> 2.0)
     puma_worker_killer (0.3.1)
       get_process_mem (~> 0.2)
@@ -317,7 +317,8 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    sqlite3 (1.4.2)
+    sqlite3 (1.6.9)
+      mini_portile2 (~> 2.8.0)
     sshkit (1.21.3)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
@@ -427,7 +428,7 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-flash
   slim
-  sqlite3
+  sqlite3 (~> 1.6.0)
   sshkit
   tantiny
   tilt
