@@ -11,7 +11,7 @@ module Lokka
             when "img"
               item.attributes["src"].value
             when "video"
-              item.attributes["poster"].value
+              item.attributes["poster"]&.value
             end
           }
         end
