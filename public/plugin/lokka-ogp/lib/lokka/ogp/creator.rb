@@ -56,7 +56,7 @@ module Lokka::OGP
           result[-2] += result[-1]
           result.pop
         end
-        result.map(&:strip).join("\n").chomp
+        result.map(&:strip).join("\n").gsub(/"/, '\"').chomp
       end
     end
   end
