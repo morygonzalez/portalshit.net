@@ -20,7 +20,7 @@ module Lokka::OGP
           config.resize '1200x675'
           config.gravity GRAVITY
           config.pointsize FONT_SIZE
-          config.draw %(text #{TEXT_POSITION} "#{text}")
+          config.draw %(text #{TEXT_POSITION} '#{text}')
         end
       end
 
