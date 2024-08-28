@@ -182,7 +182,7 @@ GEM
       kaminari-core (~> 1.0)
       padrino-helpers
       sinatra
-    kramdown (2.2.1)
+    kramdown (2.4.0)
       rexml
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
@@ -255,7 +255,8 @@ GEM
     regexp_parser (2.4.0)
     request_store (1.5.0)
       rack (>= 1.4)
-    rexml (3.2.5)
+    rexml (3.3.6)
+      strscan
     ripl (0.7.1)
       bond (~> 0.5.1)
     ripl-multi_line (0.3.1)
@@ -322,6 +323,7 @@ GEM
     sshkit (1.21.3)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    strscan (3.1.0)
     sysexits (1.2.0)
     tantiny (0.3.3)
       concurrent-ruby (~> 1.0)
