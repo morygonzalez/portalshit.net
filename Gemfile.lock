@@ -437,7 +437,7 @@ DEPENDENCIES
   yard-sinatra
 
 RUBY VERSION
-   ruby 2.7.0p0
+   ruby 3.3.5p100
 
 BUNDLED WITH
    2.1.4
