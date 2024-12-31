@@ -24,10 +24,13 @@ module Lokka
       end
 
       def url_to_request
-        if @url =~ /wikipedia\.org/
+        case
+        when wikipedia?
           parsed = URI.parse(Addressable::URI.escape(@url))
           title = @url.split('/').last
           %(#{parsed.scheme}://#{parsed.hostname}/w/index.php?title=#{title})
+        when youtube?
+          %(https://www.youtube.com/oembed?url=#{Addressable::URI.escape(@url)})
         else
           @url
         end
@@ -81,6 +84,14 @@ module Lokka
         File.join(CACHE_DIR, uname)
       end
 
+      def youtube?
+        host =~ /youtube/
+      end
+
+      def wikipedia?
+        @url =~ /wikipedia\.org/
+      end
+
       def doc
         @doc ||= begin
                    connection = Faraday.new do |builder|
@@ -92,6 +103,15 @@ module Lokka
                  rescue StandardError
                    nil
                  end
+      end
+
+      def oembed_result
+        connection = Faraday.new do |builder|
+          builder.response :follow_redirects
+          builder.adapter Faraday.default_adapter
+        end
+        response = connection.get(url_to_request)
+        JSON.parse(response.body)
       end
 
       def title_fallback
@@ -135,22 +155,30 @@ module Lokka
       end
 
       def html
-        template = <<~ERUBY
-          <div class="ogp">
-            <a href="<%= url %>" class="ogp-link" target="_parent">
-              <div class="ogp-element">
-                <div class="ogp-image">
-                  <img src="<%= secure_image %>" alt="<%= html_escape(title) %>" />
-                </div>
-                <div class="ogp-summary">
-                  <h3><%= html_escape(title) %></h3>
-                  <p class="description"><%= html_escape(description) %></p>
-                  <p class="host"><%= host %></p>
-                </div>
-              </div>
-            </a>
-          </div>
-        ERUBY
+        template = if youtube?
+                     <<~ERUBY
+                       <div class="iframe-container youtube">
+                         <%= oembed_result['html'] %>
+                       </div>
+                     ERUBY
+                   else
+                     <<~ERUBY
+                       <div class="ogp">
+                         <a href="<%= url %>" class="ogp-link" target="_parent">
+                           <div class="ogp-element">
+                             <div class="ogp-image">
+                               <img src="<%= secure_image %>" alt="<%= html_escape(title) %>" />
+                             </div>
+                             <div class="ogp-summary">
+                               <h3><%= html_escape(title) %></h3>
+                               <p class="description"><%= html_escape(description) %></p>
+                               <p class="host"><%= host %></p>
+                             </div>
+                           </div>
+                         </a>
+                       </div>
+                     ERUBY
+                   end
         erb = ERB.new(template)
         erb.result(binding)
       end
