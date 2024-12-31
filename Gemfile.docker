@@ -44,6 +44,7 @@ gem 'tilt'
 gem 'tux'
 gem 'yard-sinatra'
 gem 'tantiny'
+gem 'natto'
 
 
 group :production do
@@ -70,7 +71,7 @@ group :development, :test do
   gem 'rack-test', require: 'rack/test'
   gem 'rspec', '~> 2.99'
   gem 'simplecov', require: false
-  gem 'sqlite3', group: :batch
+  gem 'sqlite3', '~> 1.6.0', group: :batch
 end
 
 group :mysql do
@@ -79,10 +80,6 @@ end
 
 group :postgresql do
   gem 'pg'
-end
-
-group :batch do
-  gem 'natto'
 end
 
 gem 'vacuum'
