@@ -233,8 +233,8 @@
 
   // OGP
   .ogp {
-    max-width: 552px;
-    height: 125px;
+    max-width: 800px;
+    height: 200px;
     margin: 1.5em 0px;
     overflow-y: hidden;
     font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
@@ -259,21 +259,21 @@
       border-radius: 5px;
       border: 1px solid #8b968d;
       font-size: .9em;
-      height: 120px;
+      height: 198px;
     }
 
     .ogp-image {
       flex-grow: 1;
-      width: 120px;
+      max-width: 200px;
       background-color: #fffffc;
       border-radius: 5px 0 0 5px;
-      overflow: hidden;
     }
 
     .ogp-image img {
       border-radius: 5px 0 0 5px;
-      height: 120px;
-      width: 120px;
+      height: 200px;
+      width: 200px;
+      max-width: initial;
       object-fit: cover;
     }
 
@@ -294,8 +294,8 @@
     }
 
     .ogp-summary h3 {
-      max-width: 400px;
-      font-size: 1em;
+      max-width: 600px;
+      font-size: 1.15em;
       margin: 0;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -314,8 +314,8 @@
     }
 
     .description {
-      max-width: 400px;
-      font-size: .8em;
+      max-width: 600px;
+      font-size: 1em;
       line-height: 1.3em;
       margin: 0 auto 0 0;
       border-radius: 0 5px 5px 0;
@@ -323,21 +323,43 @@
       text-overflow: ellipsis;
       overflow: hidden;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 4;
     }
 
     .host {
       margin: 0 auto 0 0;
     }
+  }
 
-    @media screen and (max-width:414px) {
+  @media screen and (max-width: 414px) {
+    .ogp {
+      max-width: 552px;
+      height: 125px;
+
       .ogp-element {
         font-size: 80%;
+        height: 120px;
       }
+
+      .ogp-image {
+        width: 120px;
+
+        img {
+          height: 120px;
+          width: 120px;
+        }
+      }
+
       .ogp-summary {
         max-width: 233px;
 
+        .description {
+          font-size: .8em;
+          -webkit-line-clamp: 2;
+        }
+
         h3 {
+          font-size: 1em;
           float: none;
         }
       }

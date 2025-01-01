@@ -143,7 +143,7 @@ module Lokka
 
       def secure_image
         if use_proxy?
-          "https://portalshit.net/imageproxy/120/#{image}"
+          "https://portalshit.net/imageproxy/200/#{image}"
         else
           image
         end
