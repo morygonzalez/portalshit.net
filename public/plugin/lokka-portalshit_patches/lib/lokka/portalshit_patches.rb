@@ -104,56 +104,6 @@ module Lokka
 
       render_detect :categories
     end
-
-    get '/popular/today' do
-      @theme_types << :entries
-      @page_title = '今日よく読まれている記事'
-      @page_description = %(今日（ #{Date.today} ）アクセス数が多い記事の一覧です。)
-      @bread_crumbs = [{ name: t('home'), link: '/' },
-                       { name: @page_title }]
-      @entries = Post.includes(:category, :tags).popular(target: 'today', limit: 25)
-      render_detect :popular_entries
-    end
-
-    get '/popular/yesterday' do
-      @theme_types << :entries
-      @page_title = '昨日よく読まれた記事'
-      @page_description = %(昨日（ #{Date.yesterday} ）アクセス数が多かった記事の一覧です。)
-      @bread_crumbs = [{ name: t('home'), link: '/' },
-                       { name: @page_title }]
-      @entries = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 25)
-      render_detect :popular_entries
-    end
-
-    get %r{^/popular/(\d{4}\-\d{2}\-\d{2})$} do |date|
-      @theme_types << :entries
-      @page_title = 'その日よく読まれた記事'
-      @page_description = %(#{Date.parse(date)} にアクセス数が多かった記事の一覧です。)
-      @bread_crumbs = [{ name: t('home'), link: '/' },
-                       { name: @page_title }]
-      @entries = Post.includes(:category, :tags).popular(target: date, limit: 25)
-      render_detect :popular_entries
-    end
-
-    get '/popular/recent' do
-      @theme_types << :entries
-      @page_title = '最近よく読まれている記事'
-      @page_description = '直近 30 日間でアクセス数が多かった記事の一覧です。'
-      @bread_crumbs = [{ name: t('home'), link: '/' },
-                       { name: @page_title }]
-      @entries = Post.includes(:category, :tags).popular(target: 'all', limit: 25)
-      render_detect :popular_entries
-    end
-
-    get '/popular/hatena-bookmark' do
-      @theme_types << :entries
-      @page_title = 'はてなブックマークで注目を集めた記事'
-      @page_description = 'はてなブックマークでブックマーク数が多い記事の一覧です。'
-      @bread_crumbs = [{ name: t('home'), link: '/' },
-                       { name: @page_title }]
-      @entries = Post.includes(:category, :tags).hotentry(limit: 25)
-      render_detect :popular_entries
-    end
   end
 
   module Helpers

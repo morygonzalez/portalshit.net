@@ -4,12 +4,95 @@ require 'nokogiri'
 
 module Lokka
   module PopularEntries
-    def self.registerd(app); end
+    def self.registered(app)
+      app.get '/popular' do
+        @theme_types << :entries
+        @page_title = t('popular_entries')
+        @page_description = '日ごとのアクセスランキング。'
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: @page_title }]
+        @title = %Q(#{@page_title} - #{@site.title})
+
+        today = Post.includes(:category, :tags).popular(target: 'today', limit: 7)
+        yesterday = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 7)
+        recent = Post.includes(:category, :tags).popular(target: 'all', limit: 7)
+        hatena = Post.includes(:category, :tags).hotentry(limit: 7)
+
+        @popular_entries = {
+          today: today,
+          yesterday: yesterday,
+          recent: recent,
+          'hatena-bookmark': hatena
+        }
+
+        haml :"plugin/lokka-popular_entries/views/index", layout: :"theme/#{@theme.name}/layout"
+      end
+
+      app.get '/popular/today' do
+        @theme_types << :entries
+        @page_title = t('popular_entries_today')
+        @page_description = %(今日（ #{Date.today} ）アクセス数が多い記事の一覧です。)
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: t('popular_entries'), link: '/popular' },
+                         { name: @page_title }]
+        @title = %Q(#{@page_title} - #{@site.title})
+        @entries = Post.includes(:category, :tags).popular(target: 'today', limit: 25)
+        render_detect :popular_entries
+      end
+
+      app.get '/popular/yesterday' do
+        @theme_types << :entries
+        @page_title = t('popular_entries_yesterday')
+        @page_description = %(昨日（ #{Date.yesterday} ）アクセス数が多かった記事の一覧です。)
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: t('popular_entries'), link: '/popular' },
+                         { name: @page_title }]
+        @title = %Q(#{@page_title} - #{@site.title})
+        @entries = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 25)
+        render_detect :popular_entries
+      end
+
+      app.get %r{^/popular/(\d{4}\-\d{2}\-\d{2})$} do |date|
+        @theme_types << :entries
+        @page_title = t('popular_entries_day')
+        @page_description = %(#{Date.parse(date)} にアクセス数が多かった記事の一覧です。)
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: t('popular_entries'), link: '/popular' },
+                         { name: @page_title }]
+        @title = %Q(#{@page_title} - #{@site.title})
+        @entries = Post.includes(:category, :tags).popular(target: date, limit: 25)
+        render_detect :popular_entries
+      end
+
+      app.get '/popular/recent' do
+        @theme_types << :entries
+        @page_title = t('popular_entries_recent')
+        @page_description = '直近 30 日間でアクセス数が多かった記事の一覧です。'
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: t('popular_entries'), link: '/popular' },
+                         { name: @page_title }]
+        @title = %Q(#{@page_title} - #{@site.title})
+        @entries = Post.includes(:category, :tags).popular(target: 'all', limit: 25)
+        render_detect :popular_entries
+      end
+
+      app.get '/popular/hatena-bookmark' do
+        @theme_types << :entries
+        @page_title = t('popular_entries_hatena-bookmark')
+        @page_description = 'はてなブックマークでブックマーク数が多い記事の一覧です。'
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: t('popular_entries'), link: '/popular' },
+                         { name: @page_title }]
+        @title = %Q(#{@page_title} - #{@site.title})
+        @entries = Post.includes(:category, :tags).hotentry(limit: 25)
+        render_detect :popular_entries
+      end
+    end
   end
 end
 
 class Entry
-  attr_accessor :bookmark_count, :bookmark_url
+  attr_accessor :bookmark_count, :bookmark_url, :pv
 
   class << self
     def popular(limit: 5, target: 'all')
@@ -42,18 +125,21 @@ class Entry
 
       buffer = 2
       slugs = {}
-      access_ranking.each_with_index do |line, index|
-        _, path = *line.split(' ')
+      access_ranking.each do |line|
+        pv, path = *line.split(' ')
         next unless Lokka::PermalinkHelper.custom_permalink_parse(path)
         slug = path.split('/')[-1]
-        slugs[index] = slug
+        slugs[slug] = pv
         break if slugs.length == limit + buffer
       end
       entries = includes(:category, :tags).
         published.
-        where(slug: slugs.values).
+        where(slug: slugs.keys).
         where('entries.created_at < ?', before)
-      entries.sort_by {|entry| slugs.values.index(entry.slug) }[0...limit]
+      entries.map {|entry|
+        entry.pv = slugs[entry.slug]
+        entry
+      }.sort_by {|entry| -entry.pv.to_i }[0...limit]
     end
 
     def hotentry(limit: 5)

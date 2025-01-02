@@ -1,5 +1,7 @@
 ja:
-  popular_entries: 人気のエントリー
-  popular_entries_today: 今日の人気エントリー
-  popular_entries_yesterday: 昨日の人気エントリー
-  hotentry: ホットエントリー
+  popular_entries: 人気の記事
+  popular_entries_today: 今日よく読まれている記事
+  popular_entries_yesterday: 昨日よく読まれた記事
+  popular_entries_day: その日よく読まれた記事
+  popular_entries_recent: 最近よく読まれている記事
+  popular_entries_hatena-bookmark: はてなブックマークで注目を集めた記事
