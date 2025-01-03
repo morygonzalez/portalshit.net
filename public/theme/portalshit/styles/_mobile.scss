@@ -1,7 +1,7 @@
 // For Tablet, Small laptop
 @media screen and (max-width: 1279px) {
   #content {
-    article#recent_entries, article.category {
+    article#recent_entries, article.category, article.popular {
       section {
         .new-entry {
           .content {
@@ -175,7 +175,7 @@
   #content {
     padding: .5em 0;
 
-    article#recent_entries, article.category {
+    article#recent_entries, article.category, article.popular {
       header {
         .meta {
           display: block;
