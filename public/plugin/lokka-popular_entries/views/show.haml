@@ -1,0 +1,22 @@
+%section
+  %h2= @page_title
+  %p= @page_description
+  - if request_path =~ /(today|yesterday|\d{4}\-\d{2}\-\d{2})$/
+    #date_picker
+      他の日に読まれた記事を見る。
+      %form
+        %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: defined?(@date) ? @date : 2.days.ago.to_date }
+        %button{ type: 'submit' } Go
+
+%article#recent_entries
+  %section.recent
+    - cache_fragment %(popular-#{I18n.locale}), expires_in: 1.hour do
+      .new-entry
+        - if post = @entries.first
+          = partial :_main_entry, locals: { post: post }
+      .past-entries
+        - @entries.each_with_index do |post, index|
+          - next if index == 0
+          = partial :_other_entries, locals: { post: post }
+
+%script(src="#{asset_path(:js, '/plugin/lokka-popular_entries/src/index.js')}")

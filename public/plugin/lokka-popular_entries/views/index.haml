@@ -1,26 +1,30 @@
-%section#root
-  -# %h1= t('popular_entries')
+%section
+  %h2= t('popular_entries')
+  %p よく読まれている記事の一覧。
 
-  %script(src="#{asset_path(:js, '/plubin/lokka-popular_entries/javascripts/index.js')}")
+  %ul
+    - @popular_entries.keys.each do |key|
+      %li= link_to t("popular_entries_#{key}"), "/popular##{key}"
+    %li#date_picker
+      = t('popular_entries_of_the_day')
+      %form
+        %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: 2.days.ago.to_date }
+        %button{ type: 'submit' } Go
 
-  #calendar
+- @popular_entries.each do |key, entries|
+  - title = t("popular_entries_#{key}")
+  %article.popular{ id: key }
+    %header
+      %h3= link_to title, "/popular/#{key}"
+    %section
+      - post = entries.delete_if {|item| entries.index(0) == item }.first
+      .new-entry
+        = partial :_main_entry, locals: { post: post }
+      .past-entries
+        - entries.each_with_index do |post, index|
+          - next if index == 0
+          = partial :_other_entries, locals: { post: post }
+    %footer
+      %p.read-more= link_to "<q>#{title}</q>をもっと読む".html_safe, %(/popular/#{key})
 
-  #entries
-    - @popular_entries.each do |type, entries|
-      - title = t("popular_entries_#{type}")
-      %article#today.category
-        %header
-          %h2= title
-          %ul.meta
-            %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: '%Y年%m月%d日 (%a)'}
-            %li== 記事数 #{entries.length}
-        %section
-          - post = entries.delete_if {|item| entries.index(0) == item }.first
-          .new-entry
-            = partial :_main_entry, locals: { post: post }
-          .past-entries
-            - entries.each_with_index do |post, index|
-              - next if index == 0
-              = partial :_other_entries, locals: { post: post }
-        %footer
-          %p.read-more= link_to "<q>#{title}</q>をもっと読む".html_safe, %(/popular/#{type})
+%script(src="#{asset_path(:js, '/plugin/lokka-popular_entries/src/index.js')}")

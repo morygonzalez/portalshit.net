@@ -2,6 +2,7 @@ en:
   popular_entries: Popular Entries
   popular_entries_today: Popular Entries Today
   popular_entries_yesterday: Popular Entries Yesterday
-  popular_entries_day: Pupular Entries on that day
+  popular_entries_of_the_day: Pupular Entries on the day
+  popular_entries_on: 'Pupular Entries on %{date}'
   popular_entries_recent: Popular Entries Recent
   popular_entries_hatena-bookmark: Hotentries on Hatena Bookmark

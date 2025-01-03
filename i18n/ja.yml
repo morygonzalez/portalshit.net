@@ -259,6 +259,7 @@ ja:
   date:
     formats:
       long: '%Y年%m月%d日 (%a)'
+      short: '%Y年%m月%d日'
   views:
      pagination:
        first: "&laquo; 最初のページ"

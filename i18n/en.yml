@@ -256,3 +256,14 @@ en:
   comment_delete_selected: Delete selected
   comment_delete_selected_confirmation: Will delete selected %d comments. Is it OK?
   comment_delete_not_selected: Please select comments which you want to delete.
+  date:
+    formats:
+      long: '%Y年%m月%d日 (%a)'
+      short: '%Y年%m月%d日'
+  views:
+     pagination:
+       first: "&laquo; 最初のページ"
+       last: "最後のページ &raquo;"
+       previous: "&lsaquo; 前のページ"
+       next: "次のページ &rsaquo;"
+       truncate: "..."

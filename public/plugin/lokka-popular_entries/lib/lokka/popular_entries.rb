@@ -13,10 +13,10 @@ module Lokka
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
 
-        today = Post.includes(:category, :tags).popular(target: 'today', limit: 7)
-        yesterday = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 7)
-        recent = Post.includes(:category, :tags).popular(target: 'all', limit: 7)
-        hatena = Post.includes(:category, :tags).hotentry(limit: 7)
+        today = Post.includes(:category, :tags).popular(target: 'today', limit: 4)
+        yesterday = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 4)
+        recent = Post.includes(:category, :tags).popular(target: 'all', limit: 4)
+        hatena = Post.includes(:category, :tags).hotentry(limit: 4)
 
         @popular_entries = {
           today: today,
@@ -31,37 +31,38 @@ module Lokka
       app.get '/popular/today' do
         @theme_types << :entries
         @page_title = t('popular_entries_today')
-        @page_description = %(今日（ #{Date.today} ）アクセス数が多い記事の一覧です。)
+        @page_description = %(今日（#{l(Date.today, format: :long)}）アクセス数が多い記事の一覧です。)
         @bread_crumbs = [{ name: t('home'), link: '/' },
                          { name: t('popular_entries'), link: '/popular' },
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).popular(target: 'today', limit: 25)
-        render_detect :popular_entries
+        haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
 
       app.get '/popular/yesterday' do
         @theme_types << :entries
         @page_title = t('popular_entries_yesterday')
-        @page_description = %(昨日（ #{Date.yesterday} ）アクセス数が多かった記事の一覧です。)
+        @page_description = %(昨日（#{l(Date.yesterday, format: :long)}）アクセス数が多かった記事の一覧です。)
         @bread_crumbs = [{ name: t('home'), link: '/' },
                          { name: t('popular_entries'), link: '/popular' },
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).popular(target: 'yesterday', limit: 25)
-        render_detect :popular_entries
+        haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
 
       app.get %r{^/popular/(\d{4}\-\d{2}\-\d{2})$} do |date|
         @theme_types << :entries
-        @page_title = t('popular_entries_day')
-        @page_description = %(#{Date.parse(date)} にアクセス数が多かった記事の一覧です。)
+        @page_title = t('popular_entries_on', date: l(Date.parse(date), format: :short))
+        @page_description = %(#{l(Date.parse(date), format: :long)}にアクセス数が多かった記事の一覧です。)
         @bread_crumbs = [{ name: t('home'), link: '/' },
                          { name: t('popular_entries'), link: '/popular' },
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).popular(target: date, limit: 25)
-        render_detect :popular_entries
+        @date = date
+        haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
 
       app.get '/popular/recent' do
@@ -73,7 +74,7 @@ module Lokka
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).popular(target: 'all', limit: 25)
-        render_detect :popular_entries
+        haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
 
       app.get '/popular/hatena-bookmark' do
@@ -85,7 +86,7 @@ module Lokka
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).hotentry(limit: 25)
-        render_detect :popular_entries
+        haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
     end
   end

@@ -2,6 +2,7 @@ ja:
   popular_entries: 人気の記事
   popular_entries_today: 今日よく読まれている記事
   popular_entries_yesterday: 昨日よく読まれた記事
-  popular_entries_day: その日よく読まれた記事
+  popular_entries_of_the_day: その日よく読まれた記事
+  popular_entries_on: '%{date}によく読まれた記事'
   popular_entries_recent: 最近よく読まれている記事
   popular_entries_hatena-bookmark: はてなブックマークで注目を集めた記事
