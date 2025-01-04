@@ -308,7 +308,7 @@
   }
 
   > section, > article, > aside {
-    margin: 1rem .5rem 5rem;
+    margin: 1rem .5rem 4rem;
 
     &:last-child {
       margin-bottom: 2rem;
@@ -362,7 +362,7 @@
 
     section {
       .new-entry {
-        margin-bottom: 3rem;
+        margin-bottom: 8rem;
 
         .title {
           @include article-title;
@@ -406,7 +406,7 @@
 
         .entry {
           width: 31%;
-          margin-bottom: 2em;
+          margin-bottom: 4em;
           margin-right: 2em;
 
           &:nth-child(3n) {

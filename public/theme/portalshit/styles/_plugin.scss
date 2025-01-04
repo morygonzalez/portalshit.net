@@ -234,7 +234,7 @@
   // OGP
   .ogp {
     max-width: 800px;
-    height: 200px;
+    height: 202px;
     margin: 1.5em 0px;
     overflow-y: hidden;
     font-family: メイリオ, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, ヒラギノ丸ゴ Pro W4, HiraMaruPro-W4, Verdana, HiraMaruPro-W4, ヒラギノ角ゴ Pro W3, HiraKakuPro-W3, Osaka, sans-serif;
@@ -259,7 +259,7 @@
       border-radius: 5px;
       border: 1px solid #8b968d;
       font-size: .9em;
-      height: 198px;
+      height: 200px;
     }
 
     .ogp-image {
@@ -279,7 +279,7 @@
 
     .ogp-summary {
       flex-grow: 3;
-      padding: .7em 1.1em;
+      padding: 1em 1.1em;
       display: flex;
       border-radius: 0 5px 5px 0;
       flex-direction: column;
@@ -295,7 +295,7 @@
 
     .ogp-summary h3 {
       max-width: 600px;
-      font-size: 1.15em;
+      font-size: 1.2em;
       margin: 0;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -334,7 +334,7 @@
   @media screen and (max-width: 414px) {
     .ogp {
       max-width: 552px;
-      height: 125px;
+      height: 122px;
 
       .ogp-element {
         font-size: 80%;

@@ -1,21 +1,19 @@
 %section
   %h2= t('popular_entries')
-  %p よく読まれている記事の一覧。
+  %p= @page_description
 
   %ul
     - @popular_entries.keys.each do |key|
       %li= link_to t("popular_entries_#{key}"), "/popular##{key}"
     %li#date_picker
       = t('popular_entries_of_the_day')
-      %form
-        %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: 2.days.ago.to_date }
-        %button{ type: 'submit' } Go
+      %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: 2.days.ago.to_date }
 
 - @popular_entries.each do |key, entries|
   - title = t("popular_entries_#{key}")
   %article.popular{ id: key }
     %header
-      %h3= link_to title, "/popular/#{key}"
+      %h3= title
     %section
       - post = entries.delete_if {|item| entries.index(0) == item }.first
       .new-entry

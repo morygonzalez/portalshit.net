@@ -14,7 +14,7 @@
           = partial :_other_entries, locals: { post: post }
 
 %section#popular_entries
-  %h2 人気記事
+  %h2= link_to t('popular_entries'), '/popular'
   %section
     - cache_fragment :"index-recent-#{I18n.locale}", expires_in: 1.hour do
       %section.frequently-read-articles

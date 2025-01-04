@@ -8,7 +8,7 @@ module Lokka
       app.get '/popular' do
         @theme_types << :entries
         @page_title = t('popular_entries')
-        @page_description = '日ごとのアクセスランキング。'
+        @page_description = 'よく読まれている記事。'
         @bread_crumbs = [{ name: t('home'), link: '/' },
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})

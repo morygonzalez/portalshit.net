@@ -4,9 +4,7 @@
   - if request_path =~ /(today|yesterday|\d{4}\-\d{2}\-\d{2})$/
     #date_picker
       他の日に読まれた記事を見る。
-      %form
-        %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: defined?(@date) ? @date : 2.days.ago.to_date }
-        %button{ type: 'submit' } Go
+      %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: defined?(@date) ? @date : 2.days.ago.to_date }
 
 %article#recent_entries
   %section.recent
