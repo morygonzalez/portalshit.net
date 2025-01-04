@@ -33,11 +33,9 @@ module Lokka
       end
 
       app.before do
-        assets_path = '/plugin/lokka-amazon_associate/assets'
         content_for :header do
           <<~HTML.html_safe
-            <script src="#{assets_path}/script.js"></script>
-            <link href="#{assets_path}/style.css" rel="stylesheet" type="text/css" />
+            <script src="#{asset_path('plugin/lokka-amazon_associate/assets/script.js')}"></script>
           HTML
         end
       end

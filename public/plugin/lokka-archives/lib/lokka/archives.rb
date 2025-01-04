@@ -100,7 +100,7 @@ module Lokka
       if Lokka.production?
         "#{archives_assets_path}/#{archives_manifest[file_name]}"
       else
-        "/plugin/lokka-archives/build/#{file_name}"
+        "plugin/lokka-archives/build/#{file_name}"
       end
     end
 
