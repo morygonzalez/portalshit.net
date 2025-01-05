@@ -29,7 +29,6 @@ set :deploy_to, "/var/www/deploys/#{fetch(:application)}"
 
 # Default value for :linked_files is []
 append :linked_files,
-  'config/newrelic.yml',
   'db/database.yml',
   '.env'
 

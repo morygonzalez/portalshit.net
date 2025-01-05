@@ -11,8 +11,6 @@ services:
       - data-volume:/var/lib/mysql
   app:
     image: morygonzalez/portalshit
-    secrets:
-      - newrelic_config
     environment:
       DB_HOST: db
       SESSION_SECRET: 'secret'
@@ -31,6 +29,3 @@ volumes:
   data-volume:
   bundle:
   vendor:
-secrets:
-  newrelic_config:
-    file: config/newrelic.yml
