@@ -32,9 +32,11 @@ function access_ranking_today() {
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")" \
     | grep 'status:200' \
-    | cut -f5 | sed -e 's/request_uri://' \
-    | grep -vP ${REQUEST_PATH_TO_IGNORE} \
-    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | cut -f5 \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
+    | sed -e 's/request_uri://' \
+    | sed -e 's/\?.*//' \
+    | grep -vP '^/$' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-today.txt 2>/dev/null
 }
@@ -49,9 +51,11 @@ function access_ranking_yesterday() {
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
     | grep 'status:200' \
-    | cut -f5 | sed -e 's/request_uri://' \
-    | grep -vP ${REQUEST_PATH_TO_IGNORE} \
-    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | cut -f5 \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
+    | sed -e 's/request_uri://' \
+    | sed -e 's/\?.*//' \
+    | grep -vP '^/$' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-yesterday.txt 2>/dev/null
 }
@@ -64,9 +68,11 @@ function access_ranking_all() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep 'status:200' \
-    | cut -f5 | sed -e 's/request_uri://' \
-    | grep -vP ${REQUEST_PATH_TO_IGNORE} \
-    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | cut -f5 \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
+    | sed -e 's/request_uri://' \
+    | sed -e 's/\?.*//' \
+    | grep -vP '^/$' \
     | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | cat 1>${LOG_AGGREGATION_DIR}/access-ranking-all.txt 2>/dev/null
 }
@@ -79,7 +85,7 @@ function referer_ranking_today() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d today "+%Y-%m-%d")" \
-    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
@@ -96,7 +102,7 @@ function referer_ranking_yesterday() {
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:$(date -d yesterday "+%Y-%m-%d")" \
-    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
@@ -111,7 +117,7 @@ function referer_ranking_all() {
     | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
-    | grep -vP "request_uri:.+?${REQUEST_PATH_TO_IGNORE}" \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
     | sed -e 's/\?amp=1//' \
     | cut -f12 | sed -e 's/referer://' \
     | grep -vP '(^-$|portalshit\.net)' \
