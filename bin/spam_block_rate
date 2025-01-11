@@ -1,11 +1,11 @@
 #!/bin/bash
 
-source /var/www/app/portalshit/bin/common.sh
+source "$(dirname "$0")/common.sh"
 
 # キャッシュヒット率集計処理
 process_spam_block_rate() {
   local period=${1:-"all"}
-  local output="${LOG_AGGREGATION_DIR}/spam-block-rate-${period}-test.txt"
+  local output="${LOG_AGGREGATION_DIR}/spam-block-rate-${period}.txt"
 
   echo "Processing Spam Block Rate ($period)"
   find ${APP_DIR}/log/access.log* \

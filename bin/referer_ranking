@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /var/www/app/portalshit/bin/common.sh
+source "$(dirname "$0")/common.sh"
 
 # リファラーランキング処理
 process_referer_ranking() {
@@ -11,9 +11,9 @@ process_referer_ranking() {
   filter_logs "$period" \
     | awk -F'\t' '{print $12}' \
     | sed -e 's/referer://' \
-    | grep -vP '(^-$|portalshit\.net)' \
+    | grep -Ev '(^-$|portalshit\.net)' \
     | sort | uniq -c | sort -nr | head -100 \
-    | sed -r 's/^[ \t]+//' \
+    | sed -E 's/^[ \t]+//' \
     | tee "${output}"
 
   echo "Referer ranking saved to: ${output}"

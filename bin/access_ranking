@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /var/www/app/portalshit/bin/common.sh
+source "$(dirname "$0")/common.sh"
 
 # アクセスランキング処理
 process_access_ranking() {
@@ -9,10 +9,10 @@ process_access_ranking() {
 
   echo "Processing Access Ranking ($period)"
   filter_logs "$period" "200" \
-    | awk -F'\t' '{print $5}' \
-    | sort | grep -v '^$' | uniq -c | sort -nr | head -100 \
+    | awk -F'\t' 'NF {count[$5]++} END {for (word in count) print count[word], word}' \
+    | sort -nr \
+    | awk 'NR<=100' \
     | sed -e 's/request_uri://' \
-    | sed -r 's/^[ \t]+//' \
     | tee "${output}"
 
   echo "Access ranking saved to: ${output}"

@@ -8,7 +8,7 @@ readonly CONFIG_DIR="${APP_DIR}/bin/conf"
 readonly UA_TO_IGNORE=$(cat "${CONFIG_DIR}/ua_to_ignore.txt" 2>/dev/null || echo "")
 readonly REFERER_TO_IGNORE=$(cat "${CONFIG_DIR}/referer_to_ignore.txt" 2>/dev/null || echo "")
 readonly REQUEST_PATH_TO_IGNORE=$(cat "${CONFIG_DIR}/request_path_to_ignore.txt" 2>/dev/null || echo "")
-readonly IP_TO_IGNORE=`cat ${LOG_AGGREGATION_DIR}/ip-to-ignore.txt`
+readonly IP_TO_IGNORE=$(cat "${LOG_AGGREGATION_DIR}/ip-to-ignore.txt")
 
 # ディレクトリ確認と作成
 mkdir -p "${LOG_AGGREGATION_DIR}"
@@ -42,5 +42,10 @@ filter_by_date() {
       ;;
   esac
 
-  grep "time:${filter_date}"
+  if [[ "$filter_date" == "*" || "$filter_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+    grep "time:${filter_date}"
+  else
+    echo "Invalid date format: ${filter_date}" >&2
+    return 1
+  fi
 }
