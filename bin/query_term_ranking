@@ -1,0 +1,58 @@
+#!/bin/bash
+
+source /var/www/app/portalshit/bin/common.sh
+
+# 検索キーワードランキング処理
+process_query_term_ranking() {
+  local target=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/query-term-ranking-${target}.txt"
+  local ignore_ip=""
+
+  case "${target}" in
+    all)
+      ignore_ip="-"
+      ;;
+    visitor)
+      ignore_ip="${IP_TO_IGNORE}"
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
+
+  echo "Processing Query Term Ranking ($target)"
+  find "${LOG_DIR}" -name "access.log*" \
+    | xargs zcat -f \
+    | grep -vP "remote_addr:\(${ignore_ip}\)" \
+    | awk -F'\t' '{print $5}' \
+    | grep 'query=' \
+    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | sed -r "s/\'//g" \
+    | grep -vP "(^-$|\.cn|alert|ORDER%20BY%201|nvOpzp|\(|\)|\.\.\/|%3d|%27)" \
+    | tr -s "\n" \
+    | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
+    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | tee "${output}"
+
+  echo "Query term ranking saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local target="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_query_term_ranking
+  else
+    case "$target" in
+      all|visitor)
+        process_query_term_ranking "$target"
+        ;;
+      *)
+        echo "Usage: $0 {query_term_ranking} {[all|visitor]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"

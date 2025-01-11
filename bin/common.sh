@@ -17,6 +17,7 @@ mkdir -p "${LOG_AGGREGATION_DIR}"
 filter_logs() {
   local period=${1:-"*"}
   local status=${2:-"*"}
+
   find "${LOG_DIR}" -name "access.log*" \
     | xargs zcat -f \
     | grep -P "status:${status}" \

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+source /var/www/app/portalshit/bin/common.sh
+
+# 除外IPアドレス集計処理処理
+process_ip_to_ignore() {
+  local output="${LOG_AGGREGATION_DIR}/ip-to-ignore.txt"
+
+  echo "Processing Ignore IPs "
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | grep -viP ${UA_TO_IGNORE} \
+    | grep -viP ${REFERER_TO_IGNORE} \
+    | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
+    | cut -f2 | sed -e 's/remote_addr://' \
+    | sed -e 's/\?.*//' | grep -vP '^/$' \
+    | sort | uniq -c | sort -nr | head -200 | sed -r 's/^[ \t]+//g' \
+    | sed -e 's/^[[:digit:]]\+\s//' \
+    | sed -e 's/\./\\./g' \
+    | sed -z -e 's/\n/\|/g' \
+    | sed -r 's/\|$//g' \
+    | tee "${output}"
+
+  echo "Igore IPs saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  if [ $# -eq 0 ]; then
+    process_ip_to_ignore
+  else
+    echo "Usage: $0 {ip_to_ignore}"
+    exit 1
+  fi
+}
+
+main "$@"
