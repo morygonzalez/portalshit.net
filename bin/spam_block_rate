@@ -1,0 +1,55 @@
+#!/bin/bash
+
+source /var/www/app/portalshit/bin/common.sh
+
+# キャッシュヒット率集計処理
+process_spam_block_rate() {
+  local period=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/spam-block-rate-${period}-test.txt"
+
+  echo "Processing Spam Block Rate ($period)"
+  find ${APP_DIR}/log/access.log* \
+    | xargs zcat -f \
+    | filter_by_date "${period}" \
+    | grep "POST" | grep -v "uri:/admin/" \
+    | grep "referer:https://portalshit.net" | cut -f9 | sort | uniq -c \
+    | awk '{
+        if ($2 ~ /402/) {
+          block = $1
+        };
+        if ($2 ~ /302/) {
+          slip = $1
+        };
+        sum+=$1
+      } END {
+        block_rate = block / sum * 100;
+        slip_rate = slip / sum * 100;
+        print "TOTAL\t" sum
+        print "BLOCK\t" block "\t(" block_rate "%)"
+        print "SLIP\t" slip "\t(" slip_rate "%)"
+      }' \
+    | tee "${output}"
+
+  echo "Cache hit rate saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_spam_block_rate
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_spam_block_rate "$period"
+        ;;
+      *)
+        echo "Usage: $0 {spam_block_rate} {[YYYY-MM-DD|today|yesterday]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"

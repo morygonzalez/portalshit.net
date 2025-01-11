@@ -1,0 +1,41 @@
+#!/bin/bash
+
+source /var/www/app/portalshit/bin/common.sh
+
+# リファラーランキング処理
+process_referer_ranking() {
+  local period=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/referer-ranking-${period}.txt"
+
+  echo "Processing Referer Ranking ($period)"
+  filter_logs "$period" \
+    | awk -F'\t' '{print $12}' \
+    | sed -e 's/referer://' \
+    | grep -vP '(^-$|portalshit\.net)' \
+    | sort | uniq -c | sort -nr | head -100 \
+    | sed -r 's/^[ \t]+//' \
+    | tee "${output}"
+
+  echo "Referer ranking saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_referer_ranking
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_referer_ranking "$period"
+        ;;
+      *)
+        echo "Usage: $0 {referer_ranking} {[YYYY-MM-DD|today|yesterday]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source /var/www/app/portalshit/bin/common.sh
+
+# アクセスランキング処理
+process_access_ranking() {
+  local period=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/access-ranking-${period}.txt"
+
+  echo "Processing Access Ranking ($period)"
+  filter_logs "$period" "200" \
+    | awk -F'\t' '{print $5}' \
+    | sort | grep -v '^$' | uniq -c | sort -nr | head -100 \
+    | sed -e 's/request_uri://' \
+    | sed -r 's/^[ \t]+//' \
+    | tee "${output}"
+
+  echo "Access ranking saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_access_ranking
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_access_ranking "$period"
+        ;;
+      *)
+        echo "Usage: $0 {access_ranking} {[YYYY-MM-DD|today|yesterday]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"
