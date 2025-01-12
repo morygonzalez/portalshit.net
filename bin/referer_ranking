@@ -13,7 +13,7 @@ process_referer_ranking() {
     | sed -e 's/referer://' \
     | grep -Ev '(^-$|portalshit\.net)' \
     | sort | uniq -c | sort -nr | head -100 \
-    | sed -E 's/^[ \t]+//' \
+    | sed -e 's/^[[:space:]]*//' -e '/^[0-9].$/d' \
     | tee "${output}"
 
   echo "Referer ranking saved to: ${output}"

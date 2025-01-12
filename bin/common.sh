@@ -31,11 +31,14 @@ filter_logs() {
 filter_by_date() {
   local filter_date=""
   case "$1" in
-    "all")
+    all)
       filter_date="*"
       ;;
-    "today"|"yesterday")
+    today|yesterday)
       filter_date=$(date -d "$1" "+%Y-%m-%d")
+      ;;
+    [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9])
+      filter_date="${1}"
       ;;
     *)
       filter_date="*"

@@ -12,7 +12,7 @@ process_access_ranking() {
     | awk -F'\t' 'NF {count[$5]++} END {for (word in count) print count[word], word}' \
     | sort -nr \
     | awk 'NR<=100' \
-    | sed -e 's/request_uri://' \
+    | sed -e 's/request_uri://' -e '/^[0-9].$/d' \
     | tee "${output}"
 
   echo "Access ranking saved to: ${output}"
