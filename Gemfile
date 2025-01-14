@@ -50,6 +50,7 @@ gem 'natto'
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 
 group :production do
+  gem 'newrelic_rpm'
   gem 'rack-ssl-enforcer'
 end
 
