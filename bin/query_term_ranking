@@ -26,11 +26,11 @@ process_query_term_ranking() {
     | grep -vP "remote_addr:\(${ignore_ip}\)" \
     | awk -F'\t' '{print $5}' \
     | grep 'query=' \
-    | sed -r 's/request_uri:.+?query=//' | sed -r 's/&page=.//' | sed -r "s/\'//g" \
-    | grep -vP "(^-$|\.cn|alert|ORDER%20BY%201|nvOpzp|\(|\)|\.\.\/|%3d|%27)" \
-    | tr -s "\n" \
+    | sed -r "s/request_uri:.+?query=|&page=.|'//g" \
+    | grep -vP "(^-$|\.cn|alert|ORDER%20BY%201|nvOpzp|\(|\)|\.\.\/|%3d|%27|unhex)" \
+    | tr -s "\n" | tr '[:upper:]' '[:lower:]' \
+    | awk '{count[$0]++} END {for (word in count) print count[word], word}' | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
-    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
     | tee "${output}"
 
   echo "Query term ranking saved to: ${output}"
