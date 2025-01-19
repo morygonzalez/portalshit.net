@@ -21,7 +21,6 @@ module Lokka
       set :per_page, 10
       set :admin_per_page, 200
       set :default_locale, 'en'
-      set :haml, attr_wrapper: '"'
       set :session_secret, ENV['SESSION_SECRET'] || SecureRandom.hex(64)
       set :protect_from_csrf, true
       supported_stylesheet_templates.each do |style|
