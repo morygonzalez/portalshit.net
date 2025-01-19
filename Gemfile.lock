@@ -58,7 +58,7 @@ GEM
       debug_inspector (>= 1.2.0)
     bond (0.5.1)
     builder (3.3.0)
-    capistrano (3.14.0)
+    capistrano (3.19.2)
       airbrussh (>= 1.0.0)
       i18n
       rake (>= 10.0.0)
@@ -394,7 +394,7 @@ DEPENDENCIES
   binding_of_caller
   builder
   bundler
-  capistrano (= 3.14.0)
+  capistrano
   capistrano-bundler
   capistrano-rbenv
   capistrano-rbenv-install

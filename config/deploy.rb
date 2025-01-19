@@ -56,6 +56,9 @@ set :bundle_without, %w{test postgresql sqlite batch}.join(' ')
 set :puma_conf, '/var/www/app/portalshit/config/puma.rb'
 set :user, 'app'
 set :puma_systemctl_user, fetch(:user)
+set :puma_service_unit_env_vars, ['RACK_ENV=production', 'RUBYOPT=-EUTF-8']
+set :puma_access_log, '/var/www/app/portalshit/log/puma_access.log'
+set :puma_error_log, '/var/www/app/portalshit/log/puma_error.log'
 
 namespace :deploy do
   desc 'Build JavaScript'
