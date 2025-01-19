@@ -48,7 +48,7 @@ module Lokka
     end
 
     def ga4_tracking_code
-      <<-JAVASCRIPT.strip_heredoc
+      <<-JAVASCRIPT.strip_heredoc.html_safe
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=#{Option.tracker_ga4}"></script>
         <script>
