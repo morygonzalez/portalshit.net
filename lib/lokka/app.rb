@@ -22,7 +22,7 @@ module Lokka
       set :admin_per_page, 200
       set :default_locale, 'en'
       set :haml, attr_wrapper: '"'
-      set :session_secret, ENV['SESSION_SECRET'] || SecureRandom.hex(30)
+      set :session_secret, ENV['SESSION_SECRET'] || SecureRandom.hex(64)
       set :protect_from_csrf, true
       supported_stylesheet_templates.each do |style|
         set style, style: :compressed
