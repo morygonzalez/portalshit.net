@@ -145,7 +145,7 @@ module Lokka
       @bread_crumbs << { name: @entry.category.title, link: @entry.category.link } if @entry.category
       @bread_crumbs << { name: @entry.title, link: @entry.link }
 
-      render_detect_with_options [type, :entry]
+      render_detect_with_options type, :entry
     end
 
     ##
@@ -181,10 +181,21 @@ module Lokka
       if args.empty?
         TranslateProxy.new(logger)
       else
-        I18n.translate(*args)
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        I18n.translate(*args, **options)
       end
     end
     alias t translate_compatibly
+
+    def localize_compatibly(*args)
+      if args.empty?
+        TranslateProxy.new(logger)
+      else
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        I18n.localize(*args, **options)
+      end
+    end
+    alias l localize_compatibly
 
     def apply_continue_reading(posts)
       posts.each do |post|

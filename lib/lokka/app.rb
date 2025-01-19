@@ -32,23 +32,22 @@ module Lokka
       register Sinatra::Flash
       register Padrino::Helpers
       register Sinatra::Namespace
-      register Sinatra::Cache
       helpers Kaminari::Helpers::SinatraHelpers
       helpers Lokka::Helpers
       helpers Lokka::PermalinkHelper
       helpers Lokka::RenderHelper
       Lokka.load_plugin(self)
       Lokka::Database.connect
+      Haml::Template.options[:escape_html] = false
     end
 
     configure :production do
-      set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
     end
 
     configure :development do
-      set :session_secret, 'development'
+      set :session_secret, SecureRandom.hex(64)
       register Sinatra::Reloader
       supported_stylesheet_templates.each do |style|
         set style, style: :expanded
