@@ -2,14 +2,15 @@
 
 module Lokka
   module RenderHelper
-    def render_detect(*names, **options)
+    def render_detect(*names)
+      options = names.last.is_a?(Hash) ? names.pop : {}
       render_detect_with_options(*names, **options)
     end
 
     def render_detect_with_options(*names, **options)
       ret = ''
       options[:layout] = 'layout'
-      names.each do |name|
+      names.flatten.each do |name|
         out = render_any(name, **options)
         unless out.blank?
           ret = out
@@ -46,7 +47,7 @@ module Lokka
       options[:views] ||= "#{settings.views}/theme/#{@theme.name}"
       path = "#{options[:views]}/#{name}"
 
-      send(ext.to_sym, name.to_sym, options) if File.exist?("#{path}.#{ext}")
+      send(ext.to_sym, name.to_sym, **options) if File.exist?("#{path}.#{ext}")
     end
   end
 end
