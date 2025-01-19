@@ -52,7 +52,7 @@ module Lokka
         haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
 
-      app.get %r{^/popular/(\d{4}\-\d{2}\-\d{2})$} do |date|
+      app.get %r{/popular/(\d{4}\-\d{2}\-\d{2})} do |date|
         @theme_types << :entries
         @page_title = t('popular_entries_on', date: l(Date.parse(date), format: :short))
         @page_description = %(#{l(Date.parse(date), format: :long)}にアクセス数が多かった記事の一覧です。)

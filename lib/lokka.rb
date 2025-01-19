@@ -31,7 +31,7 @@ module Lokka
     end
 
     def database_config
-      YAML.safe_load(ERB.new(File.read(database_config_file)).result(binding), [], [], true)
+      YAML.safe_load(ERB.new(File.read(database_config_file)).result(binding), aliases: true)
     end
 
     def database_config_file
@@ -141,7 +141,6 @@ require 'sass'
 require 'securerandom'
 require 'slim'
 require 'sinatra/base'
-require 'sinatra/cache'
 require 'sinatra/flash'
 require 'sinatra/namespace'
 require 'sinatra/reloader'

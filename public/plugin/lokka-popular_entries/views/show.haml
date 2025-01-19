@@ -8,13 +8,12 @@
 
 %article#recent_entries
   %section.recent
-    - cache_fragment %(popular-#{I18n.locale}), expires_in: 1.hour do
-      .new-entry
-        - if post = @entries.first
-          = partial :_main_entry, locals: { post: post }
-      .past-entries
-        - @entries.each_with_index do |post, index|
-          - next if index == 0
-          = partial :_other_entries, locals: { post: post }
+    .new-entry
+      - if post = @entries.first
+        = partial :_main_entry, locals: { post: post }
+    .past-entries
+      - @entries.each_with_index do |post, index|
+        - next if index == 0
+        = partial :_other_entries, locals: { post: post }
 
 %script(src="#{asset_path('plugin/lokka-popular_entries/src/index.js')}")
