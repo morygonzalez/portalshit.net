@@ -46,7 +46,7 @@ gem 'tux'
 gem 'yard-sinatra'
 gem 'tantiny'
 gem 'natto'
-gem 'concurrent-ruby', "< 1.3.5"
+gem 'concurrent-ruby', "< 1.3.6"
 
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 
