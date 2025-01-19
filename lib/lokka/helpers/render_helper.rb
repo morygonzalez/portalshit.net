@@ -2,15 +2,15 @@
 
 module Lokka
   module RenderHelper
-    def render_detect(*names)
-      render_detect_with_options(names)
+    def render_detect(*names, **options)
+      render_detect_with_options(*names, **options)
     end
 
-    def render_detect_with_options(names, options = {})
+    def render_detect_with_options(*names, **options)
       ret = ''
       options[:layout] = 'layout'
       names.each do |name|
-        out = render_any(name, options)
+        out = render_any(name, **options)
         unless out.blank?
           ret = out
           break
@@ -22,17 +22,17 @@ module Lokka
       raise Lokka::NoTemplateError, "Template not found. #{[names.join(', ')]}"
     end
 
-    def partial(name, options = {})
+    def partial(name, **options)
       options[:layout] = false
-      render_any(name, options)
+      render_any(name, **options)
     end
 
-    def render_any(name, options = {})
+    def render_any(name, **options, &block)
       ret = ''
       templates = settings.supported_templates + settings.supported_stylesheet_templates +
         settings.supported_javascript_templates
       templates.each do |ext|
-        out = rendering(ext, name, options)
+        out = rendering(ext, name, **options, &block)
         out&.force_encoding(Encoding.default_external)
         unless out.blank?
           ret = out
@@ -42,7 +42,7 @@ module Lokka
       ret
     end
 
-    def rendering(ext, name, options = {})
+    def rendering(ext, name, **options, &block)
       options[:views] ||= "#{settings.views}/theme/#{@theme.name}"
       path = "#{options[:views]}/#{name}"
 

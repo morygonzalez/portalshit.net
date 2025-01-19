@@ -98,7 +98,7 @@ module Lokka
     end
 
     # monthly
-    get %r{^/([\d]{4})/([\d]{2})/$} do |year, month|
+    get %r{/([\d]{4})/([\d]{2})/} do |year, month|
       @theme_types << :monthly
       @theme_types << :entries
 
@@ -122,7 +122,7 @@ module Lokka
     end
 
     # yearly
-    get %r{^/([\d]{4})/$} do |year|
+    get %r{/([\d]{4})/} do |year|
       @theme_types << :yearly
       @theme_types << :entries
 
@@ -144,7 +144,7 @@ module Lokka
     end
 
     # entry
-    get %r{^/([_/0-9a-zA-Z-]+)$} do |id_or_slug|
+    get %r{/([_/0-9a-zA-Z-]+)} do |id_or_slug|
       @entry = Entry.get_by_fuzzy_slug(id_or_slug) || halt(404)
 
       redirect to(@entry.link) if @entry.type == 'Post' && custom_permalink?
@@ -155,7 +155,7 @@ module Lokka
     end
 
     # comment
-    post %r{^/([_/0-9a-zA-Z-]+)$} do |id_or_slug|
+    post %r{/([_/0-9a-zA-Z-]+)} do |id_or_slug|
       @theme_types << :entry
 
       @entry = Entry.get_by_fuzzy_slug(id_or_slug) || (custom_permalink? && custom_permalink_entry('/' + id_or_slug))
