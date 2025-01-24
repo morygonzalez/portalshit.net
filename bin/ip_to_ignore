@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /var/www/app/portalshit/bin/common.sh
+source "$(dirname "$0")/common.sh"
 
 # 除外IPアドレス集計処理処理
 process_ip_to_ignore() {
@@ -14,11 +14,8 @@ process_ip_to_ignore() {
     | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
     | cut -f2 | sed -e 's/remote_addr://' \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sort | uniq -c | sort -nr | head -200 | sed -r 's/^[ \t]+//g' \
-    | sed -e 's/^[[:digit:]]\+\s//' \
-    | sed -e 's/\./\\./g' \
-    | sed -z -e 's/\n/\|/g' \
-    | sed -r 's/\|$//g' \
+    | sort | uniq -c | sort -nr | head -200 \
+    | sed -r 's/^[ \t]+//g; s/^[[:digit:]]\+\s//; s/\./\\./g; :a; N; $!ba; s/\n/\|/g; s/\|$//g' \
     | tee "${output}"
 
   echo "Igore IPs saved to: ${output}"
