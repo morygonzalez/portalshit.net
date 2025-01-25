@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '~> 2.4'
+ruby '~> 3.0'
 
-gem 'activerecord', '~> 5.2'
+gem 'activerecord', '~> 6.0'
 gem 'activerecord-import'
-gem 'activesupport', '~> 5.2'
+gem 'activesupport', '~> 6.0'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
@@ -15,37 +15,38 @@ gem 'builder'
 gem 'bundler'
 gem 'coderay'
 gem 'coffee-script'
-gem 'compass'
+gem 'compass', '1.0.3'
 gem 'erubis'
 gem 'haml'
 gem 'i18n'
 gem 'json', '~> 2.3'
 gem 'kaminari-activerecord'
-gem 'kaminari-sinatra'
+gem 'kaminari-sinatra', github: 'morygonzalez/kaminari-sinatra'
 gem 'kramdown'
 gem 'marcel'
 gem 'nokogiri'
-gem 'padrino-helpers'
+gem 'padrino-helpers', github: 'morygonzalez/padrino-framework'
 gem 'puma'
 gem 'puma_worker_killer'
 gem 'pry'
 gem 'rack'
+gem 'rackup'
 gem 'rack-flash'
 gem 'rake'
 gem 'redcarpet'
 gem 'RedCloth'
 gem 'request_store'
-gem 'sass', '< 3.7.5'
-gem 'sinatra', '~> 1.4'
-gem 'sinatra-cache', git: 'https://github.com/morygonzalez/sinatra-cache'
+gem 'sass', '< 3.7.4'
+gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'sinatra-flash'
 gem 'slim'
-gem 'tilt'
+gem 'tilt', '~> 2.1.0'
 gem 'tux'
 gem 'yard-sinatra'
 gem 'tantiny'
 gem 'natto'
+gem 'concurrent-ruby', "< 1.3.5"
 
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 
@@ -56,7 +57,7 @@ end
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'capistrano', '3.14.0', require: false
+  gem 'capistrano', require: false
   gem 'capistrano-bundler', require: false
   gem 'capistrano-rbenv', require: false
   gem 'capistrano-rbenv-install', require: false
