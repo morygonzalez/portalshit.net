@@ -1,13 +1,22 @@
 GIT
-  remote: https://github.com/morygonzalez/kaminari-sinatra
+  remote: https://github.com/morygonzalez/kaminari-sinatra.git
   revision: 45cba48c36981189e6f2d5da98e9acd68e35004d
-  branch: fix-argument-error-on-ruby-3
   specs:
     kaminari-sinatra (1.0.1)
       actionview
       kaminari-core (~> 1.0)
       padrino-helpers
       sinatra
+
+GIT
+  remote: https://github.com/morygonzalez/padrino-framework.git
+  revision: 2c94a4e5695e35fa8226bf02735bec2915ff3ccd
+  specs:
+    padrino-helpers (0.16.0.pre3)
+      i18n (>= 0.6.7, < 2)
+      padrino-support (= 0.16.0.pre3)
+      tilt (>= 1.4.1, < 3)
+    padrino-support (0.16.0.pre3)
 
 GEM
   remote: https://rubygems.org/
@@ -176,7 +185,7 @@ GEM
     http-cookie (1.0.8)
       domain_name (~> 0.5)
     http-form_data (2.3.0)
-    i18n (1.14.6)
+    i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
     json (2.9.1)
@@ -213,18 +222,13 @@ GEM
       net-ssh (>= 5.0.0, < 8.0.0)
     net-ssh (7.3.0)
     nio4r (2.7.4)
-    nokogiri (1.18.1)
+    nokogiri (1.18.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     open_graph_reader (0.7.2)
       faraday (>= 0.9.0)
       nokogiri (~> 1.6)
     ostruct (0.6.1)
-    padrino-helpers (0.16.0.pre3)
-      i18n (>= 0.6.7, < 2)
-      padrino-support (= 0.16.0.pre3)
-      tilt (>= 1.4.1, < 3)
-    padrino-support (0.16.0.pre3)
     parallel (1.26.3)
     parser (3.3.7.0)
       ast (~> 2.4.1)
@@ -429,7 +433,7 @@ DEPENDENCIES
   natto
   nokogiri
   open_graph_reader
-  padrino-helpers (= 0.16.0.pre3)
+  padrino-helpers!
   parallel
   pg
   pry
