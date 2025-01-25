@@ -18,7 +18,7 @@ module Lokka
 
         put '/:id' do |id|
           (@tag = Tag.where(id: id).first) || raise(Sinatra::NotFound)
-          if @tag.update_attributes(params[:tag])
+          if @tag.update(params[:tag])
             flash[:notice] = t('tag_was_successfully_updated')
             redirect to("/admin/tags/#{@tag.id}/edit")
           else

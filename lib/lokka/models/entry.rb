@@ -16,6 +16,9 @@ class Entry < ActiveRecord::Base
                    format: %r{\A[_/0-9a-zA-Z-]+\z}, allow_blank: true
 
   validate :validate_confliction
+
+  attr_accessor :tag_collection
+
   after_save :update_fields
   after_save :send_ping_to_pubsubhubbub
 

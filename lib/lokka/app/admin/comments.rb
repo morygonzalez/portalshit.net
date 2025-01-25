@@ -33,7 +33,7 @@ module Lokka
 
         put '/:id' do |id|
           (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
-          if @comment.update_attributes(params[:comment])
+          if @comment.update(params[:comment])
             flash[:notice] = t('comment_was_successfully_updated')
             redirect to("/admin/comments/#{@comment.id}/edit")
           else

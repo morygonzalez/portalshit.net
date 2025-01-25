@@ -47,7 +47,7 @@ module Lokka
       end
 
       put '/site' do
-        if Site.first.update_attributes(params['site'])
+        if Site.first.update(params['site'])
           flash[:notice] = t('site_was_successfully_updated')
           redirect to('/admin/site/edit')
         else

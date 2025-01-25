@@ -18,7 +18,7 @@ module Lokka
 
         put do
           site = Site.first
-          site.update_attributes(theme: params[:title])
+          site.update(theme: params[:title])
           flash[:notice] = t('theme_was_successfully_updated')
           redirect to('/admin/themes')
         end
@@ -39,7 +39,7 @@ module Lokka
 
         put do
           site = Site.first
-          site.update_attributes(mobile_theme: params[:title])
+          site.update(mobile_theme: params[:title])
           flash[:notice] = t('theme_was_successfully_updated')
           redirect to('/admin/mobile_themes')
         end

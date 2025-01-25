@@ -33,7 +33,7 @@ module Lokka
 
         put '/:id' do |id|
           (@user = User.where(id: id).first) || raise(Sinatra::NotFound)
-          if @user.update_attributes(params['user'])
+          if @user.update(params['user'])
             flash[:notice] = t('user_was_successfully_updated')
             redirect to("/admin/users/#{@user.id}/edit")
           else

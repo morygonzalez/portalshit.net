@@ -57,7 +57,7 @@ module Lokka
       (@entry = entry_class.where(id: id).first) || raise(Sinatra::NotFound)
       return render_preview entry_class.new(params[@name]) if params['preview']
 
-      if @entry.update_attributes(params[@name])
+      if @entry.update(params[@name])
         flash[:notice] = t("#{@name}_was_successfully_updated")
         redirect_after_edit(@entry)
       else

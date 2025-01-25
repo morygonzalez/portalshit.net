@@ -33,7 +33,7 @@ module Lokka
 
         put '/:id' do |id|
           (@snippet = Snippet.where(id: id).first) || raise(Sinatra::NotFound)
-          if @snippet.update_attributes(params['snippet'])
+          if @snippet.update(params['snippet'])
             flash[:notice] = t('snippet_was_successfully_updated')
             redirect to("/admin/snippets/#{@snippet.id}/edit")
           else

@@ -36,7 +36,7 @@ module Lokka
         put '/:id' do |id|
           (@category = Category.where(id: id).first) || raise(Sinatra::NotFound)
           params['category'].delete('parent_id') if params['category']['parent_id'].blank?
-          if @category.update_attributes(params[:category])
+          if @category.update(params[:category])
             flash[:notice] = t('category_was_successfully_updated')
             redirect to("/admin/categories/#{@category.id}/edit")
           else
