@@ -43,6 +43,7 @@ module Lokka
     configure :production do
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
+      set :cookie_options, { secure: true }
     end
 
     configure :development do
