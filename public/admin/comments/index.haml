@@ -1,12 +1,12 @@
 %h2= t('listing_comments')
 
 .bulk_deletion
-  - form_tag url('/admin/comments/selected'), id: 'comment_select', class: 'selected', method: :delete do
+  = form_tag url('/admin/comments/selected'), id: 'comment_select', class: 'selected', method: :delete do
     = hidden_field_tag :selected_comment_ids
     = button_tag t('comment_delete_selected'), class: 'button',
       :'data-confirmation' => t('comment_delete_selected_confirmation'),
       :'data-no-target-specified-warning' => t('comment_delete_not_selected')
-  - form_tag url('/admin/comments/spam'), id: 'delete_spam', class: 'spam', method: :delete do
+  = form_tag url('/admin/comments/spam'), id: 'delete_spam', class: 'spam', method: :delete do
     = button_tag t('comment_delete_spam'), class: 'button',
       :'data-confirmation' => t('comment_delete_spam_confirmation'),
       :'data-no-target-specified-warning' => t('comment_no_spam')
