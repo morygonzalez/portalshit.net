@@ -33,8 +33,8 @@
                    end
         %td.checkbox= check_box_tag :comment_select, value: comment.id
         %td.status= status
-        %td.body= link_to truncate(strip_tags(comment.body)), url(comment.link)
-        %td= comment.name
+        %td.body= link_to truncate(strip_tags(h(comment.body))), url(comment.link)
+        %td= h(comment.name)
         %td= l(comment.created_at, format: :long)
         %td= link_to t('edit'), url("/admin/comments/#{comment.id}/edit"), class: :button
         %td= link_to t('delete'), url("/admin/comments/#{comment.id}"), class: :button, confirm: t('are_you_sure'), method: :delete
