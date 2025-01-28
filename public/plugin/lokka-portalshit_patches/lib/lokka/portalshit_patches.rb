@@ -204,7 +204,7 @@ class PopularKeywords
   end
 
   def unique
-    @keywords = @keywords.keys.inject({}) {|result, keyword|
+    @keywords = words.inject({}) {|result, keyword|
       original = keyword
       modified = keyword.gsub(/[[:punct:]]/, '').gsub(/\A[[:space:]]+\Z/, '').downcase
       count = if (@keywords[modified] && @keywords[original]) && (@keywords[modified] != @keywords[original])
@@ -228,6 +228,13 @@ class PopularKeywords
 
   def sort
     @keywords = @keywords.sort_by {|_, value| -value }.to_h
+  end
+
+  def words
+    @words ||= begin
+                 words = @keywords.keys
+                 words.reject {|word| words.any? {|_word| _word.include?(word) && word != _word }}
+               end
   end
 end
 
