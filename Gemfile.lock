@@ -18,6 +18,14 @@ GIT
       tilt (>= 1.4.1, < 3)
     padrino-support (0.16.0.pre3)
 
+GIT
+  remote: https://github.com/morygonzalez/sinatra-cache.git
+  revision: 60eeea9fbfaf3f23d0b81925d64a823ec81867cc
+  specs:
+    sinatra-cache (0.3.7)
+      sinatra
+      sinatra-outputbuffer
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -340,6 +348,8 @@ GEM
       tilt (~> 2.0)
     sinatra-flash (0.3.0)
       sinatra (>= 1.0.0)
+    sinatra-outputbuffer (0.1.0)
+      sinatra (>= 1.0.a)
     slim (5.2.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
@@ -454,6 +464,7 @@ DEPENDENCIES
   sass (< 3.7.4)
   simplecov
   sinatra
+  sinatra-cache!
   sinatra-contrib
   sinatra-flash
   slim

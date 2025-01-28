@@ -31,6 +31,7 @@ module Lokka
       register Sinatra::Flash
       register Padrino::Helpers
       register Sinatra::Namespace
+      register Sinatra::Cache
       helpers Kaminari::Helpers::SinatraHelpers
       helpers Lokka::Helpers
       helpers Lokka::PermalinkHelper
@@ -41,6 +42,7 @@ module Lokka
     end
 
     configure :production do
+      set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
       set :cookie_options, { secure: true }

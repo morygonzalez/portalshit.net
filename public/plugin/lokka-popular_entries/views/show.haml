@@ -7,13 +7,14 @@
       %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: defined?(@date) ? @date : 2.days.ago.to_date }
 
 %article#recent_entries
-  %section.recent
-    .new-entry
-      - if post = @entries.first
-        = partial :_main_entry, locals: { post: post }
-    .past-entries
-      - @entries.each_with_index do |post, index|
-        - next if index == 0
-        = partial :_other_entries, locals: { post: post }
+  = cache_fragment %(popular-#{I18n.locale}), expires_in: 1.hour do
+    %section.recent
+      .new-entry
+        - if post = @entries.first
+          = partial :_main_entry, locals: { post: post }
+      .past-entries
+        - @entries.each_with_index do |post, index|
+          - next if index == 0
+          = partial :_other_entries, locals: { post: post }
 
 %script(src="#{asset_path('plugin/lokka-popular_entries/src/index.js')}")
