@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /var/www/app/portalshit/bin/common.sh
+source "$(dirname "$0")/common.sh"
 
 # 検索キーワードランキング処理
 process_query_term_ranking() {
