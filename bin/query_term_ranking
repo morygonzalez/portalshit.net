@@ -24,13 +24,14 @@ process_query_term_ranking() {
   find "${LOG_DIR}" -name "access.log*" \
     | xargs zcat -f \
     | grep -vP "remote_addr:\(${ignore_ip}\)" \
-    | awk -F'\t' '{print $5}' \
+    | cut -f5 \
     | grep 'query=' \
     | sed -r "s/request_uri:.+?query=|&page=.|'//g" \
     | grep -vP "(^-$|\.cn|alert|ORDER%20BY%201|nvOpzp|\(|\)|\.\.\/|%3d|%27|unhex)" \
     | tr -s "\n" | tr '[:upper:]' '[:lower:]' \
-    | awk '{count[$0]++} END {for (word in count) print count[word], word}' | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
-    | /var/www/app/.rbenv/shims/ruby -r 'cgi' -e 'puts CGI.unescape(STDIN.read)' \
+    | awk '{count[$0]++} END {for (word in count) print count[word], word}' \
+    | sort -nr | head -100 \
+    | nkf -w --url-input \
     | tee "${output}"
 
   echo "Query term ranking saved to: ${output}"
