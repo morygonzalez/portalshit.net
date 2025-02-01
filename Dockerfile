@@ -1,12 +1,12 @@
-FROM ruby:2.7.3-alpine
+FROM ruby:3.1.6-alpine
 
 RUN mkdir -p /app
 WORKDIR /app
 
-ENV MECAB_VERSION 0.996
+ENV MECAB_VERSION 0.996.10
 ENV IPADIC_VERSION 2.7.0-20070801
-ENV mecab_url https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE
-ENV ipadic_url https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM
+ENV mecab_url https://github.com/shogo82148/mecab/releases/download/v0.996.10/mecab-0.996.10.tar.gz
+ENV ipadic_url https://github.com/shogo82148/mecab/releases/download/v0.996.10/mecab-ipadic-2.7.0-20070801.tar.gz
 ENV build_deps 'alpine-sdk curl git file sudo openssh'
 ENV dependencies 'openssl'
 ENV sqlite_version sqlite-autoconf-3230100
