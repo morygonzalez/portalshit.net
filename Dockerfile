@@ -12,6 +12,7 @@ ENV dependencies 'openssl'
 ENV sqlite_version sqlite-autoconf-3230100
 ENV PATH $PATH:/root/.cargo/bin
 ENV RUSTFLAGS="-C target-feature=-crt-static"
+ENV MECAB_PATH=/usr/local/lib/libmecab.so
 
 RUN apk add --no-cache bash ${build_deps} \
   # Install dependencies
@@ -25,7 +26,7 @@ RUN apk add --no-cache bash ${build_deps} \
   && make install \
   && cd \
   # Install Neologd
-  && git clone --depth 1 https://github.com/shugyosha89/mecab-ipadic-neologd.git \
+  && git clone --depth 1 https://github.com/morygonzalez/mecab-ipadic-neologd.git \
   && mkdir mecab-ipadic-neologd/build && curl -SL -o mecab-ipadic-neologd/build/mecab-ipadic-${IPADIC_VERSION}.tar.gz ${ipadic_url} \
   && echo 'Hash値' \
   && echo `openssl sha1 mecab-ipadic-neologd/build/mecab-ipadic-${IPADIC_VERSION}.tar.gz | cut -d $' ' -f 2,2` \
@@ -45,15 +46,13 @@ RUN apk add --no-cache bash ${build_deps} \
   && cd \
   # Clean up
   && rm -rf \
-    mecab-${MECAB_VERSION}* \
-    mecab-ipadic-${IPADIC_VERSION}* \
-    mecab-ipadic-neologd \
+    mecab* \
     ${sqlite_version}*
 
 COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
 
-RUN gem install bundler:2.1.2
+RUN gem install bundler:2.6.3
 RUN apk add --no-cache nodejs mysql-client mysql-dev less
 RUN apk add --no-cache --virtual bundler_build_deps libxml2-dev libxslt-dev zlib zlib-dev tzdata \
   && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
@@ -64,4 +63,5 @@ RUN apk add --no-cache --virtual bundler_build_deps libxml2-dev libxslt-dev zlib
 COPY . /app
 COPY Gemfile.docker /app/Gemfile
 
+ENV HOME /app
 CMD /bin/bash
