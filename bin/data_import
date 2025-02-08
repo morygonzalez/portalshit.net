@@ -9,7 +9,7 @@ if [ ! -f "${FILE}" ]; then
   gunzip -f ${GZ_FILE}
 fi
 
-docker-compose run -T --rm app mysql -uroot -ppassword -hdb portalshit < ${FILE}
+docker-compose run -T --rm app mysql --skip-ssl -uroot -ppassword -hdb portalshit < ${FILE}
 
 for item in $(ls db/*-portalshit.sql*); do
   if [[ ! ${item} =~ ${DATE} ]]; then
