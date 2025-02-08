@@ -20,11 +20,10 @@ GIT
 
 GIT
   remote: https://github.com/morygonzalez/sinatra-cache.git
-  revision: 60eeea9fbfaf3f23d0b81925d64a823ec81867cc
+  revision: af2de15df9ed8ae57aae67df979d45f04a7ee248
   specs:
     sinatra-cache (0.3.7)
       sinatra
-      sinatra-outputbuffer
 
 GEM
   remote: https://rubygems.org/
@@ -348,8 +347,6 @@ GEM
       tilt (~> 2.0)
     sinatra-flash (0.3.0)
       sinatra (>= 1.0.0)
-    sinatra-outputbuffer (0.1.0)
-      sinatra (>= 1.0.a)
     slim (5.2.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
