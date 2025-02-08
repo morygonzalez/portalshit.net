@@ -19,13 +19,10 @@ services:
     command: ['bundle', 'exec', 'puma']
     volumes:
       - .:/app
-      - bundle:/app/.bundle
-      - vendor:/app/vendor
+      - ./log:/app/log
     ports:
       - "3000:3000"
     depends_on:
       - db
 volumes:
   data-volume:
-  bundle:
-  vendor:
