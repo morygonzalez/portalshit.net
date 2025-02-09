@@ -2,3 +2,5 @@
 vendor/bundle
 db/database.yml
 .rustup
+log
+.bash_history

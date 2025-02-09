@@ -67,6 +67,7 @@ RUN apk add --no-cache --virtual bundler_build_deps libxml2-dev libxslt-dev zlib
 
 COPY . /app
 COPY Gemfile.docker /app/Gemfile
+RUN mkdir -p log
 
 ENV HOME=/app
 CMD ["/bin/bash"]

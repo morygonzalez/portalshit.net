@@ -19,7 +19,6 @@ services:
     command: ['bundle', 'exec', 'puma']
     volumes:
       - .:/app
-      - ./log:/app/log
     ports:
       - "3000:3000"
     depends_on:
