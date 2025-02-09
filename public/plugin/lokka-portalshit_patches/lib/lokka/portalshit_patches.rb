@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'tokenizer'
 
 module Lokka
   module PortalshitPatches
@@ -33,9 +34,10 @@ module Lokka
 
       app.get '/search.json' do
         return if params[:query].blank?
+        keywords = Tokenizer.run(params[:query]).join(' ')
         smart_query = search_index.smart_query(
           %i[title title_tokenized body category category_tokenized tags],
-          params[:query]
+          keywords
         )
         search_result = search_index.search(smart_query, limit: 10000)[0..10]
         posts = Post.published.joins(:category).where(id: search_result).
