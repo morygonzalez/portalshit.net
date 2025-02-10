@@ -34,10 +34,11 @@ module Lokka
 
       app.get '/search.json' do
         return if params[:query].blank?
-        keywords = Tokenizer.run(params[:query]).join(' ')
+        keywords = [Tokenizer.run(params[:query])]
+        keywords << params[:query] if keywords.length > 1
         smart_query = search_index.smart_query(
           %i[title title_tokenized body category category_tokenized tags],
-          keywords
+          keywords.flatten.join(' ')
         )
         search_result = search_index.search(smart_query, limit: 10000)[0..10]
         posts = Post.published.joins(:category).where(id: search_result).
