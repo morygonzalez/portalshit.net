@@ -4,6 +4,35 @@ require 'tokenizer'
 module Lokka
   module PortalshitPatches
     def self.registered(app)
+      app.configure do
+        bg_images = YAML.load_file(File.join(File.dirname(__FILE__), '../../', 'config.yml'))['header_bg']
+        app.set :header_bg_params, -> {
+          dark_image = bg_images['dark'].sample
+          light_image = bg_images['light'].sample
+          {
+            'data-bg-dark-image': "dark-#{dark_image['name']}",
+            'data-bg-dark-description': dark_image['description'],
+            'data-bg-light-image': "light-#{light_image['name']}",
+            'data-bg-light-description': light_image['description']
+          }
+        }
+
+        app.set :search_index_path , File.join(Lokka.root, 'tmp', 'index')
+
+        app.set :search_index, -> {
+          Tantiny::Index.new(search_index_path) do
+            id :id
+            string :title
+            text :title_tokenized
+            string :category
+            text :category_tokenized
+            text :tags
+            text :body
+            date :date
+          end
+        }
+      end
+
       app.get '/index.atom' do
         @posts = Post.preload(:category, :user).
                    published.
@@ -34,13 +63,7 @@ module Lokka
 
       app.get '/search.json' do
         return if params[:query].blank?
-        keywords = [Tokenizer.run(params[:query])]
-        keywords << params[:query] if keywords.length > 1
-        smart_query = search_index.smart_query(
-          %i[title title_tokenized body category category_tokenized tags],
-          keywords.flatten.join(' ')
-        )
-        search_result = search_index.search(smart_query, limit: 10000)[0..10]
+        search_result = Search.query(params[:query])
         posts = Post.published.joins(:category).where(id: search_result).
           sort_by {|post| search_result.index(post.id.to_s) }
         posts_hash = posts.each_with_object([]) {|post, result|
@@ -55,57 +78,41 @@ module Lokka
         content_type :json
         posts_hash.to_json
       end
-    end
-  end
 
-  class App
-    configure do
-      bg_images = YAML.load_file(File.join(File.dirname(__FILE__), '../../', 'config.yml'))['header_bg']
-      set :header_bg_params, -> {
-        dark_image = bg_images['dark'].sample
-        light_image = bg_images['light'].sample
-        {
-          'data-bg-dark-image': "dark-#{dark_image['name']}",
-          'data-bg-dark-description': dark_image['description'],
-          'data-bg-light-image': "light-#{light_image['name']}",
-          'data-bg-light-description': light_image['description']
-        }
-      }
-    end
+      app.get '/categories' do
+        @theme_types << :entries
 
-    get '/categories' do
-      @theme_types << :entries
-
-      query = <<~SQL
-        select entries.id
-        from entries
-        inner join (
-          select
-            category_id,
-            group_concat(id order by created_at desc) as entry_ids,
-            count(id) as entry_count,
-            max(created_at) as last_created_at
+        query = <<~SQL
+          select entries.id
           from entries
-          where entries.draft = false
-          group by category_id
-        ) as grouped_entries
-        on grouped_entries.category_id = entries.category_id and find_in_set(id, entry_ids) between 1 and 4
-        inner join categories on categories.id = entries.category_id
-        order by last_created_at desc, entries.id desc;
-      SQL
-      entry_ids = ActiveRecord::Base.connection.select_all(query).rows.flatten
-      entries = Entry.includes(:category, :user, :tags, :approved_comments).where(id: entry_ids)
-      @entries_group_by_category = entries.each_with_object({}) {|entry, result|
-        result[entry.category] ||= []
-        result[entry.category] << entry
-      }
+          inner join (
+            select
+            category_id,
+              group_concat(id order by created_at desc) as entry_ids,
+              count(id) as entry_count,
+              max(created_at) as last_created_at
+            from entries
+            where entries.draft = false
+            group by category_id
+          ) as grouped_entries
+          on grouped_entries.category_id = entries.category_id and find_in_set(id, entry_ids) between 1 and 4
+          inner join categories on categories.id = entries.category_id
+          order by last_created_at desc, entries.id desc;
+        SQL
+        entry_ids = ActiveRecord::Base.connection.select_all(query).rows.flatten
+        entries = Entry.includes(:category, :user, :tags, :approved_comments).where(id: entry_ids)
+        @entries_group_by_category = entries.each_with_object({}) {|entry, result|
+          result[entry.category] ||= []
+          result[entry.category] << entry
+        }
 
-      @title = %Q(#{t('categories')} - #{@site.title})
+        @title = %Q(#{t('categories')} - #{@site.title})
 
-      @bread_crumbs = [{ name: t('home'), link: '/' },
-                       { name: t('categories') }]
+        @bread_crumbs = [{ name: t('home'), link: '/' },
+                         { name: t('categories') }]
 
-      render_detect :categories
+        render_detect :categories
+      end
     end
   end
 
@@ -176,6 +183,75 @@ module Lokka
   end
 end
 
+class Search
+  class << self
+    def query(query, limit = 10)
+      instance = self.new(query, limit)
+      instance.result
+    end
+  end
+
+  attr_reader :query, :limit, :query_type
+
+  def initialize(query, limit = nil)
+    @query = query
+    @limit = limit
+  end
+
+  def index
+    @index ||= Lokka::App.search_index
+  end
+
+  def query_type
+    @query_type = if query =~ /".+"/
+                    :term_query
+                  else
+                    :smart_query
+                  end
+  end
+
+  def keywords
+    case query_type
+    when :term_query
+      [query]
+    else
+      keywords = [Tokenizer.run(query)].flatten
+      keywords << query if keywords.length > 1
+      keywords
+    end
+  end
+
+  def fields
+    %i[title title_tokenized body category category_tokenized tags]
+  end
+
+  def exec_query(keyword)
+    index.send(query_type, fields, keyword)
+  end
+
+  def queries
+    case keywords.length
+    when 0
+      index.empty_query
+    when 1
+      exec_query(keywords[0])
+    else
+      original_keyword = keywords.pop
+      keywords.inject(exec_query(original_keyword)) do |query, keyword|
+        query.|(exec_query(keyword))
+      end
+    end
+  end
+
+  def result
+    if limit
+      index.search(queries, limit: limit)
+    else
+      index.search(queries)
+    end
+  end
+end
+
 class PopularKeywords
   class << self
     def keywords(limit: 7)
@@ -213,7 +289,7 @@ class PopularKeywords
       count = if (@keywords[modified] && @keywords[original]) && (@keywords[modified] != @keywords[original])
                 @keywords[modified].to_i + @keywords.delete(original)
               else
-                @keywords[modified]
+                @keywords.delete(original)
               end
       result[modified] = count
       result
@@ -222,10 +298,9 @@ class PopularKeywords
 
   def clean
     @keywords = @keywords.reject {|key, value|
-      query = Lokka::Helpers.search_index.smart_query(
-        %i[title title_tokenized body category category_tokenized tags], key
-      )
-      key.blank? || value.blank? || key.length < 2 || Lokka::Helpers.search_index.search(query).length.zero?
+      key.blank? || value.blank? || key.length < 2 || key.length > 15
+    }.reject {|key, value|
+      Search.query(key).length.zero?
     }
   end
 
@@ -361,4 +436,3 @@ class Comment
     }
   end
 end
-

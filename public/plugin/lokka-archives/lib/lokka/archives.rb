@@ -9,8 +9,7 @@ module Lokka
     def self.registered(app)
       app.get '/archives.json' do
         posts = if params[:query].present?
-                  smart_query = search_index.smart_query(%i[title title_tokenized body category category_tokenized tags], params[:query])
-                  search_result = search_index.search(smart_query, limit: 10000)
+                  search_result = Search.query(params[:query], 10000)
                   Post.published.joins(:category).where(id: search_result)
                 else
                   Post.published.joins(:category)
@@ -101,20 +100,6 @@ module Lokka
         "#{archives_assets_path}/#{archives_manifest[file_name]}"
       else
         "plugin/lokka-archives/build/#{file_name}"
-      end
-    end
-
-    def search_index
-      path = File.join(Lokka.root, 'tmp', 'index')
-      Tantiny::Index.new path do
-        id :id
-        string :title
-        text :title_tokenized
-        string :category
-        text :category_tokenized
-        text :tags
-        text :body
-        date :date
       end
     end
   end

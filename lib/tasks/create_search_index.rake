@@ -4,8 +4,8 @@ require_relative '../tokenizer'
 desc "Create full text search index"
 task :create_search_index, :force do |task, arguments|
   entries = Entry.includes(:category, :tags).published
-  index = Lokka::Helpers.search_index
-  index_path = index.instance_variable_get("@path")
+  index_path = Lokka::App.search_index_path
+  index = Lokka::App.search_index
   index_last_modified = File.mtime(index_path)
   entry_last_updated_at = entries.maximum(:updated_at)
 
@@ -23,7 +23,7 @@ end
 
 task :create_new_index do
   entries = Entry.includes(:category, :tags).published
-  index = Lokka::Helpers.search_index
+  index = Lokka::App.search_index
 
   index.transaction do
     entries.each do |entry|
@@ -49,8 +49,8 @@ task :create_new_index do
 end
 
 task :delete_old_index do
-  index = Lokka::Helpers.search_index
-  index_path = index.instance_variable_get("@path")
+  index = Lokka::App.search_index
+  index_path = Lokka::App.search_index_path
   index_keys = Dir.glob(File.join(index_path, '*.idx')).each_with_object({}) do |item, files|
     ctime = File.ctime(item)
     key = File.basename(item, '.idx')
