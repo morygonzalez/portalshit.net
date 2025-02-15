@@ -1,10 +1,32 @@
 require 'tokenizer'
 
 class Search
+  @@index = Lokka::App.search_index
+
   class << self
     def query(query, limit = 10)
       instance = self.new(query, limit)
       instance.result
+    end
+
+    def add(entry)
+      tags_splitted = entry.tag_list.join(' ')
+      title_tokenized = Tokenizer.run(entry.title).join(' ')
+      body_tokenized = Tokenizer.run(entry.raw_body).join(' ')
+      category_tokenized = Tokenizer.run(entry.category.title).join(' ') if entry.category
+
+      @@index << {
+        id: entry.id,
+        title: entry.title,
+        title_tokenized: title_tokenized,
+        category: entry.category,
+        category_tokenized: category_tokenized,
+        tags: tags_splitted,
+        body: body_tokenized,
+        date: entry.created_at
+      }
+
+      @@index.reload
     end
   end
 
@@ -13,10 +35,6 @@ class Search
   def initialize(query, limit = nil)
     @query = query
     @limit = limit
-  end
-
-  def index
-    @index ||= Lokka::App.search_index
   end
 
   def query_type
@@ -43,13 +61,13 @@ class Search
   end
 
   def exec_query(keyword)
-    index.send(query_type, fields, keyword)
+    @@index.send(query_type, fields, keyword)
   end
 
   def queries
     case keywords.length
     when 0
-      index.empty_query
+      @@index.empty_query
     when 1
       exec_query(keywords[0])
     else
@@ -62,9 +80,9 @@ class Search
 
   def result
     if limit
-      index.search(queries, limit: limit)
+      @@index.search(queries, limit: limit)
     else
-      index.search(queries)
+      @@index.search(queries)
     end
   end
 end
