@@ -32,6 +32,30 @@ process_query_term_ranking() {
     | awk '{count[$0]++} END {for (word in count) print count[word], word}' \
     | sort -nr | head -100 \
     | nkf -w --url-input \
+    | awk '
+      BEGIN { OFS=" " }
+      {
+        # $1 は出現回数、残りが単語となるのでフィールドを再構築
+        count = $1;
+        $1 = "";
+        gsub(/^ +/, "", $0);  # 先頭の空白を削除
+        word = $0;
+        words[NR] = word;
+        counts[NR] = count;
+      }
+      END {
+        for (i = 1; i <= NR; i++) {
+          reject = 0;
+          for (j = 1; j <= NR; j++) {
+            if (i != j && index(words[j], words[i]) > 0) {
+              reject = 1;
+              break;
+            }
+          }
+          if (!reject)
+            print counts[i], words[i];
+        }
+      }' \
     | tee "${output}"
 
   echo "Query term ranking saved to: ${output}"
