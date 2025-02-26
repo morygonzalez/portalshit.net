@@ -12,6 +12,10 @@ module Lokka
           entries_new Page
         end
 
+        get '/search' do
+          entries_search Page
+        end
+
         post do
           entries_create Page
         end
