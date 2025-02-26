@@ -12,6 +12,10 @@ module Lokka
           entries_new Post
         end
 
+        get '/search' do
+          entries_search Post
+        end
+
         post do
           entries_create Post
         end

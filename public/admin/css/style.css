@@ -996,6 +996,10 @@ textarea#category_description
     color:#eee;
 }
 
+#main .search {
+    margin-bottom: 1.8em;
+}
+
 .field.edited input,
 .field.edited textarea,
 .field.edited select
