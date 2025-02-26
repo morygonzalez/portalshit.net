@@ -533,6 +533,7 @@ label {
 #main table td.title {
     background: url(../images/file.png) no-repeat scroll 10px 50% transparent;
     padding-left: 30px;
+    min-width: 200px;
 }
 
 .admin_login #main {

@@ -15,12 +15,14 @@
 #table_wrapper
   %table{ class: @name.pluralize }
     %tr
+      %th.status= t('post_status')
       %th= t("#{@name}.title")
       %th= t("#{@name}.user")
       %th= t("#{@name}.created_at")
       %th{ colspan: 2 }
     - @entries.each_with_index do |entry, i|
       %tr{ class: (i + 1).odd? ? :odd : :even }
+        %td.status= entry.draft ? t('post_draft') : t('post_published')
         %td.title= link_to entry.title, url(entry.link)
         %td= entry.user.nil? ? '' : entry.user.name
         %td= l(entry.created_at, format: :long)

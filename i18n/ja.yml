@@ -240,6 +240,9 @@ ja:
   getting_started: はじめよう
   download: ダウンロード
   source_code: ソースコード
+  post_status: ステータス
+  post_draft: 下書き
+  post_published: 公開済み
   post_comment: コメントする
   comment_status: ステータス
   comment_moderated: 承認待ち
