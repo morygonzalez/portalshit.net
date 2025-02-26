@@ -3,11 +3,15 @@
 - else
   %h2= t("listing_#{@name.pluralize}")
 
-
 %ul.conditions
   %li= link_to t('new'), url("/admin/#{@name.pluralize}/new")
   %li= link_to t('all'), url("/admin/#{@name.pluralize}")
   %li= link_to t('draft'), url("/admin/#{@name.pluralize}?draft=true")
+
+%div.search
+  %form(action="/admin/posts/search" method="get")
+    %input{ type: 'search', name: 'query', placeholder: "Search", value: "#{params[:query]}" }
+
 #table_wrapper
   %table{ class: @name.pluralize }
     %tr

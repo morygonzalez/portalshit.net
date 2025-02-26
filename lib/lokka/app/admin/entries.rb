@@ -28,6 +28,18 @@ module Lokka
       haml :'admin/entries/new', layout: :'admin/layout'
     end
 
+    def entries_search(entry_class)
+      @query = params[:query]
+      @name = entry_class.name.downcase
+      @entries = params[:draft] == 'true' ? entry_class.unpublished : entry_class
+      @entries = @entries.
+                   includes(:category, :user).
+                   search(@query).
+                   page(params[:page]).per(settings.admin_per_page)
+
+      haml :'admin/entries/index', layout: :'admin/layout'
+    end
+
     def entries_edit(entry_class, id)
       @name = entry_class.name.downcase
       (@entry = entry_class.where(id: id).first) || raise(Sinatra::NotFound)
