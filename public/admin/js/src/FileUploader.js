@@ -134,10 +134,11 @@ class FileUploader {
   detectImageTag(file, url) {
     let imageTag;
     const markup = document.querySelector('select[id$=_markup] option:checked').value;
+    const fileName = file.name.replace(/\.(jpe?g|png|gif)/, "");
     switch (markup) {
       case 'kramdown':
       case 'redcarpet':
-        imageTag = '![' + file.name + '](' + url + ')';
+        imageTag = '![' + fileName + '](' + url + ')';
         break;
       case 'redcloth':
         imageTag = '!' + url + '!';
@@ -145,7 +146,7 @@ class FileUploader {
       case 'html':
       case 'wikicloth':
       default:
-        imageTag = '<img src="' + url + '" alt="' + file.name + '" />';
+        imageTag = '<img src="' + url + '" alt="' + fileName + '" />';
         break;
     }
     return imageTag;
