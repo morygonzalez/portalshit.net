@@ -1,6 +1,7 @@
-import mediumZoom from 'medium-zoom';
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import PhotoSwipeLightbox from 'photoswipe/lightbox'
+import 'photoswipe/style.css';
 
 import SearchApp from './search'
 import ThemeObserver from './theme-observer'
@@ -117,12 +118,17 @@ const observeLinkClick = (node) => {
 
 const init = node => {
   observeImages(node);
-  mediumZoom('figure img', { background: 'rgba(33, 33, 33, 0.8)' });
   checkTableWidth(node);
   new ThemeObserver();
   observeSearchMenu();
   observeLinkClick(node);
   observeCloseModal();
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '.photo-gallery',
+    children: 'a',
+    pswpModule: () => import('photoswipe')
+  });
+  lightbox.init();
 }
 
 document.addEventListener('DOMContentLoaded', () => init(document));

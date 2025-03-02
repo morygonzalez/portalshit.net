@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
   mode: 'production',
@@ -22,6 +22,10 @@ module.exports = {
             presets: [['@babel/preset-react'], ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }]]
           }
         }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
@@ -30,6 +34,8 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery'
     }),
-    new ManifestPlugin()
+    new WebpackManifestPlugin({
+      publicPath: ''
+    })
   ],
 };
