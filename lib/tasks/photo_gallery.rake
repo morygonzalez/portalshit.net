@@ -17,7 +17,7 @@ def bucket
 end
 
 def upload(filepath, filename)
-  content_type = Marcel::MimeType.for(filepath)
+  content_type = Marcel::MimeType.for(File.open(filepath))
   bucket.object(filename).upload_file(
     filepath,
     content_type: content_type,
@@ -62,7 +62,8 @@ task :photo_gallery, :folder do |task, arguments|
     }
   end
 
-  image_hashes.sort_by {|item| item[:taken_at] }.each {|item|
+  image_hashes.sort_by {|item| item[:taken_at] }.each.with_index(1) {|item, index|
+    item[:thumb_url] = "https://portalshit.net/imageproxy/1280x/#{item[:url]}" if index == 1
     puts <<~ERUBY.strip_heredoc
       <a href="#{item[:url]}" data-pswp-width="#{item[:width]}" data-pswp-height="#{item[:height]}" data-taken-at="#{item[:taken_at]}">
         <img src="#{item[:thumb_url]}" alt="#{item[:taken_at]} #{item[:alt]}">
