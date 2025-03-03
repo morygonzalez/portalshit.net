@@ -1,7 +1,9 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import PhotoSwipeLightbox from 'photoswipe/lightbox'
-import 'photoswipe/style.css';
+import 'photoswipe/style.css'
+import PhotoSwipeDynamicCaption from 'photoswipe-dynamic-caption-plugin'
+import 'photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css'
 
 import SearchApp from './search'
 import ThemeObserver from './theme-observer'
@@ -126,7 +128,19 @@ const init = node => {
   const lightbox = new PhotoSwipeLightbox({
     gallery: '.photo-gallery',
     children: 'a',
-    pswpModule: () => import('photoswipe')
+    pswpModule: () => import('photoswipe'),
+    paddingFn: (viewportSize) => {
+      if (viewportSize.x > 700) {
+        return {
+          top: 30, bottom: 30, left: 70, right: 70
+        }
+      } else {
+        return {}
+      }
+    }
+  });
+  const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+    type: 'below',
   });
   lightbox.init();
 }
