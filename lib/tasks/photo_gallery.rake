@@ -47,7 +47,7 @@ task :photo_gallery, :folder do |task, arguments|
     url = "https://resources.portalshit.net/#{s3_filename}"
     thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
     alt = filename.sub(/\.(jpe?g|png|gif)\z/, '')
-    taken_at = `exiftool -s -s -s -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" "#{filepath}"`.chomp
+    camera, lens, f_number, taken_at = `exiftool -s -s -s -Model -LensModel -FNumber -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" "#{filepath}"`.chomp.split("\n")
     width, height = FastImage.size(filepath)
 
     {
@@ -58,16 +58,30 @@ task :photo_gallery, :folder do |task, arguments|
       alt: alt,
       taken_at: taken_at,
       url: url,
-      thumb_url: thumb_url
+      thumb_url: thumb_url,
+      camera: camera,
+      lens: lens,
+      f_number: f_number,
     }
   end
 
+  str = %(<div class="photo-gallery pswp-gallery">\n)
   image_hashes.sort_by {|item| item[:taken_at] }.each.with_index(1) {|item, index|
     item[:thumb_url] = "https://portalshit.net/imageproxy/1280x/#{item[:url]}" if index == 1
-    puts <<~ERUBY.strip_heredoc
+    str += <<~ERUBY.strip_heredoc
       <a href="#{item[:url]}" data-pswp-width="#{item[:width]}" data-pswp-height="#{item[:height]}" data-taken-at="#{item[:taken_at]}">
-        <img src="#{item[:thumb_url]}" alt="#{item[:taken_at]} #{item[:alt]}">
+        <img src="#{item[:thumb_url]}" alt="#{item[:alt]}">
+        <ul class="pswp-caption-content">
+          <li class="title">#{item[:alt]}</li>
+          <li class="meta">カメラ: #{item[:camera]}</li>
+          <li class="meta">レンズ: #{item[:lens]}</li>
+          <li class="meta">F値: #{item[:f_number]}</li>
+          <li class="meta">撮影日時: #{item[:taken_at]}</li>
+        </ul>
       </a>
     ERUBY
   }
+  str += '</div>'
+
+  puts str
 end

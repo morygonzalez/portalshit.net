@@ -366,3 +366,24 @@
     }
   }
 }
+
+.pswp__dynamic-caption--aside, .pswp__dynamic-caption--mobile {
+  text-align: left;
+  font-size: .85em;
+  line-height: 1.2em;
+
+  li {
+    list-style: none;
+
+    &.title {
+      font-weight: bold;
+    }
+    &.meta {
+      font-size: .9em;
+    }
+  }
+}
+
+.pswp__dynamic-caption--aside {
+  margin-top: 0 !important;
+}

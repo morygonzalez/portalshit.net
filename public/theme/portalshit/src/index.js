@@ -128,19 +128,10 @@ const init = node => {
   const lightbox = new PhotoSwipeLightbox({
     gallery: '.photo-gallery',
     children: 'a',
-    pswpModule: () => import('photoswipe'),
-    paddingFn: (viewportSize) => {
-      if (viewportSize.x > 700) {
-        return {
-          top: 30, bottom: 30, left: 70, right: 70
-        }
-      } else {
-        return {}
-      }
-    }
+    pswpModule: () => import('photoswipe')
   });
   const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
-    type: 'below',
+    type: 'aside',
   });
   lightbox.init();
 }

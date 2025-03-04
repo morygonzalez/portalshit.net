@@ -33,7 +33,7 @@
         %meta{ itemprop: :width, content: 350 }
         %meta{ itemprop: :height, content: 255 }
 
-  .body{ itemprop: 'articleBody', class: @entry.category&.title == '写真' ? 'photo-gallery pswp-gallery' : '' }
+  .body{ itemprop: 'articleBody' }
     = @entry.body_with_toc
 
   %footer.footer
