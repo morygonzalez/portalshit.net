@@ -25,8 +25,9 @@ def upload(filepath, filename)
   )
 end
 
-task :photo_gallery, :folder do |task, arguments|
+task :photo_gallery, [:folder, :do_upload] do |task, arguments|
   folder = arguments[:folder]  # 画像が入っているフォルダを指定
+  do_upload = ActiveModel::Type::Boolean.new.cast(arguments[:do_upload])
 
   # 対象の画像拡張子リスト
   image_extensions = %w[jpg jpeg png gif]
@@ -43,11 +44,17 @@ task :photo_gallery, :folder do |task, arguments|
     digest = Digest::MD5.file(filepath).to_s
     extname = File.extname(filepath)
     s3_filename = digest + extname
-    upload(filepath, s3_filename)
+    upload(filepath, s3_filename) if do_upload
     url = "https://resources.portalshit.net/#{s3_filename}"
     thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
     alt = filename.sub(/\.(jpe?g|png|gif)\z/, '')
-    camera, lens, f_number, taken_at = `exiftool -s -s -s -Model -LensModel -FNumber -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" "#{filepath}"`.chomp.split("\n")
+    exiftool_command = <<~CMD.strip_heredoc
+      exiftool -s -s -s \
+        -Model -LensModel -FNumber -ShutterSpeed -FocalLengthIn35mmFormat \
+        -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" \
+        "#{filepath}"
+    CMD
+    camera, lens, f_number, shutter_speed, focal_length, taken_at = `#{exiftool_command}`.chomp.split("\n")
     width, height = FastImage.size(filepath)
 
     {
@@ -62,13 +69,15 @@ task :photo_gallery, :folder do |task, arguments|
       camera: camera,
       lens: lens,
       f_number: f_number,
+      shutter_speed: shutter_speed,
+      focal_length: focal_length
     }
   end
 
-  str = %(<div class="photo-gallery pswp-gallery">\n)
+  gallery_tags = ''
   image_hashes.sort_by {|item| item[:taken_at] }.each.with_index(1) {|item, index|
     item[:thumb_url] = "https://portalshit.net/imageproxy/1280x/#{item[:url]}" if index == 1
-    str += <<~ERUBY.strip_heredoc
+    gallery_tags += <<~ERUBY
       <a href="#{item[:url]}" data-pswp-width="#{item[:width]}" data-pswp-height="#{item[:height]}" data-taken-at="#{item[:taken_at]}">
         <img src="#{item[:thumb_url]}" alt="#{item[:alt]}">
         <ul class="pswp-caption-content">
@@ -76,12 +85,17 @@ task :photo_gallery, :folder do |task, arguments|
           <li class="meta">カメラ: #{item[:camera]}</li>
           <li class="meta">レンズ: #{item[:lens]}</li>
           <li class="meta">F値: #{item[:f_number]}</li>
+          <li class="meta">シャッタースピード: #{item[:shutter_speed]}</li>
+          <li class="meta">焦点距離: #{item[:focal_length]}</li>
           <li class="meta">撮影日時: #{item[:taken_at]}</li>
         </ul>
       </a>
     ERUBY
   }
-  str += '</div>'
 
-  puts str
+  puts <<~OUTPUT
+  <div class="photo-gallery pswp-gallery">
+    #{gallery_tags.strip}
+  </div>
+  OUTPUT
 end
