@@ -4,6 +4,8 @@ namespace :'theme:portalshit' do
   desc 'Install dependencies'
   task :install do
     command = <<~SHELL
+      export PATH="$HOME/.nodenv/bin:$PATH"
+      eval "$(nodenv init -)"
       cd #{__dir__} && $HOME/.nodenv/shims/npm install
     SHELL
     fail unless system(command)
@@ -12,6 +14,8 @@ namespace :'theme:portalshit' do
   desc 'Build JavaScript'
   task build_js: [:install] do
     command = <<~SHELL
+      export PATH="$HOME/.nodenv/bin:$PATH"
+      eval "$(nodenv init -)"
       cd #{__dir__} && ./node_modules/.bin/webpack --config webpack.config.js
     SHELL
     fail unless system(command)
