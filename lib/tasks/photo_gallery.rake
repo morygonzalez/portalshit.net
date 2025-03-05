@@ -1,4 +1,3 @@
-require 'fastimage'
 require 'uri'
 
 def credentials
@@ -25,9 +24,47 @@ def upload(filepath, filename)
   )
 end
 
-task :photo_gallery, [:folder, :do_upload] do |task, arguments|
+def reverse_geocode(gps_position)
+  lat, lon = gps_position.split(',').map {|coord| dms_to_decimal(coord.strip) }
+  url = "https://nominatim.openstreetmap.org/reverse?lat=#{lat}&lon=#{lon}&format=json&accept-language=ja"
+  response = URI.open(url, 'User-Agent' => 'portalshit.net/1.0 (morygonzalez@gmail.com)')
+  data = JSON.parse(response.read)
+
+  # address = data['address'] || {}
+  # prefecture = address['state'] || address['province']
+  # city = address['city'] || address['county'] + address['town'] || address['county'] + address['village']
+  # ward = address['borough'] || address['suburb']
+  # neighbourhood = address['neighbourhood']
+  # name = data['name']
+  # %(#{prefecture}#{city}#{ward}#{neighbourhood}#{name})
+
+  data['display_name'].split(', ')[0..-3].reverse[0..4].join
+rescue StandardError => e
+  warn "Reverse geocoding failed for (#{lat}, #{lon}): #{e.message}"
+  nil
+end
+
+def dms_to_decimal(dms)
+  match = dms.match(/(\d+) deg (\d+)' ([\d.]+)" ([NSEW])/)
+  degrees = match[1].to_f
+  minutes = match[2].to_f
+  seconds = match[3].to_f
+  direction = match[4]
+
+  decimal = degrees + (minutes / 60.0) + (seconds / 3600.0)
+
+  # S, Wならマイナス
+  if direction == 'S' || direction == 'W'
+    decimal *= -1
+  end
+
+  decimal
+end
+
+task :photo_gallery, [:folder, :do_upload, :get_location] do |task, arguments|
   folder = arguments[:folder]  # 画像が入っているフォルダを指定
   do_upload = ActiveModel::Type::Boolean.new.cast(arguments[:do_upload])
+  get_location = ActiveModel::Type::Boolean.new.cast(arguments[:get_location])
 
   # 対象の画像拡張子リスト
   image_extensions = %w[jpg jpeg png gif]
@@ -39,7 +76,9 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
   end
 
   # HTML生成
-  image_hashes = images.map do |filename|
+  image_hashes = images.map.with_index do |filename, index|
+    sleep 1 if index > 0
+
     filepath = File.join(folder, filename)
     digest = Digest::MD5.file(filepath).to_s
     extname = File.extname(filepath)
@@ -51,11 +90,13 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
     exiftool_command = <<~CMD.strip_heredoc
       exiftool -s -s -s \
         -Model -LensModel -FNumber -ShutterSpeed -ISO -FocalLengthIn35mmFormat \
+        -ImageWidth -ImageHeight \
         -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" \
+        -GpsPosition \
         "#{filepath}"
     CMD
-    camera, lens, f_number, shutter_speed, iso, focal_length, taken_at = `#{exiftool_command}`.chomp.split("\n")
-    width, height = FastImage.size(filepath)
+    camera, lens, f_number, shutter_speed, iso, focal_length, width, height, taken_at, gps_position = `#{exiftool_command}`.chomp.split("\n")
+    location = reverse_geocode(gps_position) if get_location && gps_position.present?
 
     {
       filename: filename,
@@ -71,7 +112,8 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
       f_number: f_number,
       shutter_speed: shutter_speed,
       iso: iso,
-      focal_length: focal_length
+      focal_length: focal_length,
+      location: location
     }
   end
 
@@ -90,6 +132,7 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
           <li class="meta">ISO感度: #{item[:iso]}</li>
           <li class="meta">焦点距離: #{item[:focal_length]}</li>
           <li class="meta">撮影日時: #{item[:taken_at]}</li>
+          <li class="meta">撮影場所: #{item[:location]}</li>
         </ul>
       </a>
     ERUBY
