@@ -50,11 +50,11 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
     alt = filename.sub(/\.(jpe?g|png|gif)\z/, '')
     exiftool_command = <<~CMD.strip_heredoc
       exiftool -s -s -s \
-        -Model -LensModel -FNumber -ShutterSpeed -FocalLengthIn35mmFormat \
+        -Model -LensModel -FNumber -ShutterSpeed -ISO -FocalLengthIn35mmFormat \
         -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" \
         "#{filepath}"
     CMD
-    camera, lens, f_number, shutter_speed, focal_length, taken_at = `#{exiftool_command}`.chomp.split("\n")
+    camera, lens, f_number, shutter_speed, iso, focal_length, taken_at = `#{exiftool_command}`.chomp.split("\n")
     width, height = FastImage.size(filepath)
 
     {
@@ -70,6 +70,7 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
       lens: lens,
       f_number: f_number,
       shutter_speed: shutter_speed,
+      iso: iso,
       focal_length: focal_length
     }
   end
@@ -86,6 +87,7 @@ task :photo_gallery, [:folder, :do_upload] do |task, arguments|
           <li class="meta">レンズ: #{item[:lens]}</li>
           <li class="meta">F値: #{item[:f_number]}</li>
           <li class="meta">シャッタースピード: #{item[:shutter_speed]}</li>
+          <li class="meta">ISO感度: #{item[:iso]}</li>
           <li class="meta">焦点距離: #{item[:focal_length]}</li>
           <li class="meta">撮影日時: #{item[:taken_at]}</li>
         </ul>

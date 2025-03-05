@@ -377,6 +377,8 @@
 
     &.title {
       font-weight: bold;
+      font-size: 1.2em;
+      padding-bottom: .4em;
     }
     &.meta {
       font-size: .9em;
@@ -386,4 +388,8 @@
 
 .pswp__dynamic-caption--aside {
   margin-top: 0 !important;
+}
+
+.pswp__dynamic-caption--mobile {
+  line-height: 1em;
 }
