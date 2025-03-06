@@ -13,7 +13,10 @@
       <li class="meta">焦点距離: <%= item[:focal_length] %></li>
       <li class="meta">撮影日時: <%= item[:taken_at] %></li>
     <%- if item[:location].present? -%>
-      <li class="meta">撮影場所: <%= item[:location] %></li>
+      <li class="meta">
+        撮影場所:<%= item[:location] %><br />
+        <span class="licence"><a href="<%= item[:licence_url] %>"><%= item[:licence_text] %></a></span>
+      </li>
     <%- end -%>
     </ul>
   </a>

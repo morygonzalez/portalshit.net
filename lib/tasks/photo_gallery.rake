@@ -32,7 +32,7 @@ def reverse_geocode(gps_position)
   url = "https://nominatim.openstreetmap.org/reverse?lat=#{lat}&lon=#{lon}&format=json&accept-language=ja"
 
   response = URI.open(url, 'User-Agent' => 'portalshit.net/1.0 (morygonzalez@gmail.com)')
-  data = JSON.parse(response.read)
+  data = JSON.parse(response.read).with_indifferent_access
 
   location = data['display_name'].split(', ')[0..-3].reverse[0..4].join
 
@@ -94,6 +94,8 @@ namespace :photo_gallery do
       f_number = "ƒ/#{f_number_raw}"
 
       location_result = gps_position.present? ? reverse_geocode(gps_position) : { location: nil, raw: nil }
+      *licence_text, licence_url = location_result.dig(:raw, :licence)&.split("\s")
+      licence_text = licence_text.join(' ')
 
       {
         filename: filename,
@@ -112,6 +114,8 @@ namespace :photo_gallery do
         focal_length: focal_length,
         gps_position: gps_position,
         location: location_result[:location],
+        licence_text: licence_text,
+        licence_url: licence_url,
         reverse_geocode_raw: location_result[:raw]
       }
     end
