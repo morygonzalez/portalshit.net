@@ -1,6 +1,7 @@
 require 'uri'
 require 'json'
 require 'erb'
+require_relative 'photo_gallery/renderer'
 
 def credentials
   @credentials ||= Aws::Credentials.new(
@@ -54,16 +55,13 @@ def dms_to_decimal(dms)
   decimal
 end
 
-task :photo_gallery, [:folder, :do_upload, :regenerate_metadata] do |task, arguments|
-  folder = arguments[:folder]
-  do_upload = ActiveModel::Type::Boolean.new.cast(arguments[:do_upload])
-  regenerate_metadata = ActiveModel::Type::Boolean.new.cast(arguments[:regenerate_metadata])
+namespace :photo_gallery do
+  desc '画像からmetadata.jsonを生成'
+  task :generate_metadata, [:folder, :do_upload] do |_, args|
+    folder = args[:folder]
+    do_upload = ActiveModel::Type::Boolean.new.cast(args[:do_upload])
+    metadata_file = File.join(folder, 'metadata.json')
 
-  metadata_file = File.join(folder, 'metadata.json')
-
-  if File.exist?(metadata_file) && !regenerate_metadata
-    image_hashes = JSON.parse(File.read(metadata_file), symbolize_names: true)
-  else
     image_extensions = %w[jpg jpeg png gif]
     images = Dir.entries(folder).select do |file|
       ext = File.extname(file).downcase.delete_prefix('.')
@@ -71,7 +69,7 @@ task :photo_gallery, [:folder, :do_upload, :regenerate_metadata] do |task, argum
     end
 
     image_hashes = images.map.with_index do |filename, index|
-      sleep 1 if index > 0  # Nominatimレートリミット対策
+      sleep 1 if index > 0
 
       filepath = File.join(folder, filename)
       digest = Digest::MD5.file(filepath).to_s
@@ -95,11 +93,7 @@ task :photo_gallery, [:folder, :do_upload, :regenerate_metadata] do |task, argum
       camera, lens, f_number_raw, shutter_speed, iso, focal_length, width, height, taken_at, gps_position = `#{exiftool_command}`.chomp.split("\n")
       f_number = "ƒ/#{f_number_raw}"
 
-      location_result = if gps_position.present?
-                          reverse_geocode(gps_position)
-                        else
-                          { location: nil, raw: nil }
-                        end
+      location_result = gps_position.present? ? reverse_geocode(gps_position) : { location: nil, raw: nil }
 
       {
         filename: filename,
@@ -122,13 +116,21 @@ task :photo_gallery, [:folder, :do_upload, :regenerate_metadata] do |task, argum
       }
     end
 
-    File.open(metadata_file, 'w:utf-8') do |f|
-      f.write(JSON.pretty_generate(image_hashes))
-    end
+    File.write(metadata_file, JSON.pretty_generate(image_hashes))
+    puts "Generated #{metadata_file}"
   end
 
-  # ERBテンプレートでHTML生成
-  require_relative 'photo_gallery/renderer'
-  renderer = PhotoGallery::Renderer.new(image_hashes)
-  puts renderer.render
+  desc 'metadata.jsonからHTMLを生成'
+  task :generate_html, [:folder] do |_, args|
+    folder = args[:folder]
+    metadata_file = File.join(folder, 'metadata.json')
+
+    unless File.exist?(metadata_file)
+      abort "#{metadata_file} が存在しません。先に rake photo_gallery:generate_metadata を実行してください。"
+    end
+
+    image_hashes = JSON.parse(File.read(metadata_file), symbolize_names: true)
+    renderer = PhotoGallery::Renderer.new(image_hashes)
+    puts renderer.render
+  end
 end
