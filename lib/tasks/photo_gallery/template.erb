@@ -1,0 +1,21 @@
+<div class="photo-gallery pswp-gallery">
+<%- @image_hashes.sort_by { |item| item[:taken_at] }.each_with_index do |item, index| -%>
+  <%- item[:thumb_url] = "https://portalshit.net/imageproxy/1280x/#{item[:url]}" if index == 0 -%>
+  <a href="<%= item[:url] %>" data-pswp-width="<%= item[:width] %>" data-pswp-height="<%= item[:height] %>" data-taken-at="<%= item[:taken_at] %>">
+    <img src="<%= item[:thumb_url] %>" alt="<%= item[:alt] %>">
+    <ul class="pswp-caption-content">
+      <li class="title"><%= item[:alt] %></li>
+      <li class="meta">カメラ: <%= item[:camera] %></li>
+      <li class="meta">レンズ: <%= item[:lens] %></li>
+      <li class="meta">F値: <%= item[:f_number] %></li>
+      <li class="meta">シャッタースピード: <%= item[:shutter_speed] %></li>
+      <li class="meta">ISO感度: <%= item[:iso] %></li>
+      <li class="meta">焦点距離: <%= item[:focal_length] %></li>
+      <li class="meta">撮影日時: <%= item[:taken_at] %></li>
+    <%- if item[:location].present? -%>
+      <li class="meta">撮影場所: <%= item[:location] %></li>
+    <%- end -%>
+    </ul>
+  </a>
+<%- end -%>
+</div>
