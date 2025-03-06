@@ -67,7 +67,7 @@ class Entry
 
   def images
     doc = Nokogiri::HTML.fragment(body)
-    doc.css('img:root, figure:root > img, p:root > video, p:root img').map {|item|
+    doc.css('img:root, figure:root > img, p:root > video, p:root img, .pswp-gallery__item > a > img').map {|item|
       case item.name
       when "img"
         item.attributes["src"].value
