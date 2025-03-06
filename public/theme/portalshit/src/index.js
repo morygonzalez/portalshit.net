@@ -127,7 +127,7 @@ const init = node => {
   observeCloseModal();
   const lightbox = new PhotoSwipeLightbox({
     gallery: '.photo-gallery',
-    children: '.photo-gallery > a',
+    children: '.pswp-gallery__item',
     pswpModule: () => import('photoswipe')
   });
   const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {

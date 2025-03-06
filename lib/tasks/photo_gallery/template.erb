@@ -1,8 +1,10 @@
 <div class="photo-gallery pswp-gallery">
 <%- @image_hashes.sort_by { |item| item[:taken_at] }.each_with_index do |item, index| -%>
   <%- item[:thumb_url] = "https://portalshit.net/imageproxy/1280x/#{item[:url]}" if index == 0 -%>
-  <a href="<%= item[:url] %>" data-pswp-width="<%= item[:width] %>" data-pswp-height="<%= item[:height] %>" data-taken-at="<%= item[:taken_at] %>">
-    <img src="<%= item[:thumb_url] %>" alt="<%= item[:alt] %>">
+  <div class="pswp-gallery__item">
+    <a href="<%= item[:url] %>" data-pswp-width="<%= item[:width] %>" data-pswp-height="<%= item[:height] %>" data-taken-at="<%= item[:taken_at] %>">
+      <img src="<%= item[:thumb_url] %>" alt="<%= item[:alt] %>">
+    </a>
     <ul class="pswp-caption-content">
       <li class="title"><%= item[:alt] %></li>
       <li class="meta">カメラ: <%= item[:camera] %></li>
@@ -19,6 +21,6 @@
       </li>
     <%- end -%>
     </ul>
-  </a>
+  </div>
 <%- end -%>
 </div>
