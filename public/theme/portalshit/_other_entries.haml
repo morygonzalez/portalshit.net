@@ -27,7 +27,7 @@
         = link_to image_tag("https://portalshit.net/imageproxy/300/#{post.cover_image}", class: 'default'), post.link
 
     .body{ itemprop: 'articleBody' }
-      = post.long_description
+      = post.summary_or_description
   .footer
     = post.tags_to_html
     .comment== #{link_to "#{t('comments')} (#{post.approved_comments.size})", "#{post.link}#comment_form"}

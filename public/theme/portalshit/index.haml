@@ -28,7 +28,7 @@
                 %span.created_at= l(post.created_at.to_date, format: :long)
               .description
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
-                .body= post.long_description
+                .body= post.summary_or_description
       %section.hotentry
         %h3
           = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena-bookmark'
@@ -42,4 +42,4 @@
                 = link_to "#{post.bookmark_count} users", post.bookmark_url
               .description
                 .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
-                .body= post.long_description
+                .body= post.summary_or_description

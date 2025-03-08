@@ -70,7 +70,7 @@ module Lokka
       require "lokka/app/admin/#{f}"
     end
     require 'lokka/app/entries.rb'
-    %w[file_upload_handler entry_preview_handler].each do |f|
+    %w[file_upload_handler entry_preview_handler entry_summarizer].each do |f|
       require "lokka/handlers/#{f}"
     end
 

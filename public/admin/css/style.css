@@ -51,6 +51,10 @@ textarea {
     min-height: 200px;
 }
 
+.summary textarea {
+    min-height: initial;
+}
+
 input[type="submit"],
 .button {
     cursor:pointer;

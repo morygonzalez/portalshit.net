@@ -22,7 +22,7 @@ module Lokka
       Database.connect
 
       migration_path = File.join(Lokka.root, 'db', 'migration')
-      ActiveRecord::MigrationContext.new(migration_path).migrate
+      ActiveRecord::MigrationContext.new(migration_path, ActiveRecord::SchemaMigration).migrate
 
       schema_file = File.join(Lokka.root, 'db', 'schema.rb')
       File.open(schema_file, 'w:utf-8') do |io|

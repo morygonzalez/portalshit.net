@@ -42,6 +42,13 @@
         = f.select :category_id, collection: Category.all, fields: [:title, :id], include_blank: t('not_select')
       - else
         = t('no_category')
+    .field.summary
+      = f.label :summary, caption: 'Summary'
+      %br/
+      = f.text_area :summary, rows: 10, placeholder: 'まだ要約はありません'
+      %div
+        = f.label :generate_or_update_summary, caption: '要約を自動生成'
+        = f.check_box :generate_or_update_summary
     .field.tags
       = f.label :tag_collection, caption: t("#{@name}.tags")
       %br/
