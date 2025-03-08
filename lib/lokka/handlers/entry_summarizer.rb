@@ -13,7 +13,7 @@ class EntrySummarizer
       parameters: {
         model: MODEL,
         messages: [
-          { role: "system", content: "以下のブログ記事を著者になりきって、日本語で簡潔に要約してください。文章の長さは200文字以内で、受動態表現と「ですます」調を避けて下さい。" },
+          { role: "system", content: "以下のブログ記事を著者になりきって、日本語で簡潔に要約してください。文章の長さは100文字以内で、受動態表現と「ですます」調を避けて下さい。" },
           { role: "user", content: @content }
         ],
         temperature: 0.3,
