@@ -81,9 +81,16 @@ module Lokka
         correct_path = custom_permalink_fix(request.path)
         return redirect(correct_path) if correct_path
 
-        @entry = custom_permalink_entry(request.path)
-        status 200
-        return setup_and_render_entry if @entry
+        if request.path =~ /\A\/(?!admin).+?\/edit\z/
+          entry_path = request.path.gsub(/\/edit\z/, '')
+          @entry = custom_permalink_entry(entry_path)
+          name = @entry.class.name.downcase.pluralize
+          return redirect to("admin/#{name}/#{@entry.id}/edit")
+        else
+          @entry = custom_permalink_entry(request.path)
+          status 200
+          return setup_and_render_entry if @entry
+        end
 
         status 404
       end
