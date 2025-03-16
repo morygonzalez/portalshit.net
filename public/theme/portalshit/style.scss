@@ -319,7 +319,7 @@
     }
   }
 
-  section#site_description, section#not_found_description {
+  #site_description, #not_found_description {
     h2 {
       margin-bottom: 2rem;
     }
@@ -329,7 +329,7 @@
     }
   }
 
-  article#recent_entries, article.category, article.popular {
+  #recent_entries, .category, .popular {
     header {
       .title {
       }
@@ -401,23 +401,19 @@
       }
 
       .past-entries {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
 
         .entry {
-          width: 31%;
-          margin-bottom: 4em;
-          margin-right: 2em;
-
-          &:nth-child(3n) {
-            margin-right: 0;
-          }
+          margin: 1em 1em;
 
           .title {
             font-size: 1em;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
+            max-width: calc(75vw/3);
+            width: 30ch;
           }
 
           .image {
@@ -518,7 +514,7 @@
     }
   }
 
-  section#popular_entries > section {
+  #popular_entries > section {
     .frequently-read-articles, .hotentry {
       @include entries-list;
 
@@ -526,11 +522,11 @@
         margin-top: 0;
       }
 
-      ul {
+      .items {
         margin-top: 0;
         padding-left: 0;
 
-        li {
+        .item {
           margin-top: 0;
 
           .title {

@@ -102,7 +102,7 @@ const observeSearchMenu = () => {
 }
 
 const observeLinkClick = (node) => {
-  const selectors = 'section.referrers ul li a, section.similar ul li a, section.frequently-read-articles ul li a, section.hotentry ul li a';
+  const selectors = '.referrers .item a, .similar .item a, .frequently-read-articles .item a, .hotentry .item a';
   node.querySelectorAll(selectors).forEach(element => {
     element.onclick = (e) => {
       const target = e.target;

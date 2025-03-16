@@ -1,7 +1,7 @@
 // For Tablet, Small laptop
 @media screen and (max-width: 1279px) {
   #content {
-    article#recent_entries, article.category, article.popular {
+    #recent_entries, #popular_entries, .category, .popular {
       section {
         .new-entry {
           .content {
@@ -28,16 +28,11 @@
         }
 
         .past-entries {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+
           .entry {
-            width: 47%;
-
-            &:nth-child(odd) {
-              margin-right: 2em;
-            }
-
-            &:nth-child(even) {
-              margin-right: 0;
-            }
+            margin: auto .3em;
 
             .image {
               margin: .5em auto 1em;
@@ -175,12 +170,18 @@
   #content {
     padding: .5em 0;
 
-    article#recent_entries, article.category, article.popular {
+    #recent_entries, #popular_entries, .category, .popular {
       header {
         .meta {
           display: block;
           margin-left: 0;
           font-size: .8rem;
+        }
+      }
+
+      .frequetly-read-articles, .hotentry {
+        .items {
+          display: block;
         }
       }
 
@@ -213,16 +214,15 @@
         }
 
         .past-entries {
+          display: block;
+
           .entry {
             width: 100%;
             padding: initial;
 
-            &:nth-child(odd), &:nth-child(even), &:nth-child(3n) {
-              margin: auto;
-            }
-
             .title {
               max-width: calc(100% - .5em);
+              width: 100%;
             }
 
             .content {
