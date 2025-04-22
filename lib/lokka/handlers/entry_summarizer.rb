@@ -1,7 +1,7 @@
 require 'openai'
 
 class EntrySummarizer
-  MODEL = 'gpt-4o-mini'
+  MODEL = 'gpt-4o'
 
   def initialize(content)
     @content = content
