@@ -6,7 +6,7 @@
       <img src="<%= item[:thumb_url] %>" alt="<%= item[:alt] %>">
     </a>
     <ul class="pswp-caption-content">
-      <li class="title"><%= item[:alt] %></li>
+      <li class="title"><%= item[:title] %></li>
       <li class="meta">カメラ: <%= item[:camera] %></li>
       <li class="meta">レンズ: <%= item[:lens] %></li>
       <li class="meta">F値: <%= item[:f_number] %></li>
@@ -16,7 +16,7 @@
       <li class="meta">撮影日時: <%= item[:taken_at] %></li>
     <%- if item[:location].present? -%>
       <li class="meta">
-        撮影場所:<%= item[:location] %><br />
+        撮影場所: <%= item[:location] %><br />
         <span class="licence"><a href="<%= item[:licence_url] %>"><%= item[:licence_text] %></a></span>
       </li>
     <%- end -%>

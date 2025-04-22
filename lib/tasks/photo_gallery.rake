@@ -79,18 +79,17 @@ namespace :photo_gallery do
 
       url = "https://resources.portalshit.net/#{s3_filename}"
       thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
-      alt = filename.sub(/\.(jpe?g|png|gif)\z/, '')
 
       exiftool_command = <<~CMD.strip_heredoc
         exiftool -s -s -s \
-          -Model -LensModel -FNumber -ShutterSpeed -ISO -FocalLengthIn35mmFormat \
+          -Title -Model -LensModel -FNumber -ShutterSpeed -ISO -FocalLengthIn35mmFormat \
           -ImageWidth -ImageHeight \
           -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" \
           -GpsPosition \
           "#{filepath}"
       CMD
 
-      camera, lens, f_number_raw, shutter_speed, iso, focal_length, width, height, taken_at, gps_position = `#{exiftool_command}`.chomp.split("\n")
+      title, camera, lens, f_number_raw, shutter_speed, iso, focal_length, width, height, taken_at, gps_position = `#{exiftool_command}`.chomp.split("\n")
       f_number = "ƒ/#{f_number_raw}"
 
       location_result = gps_position.present? ? reverse_geocode(gps_position) : { location: nil, raw: nil }
@@ -100,9 +99,10 @@ namespace :photo_gallery do
       {
         filename: filename,
         s3_filename: s3_filename,
+        title: title,
         width: width,
         height: height,
-        alt: alt,
+        alt: title,
         taken_at: taken_at,
         url: url,
         thumb_url: thumb_url,
