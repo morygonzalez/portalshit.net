@@ -1,7 +1,8 @@
 module PhotoGallery
   class Renderer
-    def initialize(image_hashes)
-      @image_hashes = image_hashes
+    def initialize(images)
+      @cover = images.find {|item| item[:keywords] =~ /cover/i }
+      @images = images.delete_if {|item| item[:s3_filename] == @cover[:s3_filename] }
     end
 
     def render

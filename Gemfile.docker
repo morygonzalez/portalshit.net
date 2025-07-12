@@ -92,6 +92,9 @@ gem 'open_graph_reader'
 gem 'faraday_middleware'
 gem 'parallel'
 gem 'mini_magick'
+source 'https://rubygems.org'
+
+gem 'exiftool'
 
 gem 'dotenv'
 gem 'rack-recaptcha2', require: 'rack/recaptcha'

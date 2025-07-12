@@ -137,6 +137,8 @@ GEM
     erubis (2.7.0)
     event_stream_parser (1.0.0)
     execjs (2.10.0)
+    exiftool (1.2.6)
+      json
     factory_girl (4.9.0)
       activesupport (>= 3.0.0)
     faraday (1.10.4)
@@ -429,6 +431,7 @@ DEPENDENCIES
   database_cleaner-active_record
   dotenv
   erubis
+  exiftool
   factory_girl (~> 4.0)
   faraday_middleware
   fastimage

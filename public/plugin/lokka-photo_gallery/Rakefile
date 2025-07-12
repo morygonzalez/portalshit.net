@@ -1,7 +1,8 @@
 require 'uri'
 require 'json'
 require 'erb'
-require_relative 'photo_gallery/renderer'
+require 'exiftool'
+require_relative 'lib/lokka/photo_gallery/renderer'
 
 def credentials
   @credentials ||= Aws::Credentials.new(
@@ -27,9 +28,8 @@ def upload(filepath, filename)
   )
 end
 
-def reverse_geocode(gps_position)
-  lat, lon = gps_position.split(',').map {|coord| dms_to_decimal(coord.strip) }
-  url = "https://nominatim.openstreetmap.org/reverse?lat=#{lat}&lon=#{lon}&format=json&accept-language=ja"
+def reverse_geocode(latitude:, longitude:)
+  url = "https://nominatim.openstreetmap.org/reverse?lat=#{latitude}&lon=#{longitude}&format=json&accept-language=ja"
 
   response = URI.open(url, 'User-Agent' => 'portalshit.net/1.0 (morygonzalez@gmail.com)')
   data = JSON.parse(response.read).with_indifferent_access
@@ -38,7 +38,7 @@ def reverse_geocode(gps_position)
 
   { location: location, raw: data }
 rescue StandardError => e
-  warn "Reverse geocoding failed for (#{lat}, #{lon}): #{e.message}"
+  warn "Reverse geocoding failed for (#{latitude}, #{longitude}): #{e.message}"
   { location: nil, raw: { error: e.message } }
 end
 
@@ -80,19 +80,22 @@ namespace :photo_gallery do
       url = "https://resources.portalshit.net/#{s3_filename}"
       thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
 
-      exiftool_command = <<~CMD.strip_heredoc
-        exiftool -s -s -s \
-          -Title -Model -LensModel -FNumber -ShutterSpeed -ISO -FocalLengthIn35mmFormat \
-          -ImageWidth -ImageHeight \
-          -DateTimeOriginal -d "%Y-%m-%d %H:%M:%S" \
-          -GpsPosition \
-          "#{filepath}"
-      CMD
+      exif = Exiftool.new(filepath).to_hash
+      title         = exif[:title]
+      camera        = %(#{exif[:make]} #{exif[:model]})
+      lens          = exif[:lens_model]
+      f_number      = %(ƒ/#{exif[:f_number]})
+      shutter_speed = exif[:shutter_speed]
+      iso           = exif[:iso]
+      focal_length  = exif[:focal_length]
+      width         = exif[:image_width]
+      height        = exif[:image_height]
+      taken_at      = exif[:date_time_created]
+      latitude      = exif[:gps_latitude]
+      longitude     = exif[:gps_longitude]
+      keywords      = exif[:keywords]
 
-      title, camera, lens, f_number_raw, shutter_speed, iso, focal_length, width, height, taken_at, gps_position = `#{exiftool_command}`.chomp.split("\n")
-      f_number = "ƒ/#{f_number_raw}"
-
-      location_result = gps_position.present? ? reverse_geocode(gps_position) : { location: nil, raw: nil }
+      location_result = (latitude && longitude) ? reverse_geocode(latitude: latitude, longitude: longitude) : { location: nil, raw: nil }
       *licence_text, licence_url = location_result.dig(:raw, :licence)&.split("\s")
       licence_text = licence_text.join(' ')
 
@@ -112,11 +115,13 @@ namespace :photo_gallery do
         shutter_speed: shutter_speed,
         iso: iso,
         focal_length: focal_length,
-        gps_position: gps_position,
+        latitude: latitude,
+        longitude: longitude,
         location: location_result[:location],
         licence_text: licence_text,
         licence_url: licence_url,
-        reverse_geocode_raw: location_result[:raw]
+        reverse_geocode_raw: location_result[:raw],
+        keywords: keywords
       }
     end
 
@@ -133,8 +138,8 @@ namespace :photo_gallery do
       abort "#{metadata_file} が存在しません。先に rake photo_gallery:generate_metadata を実行してください。"
     end
 
-    image_hashes = JSON.parse(File.read(metadata_file), symbolize_names: true)
-    renderer = PhotoGallery::Renderer.new(image_hashes)
+    images = JSON.parse(File.read(metadata_file), symbolize_names: true).sort_by {|item| item[:taken_at] }
+    renderer = PhotoGallery::Renderer.new(images)
     puts renderer.render
   end
 end
