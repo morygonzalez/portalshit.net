@@ -61,6 +61,7 @@ namespace :photo_gallery do
     folder = args[:folder]
     do_upload = ActiveModel::Type::Boolean.new.cast(args[:do_upload])
     metadata_file = File.join(folder, 'metadata.json')
+    metadata = JSON.parse(File.read(metadata_file), symbolize_names: true)
 
     image_extensions = %w[jpg jpeg png gif]
     images = Dir.entries(folder).select do |file|
@@ -69,60 +70,66 @@ namespace :photo_gallery do
     end
 
     image_hashes = images.map.with_index do |filename, index|
-      sleep 1 if index > 0
-
       filepath = File.join(folder, filename)
       digest = Digest::MD5.file(filepath).to_s
       extname = File.extname(filepath)
       s3_filename = digest + extname
-      upload(filepath, s3_filename) if do_upload
 
-      url = "https://resources.portalshit.net/#{s3_filename}"
-      thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
+      processed_data = metadata.find {|item| item[:s3_filename] == s3_filename }
 
-      exif = Exiftool.new(filepath).to_hash
-      title         = exif[:title]
-      camera        = %(#{exif[:make]} #{exif[:model]})
-      lens          = exif[:lens_model]
-      f_number      = %(ƒ/#{exif[:f_number]})
-      shutter_speed = exif[:shutter_speed]
-      iso           = exif[:iso]
-      focal_length  = exif[:focal_length]
-      width         = exif[:image_width]
-      height        = exif[:image_height]
-      taken_at      = exif[:date_time_created]
-      latitude      = exif[:gps_latitude]
-      longitude     = exif[:gps_longitude]
-      keywords      = exif[:keywords]
+      if processed_data.present?
+        processed_data
+      else
+        sleep 1 if index > 0
+        upload(filepath, s3_filename) if do_upload
 
-      location_result = (latitude && longitude) ? reverse_geocode(latitude: latitude, longitude: longitude) : { location: nil, raw: nil }
-      *licence_text, licence_url = location_result.dig(:raw, :licence)&.split("\s")
-      licence_text = licence_text.join(' ')
+        url = "https://resources.portalshit.net/#{s3_filename}"
+        thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
 
-      {
-        filename: filename,
-        s3_filename: s3_filename,
-        title: title,
-        width: width,
-        height: height,
-        alt: title,
-        taken_at: taken_at,
-        url: url,
-        thumb_url: thumb_url,
-        camera: camera,
-        lens: lens,
-        f_number: f_number,
-        shutter_speed: shutter_speed,
-        iso: iso,
-        focal_length: focal_length,
-        latitude: latitude,
-        longitude: longitude,
-        location: location_result[:location],
-        licence_text: licence_text,
-        licence_url: licence_url,
-        reverse_geocode_raw: location_result[:raw],
-        keywords: keywords
-      }
+        exif = Exiftool.new(filepath).to_hash
+        title = exif[:title]
+        camera = %(#{exif[:make]} #{exif[:model]})
+        lens = exif[:lens_model]
+        f_number = %(ƒ/#{exif[:f_number]})
+        shutter_speed = exif[:shutter_speed]
+        iso = exif[:iso]
+        focal_length = exif[:focal_length]
+        width = exif[:image_width]
+        height = exif[:image_height]
+        taken_at = exif[:date_time_created]
+        latitude = exif[:gps_latitude]
+        longitude = exif[:gps_longitude]
+        keywords = exif[:keywords]
+
+        location_result = (latitude && longitude) ? reverse_geocode(latitude: latitude, longitude: longitude) : { location: nil, raw: nil }
+        *licence_text, licence_url = location_result.dig(:raw, :licence)&.split("\s")
+        licence_text = licence_text.join(' ')
+
+        {
+          filename: filename,
+          s3_filename: s3_filename,
+          title: title,
+          width: width,
+          height: height,
+          alt: title,
+          taken_at: taken_at,
+          url: url,
+          thumb_url: thumb_url,
+          camera: camera,
+          lens: lens,
+          f_number: f_number,
+          shutter_speed: shutter_speed,
+          iso: iso,
+          focal_length: focal_length,
+          latitude: latitude,
+          longitude: longitude,
+          location: location_result[:location],
+          licence_text: licence_text,
+          licence_url: licence_url,
+          reverse_geocode_raw: location_result[:raw],
+          keywords: keywords
+        }
+      end
     end
 
     File.write(metadata_file, JSON.pretty_generate(image_hashes))
