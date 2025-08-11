@@ -21,12 +21,23 @@ def bucket
 end
 
 def upload(filepath, filename)
-  content_type = Marcel::MimeType.for(File.open(filepath))
-  bucket.object(filename).upload_file(
+  content_type = File.open(filepath, 'rb') { |f| Marcel::MimeType.for(f) }
+
+  object = bucket.object(filename)
+
+  if object.exists?
+    puts "[skip] s3://#{bucket.name}/#{filename} は既に存在します"
+    return { skipped: true, key: filename }
+  end
+
+  object.upload_file(
     filepath,
     content_type: content_type,
     cache_control: 'max-age=2592000,s-maxage=31536000'
   )
+
+  puts "[upload] s3://#{bucket.name}/#{filename}"
+  { uploaded: true, key: filename }
 end
 
 def reverse_geocode(latitude:, longitude:)
