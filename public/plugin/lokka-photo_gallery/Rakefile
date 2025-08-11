@@ -1,5 +1,6 @@
 require 'uri'
 require 'json'
+require 'fileutils'
 require 'erb'
 require 'exiftool'
 require_relative 'lib/lokka/photo_gallery/renderer'
@@ -55,13 +56,37 @@ def dms_to_decimal(dms)
   decimal
 end
 
+def read_or_create_file(path, default: "")
+  FileUtils.mkdir_p(File.dirname(path))
+
+  content = nil
+  File.open(path, File::RDWR | File::CREAT, 0o644) do |f|
+    f.flock(File::LOCK_EX)
+    if f.size.zero?
+      f.write(default)
+      f.flush
+    end
+    f.rewind
+    content = f.read
+  end
+
+  content
+end
+
+def read_or_create_json(path, default: [])
+  text = read_or_create_file(path, default: JSON.dump(default))
+  JSON.parse(text, symbolize_names: true)
+rescue JSON::ParserError
+  []
+end
+
 namespace :photo_gallery do
   desc '画像からmetadata.jsonを生成'
   task :generate_metadata, [:folder, :do_upload] do |_, args|
     folder = args[:folder]
     do_upload = ActiveModel::Type::Boolean.new.cast(args[:do_upload])
-    metadata_file = File.join(folder, 'metadata.json')
-    metadata = JSON.parse(File.read(metadata_file), symbolize_names: true)
+    metadata_file_path = File.join(folder, 'metadata.json')
+    metadata = read_or_create_json(metadata_file_path, default: [])
 
     image_extensions = %w[jpg jpeg png gif]
     images = Dir.entries(folder).select do |file|
@@ -132,8 +157,8 @@ namespace :photo_gallery do
       end
     end
 
-    File.write(metadata_file, JSON.pretty_generate(image_hashes))
-    puts "Generated #{metadata_file}"
+    File.write(metadata_file_path, JSON.pretty_generate(image_hashes))
+    puts "Generated #{metadata_file_path}"
   end
 
   desc 'metadata.jsonからHTMLを生成'
