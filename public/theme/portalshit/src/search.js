@@ -99,24 +99,14 @@ class SearchApp extends Component {
 }
 
 const SearchField = (props) => {
-  const [query, setQuery] = useState('')
-
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      props.update(query)
-    }, 500)
-    window.addEventListener('keydown', props.keydown)
+    window.addEventListener('keydown', props.keydown);
+    return () => window.removeEventListener('keydown', props.keydown);
+  }, [props.keydown]);
 
-    return () => {
-      clearTimeout(timeOutId)
-      window.removeEventListener('keydown', props.keydown)
-    }
-  }, [query])
-
-  const handleChange = (event) => {
-    const query = event.currentTarget.value
-    props.update(query)
-  }
+  const handleChange = (e) => {
+    props.update(e.currentTarget.value);
+  };
 
   return (
     <p className="search-field">
@@ -155,18 +145,20 @@ class PopularKeywords extends Component {
 class Keyword extends Component {
   constructor(props) {
     super(props)
-    this.clickLink = this.clickLink.bind(this)
+    this.onClick = this.onClick.bind(this)
   }
 
-  clickLink(event) {
-    const keyword = event.target.innerText
-    this.props.updateQuery(keyword)
+  onClick(event) {
+    event.preventDefault();
+    this.props.updateQuery(this.props.keyword)
+    const input = document.querySelector('.search-field input')
+    input && input.focus();
   }
 
   render() {
     return (
       <span className="keyword">
-        <a href onClick={this.clickLink}>
+        <a href onClick={this.onClick} role="button">
           {this.props.keyword}
         </a>
       </span>
