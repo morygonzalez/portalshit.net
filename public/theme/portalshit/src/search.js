@@ -19,6 +19,25 @@ class SearchApp extends Component {
     this.updateEntryLength = this.updateEntryLength.bind(this)
   }
 
+  componentDidMount() {
+    this.onKeyword = (event) => {
+      this.updateQuery(event.detail.keyword);
+
+      window.__openingSearch = true;
+      requestAnimationFrame(() => {
+        const container = this.modal.current.parentNode;
+        container?.classList.add('active');
+        container?.querySelector('input')?.focus();
+        setTimeout(() => { window.__openingSearch = false; }, 0);
+      });
+    }
+    document.addEventListener('search:keyword', this.onKeyword);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('search:keyword', this.onKeyword);
+  }
+
   updateQuery(query) {
     this.setState({ query })
   }

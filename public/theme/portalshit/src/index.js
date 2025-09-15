@@ -78,16 +78,20 @@ const observeImages = node => {
 }
 
 const observeCloseModal = () => {
-  document.documentElement.onclick = () => {
+  document.documentElement.addEventListener('click', (event) => {
+    if (window.__openingSearch) return;
+
     document.querySelectorAll('.modal.active').forEach(modal => {
-      modal.classList.toggle('active');
+      if (!modal.contains(event.target)) {
+        modal.classList.remove('active');
+      }
     })
-  }
+  })
 
   document.querySelectorAll('.modal').forEach(modal => {
-    modal.parentNode.onclick = (event) => {
+    modal.parentNode.addEventListener('click', (event) => {
       event.stopPropagation();
-    }
+    })
   })
 }
 
