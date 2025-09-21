@@ -1,4 +1,11 @@
 GIT
+  remote: https://github.com/danielpclark/rutie-gem.git
+  revision: ffaba4689f351a0acaf84067a6fca5c3b65bc9aa
+  branch: master
+  specs:
+    rutie (0.0.4)
+
+GIT
   remote: https://github.com/morygonzalez/kaminari-sinatra.git
   revision: 45cba48c36981189e6f2d5da98e9acd68e35004d
   specs:
@@ -331,7 +338,6 @@ GEM
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    rutie (0.0.4)
     sass (3.4.25)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -467,6 +473,7 @@ DEPENDENCIES
   rspec (~> 2.99)
   rubocop
   ruby-openai
+  rutie!
   sass (< 3.7.4)
   simplecov
   sinatra
