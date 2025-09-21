@@ -20,7 +20,7 @@ module Lokka
           id :id
           string :title
           text :title_tokenized
-          string :category
+          facet :category
           text :category_tokenized
           text :tags
           text :body
