@@ -36,7 +36,7 @@ task :create_new_index do
         id: entry.id,
         title: entry.title,
         title_tokenized: title_tokenized,
-        category: entry.category,
+        category: "/#{entry.category&.title}",
         category_tokenized: category_tokenized,
         tags: tags_splitted,
         body: body_tokenized,

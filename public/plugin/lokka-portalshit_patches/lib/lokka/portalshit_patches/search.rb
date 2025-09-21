@@ -19,7 +19,7 @@ class Search
         id: entry.id,
         title: entry.title,
         title_tokenized: title_tokenized,
-        category: entry.category,
+        category: "/#{entry.category&.title}",
         category_tokenized: category_tokenized,
         tags: tags_splitted,
         body: body_tokenized,
@@ -40,6 +40,8 @@ class Search
   def query_type
     @query_type = if query =~ /".+"/
                     :term_query
+                  elsif query =~ /category:/
+                    :facet_query
                   else
                     :smart_query
                   end
@@ -49,6 +51,9 @@ class Search
     case query_type
     when :term_query
       [query.delete('"')]
+    when :facet_query
+      query.match(/c(?:ategory)?:(.+?)(?:\s|\z)/)
+      ["/#{$1}"]
     else
       keywords = [Tokenizer.run(query)].flatten
       keywords << query if keywords.length > 1
@@ -57,7 +62,12 @@ class Search
   end
 
   def fields
-    %i[title title_tokenized body category category_tokenized tags]
+    case query_type
+    when :facet_query
+      :category
+    else
+      %i[title title_tokenized body category_tokenized tags]
+    end
   end
 
   def exec_query(keyword)
