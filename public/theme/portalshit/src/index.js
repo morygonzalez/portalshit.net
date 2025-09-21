@@ -122,6 +122,43 @@ const observeLinkClick = (node) => {
   })
 }
 
+const dispatchSearchKeyword = function(keyword) {
+  const event = new CustomEvent('search:keyword', { detail: { keyword } });
+  document.dispatchEvent(event);
+};
+
+const execModalSearch = function(event) {
+  if (event.defaultPrevented) return;
+  if (event.button !== 0) return; // 左クリックのみ
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+  const a = event.target.closest('a[href]');
+  if (!a) return;
+
+  // 対象となるリンク判定（どちらかでOK）
+  // ① data-search-keyword を明示指定
+  let keyword = a.dataset.searchKeyword;
+  // ② href の ?query= から抽出（/search or /search/ を想定）
+  if (!keyword) {
+    try {
+      const url = new URL(a.getAttribute('href'), window.location.origin);
+      const isSearchPath = /\/search\/?$/.test(url.pathname);
+      if (isSearchPath && url.searchParams.has('query')) {
+        keyword = url.searchParams.get('query') || '';
+        // サーバが + をスペース代わりに出す場合の保険
+        keyword = keyword.replace(/\+/g, ' ').trim();
+      }
+    } catch (_) { /* 相対URLなど、失敗時は無視 */ }
+  }
+
+  if (keyword) {
+    event.preventDefault();
+    setTimeout(() => dispatchSearchKeyword(keyword), 0);
+  } else {
+    return; // 普通のリンクは素通し
+  }
+}
+
 const init = node => {
   observeImages(node);
   checkTableWidth(node);
@@ -147,3 +184,4 @@ document.body.addEventListener('AutoPagerize_DOMNodeInserted', (e) => {
   const parentNode = e.relatedNode
   init(node);
 }, false);
+document.body.addEventListener('click', execModalSearch, false);
