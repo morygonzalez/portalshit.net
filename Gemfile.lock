@@ -1,11 +1,4 @@
 GIT
-  remote: https://github.com/danielpclark/rutie-gem.git
-  revision: ffaba4689f351a0acaf84067a6fca5c3b65bc9aa
-  branch: master
-  specs:
-    rutie (0.0.4)
-
-GIT
   remote: https://github.com/morygonzalez/kaminari-sinatra.git
   revision: 45cba48c36981189e6f2d5da98e9acd68e35004d
   specs:
@@ -31,6 +24,17 @@ GIT
   specs:
     sinatra-cache (0.3.7)
       sinatra
+
+GIT
+  remote: https://github.com/morygonzalez/tantiny.git
+  revision: 33a6c1fd0b1a5213190a343a46349b29e232393e
+  specs:
+    tantiny (0.3.3)
+      concurrent-ruby (~> 1.0)
+      rake (~> 13.0)
+      ruby-next (~> 0.14.0)
+      rutie (~> 0.0.4)
+      thermite (~> 0)
 
 GEM
   remote: https://rubygems.org/
@@ -59,7 +63,7 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     airbrussh (1.5.3)
       sshkit (>= 1.6.1, != 1.7.0)
-    ast (2.4.2)
+    ast (2.4.3)
     awesome_print (1.9.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.1044.0)
@@ -136,7 +140,7 @@ GEM
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
     debug_inspector (1.2.0)
-    diff-lcs (1.5.1)
+    diff-lcs (1.6.2)
     docile (1.4.1)
     domain_name (0.6.20240107)
     dotenv (3.1.7)
@@ -247,7 +251,7 @@ GEM
       nokogiri (~> 1.6)
     ostruct (0.6.1)
     parallel (1.26.3)
-    parser (3.3.7.0)
+    parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
@@ -287,7 +291,7 @@ GEM
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     rainbow (3.1.1)
-    rake (13.2.1)
+    rake (13.3.0)
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
@@ -338,6 +342,7 @@ GEM
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    rutie (0.0.4)
     sass (3.4.25)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -372,12 +377,6 @@ GEM
       net-ssh (>= 2.8.0)
       ostruct
     sysexits (1.2.0)
-    tantiny (0.3.3)
-      concurrent-ruby (~> 1.0)
-      rake (~> 13.0)
-      ruby-next (~> 0.14.0)
-      rutie (~> 0.0.4)
-      thermite (~> 0)
     temple (0.10.3)
     thermite (0.13.0)
       minitar (~> 0.5)
@@ -473,7 +472,6 @@ DEPENDENCIES
   rspec (~> 2.99)
   rubocop
   ruby-openai
-  rutie!
   sass (< 3.7.4)
   simplecov
   sinatra
@@ -483,7 +481,7 @@ DEPENDENCIES
   slim
   sqlite3
   sshkit
-  tantiny
+  tantiny!
   tilt (~> 2.1.0)
   tux
   vacuum

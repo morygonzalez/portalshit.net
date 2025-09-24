@@ -15,6 +15,8 @@ services:
       DB_HOST: db
       SESSION_SECRET: 'secret'
       OLD_SESSION_SECRET: 'old_secret'
+      BUNDLE_PATH: /usr/local/bundle
+      BUNDLE_BIN: /usr/local/bundle/bin
     build: .
     command: ['bundle', 'exec', 'puma']
     volumes:

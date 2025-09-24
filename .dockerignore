@@ -1,6 +1,6 @@
 .bundle
 vendor/bundle
 db/database.yml
-.rustup
+.rustup/
 log
 .bash_history

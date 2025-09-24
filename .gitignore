@@ -5,6 +5,7 @@
 /vendor/bundle
 /vendor/gem
 /.bundle
+/.rustup
 /tmp/*
 /tmp/*.log
 /tmp/pids
@@ -31,6 +32,8 @@ plugin_old
 *.sql.gz
 /public/**/node_modules
 /config/newrelic.yml
+/.local/
+.bash_history
 
 public/**/build/*.js
 public/**/dist/*.js
