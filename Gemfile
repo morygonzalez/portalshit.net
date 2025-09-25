@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 ruby '~> 3.0'
 
-gem 'activerecord', '~> 6.0'
+gem 'activerecord', '~> 7.0'
 gem 'activerecord-import'
 gem 'activesupport', '~> 6.0'
 gem 'awesome_print'
