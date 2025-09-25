@@ -37,8 +37,20 @@ class Search
     @limit = limit
   end
 
+  def search_type
+    @search_type = if query =~ /category:/
+                     :category
+                   elsif query =~ /tags?:/
+                     :tag
+                   else
+                     :all
+                   end
+  end
+
   def query_type
     @query_type = if query =~ /".+"/
+                    :term_query
+                  elsif query =~ /tags?:/
                     :term_query
                   elsif query =~ /category:/
                     :facet_query
@@ -48,11 +60,15 @@ class Search
   end
 
   def keywords
-    case query_type
-    when :term_query
+    case
+    when search_type == :tag && query_type == :term_query
+      query.match(/tags?:(.+)/)
+      tags = $1
+      tags.split(" ")
+    when search_type == :all && query_type == :term_query
       [query.delete('"')]
-    when :facet_query
-      query.match(/c(?:ategory)?:(.+?)(?:\s|\z)/)
+    when search_type == :category && query_type == :facet_query
+      query.match(/category:(.+?)(?:\s|\z)/)
       ["/#{$1}"]
     else
       keywords = [Tokenizer.run(query)].flatten
@@ -62,8 +78,10 @@ class Search
   end
 
   def fields
-    case query_type
-    when :facet_query
+    case search_type
+    when :tag
+      :tags
+    when :category
       :category
     else
       %i[title title_tokenized body category_tokenized tags]
