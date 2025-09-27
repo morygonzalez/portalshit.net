@@ -87,7 +87,7 @@ function Category(props) {
   }
   return (
     <span className="category">
-      <a href={`/category/${props.category.slug}/`}>{props.category.title}</a>
+      <a href={`/archives?query=category:${encodeURIComponent(props.category.title)}`}>{props.category.title}</a>
     </span>
   )
 }
@@ -100,7 +100,7 @@ function Tags(props) {
     props.tags.map(tag => {
       return (
         <span className="tag" key={`${props.id}-${tag.name}`}>
-          <a href={`/tags/${tag.name}/`}>&nbsp;#{tag.name}</a>
+          <a href={`/archives?query=tag:${encodeURIComponent(tag.name)}`}>&nbsp;#{tag.name}</a>
         </span>
       )
     })
