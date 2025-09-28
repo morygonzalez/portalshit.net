@@ -10,15 +10,13 @@ ENV PATH=$PATH:/root/.cargo/bin
 ENV CARGO=/root/.cargo/bin/cargo \
     CARGO_TARGET_DIR=/root/target \
     CARGO_TERM_COLOR=always
-ENV RUST_VERSION=1.80.1
+ENV RUST_VERSION=1.77
 # Debian の MeCab 共有ライブラリの一般的なパス（必要なら後で上書き可）
 ENV MECAB_PATH=/usr/lib/x86_64-linux-gnu/libmecab.so.2
 ENV TZ=Asia/Tokyo
 
 # 基本ツール & ビルド依存のインストール（APT キャッシュを BuildKit で再利用）
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       bash build-essential curl git file sudo openssh-client ca-certificates \
       libssl-dev libxml2-dev libxslt1-dev zlib1g zlib1g-dev tzdata \
       nodejs default-mysql-client default-libmysqlclient-dev less \
@@ -57,11 +55,7 @@ ENV BUNDLE_PATH=/usr/local/bundle \
 COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
 
-RUN --mount=type=cache,target=/root/.cargo/registry \
-    --mount=type=cache,target=/root/.cargo/git \
-    --mount=type=cache,target=/root/target \
-    --mount=type=cache,target=/root/.cache/sccache \
-    bash -lc 'gem install bundler:2.6.3 && \
+RUN bash -lc 'gem install bundler:2.6.3 && \
               bundle config set path /usr/local/bundle && \
               bundle config set without postgresql:sqlite && \
               export RUSTC_WRAPPER=/usr/local/bin/sccache && \
