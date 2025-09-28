@@ -53,6 +53,9 @@
       = f.label :tag_collection, caption: t("#{@name}.tags")
       %br/
       = f.text_field :tag_collection
+      %div
+        = f.label :auto_generate_tags, caption: 'タグを自動生成'
+        = f.check_box :auto_generate_tags
     - @field_names.each do |field_name|
       .field
         = label_tag "#{@name}_fields_#{field_name.name}", caption: field_name.name

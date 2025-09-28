@@ -1,16 +1,16 @@
 require 'openai'
 
-class EntrySummarizer
+class EntryTagGenerator
   MODEL = 'gpt-5-mini'
   PROMPT = <<~EOF
 以下のブログ記事に関して、次の作業をしてください。
 
-1. ブログ記事の著者本人になりきって、日本語で簡潔に要約してください。結論は要約に含めないようにしてください。文章の長さは150文字（語数ではなく文字数）以内で、受動態表現と「ですます」調を避けて下さい。
+1. この文章の内容を反映したタグを抽出してください。タグの数は最大で 5 個までとします。タグは極力一語で構成されるようにし、略語は避けてください。また「減量ダイエット」のような意味が重複する二つの単語で構成されるタグは付与しないでください。固有名詞の場合はその限りではありません。
 
 レスポンスは JSON フォーマットで、以下のような形式にしてください。
 
 {
-  "summary": "summary..."
+  "tags": ["tag1", "tag2"...]
 }
 
 # ブログ記事本文
@@ -24,7 +24,7 @@ EOF
     @client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
   end
 
-  def summarize
+  def generate
     @response ||= begin
                     request = @client.responses.create(
                       parameters: {
@@ -35,7 +35,7 @@ EOF
                     )
                     JSON.parse(request.dig("output", 1, "content", 0, "text").strip)
                   rescue => e
-                    puts "要約生成エラー: #{e.message}"
+                    puts "タグ生成エラー: #{e.message}"
                     nil
                   end
   end

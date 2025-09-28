@@ -17,11 +17,12 @@ class Entry < ActiveRecord::Base
 
   validate :validate_confliction
 
-  attr_accessor :tag_collection, :generate_or_update_summary
+  attr_accessor :tag_collection, :generate_or_update_summary, :auto_generate_tags
 
   after_save :update_fields
   after_save :send_ping_to_pubsubhubbub
   after_save :generate_summary, if: -> { ActiveModel::Type::Boolean.new.cast(self.generate_or_update_summary) }
+  after_save :generate_tags, if: -> { ActiveModel::Type::Boolean.new.cast(self.auto_generate_tags) }
 
   default_scope { order('created_at DESC') }
   scope :published,   -> { where(draft: false) }
@@ -154,8 +155,16 @@ class Entry < ActiveRecord::Base
 
   def generate_summary
     summarizer = EntrySummarizer.new(self.body)
-    generated_summary = summarizer.summarize
-    update_columns(summary: generated_summary)
+    response = summarizer.summarize
+    self.update_column(:summary, response['summary']) if response
+  end
+
+  def generate_tags
+    tag_generator = EntryTagGenerator.new(self.body)
+    response = tag_generator.generate
+    if response
+      self.tag_collection = self.tags.pluck(:name).concat(response['tags'])
+    end
   end
 
   private
