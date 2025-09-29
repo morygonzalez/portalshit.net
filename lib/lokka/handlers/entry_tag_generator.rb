@@ -61,6 +61,6 @@ EOF
   end
 
   def input
-    PROMPT % [Tag.all.pluck(:name), @title, @body, @tags]
+    PROMPT % [Tag.joins(:entries).pluck(:name), @title, @body, @tags]
   end
 end
