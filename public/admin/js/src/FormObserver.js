@@ -8,11 +8,8 @@ class FormObserver {
     this.previousMarkup;
     this.setupEditor();
     this.initializeFields();
-    this.adjustTextareaHeight();
     this.observeSubmit();
     this.observePreview();
-    this.observeTextInput();
-    this.observeWindowResize();
     this.observeFieldsChange();
     this.observeSummaryGenerator();
     this.observeTagGenerator();
@@ -75,17 +72,6 @@ class FormObserver {
       editor.appendChild(textarea);
       previewTab.parentNode.insertBefore(editor, previewTab.nextSibling);
     }
-  }
-
-  adjustTextareaHeight() {
-    const textarea = this.textarea;
-    const editor = textarea.parentNode;
-    if (editor.dataset.mobile === "true") {
-      return;
-    }
-    const offset = parseInt(textarea.getBoundingClientRect().top * 1.1);
-    let newHeight = document.documentElement.clientHeight - offset;
-    editor.style.height = `${newHeight}px`;
   }
 
   selectLocalImage() {
@@ -196,18 +182,6 @@ figure {
       editor.style.display = 'none';
       preview.style.display = 'block';
     });
-  }
-
-  observeTextInput() {
-    this.textarea.addEventListener('input', () => {
-      this.adjustTextareaHeight();
-    })
-  }
-
-  observeWindowResize() {
-    window.onresize = () => {
-      this.adjustTextareaHeight();
-    }
   }
 
   initializeFields() {
