@@ -48,10 +48,12 @@ class Search
   end
 
   def query_type
-    @query_type = if query =~ /".+"/
-                    :term_query
-                  elsif query =~ /tags?:/
-                    :term_query
+    @query_type = if query =~ /tags?:/
+                    if query =~ /\s/
+                      :phrase_query
+                    else
+                      :term_query
+                    end
                   elsif query =~ /category:/
                     :facet_query
                   else
@@ -61,13 +63,13 @@ class Search
 
   def keywords
     case
-    when search_type == :tag && query_type == :term_query
+    when search_type == :tag
       query.match(/tags?:(.+)/)
       tags = $1
-      tags.split(",").map(&:strip)
-    when search_type == :all && query_type == :term_query
+      tags.split(",").map(&:strip).map(&:downcase)
+    when search_type == :all
       [query.delete('"')]
-    when search_type == :category && query_type == :facet_query
+    when search_type == :category
       query.match(/category:(.+?)(?:\s|\z)/)
       ["/#{$1}"]
     else
