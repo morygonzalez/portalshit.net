@@ -21,8 +21,6 @@ class Entry < ActiveRecord::Base
 
   after_save :update_fields
   after_save :send_ping_to_pubsubhubbub
-  after_save :generate_summary, if: -> { ActiveModel::Type::Boolean.new.cast(self.generate_or_update_summary) }
-  after_save :generate_tags, if: -> { ActiveModel::Type::Boolean.new.cast(self.auto_generate_tags) }
 
   default_scope { order('created_at DESC') }
   scope :published,   -> { where(draft: false) }
@@ -150,20 +148,6 @@ class Entry < ActiveRecord::Base
       field_name = FieldName.where(name: attribute).first
       field = Field.where(entry_id: id, field_name_id: field_name.id).first
       field.try(:value)
-    end
-  end
-
-  def generate_summary
-    summarizer = EntrySummarizer.new(self.body)
-    response = summarizer.summarize
-    self.update_column(:summary, response['summary']) if response
-  end
-
-  def generate_tags
-    tag_generator = EntryTagGenerator.new(self.body)
-    response = tag_generator.generate
-    if response
-      self.tag_collection = self.tags.pluck(:name).concat(response['tags'])
     end
   end
 

@@ -9,6 +9,28 @@ module Lokka
         status result[:status]
         result.to_json
       end
+
+      post '/summaries' do
+        response = EntrySummarizer.new(params[:title], params[:body]).summarize
+        result = {
+          response: response,
+          stauts: response ? 200 : 400
+        }
+        content_type :json
+        status result[:status]
+        result.to_json
+      end
+
+      post '/generated_tags' do
+        response = EntryTagGenerator.new(params[:title], params[:body], params[:tags]).generate
+        result = {
+          response: response,
+          stauts: response ? 200 : 400
+        }
+        content_type :json
+        status result[:status]
+        result.to_json
+      end
     end
 
     private

@@ -14,6 +14,8 @@ class FormObserver {
     this.observeTextInput();
     this.observeWindowResize();
     this.observeFieldsChange();
+    this.observeSummaryGenerator();
+    this.observeTagGenerator();
   }
 
   setupEditor() {
@@ -243,6 +245,74 @@ figure {
         this.showChangedWarning();
       })
     }
+  }
+
+  observeSummaryGenerator() {
+    const checkbox = document.querySelector('input#post_generate_or_update_summary')
+    checkbox.addEventListener('change', (event) => {
+      const checked = event.target.checked;
+      if (checked) {
+        const title = document.querySelector('#post_title').value;
+        const body = document.querySelector('#editor textarea').textContent;
+        const formData = new FormData();
+        formData.set('title', title);
+        formData.set('body', body);
+        fetch('/admin/summaries', {
+          method: 'POST',
+          body: formData
+        }).
+          then(response => {
+            response.json()
+              .then(data => {
+                const summaryInput = document.querySelector('#post_summary');
+                summaryInput.value = data.response.summary;
+                summaryInput.dataset.changed = 'true';
+                summaryInput.parentNode.classList.add('edited');
+              })
+              .catch(data => {
+                console.error(data.response.summary);
+              })
+              .finally(() => {
+                console.log('done');
+              })
+          })
+      }
+    })
+  }
+
+  observeTagGenerator() {
+    const checkbox = document.querySelector('input#post_auto_generate_tags')
+    checkbox.addEventListener('change', (event) => {
+      const checked = event.target.checked;
+      if (checked) {
+        const title = document.querySelector('#post_title').value;
+        const body = document.querySelector('#editor textarea').textContent;
+        const tags = document.querySelector('#post_tag_collection').value;
+        const formData = new FormData();
+        formData.set('title', title);
+        formData.set('body', body);
+        formData.set('tags', tags);
+        fetch('/admin/generated_tags', {
+          method: 'POST',
+          body: formData
+        }).
+          then(response => {
+            response.json()
+              .then(data => {
+                const tagInput = document.querySelector('#post_tag_collection');
+                tagInput.value = data.response.tags.join(", ");
+                tagInput.dataset.changed = 'true';
+                tagInput.parentNode.classList.add('edited');
+              })
+              .catch(data => {
+                console.error(data.response.tags);
+              })
+              .finally(() => {
+                console.log('done');
+              })
+          })
+      }
+    })
   }
 
   showChangedWarning() {
