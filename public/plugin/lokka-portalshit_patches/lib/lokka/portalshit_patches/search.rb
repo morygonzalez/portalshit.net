@@ -66,6 +66,7 @@ class Search
     when search_type == :tag
       query.match(/tags?:(.+)/)
       tags = $1
+      return [] if tags.nil?
       tags.split(",").map(&:strip).map(&:downcase)
     when search_type == :all
       [query.delete('"')]
