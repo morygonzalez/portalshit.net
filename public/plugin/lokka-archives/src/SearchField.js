@@ -9,9 +9,10 @@ const SearchField = (props) => {
     const timeOutId = setTimeout(() => {
       const params = new URLSearchParams(props.router.location.search)
       const currentQuery = params.get('query') || ''
-      if (currentQuery === query) return // クエリが同じなら何もしない
+      if (currentQuery === query) {
+        return
+      }
 
-      // ここで他のパラメータは残して query だけ更新
       if (query) {
         params.set('query', query)
       } else {
