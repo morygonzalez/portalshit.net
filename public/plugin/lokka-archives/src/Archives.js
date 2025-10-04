@@ -57,14 +57,13 @@ class Archives extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.router.searchParams.get('year') !== this.props.router.searchParams.get('year')
-      ||
-      prevProps.query !== this.props.query
-    ) {
-      const params = this.props.router.searchParams
-      const year = params.get('year')
-      const search = params.get('query')
+    const prevYear = prevProps.router.searchParams.get('year')
+    const prevQuery = prevProps.query
+    const currentYear = this.props.router.searchParams.get('year')
+    const currentQuery = this.props.query
+    if (prevYear !== currentYear || prevQuery !== currentQuery) {
+      const year = currentYear
+      const search = currentQuery
       this.loadArchivesFromServer({ year, search })
     }
   }
