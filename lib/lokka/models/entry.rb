@@ -71,7 +71,12 @@ class Entry < ActiveRecord::Base
   end
 
   def summary_or_description
-    summary.presence || long_description
+    if summary.present?
+      return '%s...' % summary[0..120] if summary.length > 120
+      summary
+    else
+      long_description
+    end
   end
 
   def fuzzy_slug
