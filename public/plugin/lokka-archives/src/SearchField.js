@@ -1,5 +1,4 @@
 import React, { Component, useState, useEffect } from 'react'
-import ReactDOM from 'react-dom'
 import withRouter from './withRouter'
 
 const SearchField = (props) => {

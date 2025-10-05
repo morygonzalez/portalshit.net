@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import Select from 'react-select'
 
 class CategoryList extends Component {

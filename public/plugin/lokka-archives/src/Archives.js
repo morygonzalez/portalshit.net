@@ -58,16 +58,22 @@ class Archives extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const prevSearch = prevProps.router.location.search
-    const currentSearch = this.props.router.location.search
-    let year
-    let search
-    if (currentSearch.get !== undefined) {
-      year = currentSearch.get('year') ?? prevSearch.get('year')
-      search = currentSearch.get('query') ?? prevSearch.get('query')
-    }
-    if (prevSearch !== currentSearch) {
+    const currSearch = this.props.router.location.search
+    if (prevSearch !== currSearch) {
+      const params = new URLSearchParams(currSearch)
+      const year = params.get('year')
+      const search = params.get('query')
       this.loadArchivesFromServer({ year, search })
     }
+    // let year
+    // let search
+    // if (currentSearch.get !== undefined) {
+    //   year = currentSearch.get('year') ?? prevSearch.get('year')
+    //   search = currentSearch.get('query') ?? prevSearch.get('query')
+    // }
+    // if (prevSearch !== currentSearch) {
+    //   this.loadArchivesFromServer({ year, search })
+    // }
   }
 
   render() {
@@ -100,7 +106,7 @@ function Tags(props) {
   return (
     props.tags.map(tag => {
       return (
-        <span className="tag" key={`${props.id}-${tag.name}`}>
+        <span className="tag" key={`${props.entryId}-${tag.id}-${tag.name}`}>
           <a href={`/archives?query=tag:${encodeURIComponent(tag.name)}`}>&nbsp;#{tag.name}</a>
         </span>
       )
@@ -115,7 +121,7 @@ function Entry(props) {
       <div className="detail-information">
         <span className="created_at"><Moment format="LL" date={props.created_at} locale={locale} /></span>
         <Category category={props.category} />
-        <Tags tags={props.tags} entry={props.id} />
+        <Tags tags={props.tags} entryId={props.id} />
       </div>
     </li>
   )
@@ -139,7 +145,14 @@ class EntryList extends Component {
     const entries = this.props.entries.map((entry) => {
       const uniqueKey = `${entry.title}-${entry.created_at}`
       return (
-        <Entry key={uniqueKey} title={entry.title} category={entry.category} link={entry.link} created_at={entry.created_at} tags={entry.tags} />
+        <Entry
+          key={uniqueKey}
+          id={entry.id}
+          title={entry.title}
+          category={entry.category}
+          link={entry.link}
+          created_at={entry.created_at}
+          tags={entry.tags} />
       )
     })
     this.setState({ entries })
