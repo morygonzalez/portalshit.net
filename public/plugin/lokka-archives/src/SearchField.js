@@ -5,6 +5,11 @@ const SearchField = (props) => {
   const [query, setQuery] = useState(props.router.searchParams.get('query') || '')
 
   useEffect(() => {
+    const paramQuery = props.router.searchParams.get('query') || ''
+    if (paramQuery !== query) setQuery(paramQuery)
+  }, [props.router.location.search])
+
+  useEffect(() => {
     const timeOutId = setTimeout(() => {
       const params = new URLSearchParams(props.router.location.search)
       const currentQuery = params.get('query') || ''

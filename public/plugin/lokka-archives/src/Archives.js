@@ -1,5 +1,6 @@
 import React, { Component }  from 'react'
 import Moment from 'react-moment'
+import { Link } from 'react-router-dom'
 import { render } from 'react-dom'
 import 'moment/locale/ja'
 import { css } from '@emotion/react'
@@ -79,7 +80,7 @@ function Category(props) {
   }
   return (
     <span className="category">
-      <a href={`/archives?query=category:${encodeURIComponent(props.category.title)}`}>{props.category.title}</a>
+      <Link to={`/archives?query=category:${encodeURIComponent(props.category.title)}`}>{props.category.title}</Link>
     </span>
   )
 }
@@ -92,7 +93,7 @@ function Tags(props) {
     props.tags.map(tag => {
       return (
         <span className="tag" key={`${props.entryId}-${tag.id}-${tag.name}`}>
-          <a href={`/archives?query=tag:${encodeURIComponent(tag.name)}`}>&nbsp;#{tag.name}</a>
+          <Link to={`/archives?query=tag:${encodeURIComponent(tag.name)}`}>&nbsp;#{tag.name}</Link>
         </span>
       )
     })
