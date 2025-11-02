@@ -433,4 +433,23 @@ namespace :knowledge do
     sleep sleep_secs
     puts "[update_year] done."
   end
+
+  desc 'Export popular entry'
+  task :popular do
+    entries = Entry.popular(limit: 20)
+    text = <<~ERUBY
+      [period: recent_30d] [last_updated_at: <%= Date.today %>]
+
+      # Popular Entries (last 30 days)
+      <% entries.each.with_index(1) do |entry, i| %>
+        <%= i %>. <%= entry.title %> - <%= build_url_for(entry) %>
+          published_at: <%= entry.created_at %>
+          blurb: <%= entry.summary %>
+          page_views: <%= entry.pv %>
+      <% end %>
+    ERUBY
+    erb = ERB.new(text)
+    result = erb.result(binding)
+    puts result
+  end
 end
