@@ -7,14 +7,14 @@ describe User do
 
   shared_examples 'user with validation' do
     it 'saves successfully' do
-      subject.save.should be_true
+      subject.save.should be true
     end
 
     context 'with blank name' do
       before { user.name = '' }
 
       it 'fails to save' do
-        subject.save.should_not be_true
+        subject.save.should_not be true
       end
     end
 
@@ -22,7 +22,7 @@ describe User do
       before { user.email = '' }
 
       it 'fails to save' do
-        subject.save.should_not be_true
+        subject.save.should_not be true
       end
     end
 
