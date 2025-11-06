@@ -18,6 +18,7 @@ require 'rubygems'
 require 'sinatra'
 require 'rack/test'
 require 'rspec'
+require 'rspec/its'
 require 'factory_girl'
 require 'database_cleaner/active_record'
 require 'pry'
@@ -36,6 +37,9 @@ end
 
 RSpec.configure do |config|
   config.mock_with :rspec
+  config.expect_with(:rspec) do |expectations|
+    expectations.syntax = %i[expect should]
+  end
   config.include Rack::Test::Methods
   config.include LokkaTestMethods
   config.include Lokka::Helpers
