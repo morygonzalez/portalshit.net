@@ -25,6 +25,7 @@ BASE_URL           = (ENV['BASE_URL'] || '').sub(%r{/\z}, '')
 DEFAULT_SLEEP_SECS = (ENV['SLEEP_SECS'] || '7').to_f
 DEFAULT_RETRIES    = (ENV['RETRIES']    || '6').to_i
 STATE_FILE         = ENV['STATE_FILE']  || '.dify_uploaded_names'
+DEFAULT_CHUNK_DELIMITER = "\n---\n\n"
 
 # =========================
 # HTTP helpers
@@ -124,25 +125,70 @@ def compose_article_block(h)
   URL: #{h[:url]}
 
   #{h[:content]}
-
-  ---
   TXT
 end
 
-def compose_year_text(posts_for_year)
-  posts_for_year.map { |h| compose_article_block(h) }.join("\n")
+def compose_year_text(posts_for_year, delimiter: DEFAULT_CHUNK_DELIMITER)
+  blocks = posts_for_year.map { |h| compose_article_block(h) }
+  return blocks.join("\n") if delimiter.nil?
+
+  blocks.join(delimiter)
+end
+
+def build_custom_process_rule(chunk_size:, delimiter:)
+  chunk_size = chunk_size.to_i if chunk_size
+  chunk_size = nil unless chunk_size.is_a?(Numeric) && chunk_size.positive?
+
+  delimiter = delimiter.to_s unless delimiter.nil?
+  delimiter = nil if delimiter.respond_to?(:empty?) && delimiter.empty?
+
+  return nil if chunk_size.nil? && delimiter.nil?
+
+  segmentation = {}
+  if chunk_size
+    segmentation[:chunk_size]     = chunk_size
+    segmentation[:chunk_overlap]  = 0
+    segmentation[:max_tokens]     = chunk_size
+  end
+
+  if delimiter
+    segmentation[:separators] = [delimiter]
+    segmentation[:separator]  = delimiter
+    segmentation[:strategy]   = 'separator'
+  end
+
+  { mode: 'custom', rules: { pre_processing_rules: [], segmentation: segmentation } }
+end
+
+def resolve_chunk_options(args, size_key: :chunk_size, delimiter_key: :chunk_delimiter)
+  chunk_size = args[size_key]
+  chunk_size = ENV['CHUNK_SIZE'] if (chunk_size.nil? || chunk_size.to_s.empty?) && ENV['CHUNK_SIZE']
+  if chunk_size && !chunk_size.to_s.empty?
+    chunk_size = chunk_size.to_i
+    chunk_size = nil unless chunk_size.positive?
+  else
+    chunk_size = nil
+  end
+
+  chunk_delimiter = args[delimiter_key]
+  chunk_delimiter = ENV['CHUNK_DELIMITER'] if chunk_delimiter.nil?
+  chunk_delimiter = DEFAULT_CHUNK_DELIMITER if chunk_delimiter.nil?
+  chunk_delimiter = nil if chunk_delimiter.is_a?(String) && chunk_delimiter.empty?
+  chunk_delimiter ||= DEFAULT_CHUNK_DELIMITER
+
+  [chunk_size, chunk_delimiter]
 end
 
 # =========================
 # Dify Document ops
 # =========================
-def create_by_text!(name:, text:, date: nil, url: nil)
+def create_by_text!(name:, text:, date: nil, url: nil, process_rule: nil)
   raise 'ENV[DATASET_ID] not set' unless DIFY_DATASET_ID
   res  = http_post_json("/v1/datasets/#{DIFY_DATASET_ID}/document/create-by-text", {
     name: name,
     text: text,
     indexing_technique: 'high_quality',
-    process_rule: { mode: 'automatic' }
+    process_rule: process_rule || { mode: 'automatic' }
   })
   body = JSON.parse(res.body) rescue {}
   unless res.is_a?(Net::HTTPSuccess) && body.dig('document','id')
@@ -151,10 +197,11 @@ def create_by_text!(name:, text:, date: nil, url: nil)
   body.dig('document','id')
 end
 
-def update_by_text!(document_id:, name:, text:)
+def update_by_text!(document_id:, name:, text:, process_rule: nil)
   res = http_post_json("/v1/datasets/#{DIFY_DATASET_ID}/documents/#{document_id}/update_by_text", {
     name: name,
-    text: text
+    text: text,
+    process_rule: process_rule || { mode: 'automatic' }
   })
   body = JSON.parse(res.body) rescue {}
   unless res.is_a?(Net::HTTPSuccess) && body.dig('document', 'id')
@@ -288,10 +335,12 @@ namespace :knowledge do
   end
 
   desc 'Upload posts grouped by year (one document per year)'
-  task :upload_yearly, [:sleep_secs, :retries] do |_, args|
+  task :upload_yearly, [:sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     abort '[upload_yearly] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless DIFY_DATASET_ID && DIFY_DATASET_TOKEN
     sleep_secs = (args[:sleep_secs] || DEFAULT_SLEEP_SECS).to_f
     retries    = (args[:retries]    || DEFAULT_RETRIES).to_i
+    chunk_size, chunk_delimiter = resolve_chunk_options(args)
+    process_rule = build_custom_process_rule(chunk_size: chunk_size, delimiter: chunk_delimiter)
 
     rows = []
     Entry.published.includes(:tags, :category).each do |post|
@@ -312,9 +361,9 @@ namespace :knowledge do
           next
         end
 
-        text = compose_year_text(items)
+        text = compose_year_text(items, delimiter: chunk_delimiter)
         with_retry(retries) do
-          doc_id = create_by_text!(name: name, text: text, date: "#{year}-01-01", url: nil)
+          doc_id = create_by_text!(name: name, text: text, date: "#{year}-01-01", url: nil, process_rule: process_rule)
           # 年次メタは period/count を付与
           batch << { document_id: doc_id, metadata: { 'period' => year, 'count' => items.size } }
           puts "[upload_yearly] ok #{name} (#{doc_id}) items=#{items.size}"
@@ -387,12 +436,14 @@ namespace :knowledge do
   # 使い方:
   #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:update_year[2025,1.2,6]"
   desc '年指定で1件だけドキュメントを更新'
-  task :update_year, [:year, :sleep_secs, :retries] do |_, args|
+  task :update_year, [:year, :sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     abort '[update_year] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless DIFY_DATASET_ID && DIFY_DATASET_TOKEN
 
     year       = (args[:year] || Time.now.year.to_s).to_s
     sleep_secs = (args[:sleep_secs] || DEFAULT_SLEEP_SECS).to_f
     retries    = (args[:retries]    || DEFAULT_RETRIES).to_i
+    chunk_size, chunk_delimiter = resolve_chunk_options(args)
+    process_rule = build_custom_process_rule(chunk_size: chunk_size, delimiter: chunk_delimiter)
 
     # 1) 「年 → doc_id」マップ（name を "YYYY" で作っている前提）
     name2id = build_name_to_docid_map
@@ -415,11 +466,11 @@ namespace :knowledge do
     end
 
     # 3) 年次テキストを再生成
-    new_text = compose_year_text(rows)
+    new_text = compose_year_text(rows, delimiter: chunk_delimiter)
 
     # 4) 本文置換（update_by_text）をリトライ付きで
     with_retry(retries) do
-      update_by_text!(document_id: doc_id, name: year, text: new_text)
+      update_by_text!(document_id: doc_id, name: year, text: new_text, process_rule: process_rule)
       puts "[update_year] updated body for #{year} (#{doc_id}) items=#{rows.size}"
     end
 
