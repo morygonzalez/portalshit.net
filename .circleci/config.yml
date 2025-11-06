@@ -3,15 +3,13 @@ jobs:
   build:
     working_directory: ~/app
     docker:
-      - image: circleci/ruby:2.7-node
+      - image: cimg/ruby:3.0-node
         environment:
           RAILS_ENV: test
     steps:
-      # - run:
-      #     name: Install Dependencies
-      #     command: |
-      #       apt-get install -y sqlite3
-      - run: gem i bundler:2.1.2
+      - run:
+          name: Update bundler
+          command: gem install bundler:2.4.22
       - checkout
       - restore_cache:
           key: portalshit-{{ checksum "Gemfile.lock" }}
