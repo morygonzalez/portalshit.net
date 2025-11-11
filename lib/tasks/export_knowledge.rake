@@ -120,9 +120,11 @@ end
 
 def compose_article_block(h)
   <<~TXT
+  === ARTICLE START id:#{h[:id]} ===
   [published_at: #{h[:date]}]
   Title: #{h[:title]}
   URL: #{h[:url]}
+  tags: #{Array(h[:tags]).join(', ')}
 
   #{h[:content]}
   TXT
@@ -146,8 +148,8 @@ def build_custom_process_rule(chunk_size:, delimiter:)
 
   segmentation = {}
   if chunk_size
-    segmentation[:chunk_size]     = chunk_size
-    segmentation[:chunk_overlap]  = 0
+    segmentation[:max_tokens]    = chunk_size
+    segmentation[:chunk_overlap] = 150
   end
 
   if delimiter
@@ -213,31 +215,24 @@ end
 def update_documents_metadata!(pairs)
   return if pairs.nil? || pairs.empty?
 
-  # name -> id を取得
-  name2id = fetch_metadata_field_ids
-
-  # name を id に変換（見つからなければスキップ or 環境変数で補完）
-  # 環境変数で直指定もサポート（例: METADATA_ID_PERIOD=uuid）
-  env_overrides = {
-    "period"       => ENV['METADATA_ID_PERIOD'],
-    "count"        => ENV['METADATA_ID_COUNT']
+  # Cloud 環境では field-list API を使わず、ENV に設定した ID だけで更新する
+  # 互換のため、旧ENV名(METADATA_ID_*) と新ENV名(PERIOD_ID/COUNT_ID)の両方を見る
+  field_ids = {
+    "period" => (ENV['PERIOD_ID'] || ENV['METADATA_ID_PERIOD']),
+    "count"  => (ENV['COUNT_ID']  || ENV['METADATA_ID_COUNT'])
   }.compact
 
   op = {
     operation_data: pairs.map do |p|
-      meta_ids = p.fetch(:metadata).filter_map do |k, v|
-        fid = env_overrides[k.to_s] || name2id[k.to_s]
-        if fid.nil? || fid.empty?
-          warn "[metadata] skip key=#{k} (field id not found)"
-          nil
-        else
-          { id: fid, value: v }
+      metadata_list = p.fetch(:metadata).filter_map do |k, v|
+        fid = field_ids[k.to_s]
+        unless fid && !fid.empty?
+          warn "[metadata] skip key=#{k} (field id not configured)"
+          next
         end
+        { id: fid, name: k.to_s, value: v }
       end
-      {
-        document_id:  p.fetch(:document_id),
-        metadata_list: meta_ids
-      }
+      { document_id: p.fetch(:document_id), metadata_list: metadata_list }
     end
   }
 
@@ -270,69 +265,10 @@ def build_name_to_docid_map
   docs.each_with_object({}) { |d, m| m[d['name'].to_s] = d['id'] }
 end
 
-# データセットのメタデータ定義を取得して { name => id } を返す
-def fetch_metadata_field_ids
-  # 候補エンドポイントを順に試す（環境差対応）
-  candidates = [
-    "/v1/datasets/#{DIFY_DATASET_ID}/metadata/fields",
-    "/v1/datasets/#{DIFY_DATASET_ID}/metadata",          # 環境によってはこちら
-    "/v1/datasets/#{DIFY_DATASET_ID}/doc_metadata/fields"
-  ]
-  last_err = nil
-  candidates.each do |path|
-    begin
-      res = http_get(path)
-      body = JSON.parse(res.body) rescue {}
-      # だいたい data 配下、または fields 配下に [ {id,name,...}, ... ]
-      list = body['data'] || body['fields'] || body
-      if res.is_a?(Net::HTTPSuccess) && list.is_a?(Array)
-        return list.each_with_object({}) { |f, m| m[f['name']] = f['id'] if f['name'] && f['id'] }
-      end
-      last_err = "#{res.code} #{res.body}"
-    rescue => e
-      last_err = e.message
-    end
-  end
-  warn "[metadata] could not fetch field IDs automatically: #{last_err}"
-  {}
-end
-
 # =========================
 # Rake tasks（:environment 依存なし）
 # =========================
 namespace :knowledge do
-  desc 'Export posts (out_path[, format=jsonl|csv|txt])'
-  task :export, [:out_path, :format] do |_, args|
-    out_path = args[:out_path] || 'tmp/knowledge_posts.jsonl'
-    format   = (args[:format] || File.extname(out_path).sub('.', '')).downcase
-    FileUtils.mkdir_p(File.dirname(out_path))
-
-    rows = []
-    # ★ ここはあなたのアプリの取込元に合わせて書き換え：
-    #   Entry.published が無い場合は独自の列挙に置換してください。
-    Entry.published.includes(:tags, :category).each do |post|
-      rows << article_hash(post)
-    rescue => e
-      warn "[export] skip id=#{post.respond_to?(:id) ? post.id : 'n/a'}: #{e.class} #{e.message}"
-    end
-
-    case format
-    when 'jsonl', ''
-      File.open(out_path, 'w:utf-8') { |f| rows.each { |h| f.puts(JSON.dump(h)) } }
-    when 'csv'
-      CSV.open(out_path, 'w', headers: true, write_headers: true, encoding: 'UTF-8') do |csv|
-        csv << %w[id title date tags slug url content]
-        rows.each { |h| csv << [h[:id], h[:title], h[:date], Array(h[:tags]).join(' '), h[:slug], h[:url], h[:content]] }
-      end
-    when 'txt'
-      File.open(out_path, 'w:utf-8') { |f| rows.each { |h| f.write(compose_article_block(h)) } }
-    else
-      abort "[export] unsupported format: #{format}"
-    end
-
-    puts "[export] done: #{rows.size} records -> #{out_path}"
-  end
-
   desc 'Upload posts grouped by year (one document per year)'
   task :upload_yearly, [:sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     abort '[upload_yearly] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless DIFY_DATASET_ID && DIFY_DATASET_TOKEN
@@ -388,6 +324,70 @@ namespace :knowledge do
     puts "[upload_yearly] done. state: #{STATE_FILE}"
   end
 
+  # 年次ドキュメントを update_by_text! で置換（無ければ create）
+  # 例:
+  #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:refresh_yearly[1.2,6]"
+  desc 'Refresh yearly documents (update_by_text; fallback to create if not exists)'
+  task :refresh_yearly, [:sleep_secs, :retries] do |_, args|
+    abort '[refresh_yearly] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless DIFY_DATASET_ID && DIFY_DATASET_TOKEN
+    sleep_secs = (args[:sleep_secs] || DEFAULT_SLEEP_SECS).to_f
+    retries    = (args[:retries]    || DEFAULT_RETRIES).to_i
+
+    # 1) 全記事を集めて年ごとにまとめる
+    rows = []
+    Entry.published.includes(:tags, :category).each do |post|
+      rows << article_hash(post)
+    rescue => e
+      warn "[refresh_yearly] skip id=#{post.respond_to?(:id) ? post.id : 'n/a'}: #{e.class} #{e.message}"
+    end
+    groups = rows.group_by { |h| (h[:date] || '').slice(0, 4) || 'unknown' }
+
+    # 2) 既存の name -> doc_id マップを取得（name は "YYYY" 想定）
+    name2id = build_name_to_docid_map
+
+    # 3) 年ごとに本文を再生成 → update_by_text（なければ create）
+    batch = []  # メタデータ一括更新用バッファ
+    groups.sort.each do |year, items|
+      name = year
+      text = compose_year_text(items)
+
+      doc_id = name2id[name]
+      if doc_id
+        with_retry(retries) do
+          update_by_text!(document_id: doc_id, name: name, text: text)
+          puts "[refresh_yearly] updated #{name} (#{doc_id}) items=#{items.size}"
+        end
+      else
+        with_retry(retries) do
+          doc_id = create_by_text!(name: name, text: text, date: "#{year}-01-01", url: nil)
+          name2id[name] = doc_id
+          puts "[refresh_yearly] created #{name} (#{doc_id}) items=#{items.size}"
+        end
+      end
+
+      # メタデータ（period / count）はまとめて付与（あなたの環境は id 必須実装）
+      batch << { document_id: doc_id, metadata: { 'period' => year, 'count' => items.size } }
+
+      # レート制限対策
+      if batch.size >= 10
+        with_retry(retries) { update_documents_metadata!(batch) }
+        batch.clear
+        sleep sleep_secs
+      end
+
+      sleep sleep_secs
+    rescue Interrupt
+      warn "[refresh_yearly] interrupted by user"; raise
+    rescue => e
+      warn "[refresh_yearly] skip #{name}: #{e.class} #{e.message}"
+    end
+
+    # 余り分のメタ更新
+    with_retry(retries) { update_documents_metadata!(batch) } unless batch.empty?
+
+    puts "[refresh_yearly] done."
+  end
+
   desc 'Repair metadata (re-apply period/count by listing documents)'
   task :repair_year_metadata, [:batch_size] do |_, args|
     abort '[repair_year_metadata] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless DIFY_DATASET_ID && DIFY_DATASET_TOKEN
@@ -423,12 +423,6 @@ namespace :knowledge do
     end
 
     puts "[repair] done."
-  end
-
-  desc 'Export then upload yearly (out_path, format=jsonl|csv|txt, sleep_secs, retries)'
-  task :export_and_upload_yearly, [:out_path, :format, :sleep_secs, :retries] do |_, args|
-    Rake::Task['knowledge:export'].invoke(args[:out_path], args[:format])
-    Rake::Task['knowledge:upload_yearly'].invoke(args[:sleep_secs], args[:retries])
   end
 
   # 年指定で1件だけ更新（本文置換＋メタ再付与）
