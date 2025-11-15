@@ -5,7 +5,6 @@ begin
 rescue LoadError
 end
 
-require 'set'
 require 'dify/knowledge_exporter'
 
 namespace :knowledge do
