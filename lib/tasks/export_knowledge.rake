@@ -6,7 +6,6 @@ rescue LoadError
 end
 
 require 'set'
-require 'erb'
 require 'dify/knowledge_exporter'
 
 namespace :knowledge do
