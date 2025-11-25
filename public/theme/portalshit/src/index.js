@@ -143,7 +143,7 @@ const execModalSearch = function(event) {
     try {
       const url = new URL(a.getAttribute('href'), window.location.origin);
       const isSearchPath = /\/search\/?$/.test(url.pathname);
-      if (isSearchPath && url.searchParams.has('query')) {
+      if (isSearchPath && url.searchParams.has('query') && !url.searchParams.has('page')) {
         keyword = url.searchParams.get('query') || '';
         // サーバが + をスペース代わりに出す場合の保険
         keyword = keyword.replace(/\+/g, ' ').trim();
