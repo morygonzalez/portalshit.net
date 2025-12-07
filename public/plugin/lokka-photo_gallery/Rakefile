@@ -132,10 +132,10 @@ namespace :photo_gallery do
         focal_length = exif[:focal_length]
         width = exif[:image_width]
         height = exif[:image_height]
-        taken_at = exif[:date_time_created]
+        taken_at = exif[:date_time_original]
         latitude = exif[:gps_latitude]
         longitude = exif[:gps_longitude]
-        keywords = exif[:keywords]
+        keywords = exif[:subject]
 
         location_result = (latitude && longitude) ? reverse_geocode(latitude: latitude, longitude: longitude) : { location: nil, raw: nil }
         *licence_text, licence_url = location_result.dig(:raw, :licence)&.split("\s")
