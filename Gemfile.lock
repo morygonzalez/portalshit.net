@@ -227,7 +227,7 @@ GEM
     marcel (1.0.4)
     method_source (1.1.0)
     mini_magick (5.1.0)
-    mini_portile2 (2.8.8)
+    mini_portile2 (2.8.9)
     minitar (0.12.1)
     minitest (5.25.4)
     multi_json (1.15.0)
@@ -376,7 +376,7 @@ GEM
     slim (5.2.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
-    sqlite3 (2.5.0)
+    sqlite3 (1.7.3)
       mini_portile2 (~> 2.8.0)
     sshkit (1.23.2)
       base64
@@ -488,7 +488,7 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-flash
   slim
-  sqlite3
+  sqlite3 (~> 1.4)
   sshkit
   tantiny!
   tilt (~> 2.1.0)
