@@ -1,0 +1,58 @@
+%h2= t('activity_tracker.admin.edit', default: 'Edit Activity')
+
+%form#activity-edit-form
+  .form-group
+    %label{for: 'title'}= t('activity_tracker.title_label', default: 'Title')
+    %input.form-control{type: 'text', name: 'title', id: 'title', value: @activity.title, required: true}
+
+  .form-group
+    %label{for: 'activity_type'}= t('activity_tracker.type', default: 'Type')
+    %select.form-control{name: 'activity_type', id: 'activity_type'}
+      - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
+        %option{value: type, selected: @activity.activity_type == type}= type.capitalize
+
+  .form-group
+    %label{for: 'entry_id'}= t('activity_tracker.entry', default: 'Link to Entry')
+    %select.form-control{name: 'entry_id', id: 'entry_id'}
+      %option{value: ''}= t('activity_tracker.no_entry', default: '-- No Entry --')
+      - Entry.published.order(created_at: :desc).limit(100).each do |entry|
+        %option{value: entry.id, selected: @activity.entry_id == entry.id}= entry.title
+
+  .form-group
+    %button.btn.btn-primary{type: 'submit'}= t('save', default: 'Save')
+
+  %a.btn.btn-secondary{href: '/admin/activities'}= t('cancel', default: 'Cancel')
+
+#edit-status
+
+:javascript
+  document.getElementById('activity-edit-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = new FormData(this);
+    var status = document.getElementById('edit-status');
+    var activityId = #{@activity.id};
+
+    fetch('/admin/activities/' + activityId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: formData.get('title'),
+        activity_type: formData.get('activity_type'),
+        entry_id: formData.get('entry_id')
+      })
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      if (data.success) {
+        status.innerHTML = '<p class="text-success">Saved successfully!</p>';
+        setTimeout(function() {
+          window.location.href = '/admin/activities';
+        }, 1000);
+      } else {
+        status.innerHTML = '<p class="text-danger">Error: ' + data.error + '</p>';
+      }
+    }).catch(function(error) {
+      status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
+    });
+  });

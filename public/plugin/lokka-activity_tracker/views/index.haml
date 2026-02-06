@@ -1,0 +1,24 @@
+.activities-list
+  %h1= t('activity_tracker.title', default: 'Activities')
+
+  - if @activities.any?
+    %ul.activities
+      - @activities.each do |activity|
+        %li.activity-item
+          %a{href: "/activities/#{activity.id}"}
+            .activity-header
+              %span.activity-type= activity.activity_type&.capitalize || 'Activity'
+              %span.activity-title= activity.title
+            .activity-meta
+              - if activity.started_at
+                %span.activity-date= activity.started_at.strftime('%Y-%m-%d %H:%M')
+              - if activity.formatted_distance
+                %span.activity-distance= activity.formatted_distance
+              - if activity.formatted_duration
+                %span.activity-duration= activity.formatted_duration
+  - else
+    %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
+
+  - if @activities.respond_to?(:total_pages) && @activities.total_pages > 1
+    .pagination
+      = paginate @activities

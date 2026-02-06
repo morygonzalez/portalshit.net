@@ -1,0 +1,51 @@
+%h2= t('activity_tracker.admin.title', default: 'Manage Activities')
+
+%p
+  %a.btn.btn-primary{href: '/admin/activities/new'}= t('activity_tracker.admin.new', default: 'Upload Activity')
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th ID
+      %th= t('activity_tracker.title_label', default: 'Title')
+      %th= t('activity_tracker.type', default: 'Type')
+      %th= t('activity_tracker.started_at', default: 'Date')
+      %th= t('activity_tracker.distance', default: 'Distance')
+      %th= t('activity_tracker.duration', default: 'Duration')
+      %th= t('activity_tracker.actions', default: 'Actions')
+  %tbody
+    - @activities.each do |activity|
+      %tr
+        %td= activity.id
+        %td
+          %a{href: "/activities/#{activity.id}"}= activity.title
+        %td= activity.activity_type&.capitalize
+        %td= activity.started_at&.strftime('%Y-%m-%d %H:%M')
+        %td= activity.formatted_distance
+        %td= activity.formatted_duration
+        %td
+          %a.btn.btn-sm.btn-secondary{href: "/admin/activities/#{activity.id}/edit"}= t('edit', default: 'Edit')
+          %button.btn.btn-sm.btn-danger.delete-activity{data: {id: activity.id}}= t('delete', default: 'Delete')
+
+- if @activities.respond_to?(:total_pages) && @activities.total_pages > 1
+  .pagination
+    = paginate @activities
+
+:javascript
+  document.querySelectorAll('.delete-activity').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      if (confirm('Are you sure you want to delete this activity?')) {
+        var id = this.dataset.id;
+        fetch('/admin/activities/' + id, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        }).then(function(response) {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert('Failed to delete activity');
+          }
+        });
+      }
+    });
+  });

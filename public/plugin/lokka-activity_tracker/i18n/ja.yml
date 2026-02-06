@@ -1,0 +1,25 @@
+ja:
+  activity_tracker:
+    title: アクティビティ
+    no_activities: アクティビティがありません。
+    started_at: 日時
+    type: 種類
+    distance: 距離
+    duration: 時間
+    pace: ペース
+    avg_hr: 平均心拍数
+    max_hr: 最大心拍数
+    elevation: 獲得標高
+    cadence: 平均ケイデンス
+    power: 平均パワー
+    title_label: タイトル
+    title_placeholder: 空欄の場合はファイル名を使用
+    file_label: アクティビティファイル（FIT または GPX）
+    upload: アップロード
+    entry: 記事にリンク
+    no_entry: "-- 記事なし --"
+    actions: 操作
+    admin:
+      title: アクティビティ管理
+      new: アクティビティをアップロード
+      edit: アクティビティを編集

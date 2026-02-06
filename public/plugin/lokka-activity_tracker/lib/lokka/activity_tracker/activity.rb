@@ -1,0 +1,69 @@
+# frozen_string_literal: true
+
+module Lokka
+  module ActivityTracker
+    class Activity < ActiveRecord::Base
+      belongs_to :entry, optional: true
+      belongs_to :user
+      has_many :data_points, class_name: 'ActivityDataPoint', dependent: :destroy
+
+      ACTIVITY_TYPES = %w[running cycling swimming walking hiking other].freeze
+
+      validates :title, presence: true
+      validates :user, presence: true
+      validates :activity_type, inclusion: { in: ACTIVITY_TYPES }, allow_nil: true
+      validates :file_format, inclusion: { in: %w[fit gpx] }, allow_nil: true
+
+      scope :recent, -> { order(started_at: :desc) }
+      scope :by_type, ->(type) { where(activity_type: type) }
+
+      def formatted_duration
+        return nil unless duration_seconds
+
+        hours = duration_seconds / 3600
+        minutes = (duration_seconds % 3600) / 60
+        seconds = duration_seconds % 60
+
+        if hours > 0
+          format('%<h>d:%<m>02d:%<s>02d', h: hours, m: minutes, s: seconds)
+        else
+          format('%<m>d:%<s>02d', m: minutes, s: seconds)
+        end
+      end
+
+      def formatted_distance
+        return nil unless total_distance_meters
+
+        km = total_distance_meters / 1000.0
+        format('%.2f km', km)
+      end
+
+      def formatted_pace
+        return nil unless avg_speed && avg_speed > 0
+
+        pace_seconds = 1000.0 / avg_speed
+        minutes = (pace_seconds / 60).to_i
+        seconds = (pace_seconds % 60).to_i
+        format("%d'%02d\" /km", minutes, seconds)
+      end
+
+      def to_json_for_chart
+        {
+          id: id,
+          title: title,
+          activity_type: activity_type,
+          started_at: started_at&.iso8601,
+          duration_seconds: duration_seconds,
+          total_distance_meters: total_distance_meters&.to_f,
+          total_ascent_meters: total_ascent_meters&.to_f,
+          avg_heart_rate: avg_heart_rate,
+          max_heart_rate: max_heart_rate,
+          avg_speed: avg_speed&.to_f,
+          avg_cadence: avg_cadence,
+          avg_power: avg_power,
+          data_points: data_points.order(:elapsed_seconds).map(&:to_json_for_chart)
+        }
+      end
+    end
+  end
+end

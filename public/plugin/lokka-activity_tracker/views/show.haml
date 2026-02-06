@@ -1,0 +1,50 @@
+.activity-detail
+  %h1= @activity.title
+
+  .activity-summary
+    %dl.activity-stats
+      - if @activity.started_at
+        %dt= t('activity_tracker.started_at', default: 'Date')
+        %dd= @activity.started_at.strftime('%Y-%m-%d %H:%M')
+
+      - if @activity.activity_type
+        %dt= t('activity_tracker.type', default: 'Type')
+        %dd= @activity.activity_type.capitalize
+
+      - if @activity.formatted_distance
+        %dt= t('activity_tracker.distance', default: 'Distance')
+        %dd= @activity.formatted_distance
+
+      - if @activity.formatted_duration
+        %dt= t('activity_tracker.duration', default: 'Duration')
+        %dd= @activity.formatted_duration
+
+      - if @activity.formatted_pace
+        %dt= t('activity_tracker.pace', default: 'Pace')
+        %dd= @activity.formatted_pace
+
+      - if @activity.avg_heart_rate
+        %dt= t('activity_tracker.avg_hr', default: 'Avg Heart Rate')
+        %dd= "#{@activity.avg_heart_rate} bpm"
+
+      - if @activity.max_heart_rate
+        %dt= t('activity_tracker.max_hr', default: 'Max Heart Rate')
+        %dd= "#{@activity.max_heart_rate} bpm"
+
+      - if @activity.total_ascent_meters
+        %dt= t('activity_tracker.elevation', default: 'Elevation Gain')
+        %dd= "#{@activity.total_ascent_meters.round} m"
+
+      - if @activity.avg_cadence
+        %dt= t('activity_tracker.cadence', default: 'Avg Cadence')
+        %dd= "#{@activity.avg_cadence} spm"
+
+      - if @activity.avg_power
+        %dt= t('activity_tracker.power', default: 'Avg Power')
+        %dd= "#{@activity.avg_power} W"
+
+#activity-root{data: {activity_id: @activity.id}}
+
+%link{rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css", integrity: "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=", crossorigin: ""}
+%script{src: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js", integrity: "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=", crossorigin: ""}
+%script{src: "#{asset_path(activity_tracker_javascript_path('index.js'))}"}

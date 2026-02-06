@@ -1,0 +1,25 @@
+en:
+  activity_tracker:
+    title: Activities
+    no_activities: No activities yet.
+    started_at: Date
+    type: Type
+    distance: Distance
+    duration: Duration
+    pace: Pace
+    avg_hr: Avg Heart Rate
+    max_hr: Max Heart Rate
+    elevation: Elevation Gain
+    cadence: Avg Cadence
+    power: Avg Power
+    title_label: Title
+    title_placeholder: Leave blank to use filename
+    file_label: Activity File (FIT or GPX)
+    upload: Upload
+    entry: Link to Entry
+    no_entry: "-- No Entry --"
+    actions: Actions
+    admin:
+      title: Manage Activities
+      new: Upload Activity
+      edit: Edit Activity
