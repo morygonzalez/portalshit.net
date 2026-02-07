@@ -102,10 +102,11 @@ export default function SplitsChart({ splits, height = 300 }) {
           backgroundColor: 'white',
           padding: '8px 12px',
           border: '1px solid #ccc',
-          borderRadius: '4px'
+          borderRadius: '4px',
+          color: '#000'
         }}>
-          <p style={{ margin: 0, fontWeight: 'bold' }}>{km}</p>
-          <p style={{ margin: 0 }}>Pace: {paceFormatted}</p>
+          <p style={{ margin: 0, fontWeight: 'bold', color: '#000' }}>{km}</p>
+          <p style={{ margin: 0, color: '#000' }}>Pace: {paceFormatted}</p>
         </div>
       )
     }
