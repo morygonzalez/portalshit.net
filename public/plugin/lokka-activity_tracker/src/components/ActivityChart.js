@@ -150,6 +150,8 @@ export default class ActivityChart extends PureComponent {
                 tick={{ fontSize: compact ? 10 : 12 }}
                 stroke={config.color}
                 hide={compact && index > 0}
+                reversed={config.reversed || false}
+                tickFormatter={metric === 'pace' ? formatPace : undefined}
               />
             )
           })}

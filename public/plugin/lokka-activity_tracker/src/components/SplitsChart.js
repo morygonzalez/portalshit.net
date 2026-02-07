@@ -43,9 +43,8 @@ export default function SplitsChart({ splits, height = 300 }) {
   // Calculate average pace
   const avgPace = splits.reduce((sum, s) => sum + (s.pace_seconds || 0), 0) / splits.length
 
-  // Find min/max for domain
+  // Find max for domain (start from 0)
   const paces = splits.map(s => s.pace_seconds).filter(p => p > 0)
-  const minPace = Math.min(...paces) * 0.9
   const maxPace = Math.max(...paces) * 1.1
 
   const CustomTooltip = ({ active, payload }) => {
@@ -77,9 +76,8 @@ export default function SplitsChart({ splits, height = 300 }) {
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
           <XAxis
             type="number"
-            domain={[minPace, maxPace]}
+            domain={[0, maxPace]}
             tickFormatter={(value) => formatPace(value)}
-            reversed={true}
           />
           <YAxis
             type="category"
