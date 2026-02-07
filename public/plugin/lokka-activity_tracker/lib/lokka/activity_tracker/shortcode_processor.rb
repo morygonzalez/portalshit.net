@@ -12,7 +12,13 @@ module Lokka
       end
 
       def process
-        content.gsub(ACTIVITY_SHORTCODE_PATTERN) do |_match|
+        return content unless content.is_a?(String)
+        return content if content.empty?
+
+        safe_content = content.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+        return content unless safe_content.match?(ACTIVITY_SHORTCODE_PATTERN)
+
+        safe_content.gsub(ACTIVITY_SHORTCODE_PATTERN) do |_match|
           activity_id = ::Regexp.last_match(1)
           render_activity_embed(activity_id)
         end
