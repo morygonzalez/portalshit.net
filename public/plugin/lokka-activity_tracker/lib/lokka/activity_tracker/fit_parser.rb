@@ -106,13 +106,13 @@ module Lokka
           activity_type: detect_activity_type(session),
           started_at: extract_timestamp(session),
           duration_seconds: extract_duration(session),
-          total_distance_meters: safe_get(session, :total_distance),
-          total_ascent_meters: safe_get(session, :total_ascent),
-          avg_heart_rate: safe_get(session, :avg_heart_rate),
-          max_heart_rate: safe_get(session, :max_heart_rate),
-          avg_speed: safe_get(session, :avg_speed) || safe_get(session, :enhanced_avg_speed),
+          total_distance_meters: safe_get(session, 'total_distance'),
+          total_ascent_meters: safe_get(session, 'total_ascent'),
+          avg_heart_rate: safe_get(session, 'avg_heart_rate'),
+          max_heart_rate: safe_get(session, 'max_heart_rate'),
+          avg_speed: safe_get(session, 'avg_speed') || safe_get(session, 'enhanced_avg_speed'),
           avg_cadence: extract_avg_cadence(session),
-          avg_power: safe_get(session, :avg_power)
+          avg_power: safe_get(session, 'avg_power')
         }.merge(extract_device_metadata)
       end
 
@@ -130,14 +130,14 @@ module Lokka
 
           {
             elapsed_seconds: elapsed,
-            latitude: safe_get(record, :position_lat) || safe_get(record, :y),
-            longitude: safe_get(record, :position_long) || safe_get(record, :x),
-            altitude_meters: safe_get(record, :altitude) || safe_get(record, :enhanced_altitude),
-            heart_rate: safe_get(record, :heart_rate),
-            speed: safe_get(record, :speed) || safe_get(record, :enhanced_speed),
-            cadence: safe_get(record, :cadence),
-            power: safe_get(record, :power),
-            distance_meters: safe_get(record, :distance)
+            latitude: safe_get(record, 'position_lat'),
+            longitude: safe_get(record, 'position_long'),
+            altitude_meters: safe_get(record, 'altitude') || safe_get(record, 'enhanced_altitude'),
+            heart_rate: safe_get(record, 'heart_rate'),
+            speed: safe_get(record, 'speed') || safe_get(record, 'enhanced_speed'),
+            cadence: safe_get(record, 'cadence'),
+            power: safe_get(record, 'power'),
+            distance_meters: safe_get(record, 'distance')
           }
         end
       end
@@ -147,31 +147,34 @@ module Lokka
       def safe_get(hash_or_obj, key)
         return nil unless hash_or_obj
 
+        # rubyfit returns hashes with string keys
+        str_key = key.to_s
+
         if hash_or_obj.is_a?(Hash)
-          hash_or_obj[key] || hash_or_obj[key.to_s]
+          hash_or_obj[str_key] || hash_or_obj[key]
+        elsif hash_or_obj.respond_to?(:[])
+          hash_or_obj[str_key] || hash_or_obj[key]
         elsif hash_or_obj.respond_to?(key)
           hash_or_obj.send(key)
-        elsif hash_or_obj.respond_to?(:[])
-          hash_or_obj[key] || hash_or_obj[key.to_s]
         end
       rescue StandardError
         nil
       end
 
       def detect_activity_type(session)
-        sport = safe_get(session, :sport)&.to_s&.downcase
-        sub_sport = safe_get(session, :sub_sport)&.to_s&.downcase
+        sport = safe_get(session, 'sport')&.to_s&.downcase
+        sub_sport = safe_get(session, 'sub_sport')&.to_s&.downcase
 
         ACTIVITY_TYPE_MAP[sub_sport] || ACTIVITY_TYPE_MAP[sport] || 'other'
       end
 
       def extract_timestamp(session)
-        timestamp = safe_get(session, :start_time) || safe_get(session, :timestamp)
+        timestamp = safe_get(session, 'start_time') || safe_get(session, 'timestamp')
         parse_timestamp(timestamp)
       end
 
       def extract_record_timestamp(record)
-        timestamp = safe_get(record, :timestamp)
+        timestamp = safe_get(record, 'timestamp')
         parse_timestamp(timestamp)
       end
 
@@ -182,9 +185,9 @@ module Lokka
         when Time, DateTime
           value
         when Integer, Float
-          # FIT timestamps are seconds since Dec 31, 1989 00:00:00 UTC
-          fit_epoch = Time.utc(1989, 12, 31, 0, 0, 0)
-          fit_epoch + value
+          # rubyfit already converts FIT timestamps to Unix timestamps
+          # by adding GARMIN_TIME_OFFSET (631065600 seconds)
+          Time.at(value).utc
         when String
           Time.parse(value)
         else
@@ -195,23 +198,23 @@ module Lokka
       end
 
       def extract_duration(session)
-        timer_time = safe_get(session, :total_timer_time)
-        elapsed_time = safe_get(session, :total_elapsed_time)
+        timer_time = safe_get(session, 'total_timer_time')
+        elapsed_time = safe_get(session, 'total_elapsed_time')
 
         (timer_time || elapsed_time)&.to_i
       end
 
       def extract_avg_cadence(session)
-        safe_get(session, :avg_cadence) || safe_get(session, :avg_running_cadence)
+        safe_get(session, 'avg_cadence') || safe_get(session, 'avg_running_cadence')
       end
 
       def extract_device_metadata
         file_id = handler.file_id
         device_info = handler.device_info
 
-        manufacturer = safe_get(file_id, :manufacturer)&.to_s
-        product = safe_get(file_id, :product) || safe_get(file_id, :garmin_product)
-        device_name = safe_get(device_info, :product_name) || safe_get(device_info, :device_name)
+        manufacturer = safe_get(file_id, 'manufacturer')&.to_s
+        product = safe_get(file_id, 'product') || safe_get(file_id, 'garmin_product')
+        device_name = safe_get(device_info, 'product_name') || safe_get(device_info, 'device_name')
 
         {
           device_name: device_name ? humanize_device(device_name) : nil,
