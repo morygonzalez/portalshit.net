@@ -200,12 +200,30 @@ module Lokka
       app.delete '/admin/activities/:id' do |id|
         login_required
         activity = Activity.find_by(id: id)
-        halt 404, 'Activity not found' unless activity
+        if request.preferred_type&.to_s == 'application/json'
+          content_type :json
+        end
+
+        if activity.nil?
+          if request.preferred_type&.to_s == 'application/json'
+            halt 404, { error: 'Activity not found' }.to_json
+          else
+            halt 404, 'Activity not found'
+          end
+        end
 
         if activity.destroy
-          redirect to('/admin/activities')
+          if request.preferred_type&.to_s == 'application/json'
+            { success: true }.to_json
+          else
+            redirect to('/admin/activities')
+          end
         else
-          halt 500, 'Failed to delete activity'
+          if request.preferred_type&.to_s == 'application/json'
+            halt 500, { error: 'Failed to delete activity' }.to_json
+          else
+            halt 500, 'Failed to delete activity'
+          end
         end
       end
     end
