@@ -4,47 +4,69 @@
   .activity-summary
     %dl.activity-stats
       - if @activity.started_at
-        %dt= t('activity_tracker.started_at', default: 'Date')
+        %dt
+          %span.stat-icon 📅
+          = t('activity_tracker.started_at', default: 'Date')
         %dd= @activity.started_at.strftime('%Y-%m-%d %H:%M')
 
       - if @activity.activity_type
-        %dt= t('activity_tracker.type', default: 'Type')
+        %dt
+          %span.stat-icon 🏃
+          = t('activity_tracker.type', default: 'Type')
         %dd= @activity.activity_type.capitalize
 
       - if @activity.formatted_distance
-        %dt= t('activity_tracker.distance', default: 'Distance')
+        %dt
+          %span.stat-icon 📏
+          = t('activity_tracker.distance', default: 'Distance')
         %dd= @activity.formatted_distance
 
       - if @activity.formatted_duration
-        %dt= t('activity_tracker.duration', default: 'Duration')
+        %dt
+          %span.stat-icon ⏱️
+          = t('activity_tracker.duration', default: 'Duration')
         %dd= @activity.formatted_duration
 
       - if @activity.formatted_pace
-        %dt= t('activity_tracker.avg_pace', default: 'Avg Pace')
+        %dt
+          %span.stat-icon 🏃
+          = t('activity_tracker.avg_pace', default: 'Avg Pace')
         %dd= @activity.formatted_pace
 
       - if @activity.formatted_best_pace
-        %dt= t('activity_tracker.best_pace', default: 'Best Pace')
+        %dt
+          %span.stat-icon 🚀
+          = t('activity_tracker.best_pace', default: 'Best Pace')
         %dd= @activity.formatted_best_pace
 
       - if @activity.avg_heart_rate
-        %dt= t('activity_tracker.avg_hr', default: 'Avg Heart Rate')
+        %dt
+          %span.stat-icon ❤️
+          = t('activity_tracker.avg_hr', default: 'Avg Heart Rate')
         %dd= "#{@activity.avg_heart_rate} bpm"
 
       - if @activity.max_heart_rate
-        %dt= t('activity_tracker.max_hr', default: 'Max Heart Rate')
+        %dt
+          %span.stat-icon 💓
+          = t('activity_tracker.max_hr', default: 'Max Heart Rate')
         %dd= "#{@activity.max_heart_rate} bpm"
 
       - if @activity.total_ascent_meters
-        %dt= t('activity_tracker.elevation', default: 'Elevation Gain')
+        %dt
+          %span.stat-icon ⛰️
+          = t('activity_tracker.elevation', default: 'Elevation Gain')
         %dd= "#{@activity.total_ascent_meters.round} m"
 
       - if @activity.avg_cadence
-        %dt= t('activity_tracker.cadence', default: 'Avg Cadence')
+        %dt
+          %span.stat-icon 👟
+          = t('activity_tracker.cadence', default: 'Avg Cadence')
         %dd= "#{@activity.avg_cadence} spm"
 
       - if @activity.avg_power
-        %dt= t('activity_tracker.power', default: 'Avg Power')
+        %dt
+          %span.stat-icon ⚡
+          = t('activity_tracker.power', default: 'Avg Power')
         %dd= "#{@activity.avg_power} W"
 
 #activity-root{data: {activity_id: @activity.id}}
