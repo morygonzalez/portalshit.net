@@ -126,6 +126,27 @@ module Lokka
           end
         end
 
+        # Add final partial split if remaining distance is significant
+        last_point = points_with_data.last
+        last_distance = (last_point[:distance_meters] || last_point['distance_meters']).to_f
+        last_elapsed = (last_point[:elapsed_seconds] || last_point['elapsed_seconds']).to_i
+        prev_distance = (prev_point[:distance_meters] || prev_point['distance_meters']).to_f
+        prev_elapsed = (prev_point[:elapsed_seconds] || prev_point['elapsed_seconds']).to_i
+        remaining = last_distance - prev_distance
+
+        if remaining >= 100
+          km_time = last_elapsed - prev_elapsed
+          pace_per_km_seconds = (km_time / remaining * 1000).round if remaining > 0
+          fraction = (remaining / 1000.0).round(2)
+
+          paces << {
+            km: current_km,
+            pace_seconds: pace_per_km_seconds,
+            elapsed_seconds: last_elapsed,
+            fraction: fraction
+          }
+        end
+
         paces
       end
     end

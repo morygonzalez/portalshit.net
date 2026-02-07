@@ -73,7 +73,8 @@ export default function SplitsChart({ splits, height = 300, i18n }) {
     km: `${split.km} km`,
     pace: split.pace_seconds,
     paceValue: paceToValue(split.pace_seconds),
-    paceFormatted: formatPace(split.pace_seconds)
+    paceFormatted: formatPace(split.pace_seconds),
+    fraction: split.fraction
   }))
 
   const fastestIndex = paces.length ? splits.findIndex(s => s.pace_seconds === fastestPace) : -1
@@ -156,7 +157,29 @@ export default function SplitsChart({ splits, height = 300, i18n }) {
               label={{ value: `${t(i18n, 'splits_slowest', 'Slowest')}: ${formatPace(slowestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
             />
           )}
-          <Bar dataKey="paceValue" radius={[0, 4, 4, 0]}>
+          <Bar
+            dataKey="paceValue"
+            radius={[0, 4, 4, 0]}
+            shape={(props) => {
+              const { x, y, width, height, fill, payload } = props
+              const fraction = payload && payload.fraction ? payload.fraction : 1
+              const clamped = Math.max(0.1, Math.min(fraction, 1))
+              const scaledWidth = width * clamped
+              const offsetX = x
+              const radius = 4
+              return (
+                <rect
+                  x={offsetX}
+                  y={y}
+                  width={scaledWidth}
+                  height={height}
+                  rx={radius}
+                  ry={radius}
+                  fill={fill}
+                />
+              )
+            }}
+          >
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}

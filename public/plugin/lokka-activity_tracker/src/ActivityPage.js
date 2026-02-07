@@ -12,7 +12,7 @@ export default class ActivityPage extends Component {
       activity: null,
       loading: true,
       error: null,
-      selectedMetrics: ['heart_rate', 'altitude_meters'],
+      selectedMetrics: ['pace', 'heart_rate'],
       hoveredPoint: null
     }
     this.handleMetricChange = this.handleMetricChange.bind(this)
