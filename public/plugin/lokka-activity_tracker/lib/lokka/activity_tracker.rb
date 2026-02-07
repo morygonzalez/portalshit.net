@@ -149,11 +149,9 @@ module Lokka
         activity = Activity.find_by(id: id)
         halt 404, { error: 'Activity not found' }.to_json unless activity
 
-        if activity.update(
-          title: params[:title],
-          activity_type: params[:activity_type],
-          entry_id: params[:entry_id].presence
-        )
+        payload = json_body
+
+        if activity.update(payload)
           { success: true, activity_id: activity.id }.to_json
         else
           halt 400, { error: activity.errors.full_messages.join(', ') }.to_json
@@ -216,6 +214,14 @@ module Lokka
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
+    end
+
+    def json_body
+      raw = request.body.read
+      raw = '{}' if raw.nil? || raw.strip.empty?
+      JSON.parse(raw)
+    rescue JSON::ParserError
+      halt 400, { error: 'Invalid JSON' }.to_json
     end
 
     def upload_to_s3(tempfile, filename)
