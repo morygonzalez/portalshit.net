@@ -32,6 +32,10 @@
     var formData = new FormData(this);
     var status = document.getElementById('edit-status');
     var activityId = #{@activity.id};
+    var submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
 
     fetch('/admin/activities/' + activityId, {
       method: 'PUT',
@@ -39,20 +43,38 @@
       body: JSON.stringify({
         title: formData.get('title'),
         activity_type: formData.get('activity_type'),
-        entry_id: formData.get('entry_id')
+        entry_id: formData.get('entry_id') || null
       })
     }).then(function(response) {
-      return response.json();
+      var contentType = response.headers.get('content-type') || '';
+      var isJson = contentType.indexOf('application/json') !== -1;
+      var parseBody = isJson ? response.json() : response.text();
+
+      if (!response.ok) {
+        return parseBody.then(function(body) {
+          var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
+          throw new Error(message || response.statusText || 'Save failed');
+        });
+      }
+
+      return parseBody;
     }).then(function(data) {
-      if (data.success) {
+      if (data && data.success) {
         status.innerHTML = '<p class="text-success">Saved successfully!</p>';
         setTimeout(function() {
           window.location.href = '/admin/activities';
         }, 1000);
       } else {
-        status.innerHTML = '<p class="text-danger">Error: ' + data.error + '</p>';
+        var message = data && data.error ? data.error : 'Save failed';
+        status.innerHTML = '<p class="text-danger">Error: ' + message + '</p>';
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
       }
     }).catch(function(error) {
       status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
     });
   });

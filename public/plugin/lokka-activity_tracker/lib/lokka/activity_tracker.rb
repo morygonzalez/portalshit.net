@@ -6,6 +6,7 @@ require_relative 'activity_tracker/fit_parser'
 require_relative 'activity_tracker/gpx_parser'
 require_relative 'activity_tracker/statistics_calculator'
 require_relative 'activity_tracker/shortcode_processor'
+require 'securerandom'
 
 module Lokka
   module ActivityTracker
@@ -45,6 +46,10 @@ module Lokka
         @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
         @bread_crumbs << { name: @activity.title, link: "/activities/#{@activity.id}" }
         haml :"plugin/lokka-activity_tracker/views/show", layout: :"theme/#{@theme.name}/layout"
+      end
+
+      app.get '/admin/plugins/activity_tracker' do
+        redirect to('/admin/activities')
       end
 
       # Admin routes
@@ -129,7 +134,14 @@ module Lokka
             redirect_url: '/admin/activities'
           }.to_json
         rescue StandardError => e
-          halt 500, { error: e.message }.to_json
+          error_id = SecureRandom.hex(8)
+          if respond_to?(:logger) && logger
+            logger.error("[activity_tracker] upload failed error_id=#{error_id} #{e.class}: #{e.message}")
+            logger.error(e.backtrace.join("\n")) if e.backtrace
+          else
+            warn("[activity_tracker] upload failed error_id=#{error_id} #{e.class}: #{e.message}")
+          end
+          halt 500, { error: "Upload failed (Error ID: #{error_id})" }.to_json
         end
       end
 

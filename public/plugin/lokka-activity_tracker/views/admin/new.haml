@@ -20,21 +20,43 @@
 
     var formData = new FormData(this);
     var status = document.getElementById('upload-status');
-    status.innerHTML = '<p>Uploading...</p>';
+    var submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+    status.innerHTML = '<p>Uploading... This may take a while.</p>';
 
     fetch('/admin/activities', {
       method: 'POST',
       body: formData
     }).then(function(response) {
-      return response.json();
+      var contentType = response.headers.get('content-type') || '';
+      var isJson = contentType.indexOf('application/json') !== -1;
+      var parseBody = isJson ? response.json() : response.text();
+
+      if (!response.ok) {
+        return parseBody.then(function(body) {
+          var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
+          throw new Error(message || response.statusText || 'Upload failed');
+        });
+      }
+
+      return parseBody;
     }).then(function(data) {
-      if (data.success) {
+      if (data && data.success) {
         status.innerHTML = '<p class="text-success">Upload successful! Redirecting...</p>';
         window.location.href = data.redirect_url;
       } else {
-        status.innerHTML = '<p class="text-danger">Error: ' + data.error + '</p>';
+        var message = data && data.error ? data.error : 'Upload failed';
+        status.innerHTML = '<p class="text-danger">Error: ' + message + '</p>';
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
       }
     }).catch(function(error) {
       status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
     });
   });
