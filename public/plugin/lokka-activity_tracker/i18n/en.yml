@@ -23,6 +23,8 @@ en:
     avg_hr: Avg Heart Rate
     max_hr: Max Heart Rate
     elevation: Elevation Gain
+    total: Total
+    unknown_month: Unknown Date
     cadence: Avg Cadence
     power: Avg Power
     title_label: Title

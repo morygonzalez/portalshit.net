@@ -52,6 +52,33 @@ module Lokka
         stats
       end
 
+      def self.group_by_month(activities)
+        grouped = activities.group_by { |activity| activity.started_at&.beginning_of_month }
+        months = grouped.keys.compact.sort.reverse
+        months << nil if grouped.key?(nil)
+        {
+          grouped: grouped,
+          months: months
+        }
+      end
+
+      def self.monthly_summary(activities)
+        total_distance_meters = activities.sum { |activity| activity.total_distance_meters.to_f }
+        total_duration_seconds = activities.sum { |activity| activity.duration_seconds.to_i }
+        total_ascent_meters = activities.sum { |activity| activity.total_ascent_meters.to_f }
+
+        formatted_total_distance = total_distance_meters.positive? ? format('%.2f km', total_distance_meters / 1000.0) : '-'
+        formatted_total_duration = format_duration_static(total_duration_seconds)
+        formatted_total_ascent = total_ascent_meters.positive? ? "#{total_ascent_meters.round} m" : '-'
+
+        {
+          count: activities.size,
+          formatted_total_distance: formatted_total_distance,
+          formatted_total_duration: formatted_total_duration,
+          formatted_total_ascent: formatted_total_ascent
+        }
+      end
+
       def self.format_duration_static(seconds)
         return '-' unless seconds && seconds > 0
 

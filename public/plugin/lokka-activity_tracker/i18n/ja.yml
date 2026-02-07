@@ -23,6 +23,8 @@ ja:
     avg_hr: 平均心拍数
     max_hr: 最大心拍数
     elevation: 獲得標高
+    total: 合計
+    unknown_month: 日付不明
     cadence: 平均ケイデンス
     power: 平均パワー
     title_label: タイトル

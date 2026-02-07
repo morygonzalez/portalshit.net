@@ -7,20 +7,39 @@
 
   - if @activities.any?
     %h3= t('activity_tracker.activity_logs', default: 'Activity Logs')
-    %ul.activities
-      - @activities.each do |activity|
-        %li.activity-item
-          %a{href: "/activities/#{activity.id}"}
-            .activity-header
-              %span.activity-type= activity.activity_type&.capitalize || 'Activity'
-              %span.activity-title= activity.title
-            .activity-meta
-              - if activity.started_at
-                %span.activity-date= activity.started_at.strftime('%Y-%m-%d %H:%M')
-              - if activity.formatted_distance
-                %span.activity-distance= activity.formatted_distance
-              - if activity.formatted_duration
-                %span.activity-duration= activity.formatted_duration
+    - grouped_data = Lokka::ActivityTracker::Activity.group_by_month(@activities)
+    - grouped = grouped_data[:grouped]
+    - grouped_data[:months].each do |month_key|
+      - activities = grouped[month_key]
+      - summary = Lokka::ActivityTracker::Activity.monthly_summary(activities)
+      - month_label = month_key ? month_key.strftime('%Y-%m') : t('activity_tracker.unknown_month', default: 'Unknown Date')
+      %table.table.table-striped.activities
+        %caption= month_label
+        %thead
+          %tr
+            %th= t('activity_tracker.title_label', default: 'Title')
+            %th= t('activity_tracker.started_at', default: 'Date')
+            %th= t('activity_tracker.distance', default: 'Distance')
+            %th= t('activity_tracker.duration', default: 'Duration')
+            %th= t('activity_tracker.elevation', default: 'Elevation Gain')
+            %th= t('activity_tracker.type', default: 'Type')
+        %tbody
+          - activities.each do |activity|
+            %tr
+              %td
+                %a{href: "/activities/#{activity.id}"}= activity.title
+              %td= activity.started_at ? activity.started_at.strftime('%Y-%m-%d %H:%M') : '-'
+              %td= activity.formatted_distance || '-'
+              %td= activity.formatted_duration || '-'
+              %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
+              %td= activity.activity_type&.capitalize || 'Activity'
+        %tfoot
+          %tr
+            %td{colspan: 2}= "#{t('activity_tracker.total', default: 'Total')} (#{t('activity_tracker.activities_count', default: 'Activities')}: #{summary[:count]})"
+            %td= summary[:formatted_total_distance]
+            %td= summary[:formatted_total_duration]
+            %td= summary[:formatted_total_ascent]
+            %td= '-'
   - else
     %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
 
