@@ -6,7 +6,8 @@
       "WebFetch(domain:github.com)",
       "Bash(tree:*)",
       "Bash(gem search:*)",
-      "WebFetch(domain:rubygems.org)"
+      "WebFetch(domain:rubygems.org)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
