@@ -1,4 +1,13 @@
 en:
+  activerecord:
+    errors:
+      models:
+        lokka/activity_tracker/activity:
+          attributes:
+            title:
+              blank: can't be blank
+            user:
+              blank: must be specified
   activity_tracker:
     title: Activities
     no_activities: No activities yet.

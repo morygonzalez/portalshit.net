@@ -1,4 +1,13 @@
 ja:
+  activerecord:
+    errors:
+      models:
+        lokka/activity_tracker/activity:
+          attributes:
+            title:
+              blank: を入力してください
+            user:
+              blank: を指定してください
   activity_tracker:
     title: アクティビティ
     no_activities: アクティビティがありません。
