@@ -83,7 +83,9 @@ export default class ActivityPage extends Component {
       return <div className="activity-error">Activity not found</div>
     }
 
-    const hasGpsData = activity.data_points.some(
+    // Use map_points for display (with home location filtered out), fall back to data_points
+    const mapPoints = activity.map_points || activity.data_points
+    const hasGpsData = mapPoints.some(
       (dp) => dp.latitude !== null && dp.longitude !== null
     )
 
@@ -92,7 +94,7 @@ export default class ActivityPage extends Component {
         {hasGpsData && (
           <div className="activity-map-container">
             <h3>Route</h3>
-            <ActivityMap dataPoints={activity.data_points} highlightPoint={hoveredPoint} />
+            <ActivityMap dataPoints={mapPoints} highlightPoint={hoveredPoint} />
           </div>
         )}
 

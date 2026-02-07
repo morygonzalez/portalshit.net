@@ -213,6 +213,9 @@ module Lokka
         points = data_points.order(:elapsed_seconds).map(&:to_json_for_chart)
         calculator = StatisticsCalculator.new(points)
 
+        # Filter map points to hide home location (within configured radius)
+        map_points = filter_home_location(points)
+
         {
           id: id,
           title: title,
@@ -227,8 +230,41 @@ module Lokka
           avg_cadence: avg_cadence,
           avg_power: avg_power,
           data_points: points,
+          map_points: map_points,
           splits: calculator.pace_per_km
         }
+      end
+
+      def filter_home_location(points)
+        home_lat = ENV['ACTIVITY_TRACKER_HOME_LAT']&.to_f
+        home_lng = ENV['ACTIVITY_TRACKER_HOME_LNG']&.to_f
+        home_radius = (ENV['ACTIVITY_TRACKER_HOME_RADIUS'] || 300).to_f
+
+        return points unless home_lat && home_lng && home_lat != 0 && home_lng != 0
+
+        points.reject do |point|
+          lat = point[:latitude]
+          lng = point[:longitude]
+          next false unless lat && lng
+
+          distance_from_home(lat, lng, home_lat, home_lng) <= home_radius
+        end
+      end
+
+      def distance_from_home(lat1, lng1, lat2, lng2)
+        # Haversine formula for distance calculation
+        r = 6371000 # Earth's radius in meters
+
+        lat1_rad = lat1 * Math::PI / 180
+        lat2_rad = lat2 * Math::PI / 180
+        delta_lat = (lat2 - lat1) * Math::PI / 180
+        delta_lng = (lng2 - lng1) * Math::PI / 180
+
+        a = Math.sin(delta_lat / 2)**2 +
+            Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(delta_lng / 2)**2
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+        r * c
       end
     end
   end
