@@ -20,8 +20,12 @@
         %dd= @activity.formatted_duration
 
       - if @activity.formatted_pace
-        %dt= t('activity_tracker.pace', default: 'Pace')
+        %dt= t('activity_tracker.avg_pace', default: 'Avg Pace')
         %dd= @activity.formatted_pace
+
+      - if @activity.formatted_best_pace
+        %dt= t('activity_tracker.best_pace', default: 'Best Pace')
+        %dd= @activity.formatted_best_pace
 
       - if @activity.avg_heart_rate
         %dt= t('activity_tracker.avg_hr', default: 'Avg Heart Rate')

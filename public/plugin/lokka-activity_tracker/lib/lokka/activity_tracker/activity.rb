@@ -41,11 +41,26 @@ module Lokka
       def formatted_pace
         return nil unless avg_speed && avg_speed > 0
 
-        pace_seconds = 1000.0 / avg_speed
+        format_pace_from_speed(avg_speed)
+      end
+
+      def formatted_best_pace
+        max_speed = data_points.maximum(:speed)
+        return nil unless max_speed && max_speed > 0
+
+        format_pace_from_speed(max_speed)
+      end
+
+      private
+
+      def format_pace_from_speed(speed)
+        pace_seconds = 1000.0 / speed
         minutes = (pace_seconds / 60).to_i
         seconds = (pace_seconds % 60).to_i
         format("%d'%02d\" /km", minutes, seconds)
       end
+
+      public
 
       def to_json_for_chart
         points = data_points.order(:elapsed_seconds).map(&:to_json_for_chart)

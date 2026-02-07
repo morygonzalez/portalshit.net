@@ -6,7 +6,8 @@ en:
     type: Type
     distance: Distance
     duration: Duration
-    pace: Pace
+    avg_pace: Avg Pace
+    best_pace: Best Pace
     avg_hr: Avg Heart Rate
     max_hr: Max Heart Rate
     elevation: Elevation Gain

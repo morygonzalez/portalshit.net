@@ -6,7 +6,8 @@ ja:
     type: 種類
     distance: 距離
     duration: 時間
-    pace: ペース
+    avg_pace: 平均ペース
+    best_pace: 最速ペース
     avg_hr: 平均心拍数
     max_hr: 最大心拍数
     elevation: 獲得標高
