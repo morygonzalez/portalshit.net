@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-gem 'fit-parser', '~> 0.0.8'
+gem 'fit_parser', '~> 1.0'
 gem 'gpx', '~> 1.1'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fit'
+require 'fit_parser'
 
 module Lokka
   module ActivityTracker
@@ -27,7 +27,7 @@ module Lokka
       end
 
       def parse
-        @fit_data = Fit.load_file(file_path)
+        @fit_data = ::FitParser.load_file(file_path)
         @records = @fit_data.records
           .select { |r| r.content.record_type != :definition }
           .map(&:content)
