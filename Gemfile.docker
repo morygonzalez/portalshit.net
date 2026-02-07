@@ -74,7 +74,7 @@ group :development, :test do
   gem 'rspec', '~> 3.12'
   gem 'rspec-its'
   gem 'simplecov', require: false
-  gem 'sqlite3', group: :batch
+  gem 'sqlite3', '~> 1.4', group: :batch
 end
 
 group :mysql do
@@ -84,6 +84,11 @@ end
 group :postgresql do
   gem 'pg'
 end
+
+source 'https://rubygems.org'
+
+gem 'fit_parser', '~> 1.0'
+gem 'gpx', '~> 1.1'
 
 gem 'vacuum'
 gem 'cld'

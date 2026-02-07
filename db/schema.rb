@@ -10,7 +10,46 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_03_08_000000) do
+ActiveRecord::Schema.define(version: 2026_02_06_000001) do
+
+  create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "entry_id"
+    t.integer "user_id", null: false
+    t.string "title", null: false
+    t.string "activity_type"
+    t.datetime "started_at"
+    t.integer "duration_seconds"
+    t.decimal "total_distance_meters", precision: 10, scale: 2
+    t.decimal "total_ascent_meters", precision: 8, scale: 2
+    t.integer "avg_heart_rate"
+    t.integer "max_heart_rate"
+    t.decimal "avg_speed", precision: 6, scale: 2
+    t.integer "avg_cadence"
+    t.integer "avg_power"
+    t.string "original_filename"
+    t.string "file_url"
+    t.string "file_format"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["activity_type"], name: "index_activities_on_activity_type"
+    t.index ["entry_id"], name: "fk_rails_cf7c0a747c"
+    t.index ["started_at"], name: "index_activities_on_started_at"
+    t.index ["user_id"], name: "fk_rails_7e11bb717f"
+  end
+
+  create_table "activity_data_points", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "activity_id", null: false
+    t.integer "elapsed_seconds"
+    t.decimal "latitude", precision: 10, scale: 7
+    t.decimal "longitude", precision: 10, scale: 7
+    t.decimal "altitude_meters", precision: 7, scale: 2
+    t.integer "heart_rate"
+    t.decimal "speed", precision: 6, scale: 2
+    t.integer "cadence"
+    t.integer "power"
+    t.decimal "distance_meters", precision: 10, scale: 2
+    t.index ["activity_id", "elapsed_seconds"], name: "index_activity_data_points_on_activity_id_and_elapsed_seconds"
+  end
 
   create_table "categories", id: :integer, charset: "utf8mb3", force: :cascade do |t|
     t.string "slug"
@@ -135,4 +174,7 @@ ActiveRecord::Schema.define(version: 2025_03_08_000000) do
     t.index ["name"], name: "unique_users_name", unique: true
   end
 
+  add_foreign_key "activities", "entries"
+  add_foreign_key "activities", "users"
+  add_foreign_key "activity_data_points", "activities"
 end
