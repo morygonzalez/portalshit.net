@@ -126,7 +126,7 @@ module Lokka
           {
             success: true,
             activity_id: activity.id,
-            redirect_url: "/activities/#{activity.id}"
+            redirect_url: '/admin/activities'
           }.to_json
         rescue StandardError => e
           halt 500, { error: e.message }.to_json
