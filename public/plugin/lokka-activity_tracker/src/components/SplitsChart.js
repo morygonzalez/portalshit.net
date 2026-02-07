@@ -45,7 +45,7 @@ export default function SplitsChart({ splits, height = 300 }) {
 
   // Find max for domain (start from 0)
   const paces = splits.map(s => s.pace_seconds).filter(p => p > 0)
-  const maxPace = Math.max(...paces) * 1.1
+  const maxPace = Math.max(...paces) * 1.15
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -71,7 +71,7 @@ export default function SplitsChart({ splits, height = 300 }) {
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 10, right: 30, left: 50, bottom: 10 }}
+          margin={{ top: 28, right: 50, left: 50, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
           <XAxis
@@ -90,7 +90,7 @@ export default function SplitsChart({ splits, height = 300 }) {
             x={avgPace}
             stroke="#666"
             strokeDasharray="5 5"
-            label={{ value: `Avg: ${formatPace(avgPace)}`, position: 'top', fontSize: 11 }}
+            label={{ value: `Avg: ${formatPace(avgPace)}`, position: 'top', offset: 10, fontSize: 11 }}
           />
           <Bar dataKey="pace" radius={[0, 4, 4, 0]}>
             {data.map((entry, index) => (
