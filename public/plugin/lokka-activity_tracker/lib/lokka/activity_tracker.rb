@@ -77,7 +77,7 @@ module Lokka
         halt 400, { error: 'No file provided' }.to_json unless file
 
         tempfile = file[:tempfile]
-        filename = file[:filename]
+        filename = sanitize_filename(file[:filename])
         format = detect_format(filename)
 
         halt 400, { error: 'Unsupported file format' }.to_json unless format
@@ -230,6 +230,22 @@ module Lokka
       else
         "plugin/lokka-activity_tracker/build/#{file_name}"
       end
+    end
+
+    def sanitize_filename(filename)
+      return '' if filename.nil?
+
+      # Handle encoding issues with Japanese filenames
+      str = filename.to_s
+      str = str.dup if str.frozen?
+
+      # Try to encode to UTF-8, replacing invalid characters
+      unless str.valid_encoding?
+        str = str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+      end
+
+      # Force UTF-8 encoding
+      str.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
     end
 
     def detect_format(filename)
