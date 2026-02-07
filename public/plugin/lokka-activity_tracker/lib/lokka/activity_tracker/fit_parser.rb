@@ -49,7 +49,7 @@ module Lokka
           total_ascent_meters: safe_get(session, :total_ascent),
           avg_heart_rate: safe_get(session, :avg_heart_rate),
           max_heart_rate: safe_get(session, :max_heart_rate),
-          avg_speed: safe_get(session, :avg_speed),
+          avg_speed: safe_get(session, :enhanced_avg_speed) || safe_get(session, :avg_speed),
           avg_cadence: extract_avg_cadence(session),
           avg_power: safe_get(session, :avg_power)
         }

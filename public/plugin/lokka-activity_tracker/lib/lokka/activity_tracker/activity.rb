@@ -39,9 +39,17 @@ module Lokka
       end
 
       def formatted_pace
-        return nil unless avg_speed && avg_speed > 0
+        speed = avg_speed || calculated_avg_speed
+        return nil unless speed && speed > 0
 
-        format_pace_from_speed(avg_speed)
+        format_pace_from_speed(speed)
+      end
+
+      def calculated_avg_speed
+        speeds = data_points.where.not(speed: nil).pluck(:speed)
+        return nil if speeds.empty?
+
+        speeds.sum / speeds.size
       end
 
       def formatted_best_pace
