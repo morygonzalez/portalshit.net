@@ -11,9 +11,11 @@ export default class ActivityPage extends Component {
       activity: null,
       loading: true,
       error: null,
-      selectedMetrics: ['heart_rate', 'altitude_meters']
+      selectedMetrics: ['heart_rate', 'altitude_meters'],
+      hoveredPoint: null
     }
     this.handleMetricChange = this.handleMetricChange.bind(this)
+    this.handleHoverChange = this.handleHoverChange.bind(this)
   }
 
   async componentDidMount() {
@@ -33,8 +35,41 @@ export default class ActivityPage extends Component {
     this.setState({ selectedMetrics })
   }
 
+  handleHoverChange(elapsedSeconds) {
+    const { activity } = this.state
+    if (!activity || !activity.data_points) {
+      this.setState({ hoveredPoint: null })
+      return
+    }
+
+    if (elapsedSeconds === null || elapsedSeconds === undefined) {
+      this.setState({ hoveredPoint: null })
+      return
+    }
+
+    const points = activity.data_points.filter(
+      (dp) => dp.elapsed_seconds !== null && dp.latitude !== null && dp.longitude !== null
+    )
+    if (points.length === 0) {
+      this.setState({ hoveredPoint: null })
+      return
+    }
+
+    let closest = points[0]
+    let closestDiff = Math.abs(points[0].elapsed_seconds - elapsedSeconds)
+    for (let i = 1; i < points.length; i += 1) {
+      const diff = Math.abs(points[i].elapsed_seconds - elapsedSeconds)
+      if (diff < closestDiff) {
+        closest = points[i]
+        closestDiff = diff
+      }
+    }
+
+    this.setState({ hoveredPoint: closest })
+  }
+
   render() {
-    const { activity, loading, error, selectedMetrics } = this.state
+    const { activity, loading, error, selectedMetrics, hoveredPoint } = this.state
 
     if (loading) {
       return <div className="activity-loading">Loading activity data...</div>
@@ -57,7 +92,7 @@ export default class ActivityPage extends Component {
         {hasGpsData && (
           <div className="activity-map-container">
             <h3>Route</h3>
-            <ActivityMap dataPoints={activity.data_points} />
+            <ActivityMap dataPoints={activity.data_points} highlightPoint={hoveredPoint} />
           </div>
         )}
 
@@ -71,6 +106,7 @@ export default class ActivityPage extends Component {
           <ActivityChart
             dataPoints={activity.data_points}
             selectedMetrics={selectedMetrics}
+            onHoverChange={this.handleHoverChange}
           />
         </div>
 

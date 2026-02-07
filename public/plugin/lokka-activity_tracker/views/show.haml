@@ -1,79 +1,67 @@
 .activity-detail
-  %h1= @activity.title
+  %h2= @activity.title
 
   .activity-summary
-    %dl.activity-stats
+    .activity-stats-grid
       - if @activity.started_at
-        %dt
-          %span.stat-icon 📅
-          = t('activity_tracker.started_at', default: 'Date')
-        %dd= @activity.started_at.strftime('%Y-%m-%d %H:%M')
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.started_at', default: 'Date')
+          %div.activity-stat-value= @activity.started_at.strftime('%Y-%m-%d %H:%M')
 
       - if @activity.activity_type
-        %dt
-          %span.stat-icon 🏃
-          = t('activity_tracker.type', default: 'Type')
-        %dd= @activity.activity_type.capitalize
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.type', default: 'Type')
+          %div.activity-stat-value= @activity.activity_type.capitalize
 
       - if @activity.device_display_label
-        %dt
-          %span.stat-icon ⌚
-          = t('activity_tracker.device', default: 'Device')
-        %dd= @activity.device_display_label
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.device', default: 'Device')
+          %div.activity-stat-value= @activity.device_display_label
 
       - if @activity.formatted_distance
-        %dt
-          %span.stat-icon 📏
-          = t('activity_tracker.distance', default: 'Distance')
-        %dd= @activity.formatted_distance
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.distance', default: 'Distance')
+          %div.activity-stat-value= @activity.formatted_distance
 
       - if @activity.formatted_duration
-        %dt
-          %span.stat-icon ⏱️
-          = t('activity_tracker.duration', default: 'Duration')
-        %dd= @activity.formatted_duration
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.duration', default: 'Duration')
+          %div.activity-stat-value= @activity.formatted_duration
 
       - if @activity.formatted_pace
-        %dt
-          %span.stat-icon 🏃
-          = t('activity_tracker.avg_pace', default: 'Avg Pace')
-        %dd= @activity.formatted_pace
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.avg_pace', default: 'Avg Pace')
+          %div.activity-stat-value= @activity.formatted_pace
 
       - if @activity.formatted_best_pace
-        %dt
-          %span.stat-icon 🚀
-          = t('activity_tracker.best_pace', default: 'Best Pace')
-        %dd= @activity.formatted_best_pace
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.best_pace', default: 'Best Pace')
+          %div.activity-stat-value= @activity.formatted_best_pace
 
       - if @activity.avg_heart_rate
-        %dt
-          %span.stat-icon ❤️
-          = t('activity_tracker.avg_hr', default: 'Avg Heart Rate')
-        %dd= "#{@activity.avg_heart_rate} bpm"
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.avg_hr', default: 'Avg Heart Rate')
+          %div.activity-stat-value= "#{@activity.avg_heart_rate} bpm"
 
       - if @activity.max_heart_rate
-        %dt
-          %span.stat-icon 💓
-          = t('activity_tracker.max_hr', default: 'Max Heart Rate')
-        %dd= "#{@activity.max_heart_rate} bpm"
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.max_hr', default: 'Max Heart Rate')
+          %div.activity-stat-value= "#{@activity.max_heart_rate} bpm"
 
       - if @activity.total_ascent_meters
-        %dt
-          %span.stat-icon ⛰️
-          = t('activity_tracker.elevation', default: 'Elevation Gain')
-        %dd= "#{@activity.total_ascent_meters.round} m"
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.elevation', default: 'Elevation Gain')
+          %div.activity-stat-value= "#{@activity.total_ascent_meters.round} m"
 
       - if @activity.avg_cadence
-        %dt
-          %span.stat-icon 👟
-          = t('activity_tracker.cadence', default: 'Avg Cadence')
-        %dd= "#{@activity.avg_cadence} spm"
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.cadence', default: 'Avg Cadence')
+          %div.activity-stat-value= "#{@activity.avg_cadence} spm"
 
       - if @activity.avg_power
-        %dt
-          %span.stat-icon ⚡
-          = t('activity_tracker.power', default: 'Avg Power')
-        %dd= "#{@activity.avg_power} W"
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.power', default: 'Avg Power')
+          %div.activity-stat-value= "#{@activity.avg_power} W"
 
 #activity-root{data: {activity_id: @activity.id}}
 

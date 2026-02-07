@@ -7,8 +7,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell,
-  ReferenceLine
+  ReferenceLine,
+  Cell
 } from 'recharts'
 
 // Format pace seconds to mm:ss string
@@ -19,13 +19,28 @@ const formatPace = (paceSeconds) => {
   return `${minutes}'${seconds.toString().padStart(2, '0')}"`
 }
 
-// Get color based on pace relative to average
-const getPaceColor = (pace, avgPace) => {
-  if (!pace || !avgPace) return '#1E88E5'
-  const ratio = pace / avgPace
-  if (ratio < 0.95) return '#43A047' // Faster than average - green
-  if (ratio > 1.05) return '#E53935' // Slower than average - red
-  return '#1E88E5' // Near average - blue
+const BASE_COLOR = '#64B5F6'
+
+const hexToRgb = (hex) => {
+  const cleaned = hex.replace('#', '')
+  const value = cleaned.length === 3
+    ? cleaned.split('').map((c) => c + c).join('')
+    : cleaned
+  const num = parseInt(value, 16)
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255
+  }
+}
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+
+const mixWithWhite = (hex, ratio) => {
+  const { r, g, b } = hexToRgb(hex)
+  const t = clamp(ratio, 0, 1)
+  const mix = (channel) => Math.round(channel + (255 - channel) * t)
+  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`
 }
 
 export default function SplitsChart({ splits, height = 300 }) {
@@ -33,19 +48,51 @@ export default function SplitsChart({ splits, height = 300 }) {
     return <div className="splits-chart-empty">No split data available</div>
   }
 
-  // Prepare data for chart
-  const data = splits.map(split => ({
-    km: `${split.km} km`,
-    pace: split.pace_seconds,
-    paceFormatted: formatPace(split.pace_seconds)
-  }))
-
   // Calculate average pace
   const avgPace = splits.reduce((sum, s) => sum + (s.pace_seconds || 0), 0) / splits.length
 
-  // Find max for domain (start from 0)
+  // Find max/min for domain and shading
   const paces = splits.map(s => s.pace_seconds).filter(p => p > 0)
-  const maxPace = Math.max(...paces) * 1.15
+  const maxPaceRaw = Math.max(...paces)
+  const minPaceRaw = Math.min(...paces)
+  const paceRange = maxPaceRaw - minPaceRaw
+  const fastestPace = minPaceRaw
+  const slowestPace = maxPaceRaw
+
+  const minValueRatio = 0.7
+  const paceToValue = (pace) => {
+    if (paceRange <= 0) return 1
+    const t = clamp((maxPaceRaw - pace) / paceRange, 0, 1)
+    return (1 - minValueRatio) * t + minValueRatio
+  }
+  const maxValue = 1.1
+
+  // Prepare data for chart (faster => larger bar)
+  const data = splits.map(split => ({
+    km: `${split.km} km`,
+    pace: split.pace_seconds,
+    paceValue: paceToValue(split.pace_seconds),
+    paceFormatted: formatPace(split.pace_seconds)
+  }))
+
+  const fastestIndex = paces.length ? splits.findIndex(s => s.pace_seconds === fastestPace) : -1
+  const slowestIndex = paces.length ? splits.findIndex(s => s.pace_seconds === slowestPace) : -1
+
+  const shadeSteps = [0.2, 0.15, 0.1, 0.05, 0.0]
+  const paceToShade = (pace) => {
+    if (!pace || paceRange <= 0) return shadeSteps[2]
+    const t = clamp((pace - minPaceRaw) / paceRange, 0, 1)
+    const idx = Math.round(t * (shadeSteps.length - 1))
+    return shadeSteps[idx]
+  }
+
+  const formatPaceFromValue = (value) => {
+    if (value === undefined || value === null) return '-'
+    const t = clamp((value - minValueRatio) / (1 - minValueRatio), 0, 1)
+    const pace = maxPaceRaw - (t * paceRange)
+    if (!pace || pace <= 0) return '-'
+    return formatPace(pace)
+  }
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -76,8 +123,8 @@ export default function SplitsChart({ splits, height = 300 }) {
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
           <XAxis
             type="number"
-            domain={[0, maxPace]}
-            tickFormatter={(value) => formatPace(value)}
+            domain={[0, maxValue]}
+            tickFormatter={formatPaceFromValue}
           />
           <YAxis
             type="category"
@@ -87,16 +134,34 @@ export default function SplitsChart({ splits, height = 300 }) {
           />
           <Tooltip content={<CustomTooltip />} />
           <ReferenceLine
-            x={avgPace}
+            x={paceToValue(avgPace)}
             stroke="#666"
             strokeDasharray="5 5"
             label={{ value: `Avg: ${formatPace(avgPace)}`, position: 'top', offset: 10, fontSize: 11 }}
           />
-          <Bar dataKey="pace" radius={[0, 4, 4, 0]}>
+          {fastestPace && (
+            <ReferenceLine
+              x={paceToValue(fastestPace)}
+              stroke="#1E88E5"
+              strokeDasharray="3 3"
+              label={{ value: `Fastest: ${formatPace(fastestPace)}`, position: 'top', offset: 10, fontSize: 11 }}
+            />
+          )}
+          {slowestPace && (
+            <ReferenceLine
+              x={paceToValue(slowestPace)}
+              stroke="#1E88E5"
+              strokeDasharray="3 3"
+              label={{ value: `Slowest: ${formatPace(slowestPace)}`, position: 'top', offset: 10, fontSize: 11 }}
+            />
+          )}
+          <Bar dataKey="paceValue" radius={[0, 4, 4, 0]}>
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={getPaceColor(entry.pace, avgPace)}
+                fill={mixWithWhite(BASE_COLOR, paceToShade(entry.pace))}
+                stroke={index === fastestIndex || index === slowestIndex ? '#1E88E5' : undefined}
+                strokeWidth={index === fastestIndex || index === slowestIndex ? 1.5 : 0}
               />
             ))}
           </Bar>

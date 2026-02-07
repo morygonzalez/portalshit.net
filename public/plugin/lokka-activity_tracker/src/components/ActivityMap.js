@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from 'react'
-import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap, CircleMarker } from 'react-leaflet'
 
 // Component to fit map bounds to the route
 function FitBounds({ bounds }) {
@@ -46,7 +46,7 @@ export default class ActivityMap extends Component {
   }
 
   render() {
-    const { height = 400 } = this.props
+    const { height = 400, highlightPoint } = this.props
     const coordinates = this.getCoordinates()
 
     if (coordinates.length === 0) {
@@ -63,6 +63,7 @@ export default class ActivityMap extends Component {
         <MapContainer
           center={center}
           zoom={13}
+          scrollWheelZoom={false}
           style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
@@ -83,6 +84,14 @@ export default class ActivityMap extends Component {
           <Marker position={endPoint}>
             <Popup>Finish</Popup>
           </Marker>
+          {highlightPoint && highlightPoint.latitude !== null && highlightPoint.longitude !== null && (
+            <CircleMarker
+              center={[highlightPoint.latitude, highlightPoint.longitude]}
+              radius={6}
+              pathOptions={{ color: '#1E88E5', weight: 2, fillColor: '#1E88E5', fillOpacity: 0.7 }}
+              interactive={false}
+            />
+          )}
         </MapContainer>
       </div>
     )

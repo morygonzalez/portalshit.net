@@ -122,6 +122,74 @@
     }
   }
 
+  // Activity Tracker
+  .activity-summary {
+    margin-bottom: 16px;
+  }
+
+  .activity-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px 16px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .activity-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .activity-stat-label {
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: $meta-text-color;
+  }
+
+  .activity-stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html.dark-mode & {
+    .activity-stats-grid {
+      border-top-color: rgba(255, 255, 255, 0.12);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .activity-stat-label {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .activity-stat-value {
+      color: $dark-font-color;
+    }
+  }
+
+  html.light-mode & {
+    .activity-stat-value {
+      color: $light-font-color;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .activity-stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px 12px;
+    }
+
+    .activity-stat-value {
+      font-size: 15px;
+    }
+  }
+
   .amazon-image, .amazon-content {
     margin: 2.5em 1em;
   }

@@ -64,6 +64,8 @@ export default class ActivityChart extends PureComponent {
     super(props)
     this.formatXAxis = this.formatXAxis.bind(this)
     this.formatTooltip = this.formatTooltip.bind(this)
+    this.handleMouseMove = this.handleMouseMove.bind(this)
+    this.handleMouseLeave = this.handleMouseLeave.bind(this)
   }
 
   formatXAxis(seconds) {
@@ -85,6 +87,31 @@ export default class ActivityChart extends PureComponent {
       return [`${value} ${config.unit}`, name]
     }
     return [value, name]
+  }
+
+  handleMouseMove(state) {
+    const { onHoverChange } = this.props
+    if (!onHoverChange) return
+
+    if (!state || !state.activePayload || state.activePayload.length === 0) {
+      onHoverChange(null)
+      return
+    }
+
+    const payload = state.activePayload[0] && state.activePayload[0].payload
+    if (!payload || payload.elapsed_seconds === undefined || payload.elapsed_seconds === null) {
+      onHoverChange(null)
+      return
+    }
+
+    onHoverChange(payload.elapsed_seconds)
+  }
+
+  handleMouseLeave() {
+    const { onHoverChange } = this.props
+    if (onHoverChange) {
+      onHoverChange(null)
+    }
   }
 
   prepareData() {
@@ -123,6 +150,8 @@ export default class ActivityChart extends PureComponent {
             left: compact ? 0 : 20,
             bottom: compact ? 0 : 10
           }}
+          onMouseMove={this.handleMouseMove}
+          onMouseLeave={this.handleMouseLeave}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
           <XAxis
