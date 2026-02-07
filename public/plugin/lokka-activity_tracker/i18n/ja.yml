@@ -12,6 +12,7 @@ ja:
               duplicate_file: このファイルは既にアップロードされています
   activity_tracker:
     duplicate_file: このファイルは既にアップロードされています
+    unsupported_file: このFITファイルはサポートされていない形式を含んでいます
     title: アクティビティ
     no_activities: アクティビティがありません。
     monthly_summary: 月間サマリー

@@ -5,6 +5,8 @@ require 'time'
 
 module Lokka
   module ActivityTracker
+    class UnsupportedFileError < StandardError; end
+
     class FitParser
       attr_reader :file_path, :fit_data
 
@@ -33,6 +35,11 @@ module Lokka
           .select { |r| r.content.record_type != :definition }
           .map(&:content)
         self
+      rescue RuntimeError => e
+        if e.message.include?('No definition for local message type')
+          raise UnsupportedFileError, 'This FIT file contains unsupported data format'
+        end
+        raise
       end
 
       def activity_summary

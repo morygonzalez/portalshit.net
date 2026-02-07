@@ -12,6 +12,7 @@ en:
               duplicate_file: This file has already been uploaded
   activity_tracker:
     duplicate_file: This file has already been uploaded
+    unsupported_file: This FIT file contains unsupported data format
     title: Activities
     no_activities: No activities yet.
     monthly_summary: Monthly Summary

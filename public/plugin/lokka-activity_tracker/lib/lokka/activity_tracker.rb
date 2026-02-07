@@ -156,6 +156,10 @@ module Lokka
             activity_id: activity.id,
             redirect_url: '/admin/activities'
           }.to_json
+        rescue UnsupportedFileError => e
+          halt 400, {
+            error: I18n.t('activity_tracker.unsupported_file', default: e.message)
+          }.to_json
         rescue StandardError => e
           error_id = SecureRandom.hex(8)
           if respond_to?(:logger) && logger
