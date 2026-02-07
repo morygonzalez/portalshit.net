@@ -2,6 +2,9 @@ en:
   activity_tracker:
     title: Activities
     no_activities: No activities yet.
+    monthly_summary: Monthly Summary
+    month: Month
+    activities_count: Activities
     started_at: Date
     type: Type
     distance: Distance

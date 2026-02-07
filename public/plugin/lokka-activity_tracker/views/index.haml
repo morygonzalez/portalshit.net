@@ -1,6 +1,24 @@
 .activities-list
   %h1= t('activity_tracker.title', default: 'Activities')
 
+  - if @monthly_stats.any?
+    .monthly-stats
+      %h2= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
+      %table.monthly-stats-table
+        %thead
+          %tr
+            %th= t('activity_tracker.month', default: 'Month')
+            %th= t('activity_tracker.distance', default: 'Distance')
+            %th= t('activity_tracker.duration', default: 'Duration')
+            %th= t('activity_tracker.activities_count', default: 'Activities')
+        %tbody
+          - @monthly_stats.each do |stat|
+            %tr
+              %td= stat[:label]
+              %td= "#{stat[:total_distance_km]} km"
+              %td= stat[:formatted_duration]
+              %td= stat[:count]
+
   - if @activities.any?
     %ul.activities
       - @activities.each do |activity|

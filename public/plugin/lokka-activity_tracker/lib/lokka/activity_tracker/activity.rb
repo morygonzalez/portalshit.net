@@ -16,6 +16,51 @@ module Lokka
 
       scope :recent, -> { order(started_at: :desc) }
       scope :by_type, ->(type) { where(activity_type: type) }
+      scope :in_month, ->(year, month) {
+        start_date = Date.new(year, month, 1)
+        end_date = start_date.end_of_month
+        where(started_at: start_date.beginning_of_day..end_date.end_of_day)
+      }
+
+      def self.monthly_stats(months_back = 6)
+        stats = []
+        today = Date.today
+
+        (0...months_back).each do |i|
+          date = today - i.months
+          year = date.year
+          month = date.month
+          activities = in_month(year, month)
+
+          total_distance = activities.sum(:total_distance_meters) || 0
+          total_duration = activities.sum(:duration_seconds) || 0
+          count = activities.count
+
+          stats << {
+            year: year,
+            month: month,
+            label: date.strftime('%Y-%m'),
+            total_distance_km: (total_distance / 1000.0).round(2),
+            total_duration_seconds: total_duration,
+            formatted_duration: format_duration_static(total_duration),
+            count: count
+          }
+        end
+
+        stats
+      end
+
+      def self.format_duration_static(seconds)
+        return '-' unless seconds && seconds > 0
+
+        hours = seconds / 3600
+        minutes = (seconds % 3600) / 60
+        if hours > 0
+          format('%<h>dh %<m>02dm', h: hours, m: minutes)
+        else
+          format('%<m>dm', m: minutes)
+        end
+      end
 
       def formatted_duration
         return nil unless duration_seconds

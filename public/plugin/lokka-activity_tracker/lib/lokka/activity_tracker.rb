@@ -23,6 +23,7 @@ module Lokka
       # Public routes
       app.get '/activities' do
         @activities = Activity.recent.page(params[:page]).per(20)
+        @monthly_stats = Activity.monthly_stats(6)
         @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }

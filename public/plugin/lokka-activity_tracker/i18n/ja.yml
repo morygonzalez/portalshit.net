@@ -2,6 +2,9 @@ ja:
   activity_tracker:
     title: アクティビティ
     no_activities: アクティビティがありません。
+    monthly_summary: 月間サマリー
+    month: 月
+    activities_count: 回数
     started_at: 日時
     type: 種類
     distance: 距離
