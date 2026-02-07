@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'fit_parser'
+require 'time'
 
 module Lokka
   module ActivityTracker
@@ -60,10 +61,10 @@ module Lokka
         record_messages = @records.select { |r| record_type?(r, :record) }
         return [] if record_messages.empty?
 
-        start_time = safe_get(record_messages.first, :timestamp)
+        start_time = parse_timestamp(safe_get(record_messages.first, :timestamp))
 
         record_messages.map do |record|
-          timestamp = safe_get(record, :timestamp)
+          timestamp = parse_timestamp(safe_get(record, :timestamp))
           elapsed = start_time && timestamp ? (timestamp - start_time).to_i : nil
 
           {
@@ -109,7 +110,25 @@ module Lokka
       end
 
       def extract_timestamp(session)
-        safe_get(session, :start_time) || safe_get(session, :timestamp)
+        timestamp = safe_get(session, :start_time) || safe_get(session, :timestamp)
+        parse_timestamp(timestamp)
+      end
+
+      def parse_timestamp(value)
+        return nil unless value
+
+        case value
+        when Time, DateTime
+          value
+        when String
+          Time.parse(value)
+        when Numeric
+          Time.at(value)
+        else
+          value.respond_to?(:to_time) ? value.to_time : nil
+        end
+      rescue ArgumentError
+        nil
       end
 
       def extract_duration(session)
