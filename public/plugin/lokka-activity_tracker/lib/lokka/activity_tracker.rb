@@ -10,6 +10,16 @@ require_relative 'activity_tracker/shortcode_processor'
 module Lokka
   module ActivityTracker
     def self.registered(app)
+      # JSON API route (must be defined before :id route)
+      app.get '/activities/:id.json' do |id|
+        activity = Activity.find_by(id: id)
+        halt 404, { error: 'Activity not found' }.to_json unless activity
+
+        content_type :json
+        cache_control :public, :must_revalidate, max_age: 5.minutes
+        activity.to_json_for_chart.to_json
+      end
+
       # Public routes
       app.get '/activities' do
         @activities = Activity.recent.page(params[:page]).per(20)
@@ -28,15 +38,6 @@ module Lokka
         @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
         @bread_crumbs << { name: @activity.title, link: "/activities/#{@activity.id}" }
         haml :"plugin/lokka-activity_tracker/views/show", layout: :"theme/#{@theme.name}/layout"
-      end
-
-      app.get '/activities/:id.json' do |id|
-        activity = Activity.find_by(id: id)
-        halt 404, { error: 'Activity not found' }.to_json unless activity
-
-        content_type :json
-        cache_control :public, :must_revalidate, max_age: 5.minutes
-        activity.to_json_for_chart.to_json
       end
 
       # Admin routes
