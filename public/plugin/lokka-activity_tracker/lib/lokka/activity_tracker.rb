@@ -10,6 +10,13 @@ require_relative 'activity_tracker/shortcode_processor'
 module Lokka
   module ActivityTracker
     def self.registered(app)
+      # Monthly stats JSON API
+      app.get '/activities/monthly_stats.json' do
+        content_type :json
+        cache_control :public, :must_revalidate, max_age: 10.minutes
+        Activity.monthly_stats(12).to_json
+      end
+
       # JSON API route (must be defined before :id route)
       app.get '/activities/:id.json' do |id|
         activity = Activity.find_by(id: id)
@@ -23,7 +30,6 @@ module Lokka
       # Public routes
       app.get '/activities' do
         @activities = Activity.recent.page(params[:page]).per(20)
-        @monthly_stats = Activity.monthly_stats(6)
         @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }

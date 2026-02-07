@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import ActivityPage from './ActivityPage'
 import ActivityEmbed from './ActivityEmbed'
+import MonthlyStatsChart from './components/MonthlyStatsChart'
 
 // Render full activity page
 const activityRoot = document.getElementById('activity-root')
@@ -11,6 +12,15 @@ if (activityRoot) {
   ReactDOM.render(
     <ActivityPage activityId={activityId} />,
     activityRoot
+  )
+}
+
+// Render monthly stats chart on activities index page
+const monthlyStatsRoot = document.getElementById('monthly-stats-chart')
+if (monthlyStatsRoot) {
+  ReactDOM.render(
+    <MonthlyStatsChart />,
+    monthlyStatsRoot
   )
 }
 
