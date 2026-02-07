@@ -47,7 +47,10 @@ export default class ActivityPage extends Component {
       return
     }
 
-    const points = activity.data_points.filter(
+    // Use map_points (with home location filtered out) for highlight
+    // to prevent revealing home location when hovering over chart
+    const mapPoints = activity.map_points || activity.data_points
+    const points = mapPoints.filter(
       (dp) => dp.elapsed_seconds !== null && dp.latitude !== null && dp.longitude !== null
     )
     if (points.length === 0) {
