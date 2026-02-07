@@ -71,9 +71,9 @@ module Lokka
             elapsed_seconds: elapsed,
             latitude: convert_semicircles_to_degrees(safe_get(record, :position_lat)),
             longitude: convert_semicircles_to_degrees(safe_get(record, :position_long)),
-            altitude_meters: safe_get(record, :altitude),
+            altitude_meters: extract_altitude(record),
             heart_rate: safe_get(record, :heart_rate),
-            speed: safe_get(record, :speed),
+            speed: extract_speed(record),
             cadence: safe_get(record, :cadence),
             power: safe_get(record, :power),
             distance_meters: safe_get(record, :distance)
@@ -150,6 +150,20 @@ module Lokka
         return nil unless semicircles
 
         semicircles * (180.0 / 2**31)
+      end
+
+      def extract_speed(record)
+        # Try different field names for speed
+        safe_get(record, :enhanced_speed) ||
+          safe_get(record, :speed) ||
+          safe_get(record, :avg_speed)
+      end
+
+      def extract_altitude(record)
+        # Try different field names for altitude
+        safe_get(record, :enhanced_altitude) ||
+          safe_get(record, :altitude) ||
+          safe_get(record, :elevation)
       end
     end
   end
