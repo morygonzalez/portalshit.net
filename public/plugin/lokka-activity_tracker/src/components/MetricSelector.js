@@ -2,7 +2,6 @@ import React from 'react'
 
 const AVAILABLE_METRICS = [
   { key: 'heart_rate', label: 'Heart Rate', checkField: 'heart_rate' },
-  { key: 'speed', label: 'Speed', checkField: 'speed' },
   { key: 'pace', label: 'Pace', checkField: 'speed' }, // Pace is derived from speed
   { key: 'altitude_meters', label: 'Altitude', checkField: 'altitude_meters' },
   { key: 'cadence', label: 'Cadence', checkField: 'cadence' },

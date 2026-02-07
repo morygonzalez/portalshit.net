@@ -18,12 +18,6 @@ const METRIC_CONFIG = {
     color: '#E53935',
     domain: [60, 200]
   },
-  speed: {
-    label: 'Speed',
-    unit: 'm/s',
-    color: '#1E88E5',
-    domain: [0, 'auto']
-  },
   pace: {
     label: 'Pace',
     unit: 'min/km',
