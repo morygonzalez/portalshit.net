@@ -6,6 +6,7 @@ require_relative 'activity_tracker/fit_parser'
 require_relative 'activity_tracker/gpx_parser'
 require_relative 'activity_tracker/statistics_calculator'
 require_relative 'activity_tracker/shortcode_processor'
+require_relative 'activity_tracker/title_generator'
 require 'securerandom'
 
 module Lokka
@@ -87,9 +88,13 @@ module Lokka
           summary = parser.activity_summary
           data_points = parser.data_points
 
+          # Generate title automatically if not provided
+          title = params[:title].presence
+          title ||= TitleGenerator.new(summary).generate rescue filename
+
           activity = Activity.new(
             user: current_user,
-            title: params[:title].presence || filename,
+            title: title,
             activity_type: summary[:activity_type],
             started_at: summary[:started_at],
             duration_seconds: summary[:duration_seconds],

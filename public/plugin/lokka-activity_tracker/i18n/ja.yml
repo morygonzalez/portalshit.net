@@ -31,7 +31,7 @@ ja:
     cadence: 平均ケイデンス
     power: 平均パワー
     title_label: タイトル
-    title_placeholder: 空欄の場合はファイル名を使用
+    title_placeholder: 空欄の場合は AI が自動生成
     file_label: アクティビティファイル（FIT または GPX）
     upload: アップロード
     entry: 記事にリンク

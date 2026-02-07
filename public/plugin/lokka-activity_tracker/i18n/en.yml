@@ -31,7 +31,7 @@ en:
     cadence: Avg Cadence
     power: Avg Power
     title_label: Title
-    title_placeholder: Leave blank to use filename
+    title_placeholder: Leave blank to auto-generate with AI
     file_label: Activity File (FIT or GPX)
     upload: Upload
     entry: Link to Entry
