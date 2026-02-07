@@ -235,13 +235,19 @@ module Lokka
   end
 end
 
-# Entry body shortcode processing
+# Entry body shortcode processing - only process if shortcode is present
 class Entry
   if method_defined?(:body)
     alias _original_activity_tracker_body body
     def activity_tracker_processed_body
-      processed = _original_activity_tracker_body
-      Lokka::ActivityTracker::ShortcodeProcessor.new(processed).process
+      original = _original_activity_tracker_body
+      return original unless original.is_a?(String)
+      return original unless original.valid_encoding?
+      return original unless original.include?('[activity:')
+
+      Lokka::ActivityTracker::ShortcodeProcessor.new(original).process
+    rescue StandardError
+      long_body rescue raw_body
     end
     alias body activity_tracker_processed_body
   end
@@ -249,8 +255,14 @@ class Entry
   if method_defined?(:short_body)
     alias _original_activity_tracker_short_body short_body
     def activity_tracker_processed_short_body
-      processed = _original_activity_tracker_short_body
-      Lokka::ActivityTracker::ShortcodeProcessor.new(processed).process
+      original = _original_activity_tracker_short_body
+      return original unless original.is_a?(String)
+      return original unless original.valid_encoding?
+      return original unless original.include?('[activity:')
+
+      Lokka::ActivityTracker::ShortcodeProcessor.new(original).process
+    rescue StandardError
+      long_body rescue raw_body
     end
     alias short_body activity_tracker_processed_short_body
   end
