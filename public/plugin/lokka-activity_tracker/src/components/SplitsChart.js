@@ -119,7 +119,7 @@ export default function SplitsChart({ splits, height = 300 }) {
         <BarChart
           data={data}
           layout="horizontal"
-          margin={{ top: 28, right: 50, left: 20, bottom: 30 }}
+          margin={{ top: 28, right: 110, left: 20, bottom: 30 }}
         >
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
           <XAxis
