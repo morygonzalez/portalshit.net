@@ -15,6 +15,7 @@ module Lokka
       validates :user, presence: true
       validates :activity_type, inclusion: { in: ACTIVITY_TYPES }, allow_nil: true
       validates :file_format, inclusion: { in: %w[fit gpx] }, allow_nil: true
+      validates :file_hash, uniqueness: { message: :duplicate_file }, allow_nil: true
 
       scope :recent, -> { order(started_at: :desc) }
       scope :by_type, ->(type) { where(activity_type: type) }

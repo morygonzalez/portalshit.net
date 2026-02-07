@@ -8,6 +8,7 @@ require_relative 'activity_tracker/statistics_calculator'
 require_relative 'activity_tracker/shortcode_processor'
 require_relative 'activity_tracker/title_generator'
 require 'securerandom'
+require 'digest'
 
 module Lokka
   module ActivityTracker
@@ -82,6 +83,19 @@ module Lokka
         halt 400, { error: 'Unsupported file format' }.to_json unless format
 
         begin
+          # Calculate file hash for duplicate detection
+          file_hash = Digest::SHA256.file(tempfile.path).hexdigest
+
+          # Check for duplicate file
+          existing = Activity.find_by(file_hash: file_hash)
+          if existing
+            halt 409, {
+              error: I18n.t('activity_tracker.duplicate_file', default: 'This file has already been uploaded'),
+              existing_activity_id: existing.id,
+              existing_activity_title: existing.title
+            }.to_json
+          end
+
           parser = create_parser(format, tempfile.path)
           parser.parse
 
@@ -109,7 +123,8 @@ module Lokka
             device_manufacturer: summary[:device_manufacturer],
             device_product_id: summary[:device_product_id],
             original_filename: filename,
-            file_format: format
+            file_format: format,
+            file_hash: file_hash
           )
 
           # Handle file upload to S3 if configured

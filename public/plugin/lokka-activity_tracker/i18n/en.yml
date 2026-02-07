@@ -8,7 +8,10 @@ en:
               blank: can't be blank
             user:
               blank: must be specified
+            file_hash:
+              duplicate_file: This file has already been uploaded
   activity_tracker:
+    duplicate_file: This file has already been uploaded
     title: Activities
     no_activities: No activities yet.
     monthly_summary: Monthly Summary

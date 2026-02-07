@@ -8,7 +8,10 @@ ja:
               blank: を入力してください
             user:
               blank: を指定してください
+            file_hash:
+              duplicate_file: このファイルは既にアップロードされています
   activity_tracker:
+    duplicate_file: このファイルは既にアップロードされています
     title: アクティビティ
     no_activities: アクティビティがありません。
     monthly_summary: 月間サマリー
