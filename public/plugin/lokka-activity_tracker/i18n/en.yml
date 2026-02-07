@@ -42,6 +42,38 @@ en:
     no_entry: "-- No Entry --"
     actions: Actions
     activity_logs: Activity Logs
+    js:
+      loading_activity: Loading activity data...
+      loading: Loading...
+      error_prefix: "Error: "
+      activity_not_found: Activity not found
+      route_title: Route
+      performance_data_title: Performance Data
+      splits_title: Splits (per km)
+      chart_empty: No data available
+      chart_time_label: Time
+      metric_show_label: "Show:"
+      metric_heart_rate: Heart Rate
+      metric_pace: Pace
+      metric_altitude: Altitude
+      metric_cadence: Cadence
+      metric_power: Power
+      metric_distance: Distance
+      metric_duration: Duration
+      metric_avg_hr: Avg HR
+      metric_max_hr: Max HR
+      metric_elevation: Elevation
+      splits_empty: No split data available
+      splits_pace_label: Pace
+      splits_avg: Avg
+      splits_fastest: Fastest
+      splits_slowest: Slowest
+      monthly_loading: Loading...
+      monthly_empty: No data available
+      monthly_distance: Distance
+      monthly_elevation: Elevation Gain
+      embed_view_full: View full activity →
+      embed_load_failed: Failed to load activity data
     admin:
       title: Manage Activities
       new: Upload Activity

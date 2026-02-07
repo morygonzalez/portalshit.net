@@ -3,7 +3,13 @@
 
   .monthly-stats
     %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
-    #monthly-stats-chart
+    #monthly-stats-chart{data: {i18n: {
+      monthly_loading: t('activity_tracker.js.monthly_loading', default: 'Loading...'),
+      monthly_empty: t('activity_tracker.js.monthly_empty', default: 'No data available'),
+      monthly_distance: t('activity_tracker.js.monthly_distance', default: 'Distance'),
+      monthly_elevation: t('activity_tracker.js.monthly_elevation', default: 'Elevation Gain'),
+      error_prefix: t('activity_tracker.js.error_prefix', default: 'Error: ')
+    }.to_json }}
 
   - if @activities.any?
     %h3= t('activity_tracker.activity_logs', default: 'Activity Logs')

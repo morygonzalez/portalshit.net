@@ -10,6 +10,7 @@ import {
   ReferenceLine,
   Cell
 } from 'recharts'
+import { t } from '../i18n'
 
 // Format pace seconds to mm:ss string
 const formatPace = (paceSeconds) => {
@@ -43,9 +44,9 @@ const mixWithWhite = (hex, ratio) => {
   return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`
 }
 
-export default function SplitsChart({ splits, height = 300 }) {
+export default function SplitsChart({ splits, height = 300, i18n }) {
   if (!splits || splits.length === 0) {
-    return <div className="splits-chart-empty">No split data available</div>
+    return <div className="splits-chart-empty">{t(i18n, 'splits_empty', 'No split data available')}</div>
   }
 
   // Calculate average pace
@@ -106,7 +107,7 @@ export default function SplitsChart({ splits, height = 300 }) {
           color: '#000'
         }}>
           <p style={{ margin: 0, fontWeight: 'bold', color: '#000' }}>{km}</p>
-          <p style={{ margin: 0, color: '#000' }}>Pace: {paceFormatted}</p>
+          <p style={{ margin: 0, color: '#000' }}>{t(i18n, 'splits_pace_label', 'Pace')}: {paceFormatted}</p>
         </div>
       )
     }
@@ -137,14 +138,14 @@ export default function SplitsChart({ splits, height = 300 }) {
             y={paceToValue(avgPace)}
             stroke="#666"
             strokeDasharray="5 5"
-            label={{ value: `Avg: ${formatPace(avgPace)}`, position: 'right', offset: 10, fontSize: 11 }}
+            label={{ value: `${t(i18n, 'splits_avg', 'Avg')}: ${formatPace(avgPace)}`, position: 'right', offset: 10, fontSize: 11 }}
           />
           {fastestPace && (
             <ReferenceLine
               y={paceToValue(fastestPace)}
               stroke="#1E88E5"
               strokeDasharray="3 3"
-              label={{ value: `Fastest: ${formatPace(fastestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
+              label={{ value: `${t(i18n, 'splits_fastest', 'Fastest')}: ${formatPace(fastestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
             />
           )}
           {slowestPace && (
@@ -152,7 +153,7 @@ export default function SplitsChart({ splits, height = 300 }) {
               y={paceToValue(slowestPace)}
               stroke="#1E88E5"
               strokeDasharray="3 3"
-              label={{ value: `Slowest: ${formatPace(slowestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
+              label={{ value: `${t(i18n, 'splits_slowest', 'Slowest')}: ${formatPace(slowestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
             />
           )}
           <Bar dataKey="paceValue" radius={[0, 4, 4, 0]}>

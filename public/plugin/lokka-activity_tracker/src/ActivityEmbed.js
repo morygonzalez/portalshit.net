@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ActivityChart from './components/ActivityChart'
 import StatsSummary from './components/StatsSummary'
+import { t } from './i18n'
 
 export default class ActivityEmbed extends Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export default class ActivityEmbed extends Component {
     try {
       const response = await fetch(`/activities/${this.props.activityId}.json`)
       if (!response.ok) {
-        throw new Error('Failed to load activity data')
+        throw new Error(t(this.props.i18n, 'embed_load_failed', 'Failed to load activity data'))
       }
       const activity = await response.json()
       this.setState({ activity, loading: false })
@@ -27,13 +28,14 @@ export default class ActivityEmbed extends Component {
 
   render() {
     const { activity, loading, error } = this.state
+    const { i18n } = this.props
 
     if (loading) {
-      return <div className="activity-embed-loading">Loading...</div>
+      return <div className="activity-embed-loading">{t(i18n, 'loading', 'Loading...')}</div>
     }
 
     if (error) {
-      return <div className="activity-embed-error">Error: {error}</div>
+      return <div className="activity-embed-error">{t(i18n, 'error_prefix', 'Error: ')}{error}</div>
     }
 
     if (!activity) {
@@ -51,7 +53,7 @@ export default class ActivityEmbed extends Component {
           </span>
         </div>
 
-        <StatsSummary activity={activity} compact={true} />
+        <StatsSummary activity={activity} compact={true} i18n={i18n} />
 
         <div className="activity-embed-chart">
           <ActivityChart
@@ -59,11 +61,12 @@ export default class ActivityEmbed extends Component {
             selectedMetrics={['heart_rate']}
             height={150}
             compact={true}
+            i18n={i18n}
           />
         </div>
 
         <a href={`/activities/${activity.id}`} className="activity-embed-link">
-          View full activity →
+          {t(i18n, 'embed_view_full', 'View full activity →')}
         </a>
       </div>
     )

@@ -10,15 +10,18 @@ import {
   ResponsiveContainer,
   ReferenceLine
 } from 'recharts'
+import { t } from '../i18n'
 
 const METRIC_CONFIG = {
   heart_rate: {
+    labelKey: 'metric_heart_rate',
     label: 'Heart Rate',
     unit: 'bpm',
     color: '#A24E4E',
     domain: [60, 200]
   },
   pace: {
+    labelKey: 'metric_pace',
     label: 'Pace',
     unit: 'min/km',
     color: '#3B6D8C',
@@ -26,18 +29,21 @@ const METRIC_CONFIG = {
     reversed: true // Lower pace is better
   },
   altitude_meters: {
+    labelKey: 'metric_altitude',
     label: 'Altitude',
     unit: 'm',
     color: '#4E7A5A',
     domain: ['auto', 'auto']
   },
   cadence: {
+    labelKey: 'metric_cadence',
     label: 'Cadence',
     unit: 'spm',
     color: '#B07A3D',
     domain: [0, 200]
   },
   power: {
+    labelKey: 'metric_power',
     label: 'Power',
     unit: 'W',
     color: '#6D5A9C',
@@ -78,11 +84,11 @@ export default class ActivityChart extends PureComponent {
     return `${minutes}m`
   }
 
-  formatTooltip(value, name) {
-    if (name === 'Pace') {
+  formatTooltip(value, name, i18n) {
+    const config = Object.values(METRIC_CONFIG).find(c => t(i18n, c.labelKey, c.label) === name)
+    if (config && config.labelKey === 'metric_pace') {
       return [formatPace(value), name]
     }
-    const config = Object.values(METRIC_CONFIG).find(c => c.label === name)
     if (config) {
       return [`${value} ${config.unit}`, name]
     }
@@ -133,11 +139,11 @@ export default class ActivityChart extends PureComponent {
   }
 
   render() {
-    const { selectedMetrics, height = 400, compact = false } = this.props
+    const { selectedMetrics, height = 400, compact = false, i18n } = this.props
     const data = this.prepareData()
 
     if (data.length === 0) {
-      return <div className="activity-chart-empty">No data available</div>
+      return <div className="activity-chart-empty">{t(i18n, 'chart_empty', 'No data available')}</div>
     }
 
     return (
@@ -179,8 +185,8 @@ export default class ActivityChart extends PureComponent {
             )
           })}
           <Tooltip
-            formatter={this.formatTooltip}
-            labelFormatter={(label) => `Time: ${this.formatXAxis(label)}`}
+            formatter={(value, name) => this.formatTooltip(value, name, i18n)}
+            labelFormatter={(label) => `${t(i18n, 'chart_time_label', 'Time')}: ${this.formatXAxis(label)}`}
             labelStyle={{ color: '#000', fontWeight: 'bold' }}
             itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
           />
@@ -195,7 +201,7 @@ export default class ActivityChart extends PureComponent {
                 yAxisId={metric}
                 type="monotone"
                 dataKey={metric}
-                name={config.label}
+                name={t(i18n, config.labelKey, config.label)}
                 stroke={config.color}
                 dot={false}
                 strokeWidth={compact ? 1 : 2}

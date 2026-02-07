@@ -1,4 +1,5 @@
 import React from 'react'
+import { t } from '../i18n'
 
 const formatDuration = (seconds) => {
   if (!seconds) return '-'
@@ -25,35 +26,35 @@ const formatPace = (avgSpeed) => {
   return `${minutes}'${seconds.toString().padStart(2, '0')}" /km`
 }
 
-export default function StatsSummary({ activity, compact = false }) {
+export default function StatsSummary({ activity, compact = false, i18n }) {
   const stats = [
     {
-      label: 'Distance',
+      label: t(i18n, 'metric_distance', 'Distance'),
       value: formatDistance(activity.total_distance_meters),
       icon: '📏'
     },
     {
-      label: 'Duration',
+      label: t(i18n, 'metric_duration', 'Duration'),
       value: formatDuration(activity.duration_seconds),
       icon: '⏱️'
     },
     {
-      label: 'Pace',
+      label: t(i18n, 'metric_pace', 'Pace'),
       value: formatPace(activity.avg_speed),
       icon: '🏃'
     },
     {
-      label: 'Avg HR',
+      label: t(i18n, 'metric_avg_hr', 'Avg HR'),
       value: activity.avg_heart_rate ? `${activity.avg_heart_rate} bpm` : '-',
       icon: '❤️'
     },
     {
-      label: 'Max HR',
+      label: t(i18n, 'metric_max_hr', 'Max HR'),
       value: activity.max_heart_rate ? `${activity.max_heart_rate} bpm` : '-',
       icon: '💓'
     },
     {
-      label: 'Elevation',
+      label: t(i18n, 'metric_elevation', 'Elevation'),
       value: activity.total_ascent_meters ? `${Math.round(activity.total_ascent_meters)} m` : '-',
       icon: '⛰️'
     }
@@ -61,7 +62,7 @@ export default function StatsSummary({ activity, compact = false }) {
 
   if (activity.avg_cadence) {
     stats.push({
-      label: 'Cadence',
+      label: t(i18n, 'metric_cadence', 'Cadence'),
       value: `${activity.avg_cadence} spm`,
       icon: '👟'
     })
@@ -69,7 +70,7 @@ export default function StatsSummary({ activity, compact = false }) {
 
   if (activity.avg_power) {
     stats.push({
-      label: 'Power',
+      label: t(i18n, 'metric_power', 'Power'),
       value: `${activity.avg_power} W`,
       icon: '⚡'
     })

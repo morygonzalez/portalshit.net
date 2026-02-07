@@ -3,6 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer
 } from 'recharts'
+import { t } from '../i18n'
 
 export default class MonthlyStatsChart extends PureComponent {
   constructor(props) {
@@ -29,10 +30,11 @@ export default class MonthlyStatsChart extends PureComponent {
   }
 
   formatTooltip(value, name) {
-    if (name === 'Distance') {
+    const { i18n } = this.props
+    if (name === t(i18n, 'monthly_distance', 'Distance')) {
       return [`${Math.floor(value * 10) / 10} km`, name]
     }
-    if (name === 'Elevation Gain') {
+    if (name === t(i18n, 'monthly_elevation', 'Elevation Gain')) {
       return [`${Math.floor(value)} m`, name]
     }
     return [value, name]
@@ -40,17 +42,18 @@ export default class MonthlyStatsChart extends PureComponent {
 
   render() {
     const { data, loading, error } = this.state
+    const { i18n } = this.props
 
     if (loading) {
-      return <div className="monthly-chart-loading">Loading...</div>
+      return <div className="monthly-chart-loading">{t(i18n, 'monthly_loading', 'Loading...')}</div>
     }
 
     if (error) {
-      return <div className="monthly-chart-error">Error: {error}</div>
+      return <div className="monthly-chart-error">{t(i18n, 'error_prefix', 'Error: ')}{error}</div>
     }
 
     if (data.length === 0) {
-      return <div className="monthly-chart-empty">No data available</div>
+      return <div className="monthly-chart-empty">{t(i18n, 'monthly_empty', 'No data available')}</div>
     }
 
     return (
@@ -73,19 +76,19 @@ export default class MonthlyStatsChart extends PureComponent {
             tick={{ fontSize: 12 }}
             label={{ value: 'm', angle: 90, position: 'insideRight', fontSize: 12 }}
           />
-          <Tooltip formatter={this.formatTooltip} />
+          <Tooltip formatter={(value, name) => this.formatTooltip(value, name)} />
           <Legend />
           <Bar
             yAxisId="distance"
             dataKey="total_distance_km"
-            name="Distance"
+            name={t(i18n, 'monthly_distance', 'Distance')}
             fill="#4B6A8A"
             radius={[4, 4, 0, 0]}
           />
           <Bar
             yAxisId="elevation"
             dataKey="total_ascent_meters"
-            name="Elevation Gain"
+            name={t(i18n, 'monthly_elevation', 'Elevation Gain')}
             fill="#5D6B5A"
             radius={[4, 4, 0, 0]}
           />

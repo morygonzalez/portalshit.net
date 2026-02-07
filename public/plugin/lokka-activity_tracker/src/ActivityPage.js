@@ -3,6 +3,7 @@ import ActivityChart from './components/ActivityChart'
 import ActivityMap from './components/ActivityMap'
 import MetricSelector from './components/MetricSelector'
 import SplitsChart from './components/SplitsChart'
+import { t } from './i18n'
 
 export default class ActivityPage extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ export default class ActivityPage extends Component {
     try {
       const response = await fetch(`/activities/${this.props.activityId}.json`)
       if (!response.ok) {
-        throw new Error('Failed to load activity data')
+        throw new Error(t(this.props.i18n, 'embed_load_failed', 'Failed to load activity data'))
       }
       const activity = await response.json()
       this.setState({ activity, loading: false })
@@ -73,17 +74,18 @@ export default class ActivityPage extends Component {
 
   render() {
     const { activity, loading, error, selectedMetrics, hoveredPoint } = this.state
+    const { i18n } = this.props
 
     if (loading) {
-      return <div className="activity-loading">Loading activity data...</div>
+      return <div className="activity-loading">{t(i18n, 'loading_activity', 'Loading activity data...')}</div>
     }
 
     if (error) {
-      return <div className="activity-error">Error: {error}</div>
+      return <div className="activity-error">{t(i18n, 'error_prefix', 'Error: ')}{error}</div>
     }
 
     if (!activity) {
-      return <div className="activity-error">Activity not found</div>
+      return <div className="activity-error">{t(i18n, 'activity_not_found', 'Activity not found')}</div>
     }
 
     // Use map_points for display (with home location filtered out), fall back to data_points
@@ -96,29 +98,31 @@ export default class ActivityPage extends Component {
       <div className="activity-page">
         {hasGpsData && (
           <div className="activity-map-container">
-            <h3>Route</h3>
+            <h3>{t(i18n, 'route_title', 'Route')}</h3>
             <ActivityMap dataPoints={mapPoints} highlightPoint={hoveredPoint} />
           </div>
         )}
 
         <div className="activity-chart-container">
-          <h3>Performance Data</h3>
+          <h3>{t(i18n, 'performance_data_title', 'Performance Data')}</h3>
           <MetricSelector
             selectedMetrics={selectedMetrics}
             onChange={this.handleMetricChange}
             dataPoints={activity.data_points}
+            i18n={i18n}
           />
           <ActivityChart
             dataPoints={activity.data_points}
             selectedMetrics={selectedMetrics}
             onHoverChange={this.handleHoverChange}
+            i18n={i18n}
           />
         </div>
 
         {activity.splits && activity.splits.length > 0 && (
           <div className="activity-splits-container">
-            <h3>Splits (per km)</h3>
-            <SplitsChart splits={activity.splits} />
+            <h3>{t(i18n, 'splits_title', 'Splits (per km)')}</h3>
+            <SplitsChart splits={activity.splits} i18n={i18n} />
           </div>
         )}
       </div>
