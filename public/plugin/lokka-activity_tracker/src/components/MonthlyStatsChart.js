@@ -79,14 +79,14 @@ export default class MonthlyStatsChart extends PureComponent {
             yAxisId="distance"
             dataKey="total_distance_km"
             name="Distance"
-            fill="#1E88E5"
+            fill="#4B6A8A"
             radius={[4, 4, 0, 0]}
           />
           <Bar
             yAxisId="elevation"
             dataKey="total_ascent_meters"
             name="Elevation Gain"
-            fill="#43A047"
+            fill="#5D6B5A"
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

@@ -15,32 +15,32 @@ const METRIC_CONFIG = {
   heart_rate: {
     label: 'Heart Rate',
     unit: 'bpm',
-    color: '#E53935',
+    color: '#A24E4E',
     domain: [60, 200]
   },
   pace: {
     label: 'Pace',
     unit: 'min/km',
-    color: '#00ACC1',
+    color: '#3B6D8C',
     domain: ['auto', 'auto'],
     reversed: true // Lower pace is better
   },
   altitude_meters: {
     label: 'Altitude',
     unit: 'm',
-    color: '#43A047',
+    color: '#4E7A5A',
     domain: ['auto', 'auto']
   },
   cadence: {
     label: 'Cadence',
     unit: 'spm',
-    color: '#FF9800',
+    color: '#B07A3D',
     domain: [0, 200]
   },
   power: {
     label: 'Power',
     unit: 'W',
-    color: '#9C27B0',
+    color: '#6D5A9C',
     domain: [0, 'auto']
   }
 }
