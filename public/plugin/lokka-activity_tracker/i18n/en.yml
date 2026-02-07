@@ -32,6 +32,7 @@ en:
     entry: Link to Entry
     no_entry: "-- No Entry --"
     actions: Actions
+    activity_logs: Activity Logs
     admin:
       title: Manage Activities
       new: Upload Activity

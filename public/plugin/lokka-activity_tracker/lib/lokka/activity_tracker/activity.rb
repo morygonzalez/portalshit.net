@@ -34,6 +34,7 @@ module Lokka
 
           total_distance = activities.sum(:total_distance_meters) || 0
           total_duration = activities.sum(:duration_seconds) || 0
+          total_ascent = activities.sum(:total_ascent_meters) || 0
           count = activities.count
 
           stats << {
@@ -41,6 +42,7 @@ module Lokka
             month: month,
             label: date.strftime('%Y-%m'),
             total_distance_km: (total_distance / 1000.0).round(2),
+            total_ascent_meters: total_ascent,
             total_duration_seconds: total_duration,
             formatted_duration: format_duration_static(total_duration),
             count: count

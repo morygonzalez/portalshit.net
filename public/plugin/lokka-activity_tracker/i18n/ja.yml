@@ -32,6 +32,7 @@ ja:
     entry: 記事にリンク
     no_entry: "-- 記事なし --"
     actions: 操作
+    activity_logs: ログ
     admin:
       title: アクティビティ管理
       new: アクティビティをアップロード

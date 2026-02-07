@@ -1,11 +1,12 @@
 .activities-list
-  %h1= t('activity_tracker.title', default: 'Activities')
+  %h2= t('activity_tracker.title', default: 'Activities')
 
   .monthly-stats
-    %h2= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
+    %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
     #monthly-stats-chart
 
   - if @activities.any?
+    %h3= t('activity_tracker.activity_logs', default: 'Activity Logs')
     %ul.activities
       - @activities.each do |activity|
         %li.activity-item

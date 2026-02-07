@@ -29,8 +29,11 @@ export default class MonthlyStatsChart extends PureComponent {
   }
 
   formatTooltip(value, name) {
-    if (name === 'Distance (km)') {
-      return [`${value} km`, name]
+    if (name === 'Distance') {
+      return [`${Math.floor(value * 10) / 10} km`, name]
+    }
+    if (name === 'Elevation Gain') {
+      return [`${Math.floor(value)} m`, name]
     }
     return [value, name]
   }
@@ -65,24 +68,24 @@ export default class MonthlyStatsChart extends PureComponent {
             label={{ value: 'km', angle: -90, position: 'insideLeft', fontSize: 12 }}
           />
           <YAxis
-            yAxisId="count"
+            yAxisId="elevation"
             orientation="right"
             tick={{ fontSize: 12 }}
-            label={{ value: 'count', angle: 90, position: 'insideRight', fontSize: 12 }}
+            label={{ value: 'm', angle: 90, position: 'insideRight', fontSize: 12 }}
           />
           <Tooltip formatter={this.formatTooltip} />
           <Legend />
           <Bar
             yAxisId="distance"
             dataKey="total_distance_km"
-            name="Distance (km)"
+            name="Distance"
             fill="#1E88E5"
             radius={[4, 4, 0, 0]}
           />
           <Bar
-            yAxisId="count"
-            dataKey="count"
-            name="Activities"
+            yAxisId="elevation"
+            dataKey="total_ascent_meters"
+            name="Elevation Gain"
             fill="#43A047"
             radius={[4, 4, 0, 0]}
           />
