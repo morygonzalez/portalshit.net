@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'yaml'
+
 module Lokka
   module ActivityTracker
     class Activity < ActiveRecord::Base
@@ -131,6 +133,68 @@ module Lokka
         return nil unless max_speed && max_speed > 0
 
         format_pace_from_speed(max_speed)
+      end
+
+      def device_auto_name
+        mapped = self.class.device_name_from_map(device_manufacturer, device_product_id)
+        return mapped if mapped
+        return device_name if device_name && !device_name.strip.empty?
+
+        parts = []
+        parts << humanize_device(device_manufacturer) if device_manufacturer
+        parts << device_product_id.to_s if device_product_id
+        return nil if parts.empty?
+
+        parts.join(' ')
+      end
+
+      def device_display_label
+        return device_display_name if device_display_name && !device_display_name.strip.empty?
+
+        device_auto_name
+      end
+
+      def self.device_name_from_map(manufacturer, product_id)
+        return nil if manufacturer.nil? || product_id.nil?
+
+        map = device_name_map
+        return nil if map.empty?
+
+        key = manufacturer.to_s.strip.downcase
+        return nil if key.empty?
+
+        manufacturer_map = map[key]
+        return nil unless manufacturer_map.is_a?(Hash)
+
+        manufacturer_map[product_id.to_s]
+      end
+
+      def self.device_name_map
+        return @device_name_map if defined?(@device_name_map)
+
+        map_path = File.join(Lokka.root, 'config', 'fit_device_map.yml')
+        @device_name_map = if File.exist?(map_path)
+                             raw = YAML.safe_load(File.read(map_path)) || {}
+                             normalize_device_map(raw)
+                           else
+                             {}
+                           end
+      end
+
+      def self.normalize_device_map(raw)
+        raw.each_with_object({}) do |(manufacturer, products), acc|
+          next unless manufacturer
+          next unless products.is_a?(Hash)
+
+          acc[manufacturer.to_s.strip.downcase] = products.transform_keys(&:to_s)
+        end
+      end
+
+      def humanize_device(value)
+        str = value.to_s.strip
+        return nil if str.empty?
+
+        str.tr('_', ' ').split.map { |part| part[0] ? part[0].upcase + part[1..].to_s : part }.join(' ')
       end
 
       private

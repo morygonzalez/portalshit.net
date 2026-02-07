@@ -43,7 +43,10 @@ module Lokka
           max_heart_rate: calculate_max_heart_rate,
           avg_speed: calculate_avg_speed,
           avg_cadence: nil,
-          avg_power: nil
+          avg_power: nil,
+          device_name: nil,
+          device_manufacturer: nil,
+          device_product_id: nil
         }
       end
 

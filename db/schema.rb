@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_06_000001) do
+ActiveRecord::Schema.define(version: 2026_02_07_000001) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "entry_id"
@@ -31,6 +31,10 @@ ActiveRecord::Schema.define(version: 2026_02_06_000001) do
     t.string "file_format"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "device_name"
+    t.string "device_manufacturer"
+    t.integer "device_product_id"
+    t.string "device_display_name"
     t.index ["activity_type"], name: "index_activities_on_activity_type"
     t.index ["entry_id"], name: "fk_rails_cf7c0a747c"
     t.index ["started_at"], name: "index_activities_on_started_at"

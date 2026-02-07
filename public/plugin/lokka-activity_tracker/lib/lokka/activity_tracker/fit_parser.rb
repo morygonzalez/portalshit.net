@@ -52,7 +52,7 @@ module Lokka
           avg_speed: safe_get(session, :enhanced_avg_speed) || safe_get(session, :avg_speed),
           avg_cadence: extract_avg_cadence(session),
           avg_power: safe_get(session, :avg_power)
-        }
+        }.merge(extract_device_metadata)
       end
 
       def data_points
@@ -100,6 +100,44 @@ module Lokka
         record.send(field)
       rescue StandardError
         nil
+      end
+
+      def extract_device_metadata
+        device_info = find_record_by_type(:device_info) || find_record_by_type(:file_id)
+        return {} unless device_info
+
+        name = safe_get(device_info, :device_name) ||
+               safe_get(device_info, :product_name) ||
+               safe_get(device_info, :name)
+        manufacturer = safe_get(device_info, :manufacturer)
+        product = safe_get(device_info, :product) || safe_get(device_info, :garmin_product)
+
+        device_name = name ? humanize_device(name) : nil
+
+        {
+          device_name: device_name,
+          device_manufacturer: normalize_device_value(manufacturer),
+          device_product_id: normalize_product_id(product)
+        }
+      end
+
+      def humanize_device(value)
+        str = value.to_s.strip
+        return '' if str.empty?
+
+        str.tr('_', ' ').split.map { |part| part[0] ? part[0].upcase + part[1..].to_s : part }.join(' ')
+      end
+
+      def normalize_device_value(value)
+        str = value.to_s.strip
+        str.empty? ? nil : humanize_device(str)
+      end
+
+      def normalize_product_id(value)
+        str = value.to_s.strip
+        return nil unless str.match?(/\A\d+\z/)
+
+        str.to_i
       end
 
       def detect_activity_type(session)

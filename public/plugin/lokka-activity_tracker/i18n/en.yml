@@ -16,6 +16,9 @@ en:
     activities_count: Activities
     started_at: Date
     type: Type
+    device: Device
+    device_display_name: Device (override)
+    device_display_hint: Leave blank to use the detected device name.
     distance: Distance
     duration: Duration
     avg_pace: Avg Pace

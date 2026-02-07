@@ -15,6 +15,12 @@
           = t('activity_tracker.type', default: 'Type')
         %dd= @activity.activity_type.capitalize
 
+      - if @activity.device_display_label
+        %dt
+          %span.stat-icon ⌚
+          = t('activity_tracker.device', default: 'Device')
+        %dd= @activity.device_display_label
+
       - if @activity.formatted_distance
         %dt
           %span.stat-icon 📏

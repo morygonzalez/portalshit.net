@@ -16,6 +16,9 @@ ja:
     activities_count: 回数
     started_at: 日時
     type: 種類
+    device: デバイス
+    device_display_name: デバイス（上書き）
+    device_display_hint: 空欄の場合は自動取得したデバイス名を表示します。
     distance: 距離
     duration: 時間
     avg_pace: 平均ペース
