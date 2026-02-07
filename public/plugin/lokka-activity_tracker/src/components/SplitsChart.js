@@ -117,42 +117,41 @@ export default function SplitsChart({ splits, height = 300 }) {
       <ResponsiveContainer width="100%" height={height}>
         <BarChart
           data={data}
-          layout="vertical"
-          margin={{ top: 28, right: 50, left: 50, bottom: 10 }}
+          layout="horizontal"
+          margin={{ top: 28, right: 50, left: 20, bottom: 30 }}
         >
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
           <XAxis
+            type="category"
+            dataKey="km"
+            tick={{ fontSize: 12 }}
+          />
+          <YAxis
             type="number"
             domain={[0, maxValue]}
             tickFormatter={formatPaceFromValue}
           />
-          <YAxis
-            type="category"
-            dataKey="km"
-            tick={{ fontSize: 12 }}
-            width={50}
-          />
           <Tooltip content={<CustomTooltip />} />
           <ReferenceLine
-            x={paceToValue(avgPace)}
+            y={paceToValue(avgPace)}
             stroke="#666"
             strokeDasharray="5 5"
-            label={{ value: `Avg: ${formatPace(avgPace)}`, position: 'top', offset: 10, fontSize: 11 }}
+            label={{ value: `Avg: ${formatPace(avgPace)}`, position: 'right', offset: 10, fontSize: 11 }}
           />
           {fastestPace && (
             <ReferenceLine
-              x={paceToValue(fastestPace)}
+              y={paceToValue(fastestPace)}
               stroke="#1E88E5"
               strokeDasharray="3 3"
-              label={{ value: `Fastest: ${formatPace(fastestPace)}`, position: 'top', offset: 10, fontSize: 11 }}
+              label={{ value: `Fastest: ${formatPace(fastestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
             />
           )}
           {slowestPace && (
             <ReferenceLine
-              x={paceToValue(slowestPace)}
+              y={paceToValue(slowestPace)}
               stroke="#1E88E5"
               strokeDasharray="3 3"
-              label={{ value: `Slowest: ${formatPace(slowestPace)}`, position: 'top', offset: 10, fontSize: 11 }}
+              label={{ value: `Slowest: ${formatPace(slowestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
             />
           )}
           <Bar dataKey="paceValue" radius={[0, 4, 4, 0]}>
