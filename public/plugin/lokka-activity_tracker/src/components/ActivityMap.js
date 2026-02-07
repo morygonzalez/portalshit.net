@@ -1,12 +1,20 @@
-import React, { Component } from 'react'
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet'
+import React, { Component, useEffect } from 'react'
+import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet'
+
+// Component to fit map bounds to the route
+function FitBounds({ bounds }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (bounds) {
+      map.fitBounds(bounds, { padding: [50, 50] })
+    }
+  }, [map, bounds])
+
+  return null
+}
 
 export default class ActivityMap extends Component {
-  constructor(props) {
-    super(props)
-    this.mapRef = React.createRef()
-  }
-
   getCoordinates() {
     const { dataPoints } = this.props
     return dataPoints
@@ -37,19 +45,6 @@ export default class ActivityMap extends Component {
     ]
   }
 
-  componentDidMount() {
-    // Fit bounds after map is rendered
-    setTimeout(() => {
-      const map = this.mapRef.current
-      if (map) {
-        const bounds = this.getBounds()
-        if (bounds) {
-          map.fitBounds(bounds, { padding: [20, 20] })
-        }
-      }
-    }, 100)
-  }
-
   render() {
     const { height = 400 } = this.props
     const coordinates = this.getCoordinates()
@@ -59,6 +54,7 @@ export default class ActivityMap extends Component {
     }
 
     const center = this.getCenter()
+    const bounds = this.getBounds()
     const startPoint = coordinates[0]
     const endPoint = coordinates[coordinates.length - 1]
 
@@ -68,12 +64,12 @@ export default class ActivityMap extends Component {
           center={center}
           zoom={13}
           style={{ height: '100%', width: '100%' }}
-          ref={this.mapRef}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <FitBounds bounds={bounds} />
           <Polyline
             positions={coordinates}
             color="#E53935"
