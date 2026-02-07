@@ -81,6 +81,24 @@ module Lokka
         'treadmill' => 'running'
       }.freeze
 
+      SPORT_ENUM_MAP = {
+        1 => 'running',
+        2 => 'cycling',
+        5 => 'swimming',
+        11 => 'walking',
+        17 => 'hiking',
+        21 => 'cycling' # e-biking
+      }.freeze
+
+      SUB_SPORT_ENUM_MAP = {
+        1 => 'treadmill',
+        3 => 'trail_running',
+        5 => 'indoor_cycling',
+        6 => 'indoor_cycling',
+        17 => 'swimming',
+        18 => 'open_water'
+      }.freeze
+
       def initialize(file_path)
         @file_path = file_path
         @handler = nil
@@ -162,8 +180,8 @@ module Lokka
       end
 
       def detect_activity_type(session)
-        sport = safe_get(session, 'sport')&.to_s&.downcase
-        sub_sport = safe_get(session, 'sub_sport')&.to_s&.downcase
+        sport = normalize_sport_value(safe_get(session, 'sport'))
+        sub_sport = normalize_sub_sport_value(safe_get(session, 'sub_sport'))
 
         ACTIVITY_TYPE_MAP[sub_sport] || ACTIVITY_TYPE_MAP[sport] || 'other'
       end
@@ -237,6 +255,26 @@ module Lokka
         return nil unless str.match?(/\A\d+\z/)
 
         str.to_i
+      end
+
+      def normalize_sport_value(value)
+        return nil if value.nil?
+
+        if value.is_a?(Integer)
+          SPORT_ENUM_MAP[value] || value.to_s
+        else
+          value.to_s.strip.downcase
+        end
+      end
+
+      def normalize_sub_sport_value(value)
+        return nil if value.nil?
+
+        if value.is_a?(Integer)
+          SUB_SPORT_ENUM_MAP[value] || value.to_s
+        else
+          value.to_s.strip.downcase
+        end
       end
     end
   end
