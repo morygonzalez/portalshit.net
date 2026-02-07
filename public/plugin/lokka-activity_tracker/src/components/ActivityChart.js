@@ -181,7 +181,14 @@ export default class ActivityChart extends PureComponent {
           <Tooltip
             formatter={this.formatTooltip}
             labelFormatter={(label) => `Time: ${this.formatXAxis(label)}`}
-            contentStyle={{ fontSize: compact ? 11 : 13 }}
+            contentStyle={{
+              fontSize: compact ? 11 : 13,
+              backgroundColor: '#fff',
+              color: '#333',
+              border: '1px solid #ccc'
+            }}
+            labelStyle={{ color: '#333' }}
+            itemStyle={{ color: '#333' }}
           />
           {!compact && <Legend />}
           {selectedMetrics.map(metric => {
