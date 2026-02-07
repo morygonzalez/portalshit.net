@@ -48,6 +48,9 @@ module Lokka
       end
 
       def to_json_for_chart
+        points = data_points.order(:elapsed_seconds).map(&:to_json_for_chart)
+        calculator = StatisticsCalculator.new(points)
+
         {
           id: id,
           title: title,
@@ -61,7 +64,8 @@ module Lokka
           avg_speed: avg_speed&.to_f,
           avg_cadence: avg_cadence,
           avg_power: avg_power,
-          data_points: data_points.order(:elapsed_seconds).map(&:to_json_for_chart)
+          data_points: points,
+          splits: calculator.pace_per_km
         }
       end
     end

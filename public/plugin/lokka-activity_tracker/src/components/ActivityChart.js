@@ -24,6 +24,13 @@ const METRIC_CONFIG = {
     color: '#1E88E5',
     domain: [0, 'auto']
   },
+  pace: {
+    label: 'Pace',
+    unit: 'min/km',
+    color: '#00ACC1',
+    domain: ['auto', 'auto'],
+    reversed: true // Lower pace is better
+  },
   altitude_meters: {
     label: 'Altitude',
     unit: 'm',
@@ -44,6 +51,20 @@ const METRIC_CONFIG = {
   }
 }
 
+// Convert speed (m/s) to pace (min/km)
+const speedToPace = (speed) => {
+  if (!speed || speed <= 0) return null
+  return (1000 / speed) / 60 // minutes per km
+}
+
+// Format pace as mm:ss
+const formatPace = (paceMinutes) => {
+  if (!paceMinutes || paceMinutes <= 0) return '-'
+  const minutes = Math.floor(paceMinutes)
+  const seconds = Math.round((paceMinutes - minutes) * 60)
+  return `${minutes}'${seconds.toString().padStart(2, '0')}"`
+}
+
 export default class ActivityChart extends PureComponent {
   constructor(props) {
     super(props)
@@ -62,6 +83,9 @@ export default class ActivityChart extends PureComponent {
   }
 
   formatTooltip(value, name) {
+    if (name === 'Pace') {
+      return [formatPace(value), name]
+    }
     const config = Object.values(METRIC_CONFIG).find(c => c.label === name)
     if (config) {
       return [`${value} ${config.unit}`, name]
@@ -77,7 +101,11 @@ export default class ActivityChart extends PureComponent {
       .map(dp => {
         const point = { elapsed_seconds: dp.elapsed_seconds }
         selectedMetrics.forEach(metric => {
-          point[metric] = dp[metric]
+          if (metric === 'pace') {
+            point[metric] = speedToPace(dp.speed)
+          } else {
+            point[metric] = dp[metric]
+          }
         })
         return point
       })

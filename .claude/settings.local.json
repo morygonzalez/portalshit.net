@@ -4,7 +4,9 @@
       "Bash(grep:*)",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(gem search:*)",
+      "WebFetch(domain:rubygems.org)"
     ]
   }
 }

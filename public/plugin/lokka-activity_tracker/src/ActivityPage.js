@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ActivityChart from './components/ActivityChart'
 import ActivityMap from './components/ActivityMap'
 import MetricSelector from './components/MetricSelector'
+import SplitsChart from './components/SplitsChart'
 
 export default class ActivityPage extends Component {
   constructor(props) {
@@ -72,6 +73,13 @@ export default class ActivityPage extends Component {
             selectedMetrics={selectedMetrics}
           />
         </div>
+
+        {activity.splits && activity.splits.length > 0 && (
+          <div className="activity-splits-container">
+            <h3>Splits (per km)</h3>
+            <SplitsChart splits={activity.splits} />
+          </div>
+        )}
       </div>
     )
   }
