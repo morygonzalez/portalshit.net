@@ -53,6 +53,7 @@ ja:
       chart_empty: データがありません
       chart_time_label: 時間
       metric_show_label: "表示:"
+      metric_type: 種類
       metric_heart_rate: 心拍数
       metric_pace: ペース
       metric_altitude: 標高

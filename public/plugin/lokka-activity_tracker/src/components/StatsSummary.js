@@ -26,8 +26,17 @@ const formatPace = (avgSpeed) => {
   return `${minutes}'${seconds.toString().padStart(2, '0')}" /km`
 }
 
+const capitalizeFirst = (str) => {
+  if (!str) return null
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 export default function StatsSummary({ activity, compact = false, i18n }) {
   const stats = [
+    {
+      label: t(i18n, 'metric_type', 'Type'),
+      value: capitalizeFirst(activity.activity_type)
+    },
     {
       label: t(i18n, 'metric_distance', 'Distance'),
       value: formatDistance(activity.total_distance_meters)

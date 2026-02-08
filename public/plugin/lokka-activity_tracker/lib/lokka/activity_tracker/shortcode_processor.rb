@@ -45,6 +45,7 @@ module Lokka
           error_prefix: I18n.t('activity_tracker.js.error_prefix', default: 'Error: '),
           embed_view_full: I18n.t('activity_tracker.js.embed_view_full', default: 'View full activity →'),
           embed_load_failed: I18n.t('activity_tracker.js.embed_load_failed', default: 'Failed to load activity data'),
+          metric_type: I18n.t('activity_tracker.js.metric_type', default: 'Type'),
           metric_distance: I18n.t('activity_tracker.js.metric_distance', default: 'Distance'),
           metric_duration: I18n.t('activity_tracker.js.metric_duration', default: 'Duration'),
           metric_pace: I18n.t('activity_tracker.js.metric_pace', default: 'Pace'),

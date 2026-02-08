@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ActivityChart from './components/ActivityChart'
+import ActivityMap from './components/ActivityMap'
 import StatsSummary from './components/StatsSummary'
 import { t } from './i18n'
 
@@ -42,28 +42,27 @@ export default class ActivityEmbed extends Component {
       return null
     }
 
+    // Use map_points for display (with home location filtered out), fall back to data_points
+    const mapPoints = activity.map_points || activity.data_points
+    const hasGpsData = mapPoints.some(
+      (dp) => dp.latitude !== null && dp.longitude !== null
+    )
+
     return (
       <div className="activity-embed-content">
         <div className="activity-embed-header">
           <a href={`/activities/${activity.id}`} className="activity-embed-title">
             {activity.title}
           </a>
-          <span className="activity-embed-type">
-            {activity.activity_type}
-          </span>
         </div>
 
         <StatsSummary activity={activity} compact={true} i18n={i18n} />
 
-        <div className="activity-embed-chart">
-          <ActivityChart
-            dataPoints={activity.data_points}
-            selectedMetrics={['heart_rate']}
-            height={150}
-            compact={true}
-            i18n={i18n}
-          />
-        </div>
+        {hasGpsData && (
+          <div className="activity-embed-map">
+            <ActivityMap dataPoints={mapPoints} height={200} />
+          </div>
+        )}
 
         <a href={`/activities/${activity.id}`} className="activity-embed-link">
           {t(i18n, 'embed_view_full', 'View full activity →')}

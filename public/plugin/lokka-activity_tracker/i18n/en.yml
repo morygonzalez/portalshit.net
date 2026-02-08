@@ -53,6 +53,7 @@ en:
       chart_empty: No data available
       chart_time_label: Time
       metric_show_label: "Show:"
+      metric_type: Type
       metric_heart_rate: Heart Rate
       metric_pace: Pace
       metric_altitude: Altitude

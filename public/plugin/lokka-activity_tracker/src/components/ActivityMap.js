@@ -7,7 +7,7 @@ function FitBounds({ bounds }) {
 
   useEffect(() => {
     if (bounds) {
-      map.fitBounds(bounds, { padding: [50, 50] })
+      map.fitBounds(bounds, { padding: [20, 20] })
     }
   }, [map, bounds])
 
