@@ -19,6 +19,21 @@ export default class ActivityPage extends Component {
     this.handleHoverChange = this.handleHoverChange.bind(this)
   }
 
+  getDefaultMetrics(activityType) {
+    switch (activityType) {
+      case 'hiking':
+        return ['altitude_meters', 'heart_rate']
+      case 'trail_running':
+        return ['altitude_meters', 'pace']
+      case 'running':
+      case 'cycling':
+      case 'swimming':
+      case 'walking':
+      default:
+        return ['pace', 'heart_rate']
+    }
+  }
+
   async componentDidMount() {
     try {
       const response = await fetch(`/activities/${this.props.activityHash}.json`)
@@ -26,7 +41,8 @@ export default class ActivityPage extends Component {
         throw new Error(t(this.props.i18n, 'embed_load_failed', 'Failed to load activity data'))
       }
       const activity = await response.json()
-      this.setState({ activity, loading: false })
+      const selectedMetrics = this.getDefaultMetrics(activity.activity_type)
+      this.setState({ activity, selectedMetrics, loading: false })
     } catch (error) {
       this.setState({ error: error.message, loading: false })
     }

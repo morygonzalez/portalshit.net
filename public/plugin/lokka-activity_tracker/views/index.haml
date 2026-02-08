@@ -37,6 +37,7 @@
             %th= t('activity_tracker.started_at', default: 'Date')
             %th= t('activity_tracker.distance', default: 'Distance')
             %th= t('activity_tracker.duration', default: 'Duration')
+            %th= t('activity_tracker.avg_pace', default: 'Avg Pace')
             %th= t('activity_tracker.elevation', default: 'Elevation Gain')
             %th= t('activity_tracker.type', default: 'Type')
         %tbody
@@ -47,6 +48,7 @@
               %td= activity.started_at ? activity.started_at.strftime('%Y-%m-%d %H:%M') : '-'
               %td= activity.formatted_distance || '-'
               %td= activity.formatted_duration || '-'
+              %td= activity.formatted_pace || '-'
               %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
               %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
         %tfoot
@@ -54,6 +56,7 @@
             %td{colspan: 2}= "#{t('activity_tracker.total', default: 'Total')} (#{t('activity_tracker.activities_count', default: 'Activities')}: #{summary[:count]})"
             %td= summary[:formatted_total_distance]
             %td= summary[:formatted_total_duration]
+            %td= '-'
             %td= summary[:formatted_total_ascent]
             %td= '-'
   - else

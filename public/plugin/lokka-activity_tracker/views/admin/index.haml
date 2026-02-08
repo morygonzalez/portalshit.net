@@ -11,6 +11,7 @@
       %th= t('activity_tracker.started_at', default: 'Date')
       %th= t('activity_tracker.distance', default: 'Distance')
       %th= t('activity_tracker.duration', default: 'Duration')
+      %th= t('activity_tracker.avg_pace', default: 'Avg Pace')
       %th= t('activity_tracker.elevation', default: 'Elevation Gain')
       %th{ colspan: 2 }
     - @activities.each_with_index do |activity, i|
@@ -20,6 +21,7 @@
         %td= activity.started_at&.strftime('%Y-%m-%d %H:%M')
         %td= activity.formatted_distance
         %td= activity.formatted_duration
+        %td= activity.formatted_pace
         %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : nil
         %td= link_to t('edit'), url("/admin/activities/#{activity.id}/edit"), class: :button
         %td= link_to t('delete'), url("/admin/activities/#{activity.id}"), class: :button, confirm: t('are_you_sure'), method: :delete
