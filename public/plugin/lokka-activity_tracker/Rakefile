@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-
-namespace :activity_tracker do
-  desc 'Build JavaScript assets'
-  task :build do
-    sh 'npm run build'
+namespace :'plugin:activity_tracker' do
+  desc 'Install dependencies'
+  task :install do
+    command = <<~SHELL
+      cd #{__dir__} && $HOME/.nodenv/shims/npm install
+    SHELL
+    fail unless system(command)
   end
 
-  desc 'Build JavaScript assets for production'
-  task :production_build do
-    sh 'npm run production-build'
+  desc 'Build JavaScript'
+  task build_js: [:install] do
+    command = <<~SHELL
+      cd #{__dir__} && env NODE_ENV=production ./node_modules/.bin/webpack --config webpack.production.config.js
+    SHELL
+    fail unless system(command)
   end
 end

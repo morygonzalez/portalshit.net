@@ -73,6 +73,10 @@ namespace :deploy do
             command: %i[rake 'plugin:archives:build_js']
           },
           {
+            path: 'public/plugin/lokka-activity_tracker/assets',
+            command: %i[rake 'plugin:activity_tracker:build_js']
+          },
+          {
             path: 'public/theme/portalshit/scripts',
             command: %i[rake 'theme:portalshit:build_js']
           }
