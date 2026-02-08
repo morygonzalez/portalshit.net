@@ -253,6 +253,15 @@
     }
   }
 
+  // Emoji markers for map start/finish points
+  .emoji-marker {
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .amazon-image, .amazon-content {
     margin: 2.5em 1em;
   }

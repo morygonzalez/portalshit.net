@@ -1,5 +1,20 @@
 import React, { Component, useEffect } from 'react'
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap, CircleMarker } from 'react-leaflet'
+import L from 'leaflet'
+
+// Custom emoji icons for start and finish markers
+const createEmojiIcon = (emoji, size = 24) => {
+  return L.divIcon({
+    html: `<span style="font-size: ${size}px; line-height: 1;">${emoji}</span>`,
+    className: 'emoji-marker',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2]
+  })
+}
+
+const startIcon = createEmojiIcon('🟢', 20)
+const finishIcon = createEmojiIcon('🏁', 24)
 
 // Component to fit map bounds to the route
 function FitBounds({ bounds }) {
@@ -78,10 +93,10 @@ export default class ActivityMap extends Component {
             weight={8}
             opacity={0.8}
           />
-          <Marker position={startPoint}>
+          <Marker position={startPoint} icon={startIcon}>
             <Popup>Start</Popup>
           </Marker>
-          <Marker position={endPoint}>
+          <Marker position={endPoint} icon={finishIcon}>
             <Popup>Finish</Popup>
           </Marker>
           {highlightPoint && highlightPoint.latitude !== null && highlightPoint.longitude !== null && (
