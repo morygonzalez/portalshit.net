@@ -52,6 +52,9 @@ ja:
     no_entry: "-- 記事なし --"
     actions: 操作
     activity_logs: アクティビティログ
+    copy_embed: 埋め込みコード
+    copy_embed_tooltip: 埋め込みコードをコピー
+    copied: コピーしました
     js:
       loading_activity: アクティビティデータを読み込み中...
       loading: 読み込み中...
