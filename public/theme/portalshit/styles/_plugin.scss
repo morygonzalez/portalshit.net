@@ -134,6 +134,11 @@
     padding: 12px 0;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    &.activity-stats-grid-compact {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px 12px;
+    }
   }
 
   .activity-stat {

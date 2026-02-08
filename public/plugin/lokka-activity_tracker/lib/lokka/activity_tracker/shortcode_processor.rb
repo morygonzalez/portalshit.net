@@ -3,7 +3,8 @@
 module Lokka
   module ActivityTracker
     class ShortcodeProcessor
-      ACTIVITY_SHORTCODE_PATTERN = /\[activity:(\d+)\]/
+      # Match both numeric ID and file_hash (64-char hex string)
+      ACTIVITY_SHORTCODE_PATTERN = /\[activity:([a-f0-9]+)\]/i
 
       attr_reader :content
 
@@ -34,9 +35,14 @@ module Lokka
 
       private
 
-      def render_activity_embed(activity_id)
-        activity = Activity.find_by(id: activity_id)
-        return "[Activity ##{activity_id} not found]" unless activity
+      def render_activity_embed(identifier)
+        # Try to find by file_hash first (64-char hex), then by numeric ID
+        activity = if identifier.match?(/\A[a-f0-9]{64}\z/i)
+                     Activity.find_by(file_hash: identifier)
+                   else
+                     Activity.find_by(id: identifier)
+                   end
+        return "[Activity ##{identifier} not found]" unless activity
 
         @assets_included = true
 

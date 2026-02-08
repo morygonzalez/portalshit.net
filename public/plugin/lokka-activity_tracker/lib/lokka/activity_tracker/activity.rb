@@ -165,7 +165,7 @@ module Lokka
       end
 
       def formatted_pace
-        speed = avg_speed || calculated_avg_speed
+        speed = effective_avg_speed
         return nil unless speed && speed > 0
 
         format_pace_from_speed(speed)
@@ -176,6 +176,16 @@ module Lokka
         return nil if speeds.empty?
 
         speeds.sum / speeds.size
+      end
+
+      def effective_avg_speed
+        return avg_speed if avg_speed && avg_speed > 0
+
+        # Calculate from distance and duration if avg_speed is not stored
+        return nil unless total_distance_meters && duration_seconds
+        return nil unless total_distance_meters > 0 && duration_seconds > 0
+
+        total_distance_meters / duration_seconds.to_f
       end
 
       def formatted_best_pace
@@ -275,7 +285,7 @@ module Lokka
           total_ascent_meters: total_ascent_meters&.to_f,
           avg_heart_rate: avg_heart_rate,
           max_heart_rate: max_heart_rate,
-          avg_speed: avg_speed&.to_f,
+          avg_speed: effective_avg_speed&.to_f,
           avg_cadence: avg_cadence,
           avg_power: avg_power,
           data_points: points,

@@ -18,12 +18,28 @@ const formatDistance = (meters) => {
   return `${km.toFixed(2)} km`
 }
 
-const formatPace = (avgSpeed) => {
-  if (!avgSpeed || avgSpeed <= 0) return '-'
+const formatPaceFromSpeed = (avgSpeed) => {
+  if (!avgSpeed || avgSpeed <= 0) return null
   const paceSeconds = 1000 / avgSpeed
   const minutes = Math.floor(paceSeconds / 60)
   const seconds = Math.floor(paceSeconds % 60)
   return `${minutes}'${seconds.toString().padStart(2, '0')}" /km`
+}
+
+const formatPaceFromDistanceTime = (distanceMeters, durationSeconds) => {
+  if (!distanceMeters || !durationSeconds || distanceMeters <= 0 || durationSeconds <= 0) return null
+  const distanceKm = distanceMeters / 1000
+  const paceSeconds = durationSeconds / distanceKm
+  const minutes = Math.floor(paceSeconds / 60)
+  const seconds = Math.floor(paceSeconds % 60)
+  return `${minutes}'${seconds.toString().padStart(2, '0')}" /km`
+}
+
+const formatPace = (activity) => {
+  // Try avg_speed first, then calculate from distance and duration
+  return formatPaceFromSpeed(activity.avg_speed) ||
+         formatPaceFromDistanceTime(activity.total_distance_meters, activity.duration_seconds) ||
+         '-'
 }
 
 const localizeActivityType = (activityType, i18n) => {
@@ -34,7 +50,8 @@ const localizeActivityType = (activityType, i18n) => {
 }
 
 export default function StatsSummary({ activity, compact = false, i18n }) {
-  const stats = [
+  // Stats for compact mode (embed): Type, Distance, Duration, Pace, Avg HR
+  const compactStats = [
     {
       label: t(i18n, 'metric_type', 'Type'),
       value: localizeActivityType(activity.activity_type, i18n)
@@ -49,12 +66,17 @@ export default function StatsSummary({ activity, compact = false, i18n }) {
     },
     {
       label: t(i18n, 'metric_pace', 'Pace'),
-      value: formatPace(activity.avg_speed)
+      value: formatPace(activity)
     },
     {
       label: t(i18n, 'metric_avg_hr', 'Avg HR'),
       value: activity.avg_heart_rate ? `${activity.avg_heart_rate} bpm` : null
-    },
+    }
+  ]
+
+  // Full stats for activity page
+  const fullStats = [
+    ...compactStats,
     {
       label: t(i18n, 'metric_max_hr', 'Max HR'),
       value: activity.max_heart_rate ? `${activity.max_heart_rate} bpm` : null
@@ -66,22 +88,22 @@ export default function StatsSummary({ activity, compact = false, i18n }) {
   ]
 
   if (activity.avg_cadence) {
-    stats.push({
+    fullStats.push({
       label: t(i18n, 'metric_cadence', 'Cadence'),
       value: `${activity.avg_cadence} spm`
     })
   }
 
   if (activity.avg_power) {
-    stats.push({
+    fullStats.push({
       label: t(i18n, 'metric_power', 'Power'),
       value: `${activity.avg_power} W`
     })
   }
 
-  // Filter out stats with no value, then limit if compact mode
-  const filteredStats = stats.filter(stat => stat.value !== null && stat.value !== '-')
-  const displayStats = compact ? filteredStats.slice(0, 4) : filteredStats
+  const stats = compact ? compactStats : fullStats
+  // Filter out stats with no value
+  const displayStats = stats.filter(stat => stat.value !== null && stat.value !== '-')
 
   return (
     <div className={`activity-stats-grid ${compact ? 'activity-stats-grid-compact' : ''}`}>
