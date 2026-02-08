@@ -7,7 +7,8 @@
 
   .form-group
     %label{for: 'file'}= t('activity_tracker.file_label', default: 'Activity File (FIT or GPX)')
-    %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx', required: true}
+    -# iOS Safari doesn't recognize .fit files, so we use a permissive accept with */*
+    %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,*/*', required: true}
 
   .form-group
     %button.btn.btn-primary{type: 'submit'}= t('activity_tracker.upload', default: 'Upload')
