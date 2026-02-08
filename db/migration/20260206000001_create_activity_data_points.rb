@@ -2,7 +2,7 @@
 
 class CreateActivityDataPoints < ActiveRecord::Migration[4.2]
   def change
-    create_table :activity_data_points do |t|
+    create_table :activity_data_points, options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' do |t|
       t.references :activity, foreign_key: true, null: false
 
       t.integer  :elapsed_seconds

@@ -2,7 +2,7 @@
 
 class CreateActivities < ActiveRecord::Migration[4.2]
   def change
-    create_table :activities do |t|
+    create_table :activities, options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' do |t|
       t.references :entry, foreign_key: true, null: true
       t.references :user, foreign_key: true, null: false
 
