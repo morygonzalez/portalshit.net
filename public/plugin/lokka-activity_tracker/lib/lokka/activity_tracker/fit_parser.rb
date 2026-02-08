@@ -120,8 +120,13 @@ module Lokka
         session = handler.sessions.first
         return {} unless session
 
+        activity_type = detect_activity_type(session)
+        raw_cadence = extract_avg_cadence(session)
+        # Running cadence in FIT files is per foot, double it for total steps per minute
+        avg_cadence = running_activity?(activity_type) && raw_cadence ? raw_cadence * 2 : raw_cadence
+
         {
-          activity_type: detect_activity_type(session),
+          activity_type: activity_type,
           started_at: extract_timestamp(session),
           duration_seconds: extract_duration(session),
           total_distance_meters: safe_get(session, 'total_distance'),
@@ -129,7 +134,7 @@ module Lokka
           avg_heart_rate: safe_get(session, 'avg_heart_rate'),
           max_heart_rate: safe_get(session, 'max_heart_rate'),
           avg_speed: safe_get(session, 'avg_speed') || safe_get(session, 'enhanced_avg_speed'),
-          avg_cadence: extract_avg_cadence(session),
+          avg_cadence: avg_cadence,
           avg_power: safe_get(session, 'avg_power')
         }.merge(extract_device_metadata)
       end
@@ -140,11 +145,18 @@ module Lokka
         records = handler.records
         return [] if records.empty?
 
+        session = handler.sessions.first
+        activity_type = session ? detect_activity_type(session) : nil
+        is_running = running_activity?(activity_type)
+
         start_time = extract_record_timestamp(records.first)
 
         records.map do |record|
           timestamp = extract_record_timestamp(record)
           elapsed = start_time && timestamp ? (timestamp - start_time).to_i : nil
+          raw_cadence = safe_get(record, 'cadence')
+          # Running cadence in FIT files is per foot, double it for total steps per minute
+          cadence = is_running && raw_cadence ? raw_cadence * 2 : raw_cadence
 
           {
             elapsed_seconds: elapsed,
@@ -153,7 +165,7 @@ module Lokka
             altitude_meters: safe_get(record, 'altitude') || safe_get(record, 'enhanced_altitude'),
             heart_rate: safe_get(record, 'heart_rate'),
             speed: safe_get(record, 'speed') || safe_get(record, 'enhanced_speed'),
-            cadence: safe_get(record, 'cadence'),
+            cadence: cadence,
             power: safe_get(record, 'power'),
             distance_meters: safe_get(record, 'distance')
           }
@@ -224,6 +236,10 @@ module Lokka
 
       def extract_avg_cadence(session)
         safe_get(session, 'avg_cadence') || safe_get(session, 'avg_running_cadence')
+      end
+
+      def running_activity?(activity_type)
+        %w[running walking hiking].include?(activity_type)
       end
 
       def extract_device_metadata
