@@ -132,21 +132,21 @@ export default function SplitsChart({ splits, height = 300, i18n }) {
           <YAxis
             type="number"
             domain={[0, maxValue]}
-            tickFormatter={formatPaceFromValue}
+            hide={true}
           />
           <Tooltip content={<CustomTooltip />} />
           <ReferenceLine
             y={paceToValue(avgPace)}
             stroke="#666"
             strokeDasharray="5 5"
-            label={{ value: `${t(i18n, 'splits_avg', 'Avg')}: ${formatPace(avgPace)}`, position: 'right', offset: 10, fontSize: 11 }}
+            label={{ value: `${t(i18n, 'splits_avg', 'Avg')}: ${formatPace(avgPace)}`, position: 'right', offset: 10, fontSize: 14 }}
           />
           {fastestPace && (
             <ReferenceLine
               y={paceToValue(fastestPace)}
               stroke="#1E88E5"
               strokeDasharray="3 3"
-              label={{ value: `${t(i18n, 'splits_fastest', 'Fastest')}: ${formatPace(fastestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
+              label={{ value: `${t(i18n, 'splits_fastest', 'Fastest')}: ${formatPace(fastestPace)}`, position: 'right', offset: 10, fontSize: 14 }}
             />
           )}
           {slowestPace && (
@@ -154,7 +154,7 @@ export default function SplitsChart({ splits, height = 300, i18n }) {
               y={paceToValue(slowestPace)}
               stroke="#1E88E5"
               strokeDasharray="3 3"
-              label={{ value: `${t(i18n, 'splits_slowest', 'Slowest')}: ${formatPace(slowestPace)}`, position: 'right', offset: 10, fontSize: 11 }}
+              label={{ value: `${t(i18n, 'splits_slowest', 'Slowest')}: ${formatPace(slowestPace)}`, position: 'right', offset: 10, fontSize: 14 }}
             />
           )}
           <Bar
