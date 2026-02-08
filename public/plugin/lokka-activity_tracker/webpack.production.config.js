@@ -34,6 +34,8 @@ module.exports = {
     ]
   },
   plugins: [
-    new WebpackManifestPlugin()
+    new WebpackManifestPlugin({
+      publicPath: ''
+    })
   ]
 };
