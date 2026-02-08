@@ -109,7 +109,7 @@ export default class MonthlyStatsChart extends PureComponent {
             yAxisId="elevation"
             dataKey="total_ascent_meters"
             name={t(i18n, 'monthly_elevation', 'Elevation Gain')}
-            fill="#43A047"
+            fill="#757575"
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

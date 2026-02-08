@@ -32,7 +32,7 @@ const METRIC_CONFIG = {
     labelKey: 'metric_altitude',
     label: 'Altitude',
     unit: 'm',
-    color: '#43A047',
+    color: '#757575',
     domain: ['auto', 'auto']
   },
   cadence: {
