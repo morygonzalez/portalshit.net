@@ -28,9 +28,9 @@
     - grouped_data[:months].each do |month_key|
       - activities = grouped[month_key]
       - summary = Lokka::ActivityTracker::Activity.monthly_summary(activities)
-      - month_label = month_key ? month_key.strftime('%Y-%m') : t('activity_tracker.unknown_month', default: 'Unknown Date')
+      - month_label = month_key ? I18n.l(month_key, format: t('activity_tracker.month_format', default: '%Y年%-m月')) : t('activity_tracker.unknown_month', default: 'Unknown Date')
       %table.table.table-striped.activities
-        %caption= month_label
+        %caption.activity-month-caption= month_label
         %thead
           %tr
             %th= t('activity_tracker.title_label', default: 'Title')

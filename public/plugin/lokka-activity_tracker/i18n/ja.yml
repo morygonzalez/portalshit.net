@@ -42,6 +42,7 @@ ja:
     elevation: 獲得標高
     total: 合計
     unknown_month: 日付不明
+    month_format: "%Y年%-m月"
     cadence: 平均ケイデンス
     power: 平均パワー
     title_label: タイトル

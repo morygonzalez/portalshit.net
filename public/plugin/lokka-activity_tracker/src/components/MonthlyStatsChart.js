@@ -90,14 +90,14 @@ export default class MonthlyStatsChart extends PureComponent {
             yAxisId="distance"
             dataKey="total_distance_km"
             name={t(i18n, 'monthly_distance', 'Distance')}
-            fill="#4B6A8A"
+            fill="#1E88E5"
             radius={[4, 4, 0, 0]}
           />
           <Bar
             yAxisId="elevation"
             dataKey="total_ascent_meters"
             name={t(i18n, 'monthly_elevation', 'Elevation Gain')}
-            fill="#5D6B5A"
+            fill="#43A047"
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

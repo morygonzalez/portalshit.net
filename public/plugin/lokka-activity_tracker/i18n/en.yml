@@ -42,6 +42,7 @@ en:
     elevation: Elevation Gain
     total: Total
     unknown_month: Unknown Date
+    month_format: "%B %Y"
     cadence: Avg Cadence
     power: Avg Power
     title_label: Title

@@ -127,6 +127,15 @@
     margin-bottom: 16px;
   }
 
+  .activity-month-caption {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    text-align: left;
+    caption-side: top;
+  }
+
   .activity-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
