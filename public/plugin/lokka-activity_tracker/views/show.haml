@@ -11,7 +11,7 @@
       - if @activity.activity_type
         .activity-stat
           %div.activity-stat-label= t('activity_tracker.type', default: 'Type')
-          %div.activity-stat-value= @activity.activity_type.capitalize
+          %div.activity-stat-value= @activity.localized_activity_type
 
       - if @activity.device_display_label
         .activity-stat
@@ -90,7 +90,14 @@
   splits_slowest: t('activity_tracker.js.splits_slowest', default: 'Slowest'),
   embed_view_full: t('activity_tracker.js.embed_view_full', default: 'View full activity →'),
   embed_load_failed: t('activity_tracker.js.embed_load_failed', default: 'Failed to load activity data'),
-  loading: t('activity_tracker.js.loading', default: 'Loading...')
+  loading: t('activity_tracker.js.loading', default: 'Loading...'),
+  activity_type_running: t('activity_tracker.js.activity_type_running', default: 'Running'),
+  activity_type_trail_running: t('activity_tracker.js.activity_type_trail_running', default: 'Trail Running'),
+  activity_type_cycling: t('activity_tracker.js.activity_type_cycling', default: 'Cycling'),
+  activity_type_swimming: t('activity_tracker.js.activity_type_swimming', default: 'Swimming'),
+  activity_type_walking: t('activity_tracker.js.activity_type_walking', default: 'Walking'),
+  activity_type_hiking: t('activity_tracker.js.activity_type_hiking', default: 'Hiking'),
+  activity_type_other: t('activity_tracker.js.activity_type_other', default: 'Other')
 }.to_json }}
 
 %link{rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css", integrity: "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=", crossorigin: ""}

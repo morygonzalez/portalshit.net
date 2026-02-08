@@ -48,7 +48,7 @@
               %td= activity.formatted_distance || '-'
               %td= activity.formatted_duration || '-'
               %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
-              %td= activity.activity_type&.capitalize || 'Activity'
+              %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
         %tfoot
           %tr
             %td{colspan: 2}= "#{t('activity_tracker.total', default: 'Total')} (#{t('activity_tracker.activities_count', default: 'Activities')}: #{summary[:count]})"

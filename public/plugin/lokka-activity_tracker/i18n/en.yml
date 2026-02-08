@@ -14,6 +14,14 @@ en:
     duplicate_file: This file has already been uploaded
     unsupported_file: This FIT file contains unsupported data format
     title: Activities
+    activity_types:
+      running: Running
+      trail_running: Trail Running
+      cycling: Cycling
+      swimming: Swimming
+      walking: Walking
+      hiking: Hiking
+      other: Other
     no_activities: No activities yet.
     year_archives: "Archives:"
     recent: Recent
@@ -54,6 +62,7 @@ en:
       splits_title: Splits (per km)
       chart_empty: No data available
       chart_time_label: Time
+      chart_distance_label: Distance
       metric_show_label: "Show:"
       metric_type: Type
       metric_heart_rate: Heart Rate
@@ -77,6 +86,13 @@ en:
       monthly_elevation: Elevation Gain
       embed_view_full: View full activity →
       embed_load_failed: Failed to load activity data
+      activity_type_running: Running
+      activity_type_trail_running: Trail Running
+      activity_type_cycling: Cycling
+      activity_type_swimming: Swimming
+      activity_type_walking: Walking
+      activity_type_hiking: Hiking
+      activity_type_other: Other
     admin:
       title: Manage Activities
       new: Upload Activity

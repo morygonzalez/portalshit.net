@@ -75,7 +75,7 @@ export default class ActivityMap extends Component {
           <Polyline
             positions={coordinates}
             color="#E53935"
-            weight={3}
+            weight={8}
             opacity={0.8}
           />
           <Marker position={startPoint}>

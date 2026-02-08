@@ -8,7 +8,7 @@ module Lokka
       belongs_to :user
       has_many :data_points, class_name: 'ActivityDataPoint', dependent: :destroy
 
-      ACTIVITY_TYPES = %w[running cycling swimming walking hiking other].freeze
+      ACTIVITY_TYPES = %w[running trail_running cycling swimming walking hiking other].freeze
 
       validates :title, presence: true
       validates :user, presence: true
@@ -158,6 +158,12 @@ module Lokka
         format('%.2f km', km)
       end
 
+      def localized_activity_type
+        return nil unless activity_type
+
+        I18n.t("activity_tracker.activity_types.#{activity_type}", default: activity_type.tr('_', ' ').capitalize)
+      end
+
       def formatted_pace
         speed = avg_speed || calculated_avg_speed
         return nil unless speed && speed > 0
@@ -182,7 +188,6 @@ module Lokka
       def device_auto_name
         mapped = self.class.device_name_from_map(device_manufacturer, device_product_id)
         return mapped if mapped
-        return device_name if device_name && !device_name.strip.empty?
 
         parts = []
         parts << humanize_device(device_manufacturer) if device_manufacturer

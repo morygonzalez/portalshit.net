@@ -74,7 +74,7 @@ module Lokka
         'bike' => 'cycling',
         'walk' => 'walking',
         'hike' => 'hiking',
-        'trail_running' => 'running',
+        'trail_running' => 'trail_running',
         'open_water' => 'swimming',
         'indoor_cycling' => 'cycling',
         'indoor_running' => 'running',
@@ -239,19 +239,16 @@ module Lokka
       end
 
       def running_activity?(activity_type)
-        %w[running walking hiking].include?(activity_type)
+        %w[running trail_running walking hiking].include?(activity_type)
       end
 
       def extract_device_metadata
         file_id = handler.file_id
-        device_info = handler.device_info
 
         manufacturer = safe_get(file_id, 'manufacturer')&.to_s
         product = safe_get(file_id, 'product') || safe_get(file_id, 'garmin_product')
-        device_name = safe_get(device_info, 'product_name') || safe_get(device_info, 'device_name')
 
         {
-          device_name: device_name ? humanize_device(device_name) : nil,
           device_manufacturer: manufacturer ? humanize_device(manufacturer) : nil,
           device_product_id: normalize_product_id(product)
         }

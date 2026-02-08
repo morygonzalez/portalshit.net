@@ -14,6 +14,14 @@ ja:
     duplicate_file: このファイルは既にアップロードされています
     unsupported_file: このFITファイルはサポートされていない形式を含んでいます
     title: アクティビティ
+    activity_types:
+      running: ランニング
+      trail_running: トレイルランニング
+      cycling: サイクリング
+      swimming: スイミング
+      walking: ウォーキング
+      hiking: ハイキング
+      other: その他
     no_activities: アクティビティがありません。
     year_archives: "過去の記録:"
     recent: 直近
@@ -54,6 +62,7 @@ ja:
       splits_title: スプリット（1km）
       chart_empty: データがありません
       chart_time_label: 時間
+      chart_distance_label: 距離
       metric_show_label: "表示:"
       metric_type: 種類
       metric_heart_rate: 心拍数
@@ -77,6 +86,13 @@ ja:
       monthly_elevation: 獲得標高
       embed_view_full: アクティビティを見る →
       embed_load_failed: アクティビティの読み込みに失敗しました
+      activity_type_running: ランニング
+      activity_type_trail_running: トレイルランニング
+      activity_type_cycling: サイクリング
+      activity_type_swimming: スイミング
+      activity_type_walking: ウォーキング
+      activity_type_hiking: ハイキング
+      activity_type_other: その他
     admin:
       title: アクティビティ管理
       new: アクティビティをアップロード

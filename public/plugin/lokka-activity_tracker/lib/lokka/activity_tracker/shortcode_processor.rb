@@ -55,7 +55,14 @@ module Lokka
           metric_cadence: I18n.t('activity_tracker.js.metric_cadence', default: 'Cadence'),
           metric_power: I18n.t('activity_tracker.js.metric_power', default: 'Power'),
           metric_heart_rate: I18n.t('activity_tracker.js.metric_heart_rate', default: 'Heart Rate'),
-          metric_show_label: I18n.t('activity_tracker.js.metric_show_label', default: 'Show:')
+          metric_show_label: I18n.t('activity_tracker.js.metric_show_label', default: 'Show:'),
+          activity_type_running: I18n.t('activity_tracker.js.activity_type_running', default: 'Running'),
+          activity_type_trail_running: I18n.t('activity_tracker.js.activity_type_trail_running', default: 'Trail Running'),
+          activity_type_cycling: I18n.t('activity_tracker.js.activity_type_cycling', default: 'Cycling'),
+          activity_type_swimming: I18n.t('activity_tracker.js.activity_type_swimming', default: 'Swimming'),
+          activity_type_walking: I18n.t('activity_tracker.js.activity_type_walking', default: 'Walking'),
+          activity_type_hiking: I18n.t('activity_tracker.js.activity_type_hiking', default: 'Hiking'),
+          activity_type_other: I18n.t('activity_tracker.js.activity_type_other', default: 'Other')
         }
 
         <<~HTML
@@ -64,7 +71,7 @@ module Lokka
               <div class="activity-embed-fallback">
                 <h4><a href="/activities/#{activity.file_hash}">#{ERB::Util.html_escape(activity.title)}</a></h4>
                 <p>
-                  #{activity.activity_type&.capitalize}
+                  #{activity.localized_activity_type}
                   #{activity.formatted_distance ? "・#{activity.formatted_distance}" : ''}
                   #{activity.formatted_duration ? "・#{activity.formatted_duration}" : ''}
                 </p>

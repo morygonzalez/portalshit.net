@@ -44,7 +44,6 @@ module Lokka
           avg_speed: calculate_avg_speed,
           avg_cadence: nil,
           avg_power: nil,
-          device_name: nil,
           device_manufacturer: nil,
           device_product_id: nil
         }

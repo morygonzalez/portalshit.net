@@ -16,7 +16,7 @@
     - @activities.each_with_index do |activity, i|
       %tr{ class: (i + 1).odd? ? :odd : :even }
         %td.title= link_to activity.title, url("/activities/#{activity.file_hash}")
-        %td= activity.activity_type&.capitalize
+        %td= activity.localized_activity_type
         %td= activity.started_at&.strftime('%Y-%m-%d %H:%M')
         %td= activity.formatted_distance
         %td= activity.formatted_duration

@@ -9,7 +9,7 @@
     %label{for: 'activity_type'}= t('activity_tracker.type', default: 'Type')
     %select.form-control{name: 'activity_type', id: 'activity_type'}
       - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
-        %option{value: type, selected: @activity.activity_type == type}= type.capitalize
+        %option{value: type, selected: @activity.activity_type == type}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
 
   .form-group
     %label{for: 'device_display_name'}= t('activity_tracker.device_display_name', default: 'Device (override)')
