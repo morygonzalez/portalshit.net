@@ -10,10 +10,10 @@ function initActivityTracker() {
   // Render full activity page
   const activityRoot = document.getElementById('activity-root')
   if (activityRoot) {
-    const activityId = activityRoot.dataset.activityId
+    const activityHash = activityRoot.dataset.activityHash
     const i18n = parseI18n(activityRoot)
     ReactDOM.render(
-      <ActivityPage activityId={activityId} i18n={i18n} />,
+      <ActivityPage activityHash={activityHash} i18n={i18n} />,
       activityRoot
     )
   }
@@ -34,10 +34,10 @@ function initActivityTracker() {
     // Skip if already rendered
     if (element.dataset.rendered) return
 
-    const activityId = element.dataset.activityId
+    const activityHash = element.dataset.activityHash
     const i18n = parseI18n(element)
     ReactDOM.render(
-      <ActivityEmbed activityId={activityId} i18n={i18n} />,
+      <ActivityEmbed activityHash={activityHash} i18n={i18n} />,
       element
     )
     element.dataset.rendered = 'true'

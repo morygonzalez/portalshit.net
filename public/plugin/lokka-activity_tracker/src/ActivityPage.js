@@ -21,7 +21,7 @@ export default class ActivityPage extends Component {
 
   async componentDidMount() {
     try {
-      const response = await fetch(`/activities/${this.props.activityId}.json`)
+      const response = await fetch(`/activities/${this.props.activityHash}.json`)
       if (!response.ok) {
         throw new Error(t(this.props.i18n, 'embed_load_failed', 'Failed to load activity data'))
       }

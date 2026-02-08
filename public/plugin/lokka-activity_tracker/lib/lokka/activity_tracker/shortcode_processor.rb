@@ -59,10 +59,10 @@ module Lokka
         }
 
         <<~HTML
-          <div class="activity-embed" data-activity-id="#{activity.id}" data-i18n='#{ERB::Util.html_escape(i18n_payload.to_json)}'>
+          <div class="activity-embed" data-activity-hash="#{activity.file_hash}" data-i18n='#{ERB::Util.html_escape(i18n_payload.to_json)}'>
             <noscript>
               <div class="activity-embed-fallback">
-                <h4><a href="/activities/#{activity.id}">#{ERB::Util.html_escape(activity.title)}</a></h4>
+                <h4><a href="/activities/#{activity.file_hash}">#{ERB::Util.html_escape(activity.title)}</a></h4>
                 <p>
                   #{activity.activity_type&.capitalize}
                   #{activity.formatted_distance ? "・#{activity.formatted_distance}" : ''}

@@ -63,7 +63,7 @@
           %div.activity-stat-label= t('activity_tracker.power', default: 'Avg Power')
           %div.activity-stat-value= "#{@activity.avg_power} W"
 
-#activity-root{data: {activity_id: @activity.id, i18n: {
+#activity-root{data: {activity_hash: @activity.file_hash, i18n: {
   loading_activity: t('activity_tracker.js.loading_activity', default: 'Loading activity data...'),
   error_prefix: t('activity_tracker.js.error_prefix', default: 'Error: '),
   activity_not_found: t('activity_tracker.js.activity_not_found', default: 'Activity not found'),

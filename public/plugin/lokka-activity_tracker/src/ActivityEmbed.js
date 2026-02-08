@@ -15,7 +15,7 @@ export default class ActivityEmbed extends Component {
 
   async componentDidMount() {
     try {
-      const response = await fetch(`/activities/${this.props.activityId}.json`)
+      const response = await fetch(`/activities/${this.props.activityHash}.json`)
       if (!response.ok) {
         throw new Error(t(this.props.i18n, 'embed_load_failed', 'Failed to load activity data'))
       }
@@ -51,7 +51,7 @@ export default class ActivityEmbed extends Component {
     return (
       <div className="activity-embed-content">
         <div className="activity-embed-header">
-          <a href={`/activities/${activity.id}`} className="activity-embed-title">
+          <a href={`/activities/${activity.file_hash}`} className="activity-embed-title">
             {activity.title}
           </a>
         </div>
@@ -64,7 +64,7 @@ export default class ActivityEmbed extends Component {
           </div>
         )}
 
-        <a href={`/activities/${activity.id}`} className="activity-embed-link">
+        <a href={`/activities/${activity.file_hash}`} className="activity-embed-link">
           {t(i18n, 'embed_view_full', 'View full activity →')}
         </a>
       </div>

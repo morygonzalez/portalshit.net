@@ -261,6 +261,7 @@ module Lokka
 
         {
           id: id,
+          file_hash: file_hash,
           title: title,
           activity_type: activity_type,
           started_at: started_at&.iso8601,

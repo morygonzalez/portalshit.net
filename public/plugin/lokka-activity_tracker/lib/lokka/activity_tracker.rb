@@ -26,9 +26,9 @@ module Lokka
         end
       end
 
-      # JSON API route (must be defined before :id route)
-      app.get '/activities/:id.json' do |id|
-        activity = Activity.find_by(id: id)
+      # JSON API route (must be defined before other parameterized routes)
+      app.get '/activities/:file_hash.json' do |file_hash|
+        activity = Activity.find_by(file_hash: file_hash)
         halt 404, { error: 'Activity not found' }.to_json unless activity
 
         content_type :json
@@ -36,38 +36,49 @@ module Lokka
         activity.to_json_for_chart.to_json
       end
 
-      # Public routes
+      # Public routes - index (recent 13 months)
       app.get '/activities' do
         @available_years = Activity.available_years
-        @selected_year = params[:year]&.to_i
-
-        if @selected_year && @selected_year > 0
-          # Year archive mode
-          @activities = Activity.recent.in_year(@selected_year).page(params[:page]).per(20)
-          @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{@selected_year} - #{@site.title}"
-          @archive_mode = :year
-        else
-          # Recent 13 months mode (default)
-          @activities = Activity.recent.in_recent_months(13).page(params[:page]).per(20)
-          @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
-          @archive_mode = :recent
-        end
+        @selected_year = nil
+        @activities = Activity.recent.in_recent_months(13).page(params[:page]).per(20)
+        @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
+        @archive_mode = :recent
 
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
-        @bread_crumbs << { name: @selected_year.to_s, link: "/activities?year=#{@selected_year}" } if @selected_year
         haml :"plugin/lokka-activity_tracker/views/index", layout: :"theme/#{@theme.name}/layout"
       end
 
-      app.get '/activities/:id' do |id|
-        @activity = Activity.find_by(id: id)
-        halt 404, 'Activity not found' unless @activity
+      # Combined route for year archive and activity detail
+      # - 4-digit number (1900-2099): year archive
+      # - Otherwise: file_hash for activity detail
+      app.get '/activities/:param' do |param|
+        if param.match?(/\A\d{4}\z/)
+          # Year archive mode
+          year = param.to_i
+          halt 404, 'Invalid year' unless year >= 1900 && year <= 2099
 
-        @title = "#{@activity.title} - #{@site.title}"
-        @bread_crumbs = [{ name: t('home'), link: '/' }]
-        @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
-        @bread_crumbs << { name: @activity.title, link: "/activities/#{@activity.id}" }
-        haml :"plugin/lokka-activity_tracker/views/show", layout: :"theme/#{@theme.name}/layout"
+          @available_years = Activity.available_years
+          @selected_year = year
+          @activities = Activity.recent.in_year(year).page(params[:page]).per(20)
+          @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{year} - #{@site.title}"
+          @archive_mode = :year
+
+          @bread_crumbs = [{ name: t('home'), link: '/' }]
+          @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
+          @bread_crumbs << { name: year.to_s, link: "/activities/#{year}" }
+          haml :"plugin/lokka-activity_tracker/views/index", layout: :"theme/#{@theme.name}/layout"
+        else
+          # Activity detail mode
+          @activity = Activity.find_by(file_hash: param)
+          halt 404, 'Activity not found' unless @activity
+
+          @title = "#{@activity.title} - #{@site.title}"
+          @bread_crumbs = [{ name: t('home'), link: '/' }]
+          @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
+          @bread_crumbs << { name: @activity.title, link: "/activities/#{@activity.file_hash}" }
+          haml :"plugin/lokka-activity_tracker/views/show", layout: :"theme/#{@theme.name}/layout"
+        end
       end
 
       app.get '/admin/plugins/activity_tracker' do

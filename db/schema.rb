@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_07_000002) do
+ActiveRecord::Schema.define(version: 2026_02_08_000000) do
 
-  create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "entry_id"
+  create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "title", null: false
     t.string "activity_type"
@@ -36,13 +35,12 @@ ActiveRecord::Schema.define(version: 2026_02_07_000002) do
     t.string "device_display_name"
     t.string "file_hash"
     t.index ["activity_type"], name: "index_activities_on_activity_type"
-    t.index ["entry_id"], name: "fk_rails_cf7c0a747c"
     t.index ["file_hash"], name: "index_activities_on_file_hash", unique: true
     t.index ["started_at"], name: "index_activities_on_started_at"
     t.index ["user_id"], name: "fk_rails_7e11bb717f"
   end
 
-  create_table "activity_data_points", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "activity_data_points", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "activity_id", null: false
     t.integer "elapsed_seconds"
     t.decimal "latitude", precision: 10, scale: 7
@@ -179,7 +177,6 @@ ActiveRecord::Schema.define(version: 2026_02_07_000002) do
     t.index ["name"], name: "unique_users_name", unique: true
   end
 
-  add_foreign_key "activities", "entries"
   add_foreign_key "activities", "users"
   add_foreign_key "activity_data_points", "activities"
 end

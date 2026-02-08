@@ -9,7 +9,7 @@
       %span.year-nav-label= t('activity_tracker.year_archives', default: 'Archives:')
       %a{href: '/activities', class: ('current' unless @selected_year)}= t('activity_tracker.recent', default: 'Recent')
       - @available_years.each do |year|
-        %a{href: "/activities?year=#{year}", class: ('current' if @selected_year == year)}= year
+        %a{href: "/activities/#{year}", class: ('current' if @selected_year == year)}= year
 
   .monthly-stats
     %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
@@ -43,7 +43,7 @@
           - activities.each do |activity|
             %tr
               %td
-                %a{href: "/activities/#{activity.id}"}= activity.title
+                %a{href: "/activities/#{activity.file_hash}"}= activity.title
               %td= activity.started_at ? activity.started_at.strftime('%Y-%m-%d %H:%M') : '-'
               %td= activity.formatted_distance || '-'
               %td= activity.formatted_duration || '-'
