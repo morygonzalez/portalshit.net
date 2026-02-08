@@ -1,10 +1,10 @@
 import React from 'react'
 import { t } from '../i18n'
 
+// Note: altitude_meters is always shown as a separate area chart, not selectable here
 const AVAILABLE_METRICS = [
   { key: 'heart_rate', labelKey: 'metric_heart_rate', label: 'Heart Rate', checkField: 'heart_rate' },
   { key: 'pace', labelKey: 'metric_pace', label: 'Pace', checkField: 'speed' }, // Pace is derived from speed
-  { key: 'altitude_meters', labelKey: 'metric_altitude', label: 'Altitude', checkField: 'altitude_meters' },
   { key: 'cadence', labelKey: 'metric_cadence', label: 'Cadence', checkField: 'cadence' },
   { key: 'power', labelKey: 'metric_power', label: 'Power', checkField: 'power' }
 ]

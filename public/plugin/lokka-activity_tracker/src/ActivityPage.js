@@ -20,11 +20,12 @@ export default class ActivityPage extends Component {
   }
 
   getDefaultMetrics(activityType) {
+    // Note: altitude is always shown as a separate area chart, not included here
     switch (activityType) {
       case 'hiking':
-        return ['altitude_meters', 'heart_rate']
+        return ['heart_rate']
       case 'trail_running':
-        return ['altitude_meters', 'pace']
+        return ['pace', 'heart_rate']
       case 'running':
       case 'cycling':
       case 'swimming':

@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react'
 import {
-  LineChart,
+  ComposedChart,
   Line,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -12,6 +13,7 @@ import {
 } from 'recharts'
 import { t } from '../i18n'
 
+// Selectable metrics (shown as lines, user can toggle)
 const METRIC_CONFIG = {
   heart_rate: {
     labelKey: 'metric_heart_rate',
@@ -28,13 +30,6 @@ const METRIC_CONFIG = {
     domain: ['auto', 'auto'],
     reversed: true // Lower pace is better
   },
-  altitude_meters: {
-    labelKey: 'metric_altitude',
-    label: 'Altitude',
-    unit: 'm',
-    color: '#757575',
-    domain: ['auto', 'auto']
-  },
   cadence: {
     labelKey: 'metric_cadence',
     label: 'Cadence',
@@ -49,6 +44,15 @@ const METRIC_CONFIG = {
     color: '#8E24AA',
     domain: [0, 'auto']
   }
+}
+
+// Altitude is always shown as an area chart (not selectable)
+const ALTITUDE_CONFIG = {
+  labelKey: 'metric_altitude',
+  label: 'Altitude',
+  unit: 'm',
+  color: '#9E9E9E',
+  fillColor: 'rgba(158, 158, 158, 0.3)'
 }
 
 // Convert speed (m/s) to pace (min/km)
@@ -135,8 +139,14 @@ export default class ActivityChart extends PureComponent {
     }
   }
 
+  hasAltitudeData() {
+    const { dataPoints } = this.props
+    return dataPoints.some(dp => dp.altitude_meters !== null && dp.altitude_meters !== undefined)
+  }
+
   prepareData() {
     const { dataPoints, selectedMetrics } = this.props
+    const includeAltitude = this.hasAltitudeData()
 
     return dataPoints
       .filter(dp => dp.elapsed_seconds !== null && dp.distance_meters !== null)
@@ -145,6 +155,11 @@ export default class ActivityChart extends PureComponent {
           elapsed_seconds: dp.elapsed_seconds,
           distance_km: dp.distance_meters / 1000
         }
+        // Always include altitude for the area chart
+        if (includeAltitude) {
+          point.altitude_meters = dp.altitude_meters
+        }
+        // Include selected metrics for line charts
         selectedMetrics.forEach(metric => {
           if (metric === 'pace') {
             point[metric] = speedToPace(dp.speed)
@@ -156,9 +171,18 @@ export default class ActivityChart extends PureComponent {
       })
   }
 
+  formatTooltipWithAltitude(value, name, i18n) {
+    // Check if this is altitude
+    if (name === t(i18n, ALTITUDE_CONFIG.labelKey, ALTITUDE_CONFIG.label)) {
+      return [`${Math.round(value)} ${ALTITUDE_CONFIG.unit}`, name]
+    }
+    return this.formatTooltip(value, name, i18n)
+  }
+
   render() {
     const { selectedMetrics, height = 400, compact = false, i18n } = this.props
     const data = this.prepareData()
+    const hasAltitude = this.hasAltitudeData()
 
     if (data.length === 0) {
       return <div className="activity-chart-empty">{t(i18n, 'chart_empty', 'No data available')}</div>
@@ -169,7 +193,7 @@ export default class ActivityChart extends PureComponent {
 
     return (
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart
+        <ComposedChart
           data={data}
           margin={{
             top: 10,
@@ -191,6 +215,16 @@ export default class ActivityChart extends PureComponent {
             stroke="#666"
             unit=" km"
           />
+          {/* Altitude Y-axis (always present if data exists, hidden axis) */}
+          {hasAltitude && (
+            <YAxis
+              yAxisId="altitude"
+              orientation="right"
+              domain={['dataMin', 'dataMax']}
+              hide={true}
+            />
+          )}
+          {/* Selected metrics Y-axes */}
           {selectedMetrics.map((metric, index) => {
             const config = METRIC_CONFIG[metric]
             if (!config) return null
@@ -210,12 +244,27 @@ export default class ActivityChart extends PureComponent {
             )
           })}
           <Tooltip
-            formatter={(value, name) => this.formatTooltip(value, name, i18n)}
+            formatter={(value, name) => this.formatTooltipWithAltitude(value, name, i18n)}
             labelFormatter={(label) => `${t(i18n, 'chart_distance_label', 'Distance')}: ${label.toFixed(2)} km`}
             labelStyle={{ color: '#000', fontWeight: 'bold' }}
             itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
           />
           {!compact && <Legend />}
+          {/* Altitude area chart (always shown, rendered first so it's behind lines) */}
+          {hasAltitude && (
+            <Area
+              yAxisId="altitude"
+              type="monotone"
+              dataKey="altitude_meters"
+              name={t(i18n, ALTITUDE_CONFIG.labelKey, ALTITUDE_CONFIG.label)}
+              stroke={ALTITUDE_CONFIG.color}
+              fill={ALTITUDE_CONFIG.fillColor}
+              strokeWidth={1}
+              dot={false}
+              connectNulls={true}
+            />
+          )}
+          {/* Selected metrics line charts */}
           {selectedMetrics.map(metric => {
             const config = METRIC_CONFIG[metric]
             if (!config) return null
@@ -234,7 +283,7 @@ export default class ActivityChart extends PureComponent {
               />
             )
           })}
-        </LineChart>
+        </ComposedChart>
       </ResponsiveContainer>
     )
   }

@@ -268,8 +268,13 @@ module Lokka
       public
 
       def to_json_for_chart
-        points = data_points.order(:elapsed_seconds).map(&:to_json_for_chart)
-        calculator = StatisticsCalculator.new(points)
+        all_points = data_points.order(:elapsed_seconds).map(&:to_json_for_chart)
+
+        # Use all points for statistics calculation (splits need full data)
+        calculator = StatisticsCalculator.new(all_points)
+
+        # Downsample for chart/map display if activity is long
+        points = downsample_points(all_points)
 
         # Filter map points to hide home location (within configured radius)
         map_points = filter_home_location(points)
@@ -292,6 +297,30 @@ module Lokka
           map_points: map_points,
           splits: calculator.pace_per_km
         }
+      end
+
+      # Downsample data points for long activities to improve rendering performance
+      # - Activities under 50km: no downsampling
+      # - Activities 50km+: target ~2000 points (roughly 40 points per km)
+      def downsample_points(points)
+        return points if points.length <= 2000
+
+        distance_km = (total_distance_meters || 0) / 1000.0
+        return points if distance_km <= 20
+
+        # Target ~2000 points for smooth rendering
+        target_count = 2000
+        step = (points.length.to_f / target_count).ceil
+
+        result = []
+        points.each_with_index do |point, index|
+          result << point if (index % step).zero?
+        end
+
+        # Always include last point for accurate endpoint
+        result << points.last unless result.empty? || result.last == points.last
+
+        result
       end
 
       def filter_home_location(points)
