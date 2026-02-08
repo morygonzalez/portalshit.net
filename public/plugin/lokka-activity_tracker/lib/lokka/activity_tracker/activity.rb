@@ -24,6 +24,23 @@ module Lokka
         end_date = start_date.end_of_month
         where(started_at: start_date.beginning_of_day..end_date.end_of_day)
       }
+      scope :in_year, ->(year) {
+        start_date = Date.new(year, 1, 1)
+        end_date = Date.new(year, 12, 31)
+        where(started_at: start_date.beginning_of_day..end_date.end_of_day)
+      }
+      scope :in_recent_months, ->(months) {
+        cutoff = (months - 1).months.ago.beginning_of_month
+        where('started_at >= ?', cutoff)
+      }
+
+      def self.available_years
+        where.not(started_at: nil)
+             .select('DISTINCT YEAR(started_at) as year')
+             .order('year DESC')
+             .map { |r| r['year'] || r.year }
+             .compact
+      end
 
       def self.monthly_stats(months_back = 6)
         stats = []
@@ -33,6 +50,33 @@ module Lokka
           date = today - i.months
           year = date.year
           month = date.month
+          activities = in_month(year, month)
+
+          total_distance = activities.sum(:total_distance_meters) || 0
+          total_duration = activities.sum(:duration_seconds) || 0
+          total_ascent = activities.sum(:total_ascent_meters) || 0
+          count = activities.count
+
+          stats << {
+            year: year,
+            month: month,
+            label: date.strftime('%Y-%m'),
+            total_distance_km: (total_distance / 1000.0).round(2),
+            total_ascent_meters: total_ascent,
+            total_duration_seconds: total_duration,
+            formatted_duration: format_duration_static(total_duration),
+            count: count
+          }
+        end
+
+        stats
+      end
+
+      def self.yearly_stats(year)
+        stats = []
+
+        (1..12).each do |month|
+          date = Date.new(year, month, 1)
           activities = in_month(year, month)
 
           total_distance = activities.sum(:total_distance_meters) || 0

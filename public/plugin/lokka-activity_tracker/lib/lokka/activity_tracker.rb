@@ -17,7 +17,13 @@ module Lokka
       app.get '/activities/monthly_stats.json' do
         content_type :json
         cache_control :public, :must_revalidate, max_age: 10.minutes
-        Activity.monthly_stats(12).to_json
+
+        year = params[:year]&.to_i
+        if year && year > 0
+          Activity.yearly_stats(year).to_json
+        else
+          Activity.monthly_stats(12).to_json
+        end
       end
 
       # JSON API route (must be defined before :id route)
@@ -32,10 +38,24 @@ module Lokka
 
       # Public routes
       app.get '/activities' do
-        @activities = Activity.recent.page(params[:page]).per(20)
-        @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
+        @available_years = Activity.available_years
+        @selected_year = params[:year]&.to_i
+
+        if @selected_year && @selected_year > 0
+          # Year archive mode
+          @activities = Activity.recent.in_year(@selected_year).page(params[:page]).per(20)
+          @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{@selected_year} - #{@site.title}"
+          @archive_mode = :year
+        else
+          # Recent 13 months mode (default)
+          @activities = Activity.recent.in_recent_months(13).page(params[:page]).per(20)
+          @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
+          @archive_mode = :recent
+        end
+
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('activity_tracker.title', default: 'Activities'), link: '/activities' }
+        @bread_crumbs << { name: @selected_year.to_s, link: "/activities?year=#{@selected_year}" } if @selected_year
         haml :"plugin/lokka-activity_tracker/views/index", layout: :"theme/#{@theme.name}/layout"
       end
 

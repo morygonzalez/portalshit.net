@@ -17,13 +17,21 @@ export default class MonthlyStatsChart extends PureComponent {
 
   async componentDidMount() {
     try {
-      const response = await fetch('/activities/monthly_stats.json')
+      const { year } = this.props
+      const url = year
+        ? `/activities/monthly_stats.json?year=${year}`
+        : '/activities/monthly_stats.json'
+      const response = await fetch(url)
       if (!response.ok) {
         throw new Error('Failed to load monthly stats')
       }
       const data = await response.json()
-      // Reverse to show oldest first (left to right)
-      this.setState({ data: data.reverse(), loading: false })
+      // Sort by year and month ascending (oldest first, left to right)
+      const sortedData = data.sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year
+        return a.month - b.month
+      })
+      this.setState({ data: sortedData, loading: false })
     } catch (error) {
       this.setState({ error: error.message, loading: false })
     }
