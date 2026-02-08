@@ -30,61 +30,54 @@ export default function StatsSummary({ activity, compact = false, i18n }) {
   const stats = [
     {
       label: t(i18n, 'metric_distance', 'Distance'),
-      value: formatDistance(activity.total_distance_meters),
-      icon: '📏'
+      value: formatDistance(activity.total_distance_meters)
     },
     {
       label: t(i18n, 'metric_duration', 'Duration'),
-      value: formatDuration(activity.duration_seconds),
-      icon: '⏱️'
+      value: formatDuration(activity.duration_seconds)
     },
     {
       label: t(i18n, 'metric_pace', 'Pace'),
-      value: formatPace(activity.avg_speed),
-      icon: '🏃'
+      value: formatPace(activity.avg_speed)
     },
     {
       label: t(i18n, 'metric_avg_hr', 'Avg HR'),
-      value: activity.avg_heart_rate ? `${activity.avg_heart_rate} bpm` : '-',
-      icon: '❤️'
+      value: activity.avg_heart_rate ? `${activity.avg_heart_rate} bpm` : null
     },
     {
       label: t(i18n, 'metric_max_hr', 'Max HR'),
-      value: activity.max_heart_rate ? `${activity.max_heart_rate} bpm` : '-',
-      icon: '💓'
+      value: activity.max_heart_rate ? `${activity.max_heart_rate} bpm` : null
     },
     {
       label: t(i18n, 'metric_elevation', 'Elevation'),
-      value: activity.total_ascent_meters ? `${Math.round(activity.total_ascent_meters)} m` : '-',
-      icon: '⛰️'
+      value: activity.total_ascent_meters ? `${Math.round(activity.total_ascent_meters)} m` : null
     }
   ]
 
   if (activity.avg_cadence) {
     stats.push({
       label: t(i18n, 'metric_cadence', 'Cadence'),
-      value: `${activity.avg_cadence} spm`,
-      icon: '👟'
+      value: `${activity.avg_cadence} spm`
     })
   }
 
   if (activity.avg_power) {
     stats.push({
       label: t(i18n, 'metric_power', 'Power'),
-      value: `${activity.avg_power} W`,
-      icon: '⚡'
+      value: `${activity.avg_power} W`
     })
   }
 
-  const displayStats = compact ? stats.slice(0, 4) : stats
+  // Filter out stats with no value, then limit if compact mode
+  const filteredStats = stats.filter(stat => stat.value !== null && stat.value !== '-')
+  const displayStats = compact ? filteredStats.slice(0, 4) : filteredStats
 
   return (
-    <div className={`stats-summary ${compact ? 'stats-summary-compact' : ''}`}>
+    <div className={`activity-stats-grid ${compact ? 'activity-stats-grid-compact' : ''}`}>
       {displayStats.map((stat, index) => (
-        <div key={index} className="stat-item">
-          <span className="stat-icon">{stat.icon}</span>
-          <span className="stat-value">{stat.value}</span>
-          <span className="stat-label">{stat.label}</span>
+        <div key={index} className="activity-stat">
+          <div className="activity-stat-label">{stat.label}</div>
+          <div className="activity-stat-value">{stat.value}</div>
         </div>
       ))}
     </div>
