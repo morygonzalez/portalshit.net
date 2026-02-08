@@ -119,7 +119,6 @@ module Lokka
             avg_speed: summary[:avg_speed],
             avg_cadence: summary[:avg_cadence],
             avg_power: summary[:avg_power],
-            device_name: summary[:device_name],
             device_manufacturer: summary[:device_manufacturer],
             device_product_id: summary[:device_product_id],
             original_filename: filename,
