@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 2026_02_07_000002) do
     t.string "file_format"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "device_name"
     t.string "device_manufacturer"
     t.integer "device_product_id"
     t.string "device_display_name"
