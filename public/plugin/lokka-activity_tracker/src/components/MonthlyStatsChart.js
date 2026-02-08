@@ -48,6 +48,14 @@ export default class MonthlyStatsChart extends PureComponent {
     return [value, name]
   }
 
+  formatMonthLabel(label) {
+    const { i18n } = this.props
+    // label is in "YYYY-MM" format
+    const [year, month] = label.split('-')
+    const monthFormat = t(i18n, 'monthly_label_format', '{year}-{month}')
+    return monthFormat.replace('{year}', year).replace('{month}', parseInt(month, 10))
+  }
+
   render() {
     const { data, loading, error } = this.state
     const { i18n } = this.props
@@ -71,7 +79,7 @@ export default class MonthlyStatsChart extends PureComponent {
           margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+          <XAxis dataKey="label" tick={{ fontSize: 12 }} tickFormatter={(label) => this.formatMonthLabel(label)} />
           <YAxis
             yAxisId="distance"
             orientation="left"
@@ -84,7 +92,11 @@ export default class MonthlyStatsChart extends PureComponent {
             tick={{ fontSize: 12 }}
             label={{ value: 'm', angle: 90, position: 'insideRight', fontSize: 12 }}
           />
-          <Tooltip formatter={(value, name) => this.formatTooltip(value, name)} />
+          <Tooltip
+            formatter={(value, name) => this.formatTooltip(value, name)}
+            labelFormatter={(label) => this.formatMonthLabel(label)}
+            labelStyle={{ color: '#000', fontWeight: 'bold' }}
+          />
           <Legend />
           <Bar
             yAxisId="distance"

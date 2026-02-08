@@ -88,6 +88,7 @@ ja:
       monthly_empty: データがありません
       monthly_distance: 距離
       monthly_elevation: 獲得標高
+      monthly_label_format: "{year}年{month}月"
       embed_view_full: アクティビティを見る →
       embed_load_failed: アクティビティの読み込みに失敗しました
       activity_type_running: ランニング

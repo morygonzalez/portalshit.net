@@ -88,6 +88,7 @@ en:
       monthly_empty: No data available
       monthly_distance: Distance
       monthly_elevation: Elevation Gain
+      monthly_label_format: "{year}-{month}"
       embed_view_full: View full activity →
       embed_load_failed: Failed to load activity data
       activity_type_running: Running
