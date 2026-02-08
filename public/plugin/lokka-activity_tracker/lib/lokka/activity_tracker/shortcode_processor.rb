@@ -36,12 +36,7 @@ module Lokka
       private
 
       def render_activity_embed(identifier)
-        # Try to find by file_hash first (64-char hex), then by numeric ID
-        activity = if identifier.match?(/\A[a-f0-9]{64}\z/i)
-                     Activity.find_by(file_hash: identifier)
-                   else
-                     Activity.find_by(id: identifier)
-                   end
+        activity = find_activity_by_identifier(identifier)
         return "[Activity ##{identifier} not found]" unless activity
 
         @assets_included = true
@@ -111,6 +106,25 @@ module Lokka
             })();
           </script>
         HTML
+      end
+
+      def find_activity_by_identifier(identifier)
+        # Numeric ID
+        if identifier.match?(/\A\d+\z/)
+          return Activity.find_by(id: identifier)
+        end
+
+        # Full file_hash (64 chars)
+        if identifier.match?(/\A[a-f0-9]{64}\z/i)
+          return Activity.find_by(file_hash: identifier)
+        end
+
+        # Short file_hash (8+ chars) - prefix match
+        if identifier.match?(/\A[a-f0-9]{8,63}\z/i)
+          return Activity.where('file_hash LIKE ?', "#{identifier}%").first
+        end
+
+        nil
       end
 
       def load_manifest
