@@ -1,0 +1,104 @@
+ja:
+  activerecord:
+    errors:
+      models:
+        lokka/activity_tracker/activity:
+          attributes:
+            title:
+              blank: を入力してください
+            user:
+              blank: を指定してください
+            file_hash:
+              duplicate_file: このファイルは既にアップロードされています
+  activity_tracker:
+    duplicate_file: このファイルは既にアップロードされています
+    unsupported_file: このFITファイルはサポートされていない形式を含んでいます
+    title: アクティビティ
+    activity_types:
+      running: ランニング
+      trail_running: トレイルランニング
+      cycling: サイクリング
+      swimming: スイミング
+      walking: ウォーキング
+      hiking: ハイキング
+      other: その他
+    no_activities: アクティビティがありません。
+    year_archives: "過去の記録:"
+    recent: 直近
+    monthly_summary: 月ごとのサマリー
+    month: 月
+    activities_count: 回数
+    started_at: 日時
+    type: 種類
+    device: デバイス
+    device_display_name: デバイス（上書き）
+    device_display_hint: 空欄の場合は自動取得したデバイス名を表示します。
+    distance: 距離
+    duration: 時間
+    avg_pace: 平均ペース
+    best_pace: 最速ペース
+    avg_hr: 平均心拍数
+    max_hr: 最大心拍数
+    elevation: 獲得標高
+    total: 合計
+    unknown_month: 日付不明
+    month_format: "%Y年%-m月"
+    cadence: 平均ケイデンス
+    power: 平均パワー
+    title_label: タイトル
+    title_placeholder: 空欄の場合は AI が自動生成
+    file_label: アクティビティファイル（FIT または GPX）
+    upload: アップロード
+    entry: 記事にリンク
+    no_entry: "-- 記事なし --"
+    actions: 操作
+    activity_logs: アクティビティログ
+    copy_embed: 埋め込みコード
+    copy_embed_tooltip: 埋め込みコードをコピー
+    copied: コピーしました
+    js:
+      loading_activity: アクティビティデータを読み込み中...
+      loading: 読み込み中...
+      error_prefix: "エラー: "
+      activity_not_found: アクティビティが見つかりません
+      route_title: ルート
+      performance_data_title: パフォーマンス
+      splits_title: スプリット（1km）
+      chart_empty: データがありません
+      chart_time_label: 時間
+      chart_distance_label: 距離
+      metric_show_label: "表示:"
+      metric_type: 種類
+      metric_heart_rate: 心拍数
+      metric_pace: ペース
+      metric_altitude: 標高
+      metric_cadence: ケイデンス
+      metric_power: パワー
+      metric_distance: 距離
+      metric_duration: 時間
+      metric_avg_hr: 平均心拍数
+      metric_max_hr: 最大心拍数
+      metric_elevation: 獲得標高
+      splits_empty: スプリットのデータがありません
+      splits_pace_label: ペース
+      splits_avg: 平均
+      splits_fastest: 最速
+      splits_slowest: 最遅
+      monthly_loading: 読み込み中...
+      monthly_empty: データがありません
+      monthly_distance: 距離
+      monthly_elevation: 獲得標高
+      monthly_label_format: "{year}年{month}月"
+      embed_view_full: アクティビティを見る →
+      embed_load_failed: アクティビティの読み込みに失敗しました
+      activity_type_running: ランニング
+      activity_type_trail_running: トレイルランニング
+      activity_type_cycling: サイクリング
+      activity_type_swimming: スイミング
+      activity_type_walking: ウォーキング
+      activity_type_hiking: ハイキング
+      activity_type_other: その他
+    admin:
+      title: アクティビティ管理
+      new: アクティビティをアップロード
+      edit: アクティビティを編集

@@ -23,6 +23,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
       mecab libmecab-dev mecab-ipadic-utf8 \
       gcc make pkg-config wget \
       libsqlite3-dev sqlite3 \
+      imagemagick \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
     # Neologd の導入（従来と同じ。公式 ipadic を置換）
     && cd /root \

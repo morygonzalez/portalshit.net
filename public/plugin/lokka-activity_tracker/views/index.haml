@@ -1,0 +1,70 @@
+.activities-list
+  - if @selected_year
+    %h2= "#{t('activity_tracker.title', default: 'Activities')} #{@selected_year}"
+  - else
+    %h2= t('activity_tracker.title', default: 'Activities')
+
+  - if @available_years && @available_years.any?
+    .year-navigation
+      %span.year-nav-label= t('activity_tracker.year_archives', default: 'Archives:')
+      %a{href: '/activities', class: ('current' unless @selected_year)}= t('activity_tracker.recent', default: 'Recent')
+      - @available_years.each do |year|
+        %a{href: "/activities/#{year}", class: ('current' if @selected_year == year)}= year
+
+  .monthly-stats
+    %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
+    #monthly-stats-chart{data: {year: @selected_year, i18n: {
+      monthly_loading: t('activity_tracker.js.monthly_loading', default: 'Loading...'),
+      monthly_empty: t('activity_tracker.js.monthly_empty', default: 'No data available'),
+      monthly_distance: t('activity_tracker.js.monthly_distance', default: 'Distance'),
+      monthly_elevation: t('activity_tracker.js.monthly_elevation', default: 'Elevation Gain'),
+      monthly_label_format: t('activity_tracker.js.monthly_label_format', default: '{year}-{month}'),
+      error_prefix: t('activity_tracker.js.error_prefix', default: 'Error: ')
+    }.to_json }}
+
+  - if @activities.any?
+    %h3= t('activity_tracker.activity_logs', default: 'Activity Logs')
+    - grouped_data = Lokka::ActivityTracker::Activity.group_by_month(@activities)
+    - grouped = grouped_data[:grouped]
+    - grouped_data[:months].each do |month_key|
+      - activities = grouped[month_key]
+      - summary = Lokka::ActivityTracker::Activity.monthly_summary(activities)
+      - month_label = month_key ? I18n.l(month_key, format: t('activity_tracker.month_format', default: '%Y年%-m月')) : t('activity_tracker.unknown_month', default: 'Unknown Date')
+      %table.table.table-striped.activities
+        %caption.activity-month-caption= month_label
+        %thead
+          %tr
+            %th= t('activity_tracker.title_label', default: 'Title')
+            %th= t('activity_tracker.started_at', default: 'Date')
+            %th= t('activity_tracker.distance', default: 'Distance')
+            %th= t('activity_tracker.duration', default: 'Duration')
+            %th= t('activity_tracker.avg_pace', default: 'Avg Pace')
+            %th= t('activity_tracker.elevation', default: 'Elevation Gain')
+            %th= t('activity_tracker.type', default: 'Type')
+        %tbody
+          - activities.each do |activity|
+            %tr
+              %td
+                %a{href: "/activities/#{activity.file_hash}"}= activity.title
+              %td= activity.started_at ? activity.started_at.strftime('%Y-%m-%d %H:%M') : '-'
+              %td= activity.formatted_distance || '-'
+              %td= activity.formatted_duration || '-'
+              %td= activity.formatted_pace || '-'
+              %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
+              %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
+        %tfoot
+          %tr
+            %td{colspan: 2}= "#{t('activity_tracker.total', default: 'Total')} (#{t('activity_tracker.activities_count', default: 'Activities')}: #{summary[:count]})"
+            %td= summary[:formatted_total_distance]
+            %td= summary[:formatted_total_duration]
+            %td= '-'
+            %td= summary[:formatted_total_ascent]
+            %td= '-'
+  - else
+    %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
+
+  - if @activities.respond_to?(:total_pages) && @activities.total_pages > 1
+    .pagination
+      = paginate @activities
+
+%script{src: "#{asset_path(activity_tracker_javascript_path('index.js'))}"}

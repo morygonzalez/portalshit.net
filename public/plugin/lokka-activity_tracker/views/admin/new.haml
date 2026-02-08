@@ -1,0 +1,62 @@
+%h2= t('activity_tracker.admin.new', default: 'Upload Activity')
+
+%form#activity-upload-form{enctype: 'multipart/form-data'}
+  .form-group
+    %label{for: 'title'}= t('activity_tracker.title_label', default: 'Title')
+    %input.form-control{type: 'text', name: 'title', id: 'title', placeholder: t('activity_tracker.title_placeholder', default: 'Leave blank to use filename')}
+
+  .form-group
+    %label{for: 'file'}= t('activity_tracker.file_label', default: 'Activity File (FIT or GPX)')
+    %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx', required: true}
+
+  .form-group
+    %button.btn.btn-primary{type: 'submit'}= t('activity_tracker.upload', default: 'Upload')
+
+#upload-status
+
+:javascript
+  document.getElementById('activity-upload-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = new FormData(this);
+    var status = document.getElementById('upload-status');
+    var submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+    status.innerHTML = '<p>Uploading... This may take a while.</p>';
+
+    fetch('/admin/activities', {
+      method: 'POST',
+      body: formData
+    }).then(function(response) {
+      var contentType = response.headers.get('content-type') || '';
+      var isJson = contentType.indexOf('application/json') !== -1;
+      var parseBody = isJson ? response.json() : response.text();
+
+      if (!response.ok) {
+        return parseBody.then(function(body) {
+          var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
+          throw new Error(message || response.statusText || 'Upload failed');
+        });
+      }
+
+      return parseBody;
+    }).then(function(data) {
+      if (data && data.success) {
+        status.innerHTML = '<p class="text-success">Upload successful! Redirecting...</p>';
+        window.location.href = data.redirect_url;
+      } else {
+        var message = data && data.error ? data.error : 'Upload failed';
+        status.innerHTML = '<p class="text-danger">Error: ' + message + '</p>';
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+      }
+    }).catch(function(error) {
+      status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    });
+  });

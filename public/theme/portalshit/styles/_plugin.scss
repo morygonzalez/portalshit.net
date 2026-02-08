@@ -122,6 +122,146 @@
     }
   }
 
+  // Activity Tracker
+  .activity-summary {
+    margin-bottom: 16px;
+  }
+
+  .activity-month-caption {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    text-align: left;
+    caption-side: top;
+  }
+
+  .activity-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px 16px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    &.activity-stats-grid-compact {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px 12px;
+    }
+  }
+
+  .activity-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .activity-stat-label {
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: $meta-text-color;
+  }
+
+  .activity-stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html.dark-mode & {
+    .activity-stats-grid {
+      border-top-color: rgba(255, 255, 255, 0.12);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .activity-stat-label {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .activity-stat-value {
+      color: $dark-font-color;
+    }
+  }
+
+  html.light-mode & {
+    .activity-stat-value {
+      color: $light-font-color;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .activity-stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px 12px;
+    }
+
+    .activity-stat-value {
+      font-size: 15px;
+    }
+  }
+
+  .metric-selector {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 12px;
+  }
+
+  .metric-selector-label {
+    font-size: 0.9em;
+    margin-right: 6px;
+  }
+
+  .metric-button {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .metric-button.active {
+    border-color: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+  }
+
+  .metric-button:hover {
+    border-color: rgba(0, 0, 0, 0.35);
+  }
+
+  html.dark-mode & {
+    .metric-button {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .metric-button.active {
+      border-color: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .metric-button:hover {
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+  }
+
+  // Emoji markers for map start/finish points
+  .emoji-marker {
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .amazon-image, .amazon-content {
     margin: 2.5em 1em;
   }

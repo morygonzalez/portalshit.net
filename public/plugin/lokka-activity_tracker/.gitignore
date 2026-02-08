@@ -1,0 +1,6 @@
+node_modules/
+build/*.js
+build/*.map
+assets/*.js
+!assets/.gitkeep
+!assets/manifest.json

@@ -1,0 +1,106 @@
+.activity-detail
+  %h2= @activity.title
+
+  .activity-summary
+    .activity-stats-grid
+      - if @activity.started_at
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.started_at', default: 'Date')
+          %div.activity-stat-value= @activity.started_at.strftime('%Y-%m-%d %H:%M')
+
+      - if @activity.activity_type
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.type', default: 'Type')
+          %div.activity-stat-value= @activity.localized_activity_type
+
+      - if @activity.device_display_label
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.device', default: 'Device')
+          %div.activity-stat-value= @activity.device_display_label
+
+      - if @activity.formatted_distance
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.distance', default: 'Distance')
+          %div.activity-stat-value= @activity.formatted_distance
+
+      - if @activity.formatted_duration
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.duration', default: 'Duration')
+          %div.activity-stat-value= @activity.formatted_duration
+
+      - if @activity.formatted_pace
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.avg_pace', default: 'Avg Pace')
+          %div.activity-stat-value= @activity.formatted_pace
+
+      - if @activity.formatted_best_pace
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.best_pace', default: 'Best Pace')
+          %div.activity-stat-value= @activity.formatted_best_pace
+
+      - if @activity.avg_heart_rate
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.avg_hr', default: 'Avg Heart Rate')
+          %div.activity-stat-value= "#{@activity.avg_heart_rate} bpm"
+
+      - if @activity.max_heart_rate
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.max_hr', default: 'Max Heart Rate')
+          %div.activity-stat-value= "#{@activity.max_heart_rate} bpm"
+
+      - if @activity.total_ascent_meters
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.elevation', default: 'Elevation Gain')
+          %div.activity-stat-value= "#{@activity.total_ascent_meters.round} m"
+
+      - if @activity.avg_cadence
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.cadence', default: 'Avg Cadence')
+          %div.activity-stat-value= "#{@activity.avg_cadence} spm"
+
+      - if @activity.avg_power
+        .activity-stat
+          %div.activity-stat-label= t('activity_tracker.power', default: 'Avg Power')
+          %div.activity-stat-value= "#{@activity.avg_power} W"
+
+#activity-root{data: {activity_hash: @activity.file_hash, i18n: {
+  loading_activity: t('activity_tracker.js.loading_activity', default: 'Loading activity data...'),
+  error_prefix: t('activity_tracker.js.error_prefix', default: 'Error: '),
+  activity_not_found: t('activity_tracker.js.activity_not_found', default: 'Activity not found'),
+  route_title: t('activity_tracker.js.route_title', default: 'Route'),
+  performance_data_title: t('activity_tracker.js.performance_data_title', default: 'Performance Data'),
+  splits_title: t('activity_tracker.js.splits_title', default: 'Splits (per km)'),
+  chart_empty: t('activity_tracker.js.chart_empty', default: 'No data available'),
+  chart_time_label: t('activity_tracker.js.chart_time_label', default: 'Time'),
+  chart_distance_label: t('activity_tracker.js.chart_distance_label', default: 'Distance'),
+  metric_show_label: t('activity_tracker.js.metric_show_label', default: 'Show:'),
+  metric_heart_rate: t('activity_tracker.js.metric_heart_rate', default: 'Heart Rate'),
+  metric_pace: t('activity_tracker.js.metric_pace', default: 'Pace'),
+  metric_altitude: t('activity_tracker.js.metric_altitude', default: 'Altitude'),
+  metric_cadence: t('activity_tracker.js.metric_cadence', default: 'Cadence'),
+  metric_power: t('activity_tracker.js.metric_power', default: 'Power'),
+  metric_distance: t('activity_tracker.js.metric_distance', default: 'Distance'),
+  metric_duration: t('activity_tracker.js.metric_duration', default: 'Duration'),
+  metric_avg_hr: t('activity_tracker.js.metric_avg_hr', default: 'Avg HR'),
+  metric_max_hr: t('activity_tracker.js.metric_max_hr', default: 'Max HR'),
+  metric_elevation: t('activity_tracker.js.metric_elevation', default: 'Elevation'),
+  splits_empty: t('activity_tracker.js.splits_empty', default: 'No split data available'),
+  splits_pace_label: t('activity_tracker.js.splits_pace_label', default: 'Pace'),
+  splits_avg: t('activity_tracker.js.splits_avg', default: 'Avg'),
+  splits_fastest: t('activity_tracker.js.splits_fastest', default: 'Fastest'),
+  splits_slowest: t('activity_tracker.js.splits_slowest', default: 'Slowest'),
+  embed_view_full: t('activity_tracker.js.embed_view_full', default: 'View full activity →'),
+  embed_load_failed: t('activity_tracker.js.embed_load_failed', default: 'Failed to load activity data'),
+  loading: t('activity_tracker.js.loading', default: 'Loading...'),
+  activity_type_running: t('activity_tracker.js.activity_type_running', default: 'Running'),
+  activity_type_trail_running: t('activity_tracker.js.activity_type_trail_running', default: 'Trail Running'),
+  activity_type_cycling: t('activity_tracker.js.activity_type_cycling', default: 'Cycling'),
+  activity_type_swimming: t('activity_tracker.js.activity_type_swimming', default: 'Swimming'),
+  activity_type_walking: t('activity_tracker.js.activity_type_walking', default: 'Walking'),
+  activity_type_hiking: t('activity_tracker.js.activity_type_hiking', default: 'Hiking'),
+  activity_type_other: t('activity_tracker.js.activity_type_other', default: 'Other')
+}.to_json }}
+
+%link{rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css", integrity: "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=", crossorigin: ""}
+%script{src: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js", integrity: "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=", crossorigin: ""}
+%script{src: "#{asset_path(activity_tracker_javascript_path('index.js'))}"}

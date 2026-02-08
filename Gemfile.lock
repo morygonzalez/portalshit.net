@@ -36,6 +36,12 @@ GIT
       rutie (~> 0.0.4)
       thermite (~> 0)
 
+GIT
+  remote: https://github.com/ridewithgps/rubyfit.git
+  revision: 7268e76c3c66979697621fd4dc2d377ec4808895
+  specs:
+    rubyfit (0.0.18)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -135,6 +141,7 @@ GEM
       sass (>= 3.2, < 3.5)
     concurrent-ruby (1.3.4)
     crass (1.0.6)
+    csv (3.3.5)
     database_cleaner-active_record (2.2.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
@@ -185,6 +192,10 @@ GEM
     get_process_mem (1.0.0)
       bigdecimal (>= 2.0)
       ffi (~> 1.0)
+    gpx (1.2.2)
+      csv
+      nokogiri (~> 1.7)
+      rake
     haml (6.3.0)
       temple (>= 0.8.2)
       thor
@@ -448,6 +459,7 @@ DEPENDENCIES
   factory_girl (~> 4.0)
   faraday_middleware
   fastimage
+  gpx (~> 1.1)
   haml
   haml-lint
   i18n
@@ -481,6 +493,7 @@ DEPENDENCIES
   rspec-its
   rubocop
   ruby-openai
+  rubyfit!
   sass (< 3.7.4)
   simplecov
   sinatra

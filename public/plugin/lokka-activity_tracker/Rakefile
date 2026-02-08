@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+require 'bundler/setup'
+
+namespace :activity_tracker do
+  desc 'Build JavaScript assets'
+  task :build do
+    sh 'npm run build'
+  end
+
+  desc 'Build JavaScript assets for production'
+  task :production_build do
+    sh 'npm run production-build'
+  end
+end

@@ -1,0 +1,104 @@
+en:
+  activerecord:
+    errors:
+      models:
+        lokka/activity_tracker/activity:
+          attributes:
+            title:
+              blank: can't be blank
+            user:
+              blank: must be specified
+            file_hash:
+              duplicate_file: This file has already been uploaded
+  activity_tracker:
+    duplicate_file: This file has already been uploaded
+    unsupported_file: This FIT file contains unsupported data format
+    title: Activities
+    activity_types:
+      running: Running
+      trail_running: Trail Running
+      cycling: Cycling
+      swimming: Swimming
+      walking: Walking
+      hiking: Hiking
+      other: Other
+    no_activities: No activities yet.
+    year_archives: "Archives:"
+    recent: Recent
+    monthly_summary: Monthly Summary
+    month: Month
+    activities_count: Activities
+    started_at: Date
+    type: Type
+    device: Device
+    device_display_name: Device (override)
+    device_display_hint: Leave blank to use the detected device name.
+    distance: Distance
+    duration: Duration
+    avg_pace: Avg Pace
+    best_pace: Best Pace
+    avg_hr: Avg Heart Rate
+    max_hr: Max Heart Rate
+    elevation: Elevation Gain
+    total: Total
+    unknown_month: Unknown Date
+    month_format: "%B %Y"
+    cadence: Avg Cadence
+    power: Avg Power
+    title_label: Title
+    title_placeholder: Leave blank to auto-generate with AI
+    file_label: Activity File (FIT or GPX)
+    upload: Upload
+    entry: Link to Entry
+    no_entry: "-- No Entry --"
+    actions: Actions
+    activity_logs: Activity Logs
+    copy_embed: Copy Embed
+    copy_embed_tooltip: Copy embed code
+    copied: Copied!
+    js:
+      loading_activity: Loading activity data...
+      loading: Loading...
+      error_prefix: "Error: "
+      activity_not_found: Activity not found
+      route_title: Route
+      performance_data_title: Performance Data
+      splits_title: Splits (per km)
+      chart_empty: No data available
+      chart_time_label: Time
+      chart_distance_label: Distance
+      metric_show_label: "Show:"
+      metric_type: Type
+      metric_heart_rate: Heart Rate
+      metric_pace: Pace
+      metric_altitude: Altitude
+      metric_cadence: Cadence
+      metric_power: Power
+      metric_distance: Distance
+      metric_duration: Duration
+      metric_avg_hr: Avg HR
+      metric_max_hr: Max HR
+      metric_elevation: Elevation
+      splits_empty: No split data available
+      splits_pace_label: Pace
+      splits_avg: Avg
+      splits_fastest: Fastest
+      splits_slowest: Slowest
+      monthly_loading: Loading...
+      monthly_empty: No data available
+      monthly_distance: Distance
+      monthly_elevation: Elevation Gain
+      monthly_label_format: "{year}-{month}"
+      embed_view_full: View full activity →
+      embed_load_failed: Failed to load activity data
+      activity_type_running: Running
+      activity_type_trail_running: Trail Running
+      activity_type_cycling: Cycling
+      activity_type_swimming: Swimming
+      activity_type_walking: Walking
+      activity_type_hiking: Hiking
+      activity_type_other: Other
+    admin:
+      title: Manage Activities
+      new: Upload Activity
+      edit: Edit Activity

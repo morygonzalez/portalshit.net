@@ -1,0 +1,78 @@
+%h2= t('activity_tracker.admin.edit', default: 'Edit Activity')
+
+%form#activity-edit-form
+  .form-group
+    %label{for: 'title'}= t('activity_tracker.title_label', default: 'Title')
+    %input.form-control{type: 'text', name: 'title', id: 'title', value: @activity.title, required: true}
+
+  .form-group
+    %label{for: 'activity_type'}= t('activity_tracker.type', default: 'Type')
+    %select.form-control{name: 'activity_type', id: 'activity_type'}
+      - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
+        %option{value: type, selected: @activity.activity_type == type}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
+
+  .form-group
+    %label{for: 'device_display_name'}= t('activity_tracker.device_display_name', default: 'Device (override)')
+    %input.form-control{type: 'text', name: 'device_display_name', id: 'device_display_name', value: @activity.device_display_name, placeholder: @activity.device_auto_name}
+    %small.form-text.text-muted= t('activity_tracker.device_display_hint', default: 'Leave blank to use the detected device name.')
+
+  .form-group
+    %button.btn.btn-primary{type: 'submit'}= t('save', default: 'Save')
+
+  %a.btn.btn-secondary{href: '/admin/activities'}= t('cancel', default: 'Cancel')
+
+#edit-status
+
+:javascript
+  document.getElementById('activity-edit-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = new FormData(this);
+    var status = document.getElementById('edit-status');
+    var activityId = #{@activity.id};
+    var submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    fetch('/admin/activities/' + activityId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: formData.get('title'),
+        activity_type: formData.get('activity_type'),
+        device_display_name: formData.get('device_display_name') || null
+      })
+    }).then(function(response) {
+      var contentType = response.headers.get('content-type') || '';
+      var isJson = contentType.indexOf('application/json') !== -1;
+      var parseBody = isJson ? response.json() : response.text();
+
+      if (!response.ok) {
+        return parseBody.then(function(body) {
+          var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
+          throw new Error(message || response.statusText || 'Save failed');
+        });
+      }
+
+      return parseBody;
+    }).then(function(data) {
+      if (data && data.success) {
+        status.innerHTML = '<p class="text-success">Saved successfully!</p>';
+        setTimeout(function() {
+          window.location.href = '/admin/activities';
+        }, 1000);
+      } else {
+        var message = data && data.error ? data.error : 'Save failed';
+        status.innerHTML = '<p class="text-danger">Error: ' + message + '</p>';
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+      }
+    }).catch(function(error) {
+      status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    });
+  });
