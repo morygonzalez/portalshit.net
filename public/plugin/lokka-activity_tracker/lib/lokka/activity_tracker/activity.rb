@@ -5,7 +5,6 @@ require 'yaml'
 module Lokka
   module ActivityTracker
     class Activity < ActiveRecord::Base
-      belongs_to :entry, optional: true
       belongs_to :user
       has_many :data_points, class_name: 'ActivityDataPoint', dependent: :destroy
 

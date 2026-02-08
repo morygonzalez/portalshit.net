@@ -17,13 +17,6 @@
     %small.form-text.text-muted= t('activity_tracker.device_display_hint', default: 'Leave blank to use the detected device name.')
 
   .form-group
-    %label{for: 'entry_id'}= t('activity_tracker.entry', default: 'Link to Entry')
-    %select.form-control{name: 'entry_id', id: 'entry_id'}
-      %option{value: ''}= t('activity_tracker.no_entry', default: '-- No Entry --')
-      - Entry.published.order(created_at: :desc).limit(100).each do |entry|
-        %option{value: entry.id, selected: @activity.entry_id == entry.id}= entry.title
-
-  .form-group
     %button.btn.btn-primary{type: 'submit'}= t('save', default: 'Save')
 
   %a.btn.btn-secondary{href: '/admin/activities'}= t('cancel', default: 'Cancel')
@@ -48,8 +41,7 @@
       body: JSON.stringify({
         title: formData.get('title'),
         activity_type: formData.get('activity_type'),
-        device_display_name: formData.get('device_display_name') || null,
-        entry_id: formData.get('entry_id') || null
+        device_display_name: formData.get('device_display_name') || null
       })
     }).then(function(response) {
       var contentType = response.headers.get('content-type') || '';
