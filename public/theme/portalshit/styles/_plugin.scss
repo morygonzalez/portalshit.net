@@ -123,6 +123,18 @@
   }
 
   // Activity Tracker
+  .activities-list, .activity-detail {
+    margin: 1rem .5rem 4rem;
+
+    &:last-child {
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      margin-bottom: 1.5em;
+    }
+  }
+
   .activity-summary {
     margin-bottom: 16px;
   }
@@ -194,6 +206,14 @@
   }
 
   @media (max-width: 640px) {
+    .activities-list {
+      overflow-x: auto;
+
+      table.activities {
+        font-size: 14px;
+      }
+    }
+
     .activity-stats-grid {
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 8px 12px;

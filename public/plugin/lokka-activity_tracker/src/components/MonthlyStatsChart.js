@@ -5,17 +5,33 @@ import {
 } from 'recharts'
 import { t } from '../i18n'
 
+const MOBILE_BREAKPOINT = 768
+
 export default class MonthlyStatsChart extends PureComponent {
   constructor(props) {
     super(props)
     this.state = {
       data: [],
       loading: true,
-      error: null
+      error: null,
+      isMobile: window.innerWidth < MOBILE_BREAKPOINT
+    }
+    this.handleResize = this.handleResize.bind(this)
+  }
+
+  handleResize() {
+    const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+    if (isMobile !== this.state.isMobile) {
+      this.setState({ isMobile })
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize)
+  }
+
   async componentDidMount() {
+    window.addEventListener('resize', this.handleResize)
     try {
       const { year } = this.props
       const url = year
@@ -57,7 +73,7 @@ export default class MonthlyStatsChart extends PureComponent {
   }
 
   render() {
-    const { data, loading, error } = this.state
+    const { data, loading, error, isMobile } = this.state
     const { i18n } = this.props
 
     if (loading) {
@@ -76,7 +92,10 @@ export default class MonthlyStatsChart extends PureComponent {
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+          margin={isMobile
+            ? { top: 20, right: 5, left: 5, bottom: 20 }
+            : { top: 20, right: 30, left: 20, bottom: 20 }
+          }
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" tick={{ fontSize: 12 }} tickFormatter={(label) => this.formatMonthLabel(label)} />
@@ -84,13 +103,13 @@ export default class MonthlyStatsChart extends PureComponent {
             yAxisId="distance"
             orientation="left"
             tick={{ fontSize: 12 }}
-            label={{ value: 'km', angle: -90, position: 'insideLeft', fontSize: 12 }}
+            label={isMobile ? undefined : { value: 'km', angle: -90, position: 'insideLeft', fontSize: 12 }}
           />
           <YAxis
             yAxisId="elevation"
             orientation="right"
             tick={{ fontSize: 12 }}
-            label={{ value: 'm', angle: 90, position: 'insideRight', fontSize: 12 }}
+            label={isMobile ? undefined : { value: 'm', angle: 90, position: 'insideRight', fontSize: 12 }}
           />
           <Tooltip
             formatter={(value, name) => this.formatTooltip(value, name)}
