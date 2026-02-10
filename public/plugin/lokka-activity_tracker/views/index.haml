@@ -5,15 +5,22 @@
     %h2= t('activity_tracker.title', default: 'Activities')
 
   - if @available_years && @available_years.any?
-    .year-navigation
-      %span.year-nav-label= t('activity_tracker.year_archives', default: 'Archives:')
-      %a{href: '/activities', class: ('current' unless @selected_year)}= t('activity_tracker.recent', default: 'Recent')
+    .year-navigation.metric-selector
+      %span.metric-selector-label= t('activity_tracker.year_archives', default: 'Archives:')
+      %a.metric-button{href: '/activities', class: ('active' unless @selected_year)}= t('activity_tracker.recent', default: 'Recent')
       - @available_years.each do |year|
-        %a{href: "/activities/#{year}", class: ('current' if @selected_year == year)}= year
+        %a.metric-button{href: "/activities/#{year}", class: ('active' if @selected_year == year)}= year
+
+  - base_path = @selected_year ? "/activities/#{@selected_year}" : '/activities'
+  .type-filter.metric-selector
+    %span.metric-selector-label= t('activity_tracker.filter_by_type', default: 'Filter:')
+    %a.metric-button{href: base_path, class: ('active' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
+    - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
+      %a.metric-button{href: "#{base_path}?type=#{type}", class: ('active' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
 
   .monthly-stats
     %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
-    #monthly-stats-chart{data: {year: @selected_year, i18n: {
+    #monthly-stats-chart{data: {year: @selected_year, type: @selected_type, i18n: {
       monthly_loading: t('activity_tracker.js.monthly_loading', default: 'Loading...'),
       monthly_empty: t('activity_tracker.js.monthly_empty', default: 'No data available'),
       monthly_distance: t('activity_tracker.js.monthly_distance', default: 'Distance'),

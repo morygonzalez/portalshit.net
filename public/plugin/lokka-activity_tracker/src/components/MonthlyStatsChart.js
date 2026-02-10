@@ -33,10 +33,12 @@ export default class MonthlyStatsChart extends PureComponent {
   async componentDidMount() {
     window.addEventListener('resize', this.handleResize)
     try {
-      const { year } = this.props
-      const url = year
-        ? `/activities/monthly_stats.json?year=${year}`
-        : '/activities/monthly_stats.json'
+      const { year, type } = this.props
+      const params = new URLSearchParams()
+      if (year) params.set('year', year)
+      if (type) params.set('type', type)
+      const qs = params.toString()
+      const url = `/activities/monthly_stats.json${qs ? '?' + qs : ''}`
       const response = await fetch(url)
       if (!response.ok) {
         throw new Error('Failed to load monthly stats')

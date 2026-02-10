@@ -18,11 +18,12 @@ module Lokka
         content_type :json
         cache_control :public, :must_revalidate, max_age: 10.minutes
 
+        activity_type = params[:type]
         year = params[:year]&.to_i
         if year && year > 0
-          Activity.yearly_stats(year).to_json
+          Activity.yearly_stats(year, activity_type: activity_type).to_json
         else
-          Activity.monthly_stats(12).to_json
+          Activity.monthly_stats(12, activity_type: activity_type).to_json
         end
       end
 
@@ -40,7 +41,10 @@ module Lokka
       app.get '/activities' do
         @available_years = Activity.available_years
         @selected_year = nil
-        @activities = Activity.recent.in_recent_months(13).page(params[:page]).per(20)
+        @selected_type = params[:type]
+        activities = Activity.recent.in_recent_months(13)
+        activities = activities.by_type(@selected_type) if @selected_type.present?
+        @activities = activities.page(params[:page]).per(100)
         @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
         @archive_mode = :recent
 
@@ -60,7 +64,10 @@ module Lokka
 
           @available_years = Activity.available_years
           @selected_year = year
-          @activities = Activity.recent.in_year(year).page(params[:page]).per(20)
+          @selected_type = params[:type]
+          activities = Activity.recent.in_year(year)
+          activities = activities.by_type(@selected_type) if @selected_type.present?
+          @activities = activities.page(params[:page]).per(100)
           @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{year} - #{@site.title}"
           @archive_mode = :year
 

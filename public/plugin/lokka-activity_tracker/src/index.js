@@ -23,8 +23,9 @@ function initActivityTracker() {
   if (monthlyStatsRoot) {
     const i18n = parseI18n(monthlyStatsRoot)
     const year = monthlyStatsRoot.dataset.year ? parseInt(monthlyStatsRoot.dataset.year, 10) : null
+    const type = monthlyStatsRoot.dataset.type || null
     ReactDOM.render(
-      <MonthlyStatsChart i18n={i18n} year={year} />,
+      <MonthlyStatsChart i18n={i18n} year={year} type={type} />,
       monthlyStatsRoot
     )
   }

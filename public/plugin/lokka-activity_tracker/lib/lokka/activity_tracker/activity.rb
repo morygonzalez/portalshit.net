@@ -41,7 +41,7 @@ module Lokka
              .compact
       end
 
-      def self.monthly_stats(months_back = 6)
+      def self.monthly_stats(months_back = 6, activity_type: nil)
         stats = []
         today = Date.today
 
@@ -50,6 +50,7 @@ module Lokka
           year = date.year
           month = date.month
           activities = in_month(year, month)
+          activities = activities.by_type(activity_type) if activity_type.present?
 
           total_distance = activities.sum(:total_distance_meters) || 0
           total_duration = activities.sum(:duration_seconds) || 0
@@ -71,12 +72,13 @@ module Lokka
         stats
       end
 
-      def self.yearly_stats(year)
+      def self.yearly_stats(year, activity_type: nil)
         stats = []
 
         (1..12).each do |month|
           date = Date.new(year, month, 1)
           activities = in_month(year, month)
+          activities = activities.by_type(activity_type) if activity_type.present?
 
           total_distance = activities.sum(:total_distance_meters) || 0
           total_duration = activities.sum(:duration_seconds) || 0
