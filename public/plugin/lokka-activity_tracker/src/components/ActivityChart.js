@@ -89,13 +89,34 @@ const getDistanceTicks = (maxDistanceKm) => {
   return ticks
 }
 
+const MOBILE_BREAKPOINT = 768
+
 export default class ActivityChart extends PureComponent {
   constructor(props) {
     super(props)
+    this.state = {
+      isMobile: window.innerWidth < MOBILE_BREAKPOINT
+    }
     this.formatXAxis = this.formatXAxis.bind(this)
     this.formatTooltip = this.formatTooltip.bind(this)
     this.handleMouseMove = this.handleMouseMove.bind(this)
     this.handleMouseLeave = this.handleMouseLeave.bind(this)
+    this.handleResize = this.handleResize.bind(this)
+  }
+
+  handleResize() {
+    const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+    if (isMobile !== this.state.isMobile) {
+      this.setState({ isMobile })
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   }
 
   formatXAxis(distanceKm) {
@@ -181,6 +202,7 @@ export default class ActivityChart extends PureComponent {
 
   render() {
     const { selectedMetrics, height = 400, compact = false, i18n } = this.props
+    const { isMobile } = this.state
     const data = this.prepareData()
     const hasAltitude = this.hasAltitudeData()
 
@@ -190,6 +212,7 @@ export default class ActivityChart extends PureComponent {
 
     const maxDistance = data.length > 0 ? Math.max(...data.map(d => d.distance_km)) : 0
     const distanceTicks = getDistanceTicks(maxDistance)
+    const useCompact = compact || isMobile
 
     return (
       <ResponsiveContainer width="100%" height={height}>
@@ -197,9 +220,9 @@ export default class ActivityChart extends PureComponent {
           data={data}
           margin={{
             top: 10,
-            right: compact ? 10 : 30,
-            left: compact ? 0 : 20,
-            bottom: compact ? 0 : 10
+            right: useCompact ? 0 : 30,
+            left: useCompact ? 0 : 20,
+            bottom: useCompact ? 0 : 10
           }}
           onMouseMove={this.handleMouseMove}
           onMouseLeave={this.handleMouseLeave}
@@ -211,7 +234,7 @@ export default class ActivityChart extends PureComponent {
             domain={[0, 'dataMax']}
             ticks={distanceTicks}
             tickFormatter={(value) => `${value}`}
-            tick={{ fontSize: compact ? 10 : 12 }}
+            tick={{ fontSize: useCompact ? 10 : 12 }}
             stroke="#666"
             unit=" km"
           />
@@ -235,9 +258,11 @@ export default class ActivityChart extends PureComponent {
                 yAxisId={metric}
                 orientation={index === 0 ? 'left' : 'right'}
                 domain={config.domain}
-                tick={{ fontSize: compact ? 10 : 12 }}
+                tick={isMobile ? false : { fontSize: useCompact ? 10 : 12 }}
+                tickLine={!isMobile}
+                width={isMobile && index === 0 ? 0 : undefined}
                 stroke={config.color}
-                hide={compact && index > 0}
+                hide={useCompact && index > 0}
                 reversed={config.reversed || false}
                 tickFormatter={metric === 'pace' ? formatPace : undefined}
               />
@@ -249,7 +274,7 @@ export default class ActivityChart extends PureComponent {
             labelStyle={{ color: '#000', fontWeight: 'bold' }}
             itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
           />
-          {!compact && <Legend />}
+          {!useCompact && <Legend />}
           {/* Altitude area chart (always shown, rendered first so it's behind lines) */}
           {hasAltitude && (
             <Area
@@ -278,7 +303,7 @@ export default class ActivityChart extends PureComponent {
                 name={t(i18n, config.labelKey, config.label)}
                 stroke={config.color}
                 dot={false}
-                strokeWidth={compact ? 1 : 2}
+                strokeWidth={useCompact ? 1 : 2}
                 connectNulls={true}
               />
             )

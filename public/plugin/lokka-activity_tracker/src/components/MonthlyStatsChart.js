@@ -88,12 +88,15 @@ export default class MonthlyStatsChart extends PureComponent {
       return <div className="monthly-chart-empty">{t(i18n, 'monthly_empty', 'No data available')}</div>
     }
 
+    const maxDistance = Math.ceil(Math.max(...data.map(d => d.total_distance_km || 0)))
+    const maxElevation = Math.ceil(Math.max(...data.map(d => d.total_ascent_meters || 0)))
+
     return (
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
           margin={isMobile
-            ? { top: 20, right: 5, left: 5, bottom: 20 }
+            ? { top: 20, right: 0, left: 0, bottom: 20 }
             : { top: 20, right: 30, left: 20, bottom: 20 }
           }
         >
@@ -102,13 +105,19 @@ export default class MonthlyStatsChart extends PureComponent {
           <YAxis
             yAxisId="distance"
             orientation="left"
-            tick={{ fontSize: 12 }}
+            domain={[0, maxDistance]}
+            tick={isMobile ? false : { fontSize: 12 }}
+            tickLine={!isMobile}
+            width={isMobile ? 0 : undefined}
             label={isMobile ? undefined : { value: 'km', angle: -90, position: 'insideLeft', fontSize: 12 }}
           />
           <YAxis
             yAxisId="elevation"
             orientation="right"
-            tick={{ fontSize: 12 }}
+            domain={[0, maxElevation]}
+            tick={isMobile ? false : { fontSize: 12 }}
+            tickLine={!isMobile}
+            width={isMobile ? 0 : undefined}
             label={isMobile ? undefined : { value: 'm', angle: 90, position: 'insideRight', fontSize: 12 }}
           />
           <Tooltip
