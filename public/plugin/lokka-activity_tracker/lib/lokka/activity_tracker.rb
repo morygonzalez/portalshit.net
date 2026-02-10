@@ -88,7 +88,10 @@ module Lokka
       # Admin routes
       app.get '/admin/activities' do
         login_required
-        @activities = Activity.recent.page(params[:page]).per(20)
+        @selected_type = params[:type]
+        activities = Activity.recent
+        activities = activities.by_type(@selected_type) if @selected_type.present?
+        @activities = activities.page(params[:page]).per(100)
         @title = "#{I18n.t('activity_tracker.admin.title', default: 'Manage Activities')} - #{@site.title}"
         haml :"plugin/lokka-activity_tracker/views/admin/index", layout: :"admin/layout"
       end

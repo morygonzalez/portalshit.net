@@ -1,7 +1,55 @@
+:css
+  #activity-upload-form {
+    margin: 1em auto 1.5em;
+  }
+  .type-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 12px;
+  }
+  .type-filter .filter-label {
+    font-size: 0.9em;
+    margin-right: 6px;
+  }
+  .type-filter-button {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .type-filter-button:hover {
+    border-color: rgba(0, 0, 0, 0.35);
+  }
+  .type-filter-button.current {
+    border-color: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+  }
+
 %h2= t('activity_tracker.admin.title', default: 'Manage Activities')
 
-%ul.conditions
-  %li= link_to t('activity_tracker.admin.new', default: 'Upload Activity'), url('/admin/activities/new')
+%form#activity-upload-form{enctype: 'multipart/form-data'}
+  .form-group
+    %label{for: 'file'}= t('activity_tracker.file_label', default: 'Activity File (FIT or GPX)')
+    -# iOS Safari doesn't recognize .fit files, so we use a permissive accept with */*
+    %div
+      %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,*/*', required: true}
+      %button.btn.btn-primary{type: 'submit'}= t('activity_tracker.upload', default: 'Upload')
+
+#upload-status
+
+.type-filter
+  %span.filter-label= t('activity_tracker.filter_by_type', default: 'Filter:')
+  %a.type-filter-button{href: '/admin/activities', class: ('current' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
+  - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
+    %a.type-filter-button{href: "/admin/activities?type=#{type}", class: ('current' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
 
 #table_wrapper
   %table.activities
@@ -31,6 +79,52 @@
   = paginate @activities
 
 :javascript
+  document.getElementById('activity-upload-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = new FormData(this);
+    var status = document.getElementById('upload-status');
+    var submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+    status.innerHTML = '<p>Uploading... This may take a while.</p>';
+
+    fetch('/admin/activities', {
+      method: 'POST',
+      body: formData
+    }).then(function(response) {
+      var contentType = response.headers.get('content-type') || '';
+      var isJson = contentType.indexOf('application/json') !== -1;
+      var parseBody = isJson ? response.json() : response.text();
+
+      if (!response.ok) {
+        return parseBody.then(function(body) {
+          var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
+          throw new Error(message || response.statusText || 'Upload failed');
+        });
+      }
+
+      return parseBody;
+    }).then(function(data) {
+      if (data && data.success) {
+        status.innerHTML = '<p class="text-success">Upload successful! Redirecting...</p>';
+        window.location.href = data.redirect_url;
+      } else {
+        var message = data && data.error ? data.error : 'Upload failed';
+        status.innerHTML = '<p class="text-danger">Error: ' + message + '</p>';
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+      }
+    }).catch(function(error) {
+      status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    });
+  });
+
   document.querySelectorAll('.copy-embed-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
