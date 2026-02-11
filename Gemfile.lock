@@ -27,7 +27,7 @@ GIT
 
 GIT
   remote: https://github.com/morygonzalez/tantiny.git
-  revision: 33a6c1fd0b1a5213190a343a46349b29e232393e
+  revision: c42331f76ac6d940539bceff8fdc60e722d6f552
   specs:
     tantiny (0.3.3)
       concurrent-ruby (~> 1.0)
@@ -262,7 +262,7 @@ GEM
       nokogiri (~> 1.6)
     ostruct (0.6.1)
     parallel (1.26.3)
-    parser (3.3.9.0)
+    parser (3.3.10.1)
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
@@ -302,7 +302,7 @@ GEM
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     rainbow (3.1.1)
-    rake (13.3.0)
+    rake (13.3.1)
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
