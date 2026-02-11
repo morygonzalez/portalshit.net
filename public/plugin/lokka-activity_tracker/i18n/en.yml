@@ -51,8 +51,8 @@ en:
     title_placeholder: Leave blank to auto-generate with AI
     file_label: Activity File (FIT or GPX)
     upload: Upload
-    multi_upload_hint: Up to 10 files at once
-    too_many_files: Please select up to 10 files.
+    multi_upload_hint: Up to 50 files at once
+    too_many_files: Please select up to 50 files.
     uploading_progress: Uploading
     upload_complete: Upload complete
     upload_success_label: succeeded

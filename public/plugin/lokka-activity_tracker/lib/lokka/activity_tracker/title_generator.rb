@@ -42,6 +42,7 @@ module Lokka
 
       ACTIVITY_TYPE_JA = {
         'running' => 'ランニング',
+        'trail_running' => 'トレイルランニング',
         'cycling' => 'サイクリング',
         'swimming' => '水泳',
         'walking' => 'ウォーキング',

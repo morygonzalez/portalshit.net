@@ -8,7 +8,7 @@
 %form#activity-upload-form{enctype: 'multipart/form-data'}
   .form-group
     %label{for: 'file'}= t('activity_tracker.file_label', default: 'Activity File (FIT or GPX)')
-    %small.form-hint= t('activity_tracker.multi_upload_hint', default: 'Up to 10 files at once')
+    %small.form-hint= t('activity_tracker.multi_upload_hint', default: 'Up to 50 files at once')
     -# iOS Safari doesn't recognize .fit files, so we use a permissive accept with */*
     %div
       %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,*/*', required: true, multiple: true}
@@ -24,9 +24,9 @@
     var files = Array.from(fileInput.files);
     if (files.length === 0) return;
 
-    if (files.length > 10) {
+    if (files.length > 50) {
       document.getElementById('upload-status').innerHTML =
-        '<p class="text-danger">#{t("activity_tracker.too_many_files", default: "Please select up to 10 files.")}</p>';
+        '<p class="text-danger">#{t("activity_tracker.too_many_files", default: "Please select up to 50 files.")}</p>';
       return;
     }
 
@@ -80,6 +80,14 @@
       return div.innerHTML;
     }
 
+    function proceedNext(index) {
+      if (index >= files.length) {
+        renderDone();
+        return;
+      }
+      uploadNext(index);
+    }
+
     function scheduleNext(index) {
       if (index >= files.length) {
         renderDone();
@@ -113,14 +121,15 @@
       }).then(function(data) {
         if (data && data.success) {
           results.push({ name: files[index].name, success: true });
+          scheduleNext(index + 1);
         } else {
           var message = data && data.error ? data.error : 'Upload failed';
           results.push({ name: files[index].name, success: false, error: message });
+          proceedNext(index + 1);
         }
-        scheduleNext(index + 1);
       }).catch(function(error) {
         results.push({ name: files[index].name, success: false, error: error.message });
-        scheduleNext(index + 1);
+        proceedNext(index + 1);
       });
     }
 
