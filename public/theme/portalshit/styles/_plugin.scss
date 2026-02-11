@@ -138,10 +138,14 @@
   .activity-logs-wrapper {
     overflow-x: auto;
 
-    table.activities {
-      table-layout: auto;
+    .activity-logs-inner {
       width: max-content;
       min-width: 100%;
+
+      table.activities {
+        table-layout: auto;
+        width: 100%;
+      }
     }
   }
 
