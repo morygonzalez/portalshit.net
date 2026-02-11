@@ -44,7 +44,7 @@ module Lokka
         @selected_type = params[:type]
         activities = Activity.recent.in_recent_months(13)
         activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
-        @activities = activities.page(params[:page]).per(100)
+        @activities = activities
         @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
         @archive_mode = :recent
 
@@ -67,7 +67,7 @@ module Lokka
           @selected_type = params[:type]
           activities = Activity.recent.in_year(year)
           activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
-          @activities = activities.page(params[:page]).per(100)
+          @activities = activities
           @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{year} - #{@site.title}"
           @archive_mode = :year
 

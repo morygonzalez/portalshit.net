@@ -102,8 +102,4 @@
   - else
     %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
 
-  - if @activities.respond_to?(:total_pages) && @activities.total_pages > 1
-    .pagination
-      = paginate @activities
-
 %script{src: "#{asset_path(activity_tracker_javascript_path('index.js'))}"}
