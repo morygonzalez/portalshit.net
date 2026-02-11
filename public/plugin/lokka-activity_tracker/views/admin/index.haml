@@ -45,11 +45,16 @@
 
 #upload-status
 
+- available_types = Lokka::ActivityTracker::Activity.available_activity_types
 .type-filter
   %span.filter-label= t('activity_tracker.filter_by_type', default: 'Filter:')
   %a.type-filter-button{href: '/admin/activities', class: ('current' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
+  - Lokka::ActivityTracker::Activity::ACTIVITY_TYPE_GROUPS.each do |group, member_types|
+    - if (member_types & available_types).any?
+      %a.type-filter-button{href: "/admin/activities?type=#{group}", class: ('current' if @selected_type == group)}= t("activity_tracker.activity_types.#{group}", default: group.tr('_', ' ').capitalize)
   - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
-    %a.type-filter-button{href: "/admin/activities?type=#{type}", class: ('current' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
+    - if available_types.include?(type)
+      %a.type-filter-button{href: "/admin/activities?type=#{type}", class: ('current' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
 
 #table_wrapper
   %table.activities

@@ -1,3 +1,12 @@
+:css
+  .activities th {
+    min-width: 150px;
+    width: 10%;
+  }
+  .activities th.title {
+    width: 20%;
+  }
+
 .activities-list
   - if @selected_year
     %h2= "#{t('activity_tracker.title', default: 'Activities')} #{@selected_year}"
@@ -12,11 +21,16 @@
         %a.metric-button{href: "/activities/#{year}", class: ('active' if @selected_year == year)}= year
 
   - base_path = @selected_year ? "/activities/#{@selected_year}" : '/activities'
+  - available_types = Lokka::ActivityTracker::Activity.available_activity_types
   .type-filter.metric-selector
     %span.metric-selector-label= t('activity_tracker.filter_by_type', default: 'Filter:')
     %a.metric-button{href: base_path, class: ('active' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
+    - Lokka::ActivityTracker::Activity::ACTIVITY_TYPE_GROUPS.each do |group, member_types|
+      - if (member_types & available_types).any?
+        %a.metric-button{href: "#{base_path}?type=#{group}", class: ('active' if @selected_type == group)}= t("activity_tracker.activity_types.#{group}", default: group.tr('_', ' ').capitalize)
     - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
-      %a.metric-button{href: "#{base_path}?type=#{type}", class: ('active' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
+      - if available_types.include?(type)
+        %a.metric-button{href: "#{base_path}?type=#{type}", class: ('active' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
 
   .monthly-stats
     %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')
@@ -41,24 +55,24 @@
         %caption.activity-month-caption= month_label
         %thead
           %tr
-            %th= t('activity_tracker.title_label', default: 'Title')
-            %th= t('activity_tracker.started_at', default: 'Date')
-            %th= t('activity_tracker.distance', default: 'Distance')
-            %th= t('activity_tracker.duration', default: 'Duration')
-            %th= t('activity_tracker.avg_pace', default: 'Avg Pace')
-            %th= t('activity_tracker.elevation', default: 'Elevation Gain')
-            %th= t('activity_tracker.type', default: 'Type')
+            %th.title= t('activity_tracker.title_label', default: 'Title')
+            %th.typw= t('activity_tracker.type', default: 'Type')
+            %th.date= t('activity_tracker.started_at', default: 'Date')
+            %th.distance= t('activity_tracker.distance', default: 'Distance')
+            %th.duration= t('activity_tracker.duration', default: 'Duration')
+            %th.pace= t('activity_tracker.avg_pace', default: 'Avg Pace')
+            %th.elevation= t('activity_tracker.elevation', default: 'Elevation Gain')
         %tbody
           - activities.each do |activity|
             %tr
               %td
                 %a{href: "/activities/#{activity.file_hash}"}= activity.title
-              %td= activity.started_at ? activity.started_at.strftime('%Y-%m-%d %H:%M') : '-'
+              %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
+              %td= activity.started_at ? I18n.l(activity.started_at, format: t('activity_tracker.started_at_format', default: '%Y-%m-%d %H:%M')) : '-'
               %td= activity.formatted_distance || '-'
               %td= activity.formatted_duration || '-'
               %td= activity.formatted_pace || '-'
               %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
-              %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
         %tfoot
           %tr
             %td{colspan: 2}= "#{t('activity_tracker.total', default: 'Total')} (#{t('activity_tracker.activities_count', default: 'Activities')}: #{summary[:count]})"

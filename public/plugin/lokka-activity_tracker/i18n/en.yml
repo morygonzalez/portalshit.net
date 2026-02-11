@@ -15,6 +15,7 @@ en:
     unsupported_file: This FIT file contains unsupported data format
     title: Activities
     activity_types:
+      all_running: All Running
       running: Running
       trail_running: Trail Running
       cycling: Cycling
@@ -29,6 +30,7 @@ en:
     month: Month
     activities_count: Activities
     started_at: Date
+    started_at_format: "%b %-d, %Y %H:%M"
     type: Type
     device: Device
     device_display_name: Device (override)

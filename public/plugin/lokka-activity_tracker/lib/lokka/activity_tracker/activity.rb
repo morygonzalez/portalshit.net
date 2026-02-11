@@ -9,6 +9,11 @@ module Lokka
       has_many :data_points, class_name: 'ActivityDataPoint', dependent: :destroy
 
       ACTIVITY_TYPES = %w[running trail_running cycling swimming walking hiking other].freeze
+      ACTIVITY_TYPE_GROUPS = { 'all_running' => %w[running trail_running] }.freeze
+
+      def self.resolve_type_filter(type)
+        ACTIVITY_TYPE_GROUPS[type] || type
+      end
 
       validates :title, presence: true
       validates :user, presence: true
@@ -32,6 +37,10 @@ module Lokka
         cutoff = (months - 1).months.ago.beginning_of_month
         where('started_at >= ?', cutoff)
       }
+
+      def self.available_activity_types
+        distinct.pluck(:activity_type).compact
+      end
 
       def self.available_years
         where.not(started_at: nil)

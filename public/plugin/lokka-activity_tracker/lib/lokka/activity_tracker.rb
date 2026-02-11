@@ -18,7 +18,7 @@ module Lokka
         content_type :json
         cache_control :public, :must_revalidate, max_age: 10.minutes
 
-        activity_type = params[:type]
+        activity_type = Activity.resolve_type_filter(params[:type])
         year = params[:year]&.to_i
         if year && year > 0
           Activity.yearly_stats(year, activity_type: activity_type).to_json
@@ -43,7 +43,7 @@ module Lokka
         @selected_year = nil
         @selected_type = params[:type]
         activities = Activity.recent.in_recent_months(13)
-        activities = activities.by_type(@selected_type) if @selected_type.present?
+        activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
         @activities = activities.page(params[:page]).per(100)
         @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
         @archive_mode = :recent
@@ -66,7 +66,7 @@ module Lokka
           @selected_year = year
           @selected_type = params[:type]
           activities = Activity.recent.in_year(year)
-          activities = activities.by_type(@selected_type) if @selected_type.present?
+          activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
           @activities = activities.page(params[:page]).per(100)
           @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{year} - #{@site.title}"
           @archive_mode = :year
@@ -97,7 +97,7 @@ module Lokka
         login_required
         @selected_type = params[:type]
         activities = Activity.recent
-        activities = activities.by_type(@selected_type) if @selected_type.present?
+        activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
         @activities = activities.page(params[:page]).per(100)
         @title = "#{I18n.t('activity_tracker.admin.title', default: 'Manage Activities')} - #{@site.title}"
         haml :"plugin/lokka-activity_tracker/views/admin/index", layout: :"admin/layout"
