@@ -6,6 +6,17 @@
   .activities th.title {
     width: 20%;
   }
+  .activity-month-summary {
+    font-size: 0.7em;
+    font-weight: normal;
+    font-family: "ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","Lucida Sans";
+  }
+  .activity-month-summary .activity-stat-label {
+    font-size: inherit;
+  }
+  .activity-month-summary .activity-stat-value {
+    font-size: inherit;
+  }
 
 .activities-list
   - if @selected_year
@@ -52,7 +63,22 @@
       - summary = Lokka::ActivityTracker::Activity.monthly_summary(activities)
       - month_label = month_key ? I18n.l(month_key, format: t('activity_tracker.month_format', default: '%Y年%-m月')) : t('activity_tracker.unknown_month', default: 'Unknown Date')
       %table.table.table-striped.activities
-        %caption.activity-month-caption= month_label
+        %caption.activity-month-caption
+          = month_label
+          %span.activity-month-summary
+            （
+            %span.activity-stat-label= t('activity_tracker.activities_count', default: 'Activities')
+            %span.activity-stat-value= "#{summary[:count]}#{t('activity_tracker.activities_count_unit', default: '回')}"
+            \/
+            %span.activity-stat-label= t('activity_tracker.distance', default: 'Distance')
+            %span.activity-stat-value= summary[:formatted_total_distance]
+            \/
+            %span.activity-stat-label= t('activity_tracker.duration', default: 'Duration')
+            %span.activity-stat-value= summary[:formatted_total_duration]
+            \/
+            %span.activity-stat-label= t('activity_tracker.elevation', default: 'Elevation Gain')
+            %span.activity-stat-value= summary[:formatted_total_ascent]
+            ）
         %thead
           %tr
             %th.title= t('activity_tracker.title_label', default: 'Title')
@@ -73,14 +99,6 @@
               %td= activity.formatted_duration || '-'
               %td= activity.formatted_pace || '-'
               %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
-        %tfoot
-          %tr
-            %td{colspan: 2}= "#{t('activity_tracker.total', default: 'Total')} (#{t('activity_tracker.activities_count', default: 'Activities')}: #{summary[:count]})"
-            %td= summary[:formatted_total_distance]
-            %td= summary[:formatted_total_duration]
-            %td= '-'
-            %td= summary[:formatted_total_ascent]
-            %td= '-'
   - else
     %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
 

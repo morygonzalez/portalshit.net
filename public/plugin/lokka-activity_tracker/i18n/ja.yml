@@ -29,6 +29,7 @@ ja:
     monthly_summary: 月ごとのサマリー
     month: 月
     activities_count: 回数
+    activities_count_unit: 回
     started_at: 日時
     started_at_format: "%Y年%-m月%-d日 %H:%M"
     type: 種類

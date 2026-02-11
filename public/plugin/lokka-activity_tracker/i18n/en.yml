@@ -29,6 +29,7 @@ en:
     monthly_summary: Monthly Summary
     month: Month
     activities_count: Activities
+    activities_count_unit: activities
     started_at: Date
     started_at_format: "%b %-d, %Y %H:%M"
     type: Type
