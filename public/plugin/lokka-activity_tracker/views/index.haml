@@ -56,49 +56,50 @@
 
   - if @activities.any?
     %h3= t('activity_tracker.activity_logs', default: 'Activity Logs')
-    - grouped_data = Lokka::ActivityTracker::Activity.group_by_month(@activities)
-    - grouped = grouped_data[:grouped]
-    - grouped_data[:months].each do |month_key|
-      - activities = grouped[month_key]
-      - summary = Lokka::ActivityTracker::Activity.monthly_summary(activities)
-      - month_label = month_key ? I18n.l(month_key, format: t('activity_tracker.month_format', default: '%Y年%-m月')) : t('activity_tracker.unknown_month', default: 'Unknown Date')
-      %table.table.table-striped.activities
-        %caption.activity-month-caption
-          = month_label
-          %span.activity-month-summary
-            （
-            %span.activity-stat-label= t('activity_tracker.activities_count', default: 'Activities')
-            %span.activity-stat-value= "#{summary[:count]}#{t('activity_tracker.activities_count_unit', default: '回')}"
-            \/
-            %span.activity-stat-label= t('activity_tracker.distance', default: 'Distance')
-            %span.activity-stat-value= summary[:formatted_total_distance]
-            \/
-            %span.activity-stat-label= t('activity_tracker.duration', default: 'Duration')
-            %span.activity-stat-value= summary[:formatted_total_duration]
-            \/
-            %span.activity-stat-label= t('activity_tracker.elevation', default: 'Elevation Gain')
-            %span.activity-stat-value= summary[:formatted_total_ascent]
-            ）
-        %thead
-          %tr
-            %th.title= t('activity_tracker.title_label', default: 'Title')
-            %th.typw= t('activity_tracker.type', default: 'Type')
-            %th.date= t('activity_tracker.started_at', default: 'Date')
-            %th.distance= t('activity_tracker.distance', default: 'Distance')
-            %th.duration= t('activity_tracker.duration', default: 'Duration')
-            %th.pace= t('activity_tracker.avg_pace', default: 'Avg Pace')
-            %th.elevation= t('activity_tracker.elevation', default: 'Elevation Gain')
-        %tbody
-          - activities.each do |activity|
+    .activity-logs-wrapper
+      - grouped_data = Lokka::ActivityTracker::Activity.group_by_month(@activities)
+      - grouped = grouped_data[:grouped]
+      - grouped_data[:months].each do |month_key|
+        - activities = grouped[month_key]
+        - summary = Lokka::ActivityTracker::Activity.monthly_summary(activities)
+        - month_label = month_key ? I18n.l(month_key, format: t('activity_tracker.month_format', default: '%Y年%-m月')) : t('activity_tracker.unknown_month', default: 'Unknown Date')
+        %table.table.table-striped.activities
+          %caption.activity-month-caption
+            = month_label
+            %span.activity-month-summary
+              （
+              %span.activity-stat-label= t('activity_tracker.activities_count', default: 'Activities')
+              %span.activity-stat-value= "#{summary[:count]}#{t('activity_tracker.activities_count_unit', default: '回')}"
+              \/
+              %span.activity-stat-label= t('activity_tracker.distance', default: 'Distance')
+              %span.activity-stat-value= summary[:formatted_total_distance]
+              \/
+              %span.activity-stat-label= t('activity_tracker.duration', default: 'Duration')
+              %span.activity-stat-value= summary[:formatted_total_duration]
+              \/
+              %span.activity-stat-label= t('activity_tracker.elevation', default: 'Elevation Gain')
+              %span.activity-stat-value= summary[:formatted_total_ascent]
+              ）
+          %thead
             %tr
-              %td
-                %a{href: "/activities/#{activity.file_hash}"}= activity.title
-              %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
-              %td= activity.started_at ? I18n.l(activity.started_at, format: t('activity_tracker.started_at_format', default: '%Y-%m-%d %H:%M')) : '-'
-              %td= activity.formatted_distance || '-'
-              %td= activity.formatted_duration || '-'
-              %td= activity.formatted_pace || '-'
-              %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
+              %th.title= t('activity_tracker.title_label', default: 'Title')
+              %th.typw= t('activity_tracker.type', default: 'Type')
+              %th.date= t('activity_tracker.started_at', default: 'Date')
+              %th.distance= t('activity_tracker.distance', default: 'Distance')
+              %th.duration= t('activity_tracker.duration', default: 'Duration')
+              %th.pace= t('activity_tracker.avg_pace', default: 'Avg Pace')
+              %th.elevation= t('activity_tracker.elevation', default: 'Elevation Gain')
+          %tbody
+            - activities.each do |activity|
+              %tr
+                %td
+                  %a{href: "/activities/#{activity.file_hash}"}= activity.title
+                %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
+                %td= activity.started_at ? I18n.l(activity.started_at, format: t('activity_tracker.started_at_format', default: '%Y-%m-%d %H:%M')) : '-'
+                %td= activity.formatted_distance || '-'
+                %td= activity.formatted_duration || '-'
+                %td= activity.formatted_pace || '-'
+                %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
   - else
     %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
 

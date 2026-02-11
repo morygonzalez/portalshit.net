@@ -135,6 +135,16 @@
     }
   }
 
+  .activity-logs-wrapper {
+    overflow-x: auto;
+
+    table.activities {
+      table-layout: auto;
+      width: max-content;
+      min-width: 100%;
+    }
+  }
+
   .activity-summary {
     margin-bottom: 16px;
   }
@@ -207,8 +217,6 @@
 
   @media (max-width: 640px) {
     .activities-list {
-      overflow-x: auto;
-
       table.activities {
         font-size: 14px;
       }
