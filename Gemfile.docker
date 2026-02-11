@@ -89,6 +89,7 @@ source 'https://rubygems.org'
 
 gem 'rubyfit', github: 'ridewithgps/rubyfit'
 gem 'gpx', '~> 1.1'
+gem 'rubyzip', require: 'zip'
 
 gem 'vacuum'
 gem 'cld'

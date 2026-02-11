@@ -50,9 +50,10 @@ ja:
     power: 平均パワー
     title_label: タイトル
     title_placeholder: 空欄の場合は AI が自動生成
-    file_label: アクティビティファイル（FIT または GPX）
+    file_label: アクティビティファイル（FIT, GPX, ZIP）
     upload: アップロード
-    multi_upload_hint: 最大50ファイルまで同時に選択できます
+    multi_upload_hint: 最大50ファイルまで同時選択可。ZIPファイルは自動展開されます
+    zip_no_valid_files: ZIP内にFITまたはGPXファイルが見つかりませんでした
     too_many_files: ファイルは50個以内で選択してください。
     uploading_progress: アップロード中
     upload_complete: アップロード完了

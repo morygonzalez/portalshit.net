@@ -40,7 +40,7 @@
     %label{for: 'file'}= t('activity_tracker.file_label', default: 'Activity File (FIT or GPX)')
     -# iOS Safari doesn't recognize .fit files, so we use a permissive accept with */*
     %div
-      %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,*/*', required: true}
+      %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,.zip,*/*', required: true}
       %button.btn.btn-primary{type: 'submit'}= t('activity_tracker.upload', default: 'Upload')
 
 #upload-status
@@ -112,7 +112,27 @@
 
       return parseBody;
     }).then(function(data) {
-      if (data && data.success) {
+      if (data && data.results) {
+        // ZIP file response
+        var successCount = data.results.filter(function(r) { return r.success; }).length;
+        var failCount = data.results.length - successCount;
+        var html = '<p><strong>Upload complete: ' + successCount + ' succeeded'
+          + (failCount > 0 ? (', ' + failCount + ' failed') : '')
+          + '</strong></p>';
+        for (var i = 0; i < data.results.length; i++) {
+          var r = data.results[i];
+          if (r.success) {
+            html += '<p class="text-success">✓ ' + r.filename + '</p>';
+          } else {
+            html += '<p class="text-danger">✗ ' + r.filename + ' - ' + r.error + '</p>';
+          }
+        }
+        if (successCount > 0) {
+          html += '<p><a href="/admin/activities">Back to activities list</a></p>';
+        }
+        status.innerHTML = html;
+        if (submitButton) submitButton.disabled = false;
+      } else if (data && data.success) {
         status.innerHTML = '<p class="text-success">Upload successful! Redirecting...</p>';
         window.location.href = data.redirect_url;
       } else {

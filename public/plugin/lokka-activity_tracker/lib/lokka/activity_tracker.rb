@@ -123,92 +123,31 @@ module Lokka
 
         halt 400, { error: 'Unsupported file format' }.to_json unless format
 
-        begin
-          # Calculate file hash for duplicate detection
-          file_hash = Digest::SHA256.file(tempfile.path).hexdigest
+        if format == 'zip'
+          results = process_zip_file(tempfile, current_user)
 
-          # Check for duplicate file
-          existing = Activity.find_by(file_hash: file_hash)
-          if existing
-            halt 409, {
-              error: I18n.t('activity_tracker.duplicate_file', default: 'This file has already been uploaded'),
-              existing_activity_id: existing.id,
-              existing_activity_title: existing.title
-            }.to_json
-          end
-
-          parser = create_parser(format, tempfile.path)
-          parser.parse
-
-          summary = parser.activity_summary
-          data_points = parser.data_points
-
-          # Generate title automatically if not provided
-          title = params[:title].presence
-          title ||= TitleGenerator.new(summary, data_points).generate rescue filename
-
-          activity = Activity.new(
-            user: current_user,
-            title: title,
-            activity_type: summary[:activity_type],
-            started_at: summary[:started_at],
-            duration_seconds: summary[:duration_seconds],
-            total_distance_meters: summary[:total_distance_meters],
-            total_ascent_meters: summary[:total_ascent_meters],
-            avg_heart_rate: summary[:avg_heart_rate],
-            max_heart_rate: summary[:max_heart_rate],
-            avg_speed: summary[:avg_speed],
-            avg_cadence: summary[:avg_cadence],
-            avg_power: summary[:avg_power],
-            device_manufacturer: summary[:device_manufacturer],
-            device_product_id: summary[:device_product_id],
-            original_filename: filename,
-            file_format: format,
-            file_hash: file_hash
-          )
-
-          # Handle file upload to S3 if configured
-          if Option.s3_bucket_name.present?
-            upload_result = upload_to_s3(tempfile, filename)
-            activity.file_url = upload_result[:url] if upload_result[:status] == 201
-          end
-
-          Activity.transaction do
-            activity.save!
-
-            data_points.each do |dp|
-              activity.data_points.create!(
-                elapsed_seconds: dp[:elapsed_seconds],
-                latitude: dp[:latitude],
-                longitude: dp[:longitude],
-                altitude_meters: dp[:altitude_meters],
-                heart_rate: dp[:heart_rate],
-                speed: dp[:speed],
-                cadence: dp[:cadence],
-                power: dp[:power],
-                distance_meters: dp[:distance_meters]
-              )
-            end
+          if results.empty?
+            halt 400, { error: I18n.t('activity_tracker.zip_no_valid_files', default: 'No FIT or GPX files found in the ZIP archive') }.to_json
           end
 
           {
-            success: true,
-            activity_id: activity.id,
+            success: results.any? { |r| r[:success] },
+            results: results,
             redirect_url: '/admin/activities'
           }.to_json
-        rescue UnsupportedFileError => e
-          halt 400, {
-            error: I18n.t('activity_tracker.unsupported_file', default: e.message)
-          }.to_json
-        rescue StandardError => e
-          error_id = SecureRandom.hex(8)
-          if respond_to?(:logger) && logger
-            logger.error("[activity_tracker] upload failed error_id=#{error_id} #{e.class}: #{e.message}")
-            logger.error(e.backtrace.join("\n")) if e.backtrace
+        else
+          result = process_single_file(tempfile, filename, current_user)
+
+          if result[:success]
+            {
+              success: true,
+              activity_id: result[:activity_id],
+              redirect_url: '/admin/activities'
+            }.to_json
           else
-            warn("[activity_tracker] upload failed error_id=#{error_id} #{e.class}: #{e.message}")
+            status_code = result[:status] || 500
+            halt status_code, { error: result[:error] }.to_json
           end
-          halt 500, { error: "Upload failed (Error ID: #{error_id})" }.to_json
         end
       end
 
@@ -313,6 +252,7 @@ module Lokka
       case ext
       when '.fit' then 'fit'
       when '.gpx' then 'gpx'
+      when '.zip' then 'zip'
       end
     end
 
@@ -333,6 +273,116 @@ module Lokka
       JSON.parse(raw)
     rescue JSON::ParserError
       halt 400, { error: 'Invalid JSON' }.to_json
+    end
+
+    def process_single_file(tempfile, filename, user)
+      format = detect_format(filename)
+      return { success: false, error: 'Unsupported file format', status: 400 } unless format && format != 'zip'
+
+      file_hash = Digest::SHA256.file(tempfile.path).hexdigest
+
+      existing = ActivityTracker::Activity.find_by(file_hash: file_hash)
+      if existing
+        return {
+          success: false,
+          error: I18n.t('activity_tracker.duplicate_file', default: 'This file has already been uploaded'),
+          status: 409
+        }
+      end
+
+      parser = create_parser(format, tempfile.path)
+      parser.parse
+
+      summary = parser.activity_summary
+      data_points = parser.data_points
+
+      title = ActivityTracker::TitleGenerator.new(summary, data_points).generate rescue filename
+
+      activity = ActivityTracker::Activity.new(
+        user: user,
+        title: title,
+        activity_type: summary[:activity_type],
+        started_at: summary[:started_at],
+        duration_seconds: summary[:duration_seconds],
+        total_distance_meters: summary[:total_distance_meters],
+        total_ascent_meters: summary[:total_ascent_meters],
+        avg_heart_rate: summary[:avg_heart_rate],
+        max_heart_rate: summary[:max_heart_rate],
+        avg_speed: summary[:avg_speed],
+        avg_cadence: summary[:avg_cadence],
+        avg_power: summary[:avg_power],
+        device_manufacturer: summary[:device_manufacturer],
+        device_product_id: summary[:device_product_id],
+        original_filename: filename,
+        file_format: format,
+        file_hash: file_hash
+      )
+
+      if Option.s3_bucket_name.present?
+        upload_result = upload_to_s3(tempfile, filename)
+        activity.file_url = upload_result[:url] if upload_result[:status] == 201
+      end
+
+      ActivityTracker::Activity.transaction do
+        activity.save!
+
+        data_points.each do |dp|
+          activity.data_points.create!(
+            elapsed_seconds: dp[:elapsed_seconds],
+            latitude: dp[:latitude],
+            longitude: dp[:longitude],
+            altitude_meters: dp[:altitude_meters],
+            heart_rate: dp[:heart_rate],
+            speed: dp[:speed],
+            cadence: dp[:cadence],
+            power: dp[:power],
+            distance_meters: dp[:distance_meters]
+          )
+        end
+      end
+
+      { success: true, activity_id: activity.id }
+    rescue ActivityTracker::UnsupportedFileError => e
+      { success: false, error: I18n.t('activity_tracker.unsupported_file', default: e.message), status: 400 }
+    rescue StandardError => e
+      error_id = SecureRandom.hex(8)
+      if respond_to?(:logger) && logger
+        logger.error("[activity_tracker] upload failed error_id=#{error_id} #{e.class}: #{e.message}")
+        logger.error(e.backtrace.join("\n")) if e.backtrace
+      else
+        warn("[activity_tracker] upload failed error_id=#{error_id} #{e.class}: #{e.message}")
+      end
+      { success: false, error: "Upload failed (Error ID: #{error_id})", status: 500 }
+    end
+
+    def process_zip_file(tempfile, user)
+      require 'zip'
+      results = []
+
+      ::Zip::File.open(tempfile.path) do |zip|
+        zip.each do |entry|
+          next if entry.directory?
+          next if entry.name.start_with?('__MACOSX')
+          next if File.basename(entry.name).start_with?('.')
+
+          entry_filename = sanitize_filename(File.basename(entry.name))
+          entry_format = detect_format(entry_filename)
+          next unless entry_format && entry_format != 'zip'
+
+          Tempfile.open(['activity', ".#{entry_format}"]) do |tmp|
+            tmp.binmode
+            tmp.write(entry.get_input_stream.read)
+            tmp.rewind
+
+            result = process_single_file(tmp, entry_filename, user)
+            results << result.merge(filename: entry_filename)
+
+            sleep 1.5 if result[:success]
+          end
+        end
+      end
+
+      results
     end
 
     def upload_to_s3(tempfile, filename)

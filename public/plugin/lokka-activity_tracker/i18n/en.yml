@@ -50,9 +50,10 @@ en:
     power: Avg Power
     title_label: Title
     title_placeholder: Leave blank to auto-generate with AI
-    file_label: Activity File (FIT or GPX)
+    file_label: Activity File (FIT, GPX, or ZIP)
     upload: Upload
-    multi_upload_hint: Up to 50 files at once
+    multi_upload_hint: Up to 50 files at once. ZIP files are automatically extracted
+    zip_no_valid_files: No FIT or GPX files found in the ZIP archive
     too_many_files: Please select up to 50 files.
     uploading_progress: Uploading
     upload_complete: Upload complete
