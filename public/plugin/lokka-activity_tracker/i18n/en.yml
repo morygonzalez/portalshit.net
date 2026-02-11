@@ -51,6 +51,13 @@ en:
     title_placeholder: Leave blank to auto-generate with AI
     file_label: Activity File (FIT or GPX)
     upload: Upload
+    multi_upload_hint: Up to 10 files at once
+    too_many_files: Please select up to 10 files.
+    uploading_progress: Uploading
+    upload_complete: Upload complete
+    upload_success_label: succeeded
+    upload_fail_label: failed
+    back_to_list: Back to activities list
     entry: Link to Entry
     no_entry: "-- No Entry --"
     actions: Actions

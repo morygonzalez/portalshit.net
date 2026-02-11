@@ -1,17 +1,18 @@
+:css
+  #upload-status .text-success, #upload-status .text-danger {
+    margin-bottom: .5em;
+  }
+
 %h2= t('activity_tracker.admin.new', default: 'Upload Activity')
 
 %form#activity-upload-form{enctype: 'multipart/form-data'}
   .form-group
-    %label{for: 'title'}= t('activity_tracker.title_label', default: 'Title')
-    %input.form-control{type: 'text', name: 'title', id: 'title', placeholder: t('activity_tracker.title_placeholder', default: 'Leave blank to use filename')}
-
-  .form-group
     %label{for: 'file'}= t('activity_tracker.file_label', default: 'Activity File (FIT or GPX)')
+    %small.form-hint= t('activity_tracker.multi_upload_hint', default: 'Up to 10 files at once')
     -# iOS Safari doesn't recognize .fit files, so we use a permissive accept with */*
-    %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,*/*', required: true}
-
-  .form-group
-    %button.btn.btn-primary{type: 'submit'}= t('activity_tracker.upload', default: 'Upload')
+    %div
+      %input.form-control{type: 'file', name: 'file', id: 'file', accept: '.fit,.gpx,*/*', required: true, multiple: true}
+      %button.btn.btn-primary{type: 'submit'}= t('activity_tracker.upload', default: 'Upload')
 
 #upload-status
 
@@ -19,45 +20,109 @@
   document.getElementById('activity-upload-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    var formData = new FormData(this);
-    var status = document.getElementById('upload-status');
-    var submitButton = this.querySelector('button[type="submit"]');
-    if (submitButton) {
-      submitButton.disabled = true;
+    var fileInput = document.getElementById('file');
+    var files = Array.from(fileInput.files);
+    if (files.length === 0) return;
+
+    if (files.length > 10) {
+      document.getElementById('upload-status').innerHTML =
+        '<p class="text-danger">#{t("activity_tracker.too_many_files", default: "Please select up to 10 files.")}</p>';
+      return;
     }
-    status.innerHTML = '<p>Uploading... This may take a while.</p>';
 
-    fetch('/admin/activities', {
-      method: 'POST',
-      body: formData
-    }).then(function(response) {
-      var contentType = response.headers.get('content-type') || '';
-      var isJson = contentType.indexOf('application/json') !== -1;
-      var parseBody = isJson ? response.json() : response.text();
+    var submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    fileInput.disabled = true;
 
-      if (!response.ok) {
-        return parseBody.then(function(body) {
-          var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
-          throw new Error(message || response.statusText || 'Upload failed');
-        });
-      }
+    var total = files.length;
+    var results = [];
+    var statusEl = document.getElementById('upload-status');
 
-      return parseBody;
-    }).then(function(data) {
-      if (data && data.success) {
-        status.innerHTML = '<p class="text-success">Upload successful! Redirecting...</p>';
-        window.location.href = data.redirect_url;
-      } else {
-        var message = data && data.error ? data.error : 'Upload failed';
-        status.innerHTML = '<p class="text-danger">Error: ' + message + '</p>';
-        if (submitButton) {
-          submitButton.disabled = false;
+    function renderProgress(current) {
+      var html = '<p>#{t("activity_tracker.uploading_progress", default: "Uploading")} ' + current + ' / ' + total + '...</p>';
+      for (var i = 0; i < results.length; i++) {
+        var r = results[i];
+        if (r.success) {
+          html += '<p class="text-success">✓ ' + escapeHtml(r.name) + '</p>';
+        } else {
+          html += '<p class="text-danger">✗ ' + escapeHtml(r.name) + ' - ' + escapeHtml(r.error) + '</p>';
         }
       }
-    }).catch(function(error) {
-      status.innerHTML = '<p class="text-danger">Error: ' + error.message + '</p>';
-      if (submitButton) {
-        submitButton.disabled = false;
+      statusEl.innerHTML = html;
+    }
+
+    function renderDone() {
+      var successCount = results.filter(function(r) { return r.success; }).length;
+      var failCount = results.length - successCount;
+      var html = '<p><strong>#{t("activity_tracker.upload_complete", default: "Upload complete")}: '
+        + successCount + ' #{t("activity_tracker.upload_success_label", default: "succeeded")}'
+        + (failCount > 0 ? (', ' + failCount + ' #{t("activity_tracker.upload_fail_label", default: "failed")}') : '')
+        + '</strong></p>';
+      for (var i = 0; i < results.length; i++) {
+        var r = results[i];
+        if (r.success) {
+          html += '<p class="text-success">✓ ' + escapeHtml(r.name) + '</p>';
+        } else {
+          html += '<p class="text-danger">✗ ' + escapeHtml(r.name) + ' - ' + escapeHtml(r.error) + '</p>';
+        }
       }
-    });
+      if (successCount > 0) {
+        html += '<p><a href="/admin/activities">#{t("activity_tracker.back_to_list", default: "Back to activities list")}</a></p>';
+      }
+      statusEl.innerHTML = html;
+      if (submitButton) submitButton.disabled = false;
+      fileInput.disabled = false;
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    function scheduleNext(index) {
+      if (index >= files.length) {
+        renderDone();
+        return;
+      }
+      setTimeout(function() { uploadNext(index); }, 1500);
+    }
+
+    function uploadNext(index) {
+      renderProgress(index + 1);
+
+      var formData = new FormData();
+      formData.append('file', files[index]);
+
+      fetch('/admin/activities', {
+        method: 'POST',
+        body: formData
+      }).then(function(response) {
+        var contentType = response.headers.get('content-type') || '';
+        var isJson = contentType.indexOf('application/json') !== -1;
+        var parseBody = isJson ? response.json() : response.text();
+
+        if (!response.ok) {
+          return parseBody.then(function(body) {
+            var message = isJson && body && body.error ? body.error : (body && body.trim ? body.trim() : '');
+            throw new Error(message || response.statusText || 'Upload failed');
+          });
+        }
+
+        return parseBody;
+      }).then(function(data) {
+        if (data && data.success) {
+          results.push({ name: files[index].name, success: true });
+        } else {
+          var message = data && data.error ? data.error : 'Upload failed';
+          results.push({ name: files[index].name, success: false, error: message });
+        }
+        scheduleNext(index + 1);
+      }).catch(function(error) {
+        results.push({ name: files[index].name, success: false, error: error.message });
+        scheduleNext(index + 1);
+      });
+    }
+
+    uploadNext(0);
   });

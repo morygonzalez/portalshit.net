@@ -51,6 +51,13 @@ ja:
     title_placeholder: 空欄の場合は AI が自動生成
     file_label: アクティビティファイル（FIT または GPX）
     upload: アップロード
+    multi_upload_hint: 最大10ファイルまで同時に選択できます
+    too_many_files: ファイルは10個以内で選択してください。
+    uploading_progress: アップロード中
+    upload_complete: アップロード完了
+    upload_success_label: 成功
+    upload_fail_label: 失敗
+    back_to_list: アクティビティ一覧に戻る
     entry: 記事にリンク
     no_entry: "-- 記事なし --"
     actions: 操作
