@@ -145,7 +145,7 @@ module Lokka
 
           # Generate title automatically if not provided
           title = params[:title].presence
-          title ||= TitleGenerator.new(summary).generate rescue filename
+          title ||= TitleGenerator.new(summary, data_points).generate rescue filename
 
           activity = Activity.new(
             user: current_user,
