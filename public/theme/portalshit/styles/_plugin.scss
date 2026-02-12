@@ -143,8 +143,8 @@
       min-width: 100%;
 
       table.activities {
-        table-layout: auto;
-        width: 100%;
+        table-layout: fixed;
+        width: 1260px;
       }
     }
   }
@@ -223,6 +223,7 @@
     .activities-list {
       table.activities {
         font-size: 12px;
+        width: 800px;
       }
     }
 
