@@ -81,9 +81,8 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    entries = Entry.includes(:category, :tags).published
-    entry_frequencies = {}
-    entries.each do |entry|
+    insert_sql = 'INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)'
+    Entry.includes(:category, :tags).published.find_each(batch_size: 100) do |entry|
       text_to_tokenize = <<~HEREDOC.strip_heredoc
         #{entry.title}
         #{entry.raw_body})
@@ -92,11 +91,8 @@ namespace :similar_entries do
       HEREDOC
       words = Tokenizer.run(text_to_tokenize)
       frequency = words.each_with_object(Hash.new(0)) {|word, sum| sum[word] += 1; }
-      entry_frequencies[entry.id] = frequency
-    end
-    entry_frequencies.each do |entry_id, frequency|
       frequency.each do |word, count|
-        db.execute('INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)', [word, entry_id, count])
+        db.execute(insert_sql, [word, entry.id, count])
       end
     end
   end
@@ -223,11 +219,12 @@ namespace :similar_entries do
     SQL
 
     results = {}
+    db.results_as_hash = true
     Entry.published.pluck(:id).each do |entry_id|
       db.execute(extract_similar_entries_sql, [entry_id, entry_id, entry_id])
-      db.results_as_hash = true
       similarities = db.execute(search_similar_entries_sql, [entry_id, entry_id, entry_id, entry_id])
       results[entry_id] = similarities
+      db.execute('DELETE FROM similar_candidate WHERE parent_id = ?', [entry_id])
     end
 
     Similarity.connection.execute('TRUNCATE table similarities;')

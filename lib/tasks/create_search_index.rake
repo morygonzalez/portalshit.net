@@ -25,24 +25,22 @@ task :create_new_index do
   entries = Entry.includes(:category, :tags).published
   index = Lokka::App.search_index
 
-  index.transaction do
-    entries.each do |entry|
-      tags_splitted = entry.tag_list.join(' ')
-      title_tokenized = Tokenizer.run(entry.title).join(' ')
-      body_tokenized = Tokenizer.run(entry.raw_body).join(' ')
-      category_tokenized = Tokenizer.run(entry.category.title).join(' ') if entry.category
+  entries.find_each(batch_size: 200) do |entry|
+    tags_splitted = entry.tag_list.join(' ')
+    title_tokenized = Tokenizer.run(entry.title).join(' ')
+    body_tokenized = Tokenizer.run(entry.raw_body).join(' ')
+    category_tokenized = Tokenizer.run(entry.category.title).join(' ') if entry.category
 
-      index << {
-        id: entry.id,
-        title: entry.title,
-        title_tokenized: title_tokenized,
-        category: "/#{entry.category&.title}",
-        category_tokenized: category_tokenized,
-        tags: tags_splitted,
-        body: body_tokenized,
-        date: entry.created_at
-      }
-    end
+    index << {
+      id: entry.id,
+      title: entry.title,
+      title_tokenized: title_tokenized,
+      category: "/#{entry.category&.title}",
+      category_tokenized: category_tokenized,
+      tags: tags_splitted,
+      body: body_tokenized,
+      date: entry.created_at
+    }
   end
 
   index.reload
