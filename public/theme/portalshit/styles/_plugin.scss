@@ -155,7 +155,7 @@
 
   .activity-month-caption {
     font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
-    font-size: 1.25em;
+    font-size: 1.15rem;
     font-weight: 600;
     margin-bottom: 0.5em;
     text-align: left;
@@ -221,7 +221,7 @@
 
   @media (max-width: 640px) {
     .activity-month-caption {
-      font-size: 1.1em;
+      font-size: 1rem;
     }
 
     .activities-list {
