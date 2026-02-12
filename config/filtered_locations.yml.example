@@ -1,0 +1,18 @@
+# Locations to filter out from activity map display
+# Points within the specified radius (in meters) of each location will be hidden
+# Default radius is 300 meters if not specified
+
+- name: 自宅
+  latitude: 35.6812
+  longitude: 139.7671
+  radius: 300
+
+- name: 実家
+  latitude: 35.0116
+  longitude: 135.7681
+  radius: 300
+
+- name: 職場
+  latitude: 35.6595
+  longitude: 139.7004
+  radius: 200

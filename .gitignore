@@ -32,6 +32,7 @@ plugin_old
 *.sql.gz
 /public/**/node_modules
 /config/newrelic.yml
+/config/filtered_locations.yml
 /.local/
 .bash_history
 .dify_uploaded_names

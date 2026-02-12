@@ -30,7 +30,8 @@ set :deploy_to, "/var/www/deploys/#{fetch(:application)}"
 # Default value for :linked_files is []
 append :linked_files,
   'db/database.yml',
-  '.env'
+  '.env',
+  'config/filtered_locations.yml'
 
 # Default value for linked_dirs is []
 append :linked_dirs,

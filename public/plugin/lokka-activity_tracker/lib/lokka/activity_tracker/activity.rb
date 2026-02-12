@@ -260,6 +260,32 @@ module Lokka
         end
       end
 
+      def self.filtered_locations
+        return @filtered_locations if defined?(@filtered_locations)
+
+        config_path = File.join(Lokka.root, 'config', 'filtered_locations.yml')
+        @filtered_locations = if File.exist?(config_path)
+                                raw = YAML.safe_load(File.read(config_path), permitted_classes: [Symbol]) || []
+                                raw.select { |loc| loc.is_a?(Hash) }.map do |loc|
+                                  lat = loc['latitude']&.to_f
+                                  lng = loc['longitude']&.to_f
+                                  next nil unless lat && lng && lat != 0 && lng != 0
+
+                                  { latitude: lat, longitude: lng, radius: (loc['radius'] || 300).to_f }
+                                end.compact
+                              else
+                                # Fallback to ENV vars for backwards compatibility
+                                lat = ENV['ACTIVITY_TRACKER_HOME_LAT']&.to_f
+                                lng = ENV['ACTIVITY_TRACKER_HOME_LNG']&.to_f
+                                radius = (ENV['ACTIVITY_TRACKER_HOME_RADIUS'] || 300).to_f
+                                if lat && lng && lat != 0 && lng != 0
+                                  [{ latitude: lat, longitude: lng, radius: radius }]
+                                else
+                                  []
+                                end
+                              end
+      end
+
       def humanize_device(value)
         str = value.to_s.strip
         return nil if str.empty?
@@ -287,8 +313,8 @@ module Lokka
         # Downsample for chart/map display if activity is long
         points = downsample_points(all_points)
 
-        # Filter map points to hide home location (within configured radius)
-        map_points = filter_home_location(points)
+        # Filter map points to hide private locations (within configured radius)
+        map_points = filter_private_locations(points)
 
         {
           id: id,
@@ -334,24 +360,22 @@ module Lokka
         result
       end
 
-      def filter_home_location(points)
-        home_lat = ENV['ACTIVITY_TRACKER_HOME_LAT']&.to_f
-        home_lng = ENV['ACTIVITY_TRACKER_HOME_LNG']&.to_f
-        home_radius = (ENV['ACTIVITY_TRACKER_HOME_RADIUS'] || 300).to_f
-
-        return points unless home_lat && home_lng && home_lat != 0 && home_lng != 0
+      def filter_private_locations(points)
+        locations = self.class.filtered_locations
+        return points if locations.empty?
 
         points.reject do |point|
           lat = point[:latitude]
           lng = point[:longitude]
           next false unless lat && lng
 
-          distance_from_home(lat, lng, home_lat, home_lng) <= home_radius
+          locations.any? do |loc|
+            haversine_distance(lat, lng, loc[:latitude], loc[:longitude]) <= loc[:radius]
+          end
         end
       end
 
-      def distance_from_home(lat1, lng1, lat2, lng2)
-        # Haversine formula for distance calculation
+      def haversine_distance(lat1, lng1, lat2, lng2)
         r = 6371000 # Earth's radius in meters
 
         lat1_rad = lat1 * Math::PI / 180
