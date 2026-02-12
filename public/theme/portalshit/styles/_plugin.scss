@@ -184,13 +184,13 @@
   }
 
   .activity-stat-label {
-    font-size: 14px;
+    font-size: 0.875em;
     letter-spacing: 0.02em;
     color: $meta-text-color;
   }
 
   .activity-stat-value {
-    font-size: 16px;
+    font-size: 1em;
     font-weight: 600;
     color: inherit;
     white-space: nowrap;
@@ -220,6 +220,10 @@
   }
 
   @media (max-width: 640px) {
+    .activity-month-caption {
+      font-size: 1.35em;
+    }
+
     .activities-list {
       table.activities {
         font-size: 12px;
@@ -233,7 +237,7 @@
     }
 
     .activity-stat-value {
-      font-size: 15px;
+      font-size: 0.95em;
     }
   }
 
