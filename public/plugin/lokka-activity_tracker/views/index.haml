@@ -1,10 +1,17 @@
 :css
-  .activities th {
-    min-width: 150px;
-    width: 10%;
-  }
   .activities th.title {
-    width: 20%;
+    width: auto;
+  }
+  .activities .type,
+  .activities .date {
+    white-space: nowrap;
+  }
+  .activities .distance,
+  .activities .duration,
+  .activities .pace,
+  .activities .elevation {
+    text-align: right;
+    white-space: nowrap;
   }
   .activity-month-summary {
     font-size: 0.7em;
@@ -95,12 +102,12 @@
                 %tr
                   %td
                     %a{href: "/activities/#{activity.file_hash}"}= activity.title
-                  %td= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
-                  %td= activity.started_at ? I18n.l(activity.started_at, format: t('activity_tracker.started_at_format', default: '%Y-%m-%d %H:%M')) : '-'
-                  %td= activity.formatted_distance || '-'
-                  %td= activity.formatted_duration || '-'
-                  %td= activity.formatted_pace || '-'
-                  %td= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
+                  %td.type= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')
+                  %td.date= activity.started_at ? I18n.l(activity.started_at, format: t('activity_tracker.started_at_format', default: '%Y-%m-%d %H:%M')) : '-'
+                  %td.distance= activity.formatted_distance || '-'
+                  %td.duration= activity.formatted_duration || '-'
+                  %td.pace= activity.formatted_pace || '-'
+                  %td.elevation= activity.total_ascent_meters ? "#{activity.total_ascent_meters.round} m" : '-'
   - else
     %p.no-activities= t('activity_tracker.no_activities', default: 'No activities yet.')
 
