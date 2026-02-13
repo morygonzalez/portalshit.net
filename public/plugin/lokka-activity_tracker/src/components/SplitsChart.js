@@ -49,6 +49,12 @@ export default function SplitsChart({ splits, height = 300, i18n }) {
     return <div className="splits-chart-empty">{t(i18n, 'splits_empty', 'No split data available')}</div>
   }
 
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
+  const minWidthBase = isMobile ? 640 : 900
+  const widthPerSplit = 50
+  const rightPadding = isMobile ? 150 : 220
+  const chartMinWidth = Math.max(minWidthBase, splits.length * widthPerSplit + rightPadding)
+
   // Calculate average pace
   const avgPace = splits.reduce((sum, s) => sum + (s.pace_seconds || 0), 0) / splits.length
 
@@ -116,8 +122,8 @@ export default function SplitsChart({ splits, height = 300, i18n }) {
   }
 
   return (
-    <div className="splits-chart">
-      <ResponsiveContainer width="100%" height={height}>
+    <div className="splits-chart" style={{ minWidth: `${chartMinWidth}px`, height: `${height}px` }}>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           layout="horizontal"

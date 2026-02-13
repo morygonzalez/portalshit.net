@@ -139,7 +139,9 @@ export default class ActivityPage extends Component {
         {activity.splits && activity.splits.length > 0 && (
           <div className="activity-splits-container">
             <h3>{t(i18n, 'splits_title', 'Splits (per km)')}</h3>
-            <SplitsChart splits={activity.splits} i18n={i18n} />
+            <div className="activity-splits-scroll">
+              <SplitsChart splits={activity.splits} i18n={i18n} />
+            </div>
           </div>
         )}
       </div>

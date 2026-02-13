@@ -153,6 +153,12 @@
     margin-bottom: 16px;
   }
 
+  .activity-splits-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+  }
+
   .activity-month-caption {
     font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
     font-size: 1.15rem;
