@@ -85,6 +85,7 @@
 
   - if @activities.any?
     %h3= t('activity_tracker.activity_logs', default: 'Activity Logs')
+    #activity-range-filters{data: { distance_label: t('activity_tracker.distance', default: 'Distance'), elevation_label: t('activity_tracker.elevation', default: 'Elevation Gain') }}
     .activity-logs-wrapper
       .activity-logs-inner
         - grouped_data = Lokka::ActivityTracker::Activity.group_by_month(@activities)
@@ -121,7 +122,7 @@
                 %th.elevation= t('activity_tracker.elevation', default: 'Elevation Gain')
             %tbody
               - activities.each do |activity|
-                %tr
+                %tr{data: { distance: activity.total_distance_meters ? (activity.total_distance_meters / 1000.0).round(2) : '', elevation: activity.total_ascent_meters ? activity.total_ascent_meters.round : '' }}
                   %td
                     %a{href: "/activities/#{activity.file_hash}"}= activity.title
                   %td.type= activity.localized_activity_type || t('activity_tracker.title', default: 'Activity')

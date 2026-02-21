@@ -298,6 +298,106 @@
     }
   }
 
+  // Range filters (distance / elevation sliders)
+  .range-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin: 8px 0 12px;
+    align-items: center;
+  }
+
+  .range-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .range-filter-label {
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+
+  .range-filter-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 160px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border: none;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+    }
+  }
+
+  .range-filter-value {
+    font-size: 0.85em;
+    white-space: nowrap;
+    min-width: 5em;
+  }
+
+  .range-filter-reset {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.85em;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    line-height: 1;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  html.dark-mode & {
+    .range-filter-slider {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .range-filter-reset {
+      border-color: rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    .range-filters {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .range-filter-slider {
+      width: 120px;
+    }
+  }
+
   // Emoji markers for map start/finish points
   .emoji-marker {
     background: transparent;

@@ -5,6 +5,7 @@ import ActivityPage from './ActivityPage'
 import ActivityEmbed from './ActivityEmbed'
 import MonthlyStatsChart from './components/MonthlyStatsChart'
 import { parseI18n } from './i18n'
+import { initRangeFilters } from './activityRangeFilters'
 
 function initActivityTracker() {
   // Render full activity page
@@ -43,6 +44,12 @@ function initActivityTracker() {
     )
     element.dataset.rendered = 'true'
   })
+
+  // Initialize range filters (distance / elevation sliders)
+  const rangeFiltersRoot = document.getElementById('activity-range-filters')
+  if (rangeFiltersRoot) {
+    initRangeFilters(rangeFiltersRoot)
+  }
 }
 
 // Run initialization when DOM is ready
