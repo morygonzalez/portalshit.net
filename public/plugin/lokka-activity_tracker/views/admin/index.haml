@@ -45,16 +45,23 @@
 
 #upload-status
 
+%div.search
+  %form(action="/admin/activities" method="get")
+    - if @selected_type
+      %input{ type: 'hidden', name: 'type', value: @selected_type }
+    %input{ type: 'search', name: 'query', placeholder: "Search", value: "#{params[:query]}" }
+
+- query_param = @query.present? ? "&query=#{Rack::Utils.escape_html(@query)}" : ""
 - available_types = Lokka::ActivityTracker::Activity.available_activity_types
 .type-filter
   %span.filter-label= t('activity_tracker.filter_by_type', default: 'Filter:')
-  %a.type-filter-button{href: '/admin/activities', class: ('current' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
+  %a.type-filter-button{href: "/admin/activities#{@query.present? ? "?query=#{Rack::Utils.escape_html(@query)}" : ''}", class: ('current' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
   - Lokka::ActivityTracker::Activity::ACTIVITY_TYPE_GROUPS.each do |group, member_types|
     - if (member_types & available_types).any?
-      %a.type-filter-button{href: "/admin/activities?type=#{group}", class: ('current' if @selected_type == group)}= t("activity_tracker.activity_types.#{group}", default: group.tr('_', ' ').capitalize)
+      %a.type-filter-button{href: "/admin/activities?type=#{group}#{query_param}", class: ('current' if @selected_type == group)}= t("activity_tracker.activity_types.#{group}", default: group.tr('_', ' ').capitalize)
   - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
     - if available_types.include?(type)
-      %a.type-filter-button{href: "/admin/activities?type=#{type}", class: ('current' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
+      %a.type-filter-button{href: "/admin/activities?type=#{type}#{query_param}", class: ('current' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
 
 #table_wrapper
   %table.activities

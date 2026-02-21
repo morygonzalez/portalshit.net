@@ -55,15 +55,22 @@
 
   - base_path = @selected_year ? "/activities/#{@selected_year}" : '/activities'
   - available_types = Lokka::ActivityTracker::Activity.available_activity_types
+  - query_param = @query.present? ? "&query=#{Rack::Utils.escape_html(@query)}" : ""
   .type-filter.metric-selector
     %span.metric-selector-label= t('activity_tracker.filter_by_type', default: 'Filter:')
-    %a.metric-button{href: base_path, class: ('active' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
+    %a.metric-button{href: "#{base_path}#{@query.present? ? "?query=#{Rack::Utils.escape_html(@query)}" : ''}", class: ('active' unless @selected_type)}= t('activity_tracker.filter_all', default: 'All')
     - Lokka::ActivityTracker::Activity::ACTIVITY_TYPE_GROUPS.each do |group, member_types|
       - if (member_types & available_types).any?
-        %a.metric-button{href: "#{base_path}?type=#{group}", class: ('active' if @selected_type == group)}= t("activity_tracker.activity_types.#{group}", default: group.tr('_', ' ').capitalize)
+        %a.metric-button{href: "#{base_path}?type=#{group}#{query_param}", class: ('active' if @selected_type == group)}= t("activity_tracker.activity_types.#{group}", default: group.tr('_', ' ').capitalize)
     - Lokka::ActivityTracker::Activity::ACTIVITY_TYPES.each do |type|
       - if available_types.include?(type)
-        %a.metric-button{href: "#{base_path}?type=#{type}", class: ('active' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
+        %a.metric-button{href: "#{base_path}?type=#{type}#{query_param}", class: ('active' if @selected_type == type)}= t("activity_tracker.activity_types.#{type}", default: type.tr('_', ' ').capitalize)
+
+  %div.search
+    %form(action="#{base_path}" method="get")
+      - if @selected_type
+        %input{ type: 'hidden', name: 'type', value: @selected_type }
+      %input{ type: 'search', name: 'query', placeholder: "Search", value: "#{params[:query]}" }
 
   .monthly-stats
     %h3= t('activity_tracker.monthly_summary', default: 'Monthly Summary')

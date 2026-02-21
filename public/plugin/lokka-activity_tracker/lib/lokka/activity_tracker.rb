@@ -42,7 +42,9 @@ module Lokka
         @available_years = Activity.available_years
         @selected_year = nil
         @selected_type = params[:type]
+        @query = params[:query]
         activities = Activity.recent.in_recent_months(13)
+        activities = activities.search(@query) if @query.present?
         activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
         @activities = activities
         @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} - #{@site.title}"
@@ -65,7 +67,9 @@ module Lokka
           @available_years = Activity.available_years
           @selected_year = year
           @selected_type = params[:type]
+          @query = params[:query]
           activities = Activity.recent.in_year(year)
+          activities = activities.search(@query) if @query.present?
           activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
           @activities = activities
           @title = "#{I18n.t('activity_tracker.title', default: 'Activities')} #{year} - #{@site.title}"
@@ -95,8 +99,10 @@ module Lokka
       # Admin routes
       app.get '/admin/activities' do
         login_required
+        @query = params[:query]
         @selected_type = params[:type]
         activities = Activity.recent
+        activities = activities.search(@query) if @query.present?
         activities = activities.by_type(Activity.resolve_type_filter(@selected_type)) if @selected_type.present?
         @activities = activities.page(params[:page]).per(100)
         @title = "#{I18n.t('activity_tracker.admin.title', default: 'Manage Activities')} - #{@site.title}"

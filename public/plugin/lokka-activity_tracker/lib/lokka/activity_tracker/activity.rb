@@ -37,6 +37,10 @@ module Lokka
         cutoff = (months - 1).months.ago.beginning_of_month
         where('started_at >= ?', cutoff)
       }
+      scope :search, ->(query) {
+        return all if query.blank?
+        where('title LIKE :q OR activity_type LIKE :q', q: "%#{query}%")
+      }
 
       def self.available_activity_types
         distinct.pluck(:activity_type).compact
