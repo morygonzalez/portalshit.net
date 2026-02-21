@@ -1,5 +1,9 @@
 .activity-detail
-  %h2= @activity.title
+  .activity-detail-header
+    %h2= @activity.title
+    - if logged_in?
+      .edit
+        %a{href: url("/admin/activities/#{@activity.id}/edit")}= t('edit')
 
   .activity-summary
     .activity-stats-grid

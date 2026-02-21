@@ -135,6 +135,16 @@
     }
   }
 
+  .activity-detail-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    h2 {
+      margin-bottom: 1.5em;
+    }
+  }
+
   .activity-logs-wrapper {
     overflow-x: auto;
 
