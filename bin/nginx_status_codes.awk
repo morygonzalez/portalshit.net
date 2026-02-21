@@ -10,19 +10,20 @@ BEGIN { FS="\t" }
 }
 END{
   n=asorti(statuses,sorted_s)
-  printf "Date"
-  for(i=1;i<=n;i++) printf "\t%s",sorted_s[i]
-  printf "\tTotal\n"
+  printf "%-12s","Date"
+  for(i=1;i<=n;i++) printf "%8s",sorted_s[i]
+  printf "%10s\n","Total"
+
   m=asorti(dates,sorted_d)
-  for(i=1;i<=m;i++){
+  for(i=m;i>=1;i--){
     d=sorted_d[i]
-    printf "%s",d
+    printf "%-12s",d
     total=0
     for(j=1;j<=n;j++){
       v=(count[d][sorted_s[j]]?count[d][sorted_s[j]]:0)
-      printf "\t%d",v
+      printf "%8d",v
       total+=v
     }
-    printf "\t%d\n",total
+    printf "%10d\n",total
   }
 }
