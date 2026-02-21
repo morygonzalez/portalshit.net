@@ -1,6 +1,7 @@
 <h3>Activities</h3>
 <ul>
   <li><a href="/admin/activities">Admin Activities</a></li>
+  <li><a href="/admin/activities/new">Activities Bulk Upload</a></li>
   <li><a href="/activities">Activities</a></li>
 </ul>
 <h3>Link to Affiliate Reports and Access Analysis</h3>
@@ -34,6 +35,11 @@
   </div>
   <div id="query-term-ranking-visitor">
     <h3><a href="/log-aggregation/query-term-ranking-visitor.txt">Query Term Ranking Visitor</a></h3>
+  </div>
+</div>
+<div class="status-codes">
+  <div id="nginx-status-codes-all">
+    <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
   </div>
 </div>
 <div class="hit-rate">
@@ -84,7 +90,11 @@
   const createContent = async (response, identifier) => {
     let text = await getText(response);
     let lastModified = new Date(response.headers.get('last-modified'));
-    let contentArray = text.split("\n").slice(0, 19);
+    let maxContentLength = 19;
+    if (identifier.match(/status\-codes/)) {
+      maxContentLength = 32
+    }
+    let contentArray = text.split("\n").slice(0, maxContentLength);
     if (identifier.match(/ranking/)) {
       contentArray = contentArray.map(item => {
         if (!item) {
@@ -131,6 +141,7 @@
   promises.push(
     new Promise((resolve, reject) => generateElement('query-term-ranking-all')),
     new Promise((resolve, reject) => generateElement('query-term-ranking-visitor')),
+    new Promise((resolve, reject) => generateElement('nginx-status-codes-all')),
   )
 
   Promise.all(promises);
@@ -143,6 +154,10 @@
 }
 .ranking div, .hit-rate div {
   width: 33%;
+}
+pre {
+  tab-size: 12;
+  overflow-y: visible;
 }
 @media screen and (max-width: 640px) {
   .ranking div, .hit-rate div {
