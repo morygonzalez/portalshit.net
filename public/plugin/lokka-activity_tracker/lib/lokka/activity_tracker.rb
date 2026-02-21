@@ -23,7 +23,7 @@ module Lokka
         if year && year > 0
           Activity.yearly_stats(year, activity_type: activity_type).to_json
         else
-          Activity.monthly_stats(12, activity_type: activity_type).to_json
+          Activity.monthly_stats(13, activity_type: activity_type).to_json
         end
       end
 
