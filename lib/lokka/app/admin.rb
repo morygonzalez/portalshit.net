@@ -5,6 +5,12 @@ module Lokka
     namespace '/admin' do
       get '/' do
         @snippet = Snippet.where(name: 'Test Snippet').first
+        dashboard_snippet_path = File.join(settings.public_folder, '_dashboard_snippet.html')
+        @dashboard_content = if File.exist?(dashboard_snippet_path)
+                               File.read(dashboard_snippet_path)
+                             else
+                               @site.dashboard
+                             end
         haml :'admin/index', layout: :'admin/layout'
       end
 
