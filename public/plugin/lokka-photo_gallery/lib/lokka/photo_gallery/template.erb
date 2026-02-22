@@ -1,31 +1,9 @@
 <div class="photo-gallery pswp-gallery">
-<%- if @cover -%>
-  <div class="pswp-gallery__item cover">
-    <a href="<%= @cover[:url] %>" data-pswp-width="<%= @cover[:width] %>" data-pswp-height="<%= @cover[:height] %>" data-taken-at="<%= @cover[:taken_at] %>">
-      <img src="https://portalshit.net/imageproxy/1280x/<%= @cover[:url] %>" alt="<%= @cover[:alt] %>">
-    </a>
-    <ul class="pswp-caption-content">
-      <li class="title"><%= @cover[:title] %></li>
-      <li class="meta">カメラ: <%= @cover[:camera] %></li>
-      <li class="meta">レンズ: <%= @cover[:lens] %></li>
-      <li class="meta">F値: <%= @cover[:f_number] %></li>
-      <li class="meta">シャッタースピード: <%= @cover[:shutter_speed] %></li>
-      <li class="meta">ISO感度: <%= @cover[:iso] %></li>
-      <li class="meta">焦点距離: <%= @cover[:focal_length] %></li>
-      <li class="meta">撮影日時: <%= @cover[:taken_at] %></li>
-    <%- if @cover[:location].present? -%>
-      <li class="meta">
-        撮影場所: <%= @cover[:location] %><br />
-        <span class="licence"><a href="<%= @cover[:licence_url] %>"><%= @cover[:licence_text] %></a></span>
-      </li>
-    <%- end -%>
-    </ul>
-  </div>
-<%- end -%>
-<%- @images.each do |item| -%>
-  <div class="pswp-gallery__item">
+<%- all_items = [*(@cover ? [[@cover, true]] : []), *@images.map { |img| [img, false] }] -%>
+<%- all_items.each do |item, is_cover| -%>
+  <div class="pswp-gallery__item<%= ' cover' if is_cover %>">
     <a href="<%= item[:url] %>" data-pswp-width="<%= item[:width] %>" data-pswp-height="<%= item[:height] %>" data-taken-at="<%= item[:taken_at] %>">
-      <img src="<%= item[:thumb_url] %>" alt="<%= item[:alt] %>">
+      <img src="<%= image_src(item, cover: is_cover) %>" alt="<%= item[:alt] %>">
     </a>
     <ul class="pswp-caption-content">
       <li class="title"><%= item[:title] %></li>

@@ -1,175 +1,13 @@
-require 'uri'
 require 'json'
-require 'fileutils'
-require 'erb'
-require 'exiftool'
+require_relative 'lib/lokka/photo_gallery/metadata_generator'
 require_relative 'lib/lokka/photo_gallery/renderer'
-
-def credentials
-  @credentials ||= Aws::Credentials.new(
-    Option.aws_access_key_id,
-    Option.aws_secret_access_key
-  )
-end
-
-def s3
-  @s3 ||= Aws::S3::Resource.new(region: Option.s3_region, credentials: credentials)
-end
-
-def bucket
-  @bucket ||= s3.bucket(Option.s3_bucket_name)
-end
-
-def upload(filepath, filename)
-  content_type = File.open(filepath, 'rb') { |f| Marcel::MimeType.for(f) }
-
-  object = bucket.object(filename)
-
-  if object.exists?
-    puts "[skip] s3://#{bucket.name}/#{filename} は既に存在します"
-    return { skipped: true, key: filename }
-  end
-
-  object.upload_file(
-    filepath,
-    content_type: content_type,
-    cache_control: 'max-age=2592000,s-maxage=31536000'
-  )
-
-  puts "[upload] s3://#{bucket.name}/#{filename}"
-  { uploaded: true, key: filename }
-end
-
-def reverse_geocode(latitude:, longitude:)
-  url = "https://nominatim.openstreetmap.org/reverse?lat=#{latitude}&lon=#{longitude}&format=json&accept-language=ja"
-
-  response = URI.open(url, 'User-Agent' => 'portalshit.net/1.0 (morygonzalez@gmail.com)')
-  data = JSON.parse(response.read).with_indifferent_access
-
-  location = data['display_name'].split(', ')[0..-3].reverse[0..4].join
-
-  { location: location, raw: data }
-rescue StandardError => e
-  warn "Reverse geocoding failed for (#{latitude}, #{longitude}): #{e.message}"
-  { location: nil, raw: { error: e.message } }
-end
-
-def dms_to_decimal(dms)
-  match = dms.match(/(\d+) deg (\d+)' ([\d.]+)" ([NSEW])/)
-  degrees = match[1].to_f
-  minutes = match[2].to_f
-  seconds = match[3].to_f
-  direction = match[4]
-
-  decimal = degrees + (minutes / 60.0) + (seconds / 3600.0)
-  decimal *= -1 if %w[S W].include?(direction)
-
-  decimal
-end
-
-def read_or_create_file(path, default: "")
-  FileUtils.mkdir_p(File.dirname(path))
-
-  content = nil
-  File.open(path, File::RDWR | File::CREAT, 0o644) do |f|
-    f.flock(File::LOCK_EX)
-    if f.size.zero?
-      f.write(default)
-      f.flush
-    end
-    f.rewind
-    content = f.read
-  end
-
-  content
-end
-
-def read_or_create_json(path, default: [])
-  text = read_or_create_file(path, default: JSON.dump(default))
-  JSON.parse(text, symbolize_names: true)
-rescue JSON::ParserError
-  []
-end
 
 namespace :photo_gallery do
   desc '画像からmetadata.jsonを生成'
   task :generate_metadata, [:folder, :do_upload] do |_, args|
     folder = args[:folder]
     do_upload = ActiveModel::Type::Boolean.new.cast(args[:do_upload])
-    metadata_file_path = File.join(folder, 'metadata.json')
-    metadata = read_or_create_json(metadata_file_path, default: [])
-
-    image_extensions = %w[jpg jpeg png gif]
-    images = Dir.entries(folder).select do |file|
-      ext = File.extname(file).downcase.delete_prefix('.')
-      image_extensions.include?(ext)
-    end
-
-    image_hashes = images.map.with_index do |filename, index|
-      filepath = File.join(folder, filename)
-      digest = Digest::MD5.file(filepath).to_s
-      extname = File.extname(filepath)
-      s3_filename = digest + extname
-
-      processed_data = metadata.find {|item| item[:s3_filename] == s3_filename }
-
-      if processed_data.present?
-        processed_data
-      else
-        sleep 1 if index > 0
-        upload(filepath, s3_filename) if do_upload
-
-        url = "https://resources.portalshit.net/#{s3_filename}"
-        thumb_url = "https://portalshit.net/imageproxy/115/#{url}"
-
-        exif = Exiftool.new(filepath).to_hash
-        title = exif[:title]
-        camera = %(#{exif[:make]} #{exif[:model]})
-        lens = exif[:lens_model]
-        f_number = %(ƒ/#{exif[:f_number]})
-        shutter_speed = exif[:shutter_speed]
-        iso = exif[:iso]
-        focal_length = exif[:focal_length]
-        width = exif[:image_width]
-        height = exif[:image_height]
-        taken_at = exif[:date_time_original]
-        latitude = exif[:gps_latitude]
-        longitude = exif[:gps_longitude]
-        keywords = exif[:subject]
-
-        location_result = (latitude && longitude) ? reverse_geocode(latitude: latitude, longitude: longitude) : { location: nil, raw: nil }
-        *licence_text, licence_url = location_result.dig(:raw, :licence)&.split("\s")
-        licence_text = licence_text.join(' ')
-
-        {
-          filename: filename,
-          s3_filename: s3_filename,
-          title: title,
-          width: width,
-          height: height,
-          alt: title,
-          taken_at: taken_at,
-          url: url,
-          thumb_url: thumb_url,
-          camera: camera,
-          lens: lens,
-          f_number: f_number,
-          shutter_speed: shutter_speed,
-          iso: iso,
-          focal_length: focal_length,
-          latitude: latitude,
-          longitude: longitude,
-          location: location_result[:location],
-          licence_text: licence_text,
-          licence_url: licence_url,
-          reverse_geocode_raw: location_result[:raw],
-          keywords: keywords
-        }
-      end
-    end
-
-    File.write(metadata_file_path, JSON.pretty_generate(image_hashes))
-    puts "Generated #{metadata_file_path}"
+    Lokka::PhotoGallery::MetadataGenerator.new(folder, do_upload: do_upload).generate
   end
 
   desc 'metadata.jsonからHTMLを生成'
@@ -181,8 +19,8 @@ namespace :photo_gallery do
       abort "#{metadata_file} が存在しません。先に rake photo_gallery:generate_metadata を実行してください。"
     end
 
-    images = JSON.parse(File.read(metadata_file), symbolize_names: true).sort_by {|item| item[:taken_at] }
-    renderer = PhotoGallery::Renderer.new(images)
+    images = JSON.parse(File.read(metadata_file), symbolize_names: true).sort_by { |item| item[:taken_at] }
+    renderer = Lokka::PhotoGallery::Renderer.new(images)
     puts renderer.render
   end
 end
