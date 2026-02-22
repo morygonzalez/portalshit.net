@@ -24,7 +24,7 @@ module Dify
       raise 'ENV[DATASET_API_KEY] not set' unless dataset_token
     end
 
-    def create_document_by_text!(name:, text:, date: nil, process_rule: nil)
+    def create_document_by_text!(name:, text:, process_rule: nil)
       ensure_credentials!
 
       response = http_post_json("/v1/datasets/#{dataset_id}/document/create-by-text", {

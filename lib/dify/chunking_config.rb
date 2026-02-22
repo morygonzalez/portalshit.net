@@ -37,16 +37,13 @@ module Dify
       candidate = presence(value) ? value : env['CHUNK_SIZE']
       return nil if candidate.nil?
 
-      candidate = candidate.to_i if candidate.respond_to?(:to_i)
-      candidate.positive? ? candidate : nil
+      n = candidate.to_i
+      n.positive? ? n : nil
     end
 
     def normalize_delimiter(value)
-      candidate = value
-      candidate = env['CHUNK_DELIMITER'] if candidate.nil?
-      candidate = default_delimiter if candidate.nil?
-      candidate = nil if candidate.is_a?(String) && candidate.empty?
-      candidate ||= default_delimiter
+      candidate = presence(value) ? value : env['CHUNK_DELIMITER']
+      candidate = default_delimiter unless presence(candidate)
       candidate
     end
 

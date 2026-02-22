@@ -25,13 +25,15 @@ namespace :knowledge do
   # 例:
   #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:refresh_yearly[1.2,6]"
   desc 'Refresh yearly documents (update_by_text; fallback to create if not exists)'
-  task :refresh_yearly, [:sleep_secs, :retries] do |_, args|
+  task :refresh_yearly, [:sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     exporter = Dify::KnowledgeExporter.new
     abort '[refresh_yearly] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
 
     exporter.refresh_yearly!(
       sleep_secs: args[:sleep_secs],
-      retries: args[:retries]
+      retries: args[:retries],
+      chunk_size: args[:chunk_size],
+      chunk_delimiter: args[:chunk_delimiter]
     )
   end
 
