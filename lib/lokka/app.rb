@@ -49,7 +49,6 @@ module Lokka
     end
 
     configure :development do
-      set :session_secret, SecureRandom.hex(64)
       register Sinatra::Reloader
       supported_stylesheet_templates.each do |style|
         set style, style: :expanded
