@@ -121,8 +121,8 @@
             }
 
             #search_form {
-              position: absolute;
-              left: 50%; top: 200px;
+              position: fixed;
+              left: 50%; top: 20vh;
               transform: translate(-50%, 0);
               margin-top: 1px;
               background: $modal-bg-color;
