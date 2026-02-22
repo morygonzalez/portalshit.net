@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source "$(dirname "$0")/common.sh"
+
+# ステータスコード集計処理
+process_status_code() {
+  local period=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/nginx-status-codes-${period}.txt"
+  local awk_script
+
+  case "$period" in
+    all)
+      awk_script="${APP_DIR}/bin/nginx_status_codes.awk"
+      ;;
+    *)
+      awk_script="${APP_DIR}/bin/nginx_status_codes_hourly.awk"
+      ;;
+  esac
+
+  echo "Processing Status Code ($period)"
+  find "${LOG_DIR}" -name "access.log*" \
+    | xargs zcat -f \
+    | filter_by_date "${period}" \
+    | /usr/bin/gawk -f "${awk_script}" \
+    | tee "${output}"
+
+  echo "Status code saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_status_code
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_status_code "$period"
+        ;;
+      *)
+        echo "Usage: $0 {[YYYY-MM-DD|today|yesterday|all]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"
