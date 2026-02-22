@@ -62,6 +62,17 @@ namespace :knowledge do
     )
   end
 
+  # メタデータを再適用してドキュメントの無効化を防止
+  # 使い方:
+  #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake knowledge:touch
+  desc 'Touch all documents to prevent auto-archiving'
+  task :touch do
+    exporter = Dify::KnowledgeExporter.new
+    abort '[touch] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
+
+    exporter.touch_all!
+  end
+
   # 要約ドライラン: 指定年の記事を要約して結果を表示（Dify にはアップロードしない）
   # 使い方:
   #   OPENAI_API_KEY=... bundle exec rake "knowledge:summarize_preview[2025,3]"

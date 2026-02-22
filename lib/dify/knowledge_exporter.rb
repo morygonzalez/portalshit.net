@@ -149,6 +149,34 @@ module Dify
       puts "[repair] done."
     end
 
+    def touch_all!(batch_size: nil)
+      dataset_client.ensure_credentials!
+
+      batch_size = (batch_size || 20).to_i
+      name2id = build_name_to_docid_map
+      counts = article_collector.count_by_year
+
+      payloads = name2id.sort.filter_map do |(year, doc_id)|
+        cnt = counts[year] || 0
+        build_metadata_entry(doc_id, year, cnt)
+      end
+
+      if payloads.empty?
+        puts "[touch] no documents found"
+        return
+      end
+
+      payloads.each_slice(batch_size) do |slice|
+        res = dataset_client.update_documents_metadata!(slice)
+        puts "[touch] touched #{slice.size} docs (status=#{res.code})"
+        sleep 1.0
+      rescue StandardError => e
+        warn "[touch] slice failed: #{e.class} #{e.message}"
+      end
+
+      puts "[touch] done. #{payloads.size} documents touched."
+    end
+
     def update_year!(year:, sleep_secs: nil, retries: nil, chunk_size: nil, chunk_delimiter: nil)
       dataset_client.ensure_credentials!
 
