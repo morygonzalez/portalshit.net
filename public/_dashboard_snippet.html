@@ -38,6 +38,12 @@
   </div>
 </div>
 <div class="status-codes">
+  <div id="nginx-status-codes-today">
+    <h3><a href="/log-aggregation/nginx-status-codes-today.txt">Nginx Status Codes Today</a></h3>
+  </div>
+  <div id="nginx-status-codes-yesterday">
+    <h3><a href="/log-aggregation/nginx-status-codes-yesterday.txt">Nginx Status Codes Yesterday</a></h3>
+  </div>
   <div id="nginx-status-codes-all">
     <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
   </div>
@@ -92,7 +98,7 @@
     let lastModified = new Date(response.headers.get('last-modified'));
     let maxContentLength = 19;
     if (identifier.match(/status\-codes/)) {
-      maxContentLength = 32
+      maxContentLength = 35
     }
     let contentArray = text.split("\n").slice(0, maxContentLength);
     if (identifier.match(/ranking/)) {
@@ -141,6 +147,8 @@
   promises.push(
     new Promise((resolve, reject) => generateElement('query-term-ranking-all')),
     new Promise((resolve, reject) => generateElement('query-term-ranking-visitor')),
+    new Promise((resolve, reject) => generateElement('nginx-status-codes-today')),
+    new Promise((resolve, reject) => generateElement('nginx-status-codes-yesterday')),
     new Promise((resolve, reject) => generateElement('nginx-status-codes-all')),
   )
 
