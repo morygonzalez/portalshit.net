@@ -22,7 +22,7 @@ class Entry < ActiveRecord::Base
   after_save :update_fields
   after_save :send_ping_to_pubsubhubbub
 
-  default_scope { order('created_at DESC') }
+  default_scope { order('entries.created_at DESC') }
   scope :published,   -> { where(draft: false) }
   scope :unpublished, -> { where(draft: true) }
   scope :posts,       -> { where(type: 'Post') }
@@ -40,7 +40,15 @@ class Entry < ActiveRecord::Base
   scope :search,
         ->(words) {
           return all if words.blank?
-          where('MATCH (entries.title, entries.body) AGAINST (? in BOOLEAN MODE)', words)
+          if words =~ /\Acategory:(.+?)(?:\s|\z)/
+            category_name = $1
+            where(id: joins(:category).where(categories: { title: category_name }).select('entries.id'))
+          elsif words =~ /\Atags?:(.+)/
+            tag_names = $1.split(",").map(&:strip)
+            where(id: joins(:tags).where(tags: { name: tag_names }).select('entries.id'))
+          else
+            where('MATCH (entries.title, entries.body) AGAINST (? in BOOLEAN MODE)', words)
+          end
         }
 
   def self.get_by_fuzzy_slug(id_or_slug)
