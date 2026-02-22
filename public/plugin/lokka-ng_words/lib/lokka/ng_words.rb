@@ -49,8 +49,7 @@ module Lokka
     end
 
     def include_ng_words?
-      ng_words_array = ng_words&.split(',')&.flatten
-      ng_words_array&.any? {|word| comment_body =~ /#{word.strip}/i }
+      ng_words.any? {|word| comment_body =~ /#{word.strip}/i }
     end
 
     def other_than_ok_language?
