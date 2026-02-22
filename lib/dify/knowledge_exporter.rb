@@ -5,6 +5,7 @@ require 'date'
 
 require 'dify/dataset_client'
 require 'dify/article_collector'
+require 'dify/article_summarizer'
 require 'dify/chunking_config'
 
 module Dify
@@ -18,6 +19,7 @@ module Dify
       dataset_token: ENV['DATASET_API_KEY'],
       base_url: (ENV['BASE_URL'] || '').sub(%r{/\z}, ''),
       state_file: ENV['STATE_FILE'] || '.dify_uploaded_names',
+      summarize: nil,
       env: ENV
     )
       @api_base = api_base
@@ -26,6 +28,8 @@ module Dify
       @base_url = base_url
       @state_file = state_file
       @env = env
+      @summarize = summarize.nil? ? (env['SUMMARIZE'].to_s != '0') : summarize
+      @summarizer = ArticleSummarizer.new if @summarize
 
       @dataset_client = DatasetClient.new(
         api_base: api_base,
@@ -55,6 +59,7 @@ module Dify
             next
           end
 
+          items = maybe_summarize(items, label: "upload_yearly/#{year}")
           text = article_collector.compose_year_text(items, delimiter: params[:chunking].delimiter)
           with_retry(params[:retries]) do
             doc_id = dataset_client.create_document_by_text!(
@@ -92,6 +97,7 @@ module Dify
 
       batch = []
       groups.sort.each do |year, items|
+        items = maybe_summarize(items, label: "refresh_yearly/#{year}")
         text = article_collector.compose_year_text(items, delimiter: params[:chunking].delimiter)
         doc_id = create_or_update_document!(year, text, name2id, params)
 
@@ -162,6 +168,7 @@ module Dify
         warn "[update_year] no posts found for year=#{year}; only metadata will be touched (count=0)"
       end
 
+      rows = maybe_summarize(rows, label: "update_year/#{year}")
       new_text = article_collector.compose_year_text(rows, delimiter: params[:chunking].delimiter)
 
       with_retry(params[:retries]) do
@@ -217,11 +224,18 @@ module Dify
     end
 
     def resolve_params(sleep_secs:, retries:, chunk_size:, chunk_delimiter:)
+      chunk_size = 1200 if @summarize && chunk_size.nil? && env['CHUNK_SIZE'].nil?
       {
         sleep_secs: (sleep_secs || default_sleep_secs).to_f,
         retries: (retries || default_retries).to_i,
         chunking: build_chunking_config(chunk_size: chunk_size, chunk_delimiter: chunk_delimiter)
       }
+    end
+
+    def maybe_summarize(articles, label:)
+      return articles unless @summarize
+
+      @summarizer.summarize_all(articles, label: label)
     end
 
     def build_metadata_entry(doc_id, year, count)

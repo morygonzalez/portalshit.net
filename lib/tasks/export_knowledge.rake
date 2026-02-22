@@ -62,6 +62,41 @@ namespace :knowledge do
     )
   end
 
+  # 要約ドライラン: 指定年の記事を要約して結果を表示（Dify にはアップロードしない）
+  # 使い方:
+  #   OPENAI_API_KEY=... bundle exec rake "knowledge:summarize_preview[2025,3]"
+  desc '要約プレビュー（ドライラン）'
+  task :summarize_preview, [:year, :limit] do |_, args|
+    require 'dify/article_summarizer'
+
+    year  = (args[:year] || Time.now.year).to_s
+    limit = (args[:limit] || 5).to_i
+
+    exporter  = Dify::KnowledgeExporter.new
+    collector = exporter.article_collector
+
+    rows = collector.collect(label: 'summarize_preview') do |post|
+      created_year = post.respond_to?(:created_at) ? post.created_at&.year&.to_s : nil
+      created_year == year
+    end
+
+    rows = rows.first(limit) if limit.positive?
+
+    summarizer = Dify::ArticleSummarizer.new
+    summarized = summarizer.summarize_all(rows, label: 'preview')
+
+    summarized.each do |article|
+      puts "=" * 60
+      puts "Title: #{article[:title]}"
+      puts "Date:  #{article[:date]}"
+      puts "Original: #{rows.find { |r| r[:id] == article[:id] }&.dig(:content)&.length || '?'} chars"
+      puts "Summary:  #{article[:content].length} chars"
+      puts "-" * 40
+      puts article[:content]
+      puts
+    end
+  end
+
   desc 'Export popular entry'
   task :popular do
     exporter = Dify::KnowledgeExporter.new
