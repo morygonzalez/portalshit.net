@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$(dirname "$0")/common.sh"
+source "$(dirname "$0")/lib/common.sh"
 
 # ステータスコード集計処理
 process_status_code() {
@@ -10,10 +10,10 @@ process_status_code() {
 
   case "$period" in
     all)
-      awk_script="${APP_DIR}/bin/nginx_status_codes.awk"
+      awk_script="${APP_DIR}/bin/lib/nginx_status_codes.awk"
       ;;
     *)
-      awk_script="${APP_DIR}/bin/nginx_status_codes_hourly.awk"
+      awk_script="${APP_DIR}/bin/lib/nginx_status_codes_hourly.awk"
       ;;
   esac
 
