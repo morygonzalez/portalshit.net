@@ -270,6 +270,7 @@
 }
 
 #content {
+  box-sizing: border-box;
   width: 90%;
   max-width: $content-max-width;
   height: auto;
@@ -399,14 +400,14 @@
 
         .entry {
           margin: 1em 1em;
+          min-width: 0;
 
           .title {
             font-size: 1em;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            max-width: calc(75vw/3);
-            width: 30ch;
+            max-width: 100%;
           }
 
           .image {

@@ -200,6 +200,8 @@
 
     .item {
       margin: auto 1em;
+      min-width: 0;
+      overflow: hidden;
 
       .title {
         display: flex;
@@ -214,8 +216,8 @@
           -webkit-line-clamp: 1;
           font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
           font-weight: 500;
-          max-width: calc(50vw/2);
-          width: 70%;
+          max-width: 100%;
+          flex: 1 1 0;
         }
 
         .created_at {
