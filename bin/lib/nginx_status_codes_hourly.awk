@@ -23,7 +23,13 @@ END{
       v=(count[h][sorted_s[j]]?count[h][sorted_s[j]]:0)
       printf "%8d",v
       total+=v
+      sum[j]+=v
     }
     printf "%10d\n",total
+    grand_total+=total
   }
+
+  printf "%-8s","SUM"
+  for(j=1;j<=n;j++) printf "%8d",sum[j]
+  printf "%10d\n",grand_total
 }
