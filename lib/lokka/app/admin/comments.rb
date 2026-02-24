@@ -33,7 +33,19 @@ module Lokka
 
         put '/:id' do |id|
           (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
+          was_not_approved = @comment.status != Comment::APPROVED
           if @comment.update(params[:comment])
+            if was_not_approved && @comment.status == Comment::APPROVED
+              @comment.entry # preload association
+              comment = @comment
+              Thread.new do
+                Lokka::CommentNotifier.new(comment).notify_commenter
+              rescue => e
+                $stderr.puts "Failed to send comment approval notification: #{e.message}"
+              ensure
+                ActiveRecord::Base.connection_pool.release_connection
+              end
+            end
             flash[:notice] = t('comment_was_successfully_updated')
             redirect to("/admin/comments/#{@comment.id}/edit")
           else

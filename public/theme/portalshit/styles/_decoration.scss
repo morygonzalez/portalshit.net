@@ -303,6 +303,17 @@ kbd {
 }
 
 .comments {
+  .flash-notice {
+    max-width: 780px;
+    margin: 1.5em auto;
+    padding: 1em 1.5em;
+    background-color: #dff0d8;
+    border: 1px solid #d0e9c6;
+    border-radius: 4px;
+    color: #3c763d;
+    font-size: 94%;
+  }
+
   ul.comment-list {
     list-style: none;
     padding: 0;
@@ -357,6 +368,12 @@ kbd {
 #comment_form {
   margin: auto;
   max-width: 500px;
+
+  .required {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 2px;
+  }
 
   input, textarea {
     font-size: 14px;

@@ -170,7 +170,7 @@ module Lokka
                             logged_in? ? Comment::APPROVED : Comment::MODERATED
                           end
       if @comment.save
-        redirect to(@entry.link)
+        redirect to("#{@entry.link}?comment_submitted=1#comments-section")
       else
         setup_and_render_entry
       end

@@ -47,7 +47,9 @@
   = partial :related
 
   %section.comments
-    %h3= t('comments')
+    %h3#comments-section= t('comments')
+    - if params[:comment_submitted]
+      .flash-notice コメントありがとうございました。管理者の確認後にサイトに反映されます。反映されたらメールでお知らせします。
     %ul.comment-list
       - @entry.approved_comments.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}

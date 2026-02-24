@@ -9,7 +9,8 @@ class Comment < ActiveRecord::Base
 
   validates :name, presence: true
   validates :body, presence: true
-  validates_length_of :email, in: (0..40), if: ->(record) { record.email.present? }
+  validates :email, presence: true
+  validates_length_of :email, in: (1..40)
   validates_length_of :homepage, in: (0..255), if: ->(record) { record.homepage.present? }
 
   default_scope -> { order('created_at DESC') }
