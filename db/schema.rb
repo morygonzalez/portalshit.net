@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_08_000000) do
+ActiveRecord::Schema.define(version: 2026_02_25_000000) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 2026_02_08_000000) do
     t.integer "entry_id"
     t.integer "status"
     t.string "name", limit: 50
-    t.string "homepage", limit: 50, collation: "utf8mb3_general_ci"
+    t.string "homepage"
     t.text "body"
     t.datetime "created_at"
     t.datetime "updated_at"
