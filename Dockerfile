@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM ruby:3.1.6-slim
+FROM ruby:3.2.7-slim
 
 RUN mkdir -p /app
 WORKDIR /app

@@ -12,7 +12,7 @@ if ENV['RACK_ENV'] == 'production'
   log_dir = File.join(deploy_dir, 'log')
   pid_dir = File.join(tmp_dir, 'pids')
 
-  Dir.mkdir(pid_dir) unless Dir.exists?(pid_dir)
+  Dir.mkdir(pid_dir) unless Dir.exist?(pid_dir)
 
   pidfile         File.join(pid_dir, 'puma.pid')
   state_path      File.join(pid_dir, 'puma.state')

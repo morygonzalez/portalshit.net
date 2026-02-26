@@ -46,7 +46,11 @@ class PopularKeywords
     @keywords = @keywords.reject {|key, value|
       key.blank? || value.blank? || key.length < 2 || key.length > 15
     }.reject {|key, value|
-      Search.query(key).length.zero?
+      begin
+        Search.query(key).length.zero?
+      rescue Tantiny::TantivyError, Tantiny::UnexpectedNone
+        true
+      end
     }
   end
 

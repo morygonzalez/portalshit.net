@@ -62,6 +62,9 @@ module Lokka
 
     def popular_keywords
       @popular_keywords ||= PopularKeywords.keywords
+    rescue => e
+      logger.error "PopularKeywords error: #{e.class}: #{e.message}" if respond_to?(:logger)
+      []
     end
   end
 end
