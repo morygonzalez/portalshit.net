@@ -66,11 +66,11 @@ namespace :deploy do
   task :rebuild_tantiny do
     on roles(:web) do
       within release_path do
-        tantiny_so = capture(:bundle, :show, :tantiny).strip + '/lib/tantiny.so'
+        tantiny_dir = capture(:bundle, :show, :tantiny).strip
+        tantiny_so = "#{tantiny_dir}/lib/tantiny.so"
         unless test("[ -f #{tantiny_so} ]")
-          info 'tantiny.so not found, forcing rebuild...'
-          tantiny_dir = capture(:bundle, :show, :tantiny).strip
-          execute :bash, "-lc 'cd #{tantiny_dir} && rake thermite:build'"
+          info 'tantiny.so not found, building with cargo...'
+          execute :bash, "-lc 'cd #{tantiny_dir} && cargo build --release && cp target/release/libtantiny.so lib/tantiny.so'"
         end
       end
     end
