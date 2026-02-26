@@ -62,6 +62,21 @@ set :puma_access_log, '/var/www/app/portalshit/log/puma_access.log'
 set :puma_error_log, '/var/www/app/portalshit/log/puma_error.log'
 
 namespace :deploy do
+  desc 'Rebuild Tantiny native extension if missing'
+  task :rebuild_tantiny do
+    on roles(:web) do
+      within release_path do
+        tantiny_so = capture(:bundle, :show, :tantiny).strip + '/lib/tantiny.so'
+        unless test("[ -f #{tantiny_so} ]")
+          info 'tantiny.so not found, forcing rebuild...'
+          tantiny_dir = capture(:bundle, :show, :tantiny).strip
+          execute :bash, "-lc 'cd #{tantiny_dir} && rake thermite:build'"
+        end
+      end
+    end
+  end
+  after 'bundler:install', 'deploy:rebuild_tantiny'
+
   desc 'Build JavaScript'
   task :build_js do
     on roles(:web) do
