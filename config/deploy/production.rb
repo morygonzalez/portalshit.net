@@ -39,5 +39,7 @@ role :db,  %w{app@portalshit.net}
 # setting per server overrides global ssh_options
 
 set :default_env, {
-  'LOKKA_ENV' => 'production'
+  'LOKKA_ENV' => 'production',
+  'RUBYOPT' => '--encoding=UTF-8',
+  'PATH' => '/var/www/app/.cargo/bin:$PATH'
 }
