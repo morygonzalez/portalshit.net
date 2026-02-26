@@ -10,7 +10,7 @@ module Lokka
       end
 
       def doc
-        @doc ||= Nokogiri::HTML.fragment(@body)
+        @doc ||= Nokogiri::HTML.fragment(@body.encode('UTF-8', invalid: :replace, undef: :replace, replace: ''))
       end
 
       def replace
