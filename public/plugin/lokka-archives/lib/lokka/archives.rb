@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'tantiny'
 require_relative 'archives/chart_query_generator'
 require_relative 'archives/aggregator'
 

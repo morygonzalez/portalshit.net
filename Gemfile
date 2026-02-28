@@ -44,9 +44,7 @@ gem 'slim'
 gem 'tilt', '~> 2.1.0'
 gem 'tux'
 gem 'yard-sinatra'
-gem 'tantiny', github: 'morygonzalez/tantiny'
 gem 'natto'
-gem 'concurrent-ruby', "< 1.3.5"
 
 Dir['public/plugin/lokka-*/Gemfile'].each {|path| eval(File.read(path)) }
 

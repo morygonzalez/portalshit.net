@@ -12,10 +12,6 @@ module Lokka
 end
 
 class Entry
-  after_commit do
-    Search.add(self) unless self.reload.draft?
-  end
-
   def toc
     @toc ||=
       Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new(nesting_level: 2..4)).
