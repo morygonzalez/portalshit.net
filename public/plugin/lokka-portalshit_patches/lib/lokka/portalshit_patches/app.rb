@@ -13,20 +13,6 @@ module Lokka
         }
       }
 
-      set :search_index_path , File.join(Lokka.root, 'tmp', 'index')
-
-      set :search_index, -> {
-        Tantiny::Index.new(search_index_path) do
-          id :id
-          string :title
-          text :title_tokenized
-          facet :category
-          text :category_tokenized
-          text :tags
-          text :body
-          date :date
-        end
-      }
     end
 
     get '/index.atom' do

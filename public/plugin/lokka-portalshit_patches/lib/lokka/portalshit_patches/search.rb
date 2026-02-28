@@ -1,36 +1,14 @@
-require 'tokenizer'
+# frozen_string_literal: true
 
 class Search
-  @@index = Lokka::App.search_index
-
   class << self
     def query(query, limit = 10)
-      instance = self.new(query, limit)
+      instance = new(query, limit)
       instance.result
-    end
-
-    def add(entry)
-      tags_splitted = entry.tag_list.join(' ')
-      title_tokenized = Tokenizer.run(entry.title).join(' ')
-      body_tokenized = Tokenizer.run(entry.raw_body).join(' ')
-      category_tokenized = Tokenizer.run(entry.category.title).join(' ') if entry.category
-
-      @@index << {
-        id: entry.id,
-        title: entry.title,
-        title_tokenized: title_tokenized,
-        category: "/#{entry.category&.title}",
-        category_tokenized: category_tokenized,
-        tags: tags_splitted,
-        body: body_tokenized,
-        date: entry.created_at
-      }
-
-      @@index.reload
     end
   end
 
-  attr_reader :query, :limit, :query_type
+  attr_reader :query, :limit
 
   def initialize(query, limit = nil)
     @query = query
@@ -38,82 +16,31 @@ class Search
   end
 
   def search_type
-    @search_type = if query =~ /category:/
-                     :category
-                   elsif query =~ /tags?:/
-                     :tag
-                   else
-                     :all
-                   end
-  end
-
-  def query_type
-    @query_type = if query =~ /tags?:/
-                    if query =~ /\s/
-                      :phrase_query
-                    else
-                      :term_query
-                    end
-                  elsif query =~ /category:/
-                    :facet_query
-                  else
-                    :smart_query
-                  end
-  end
-
-  def keywords
-    case
-    when search_type == :tag
-      query.match(/tags?:(.+)/)
-      tags = $1
-      return [] if tags.nil?
-      tags.split(",").map(&:strip).map(&:downcase)
-    when search_type == :all
-      [query.delete('"')]
-    when search_type == :category
-      query.match(/category:(.+?)(?:\s|\z)/)
-      ["/#{$1}"]
-    else
-      keywords = [Tokenizer.run(query)].flatten
-      keywords << query if keywords.length > 1
-      keywords
-    end
-  end
-
-  def fields
-    case search_type
-    when :tag
-      :tags
-    when :category
-      :category
-    else
-      %i[title title_tokenized body category_tokenized tags]
-    end
-  end
-
-  def exec_query(keyword)
-    @@index.send(query_type, fields, keyword)
-  end
-
-  def queries
-    case keywords.length
-    when 0
-      @@index.empty_query
-    when 1
-      exec_query(keywords[0])
-    else
-      original_keyword = keywords.pop
-      keywords.inject(exec_query(original_keyword)) do |query, keyword|
-        query.|(exec_query(keyword))
-      end
-    end
+    @search_type ||= if query =~ /category:/
+                       :category
+                     elsif query =~ /tags?:/
+                       :tag
+                     else
+                       :all
+                     end
   end
 
   def result
-    if limit
-      @@index.search(queries, limit: limit)
-    else
-      @@index.search(queries)
-    end
+    scope = Entry.published
+    scope = case search_type
+            when :category
+              query.match(/category:(.+?)(?:\s|\z)/)
+              category_name = $1
+              scope.joins(:category).where(categories: { title: category_name })
+            when :tag
+              query.match(/tags?:(.+)/)
+              tag_names = $1&.split(",")&.map(&:strip) || []
+              scope.joins(:tags).where(tags: { name: tag_names })
+            else
+              scope.where('MATCH (entries.title, entries.body) AGAINST (? IN BOOLEAN MODE)', query)
+            end
+
+    scope = scope.limit(limit) if limit
+    scope.pluck(:id).map(&:to_s)
   end
 end
