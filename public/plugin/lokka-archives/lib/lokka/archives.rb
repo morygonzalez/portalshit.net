@@ -8,8 +8,7 @@ module Lokka
     def self.registered(app)
       app.get '/archives.json' do
         posts = if params[:query].present?
-                  search_result = Search.query(params[:query], 10000)
-                  Post.published.joins(:category).where(id: search_result)
+                  Search.relation(params[:query], nil).joins(:category)
                 else
                   Post.published.joins(:category)
                 end

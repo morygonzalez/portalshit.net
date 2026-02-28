@@ -6,6 +6,11 @@ class Search
       instance = new(query, limit)
       instance.result
     end
+
+    def relation(query, limit = 10)
+      instance = new(query, limit)
+      instance.relation
+    end
   end
 
   attr_reader :query, :limit
@@ -25,7 +30,7 @@ class Search
                      end
   end
 
-  def result
+  def relation
     scope = Entry.published
     scope = case search_type
             when :category
@@ -37,10 +42,16 @@ class Search
               tag_names = $1&.split(",")&.map(&:strip) || []
               scope.joins(:tags).where(tags: { name: tag_names })
             else
-              scope.where('MATCH (entries.title, entries.body) AGAINST (? IN BOOLEAN MODE)', query)
+              scope.
+                where('MATCH (entries.title, entries.body) AGAINST (? IN NATURAL LANGUAGE MODE)', query).
+                order(Arel.sql("MATCH (entries.title, entries.body) AGAINST (#{Entry.connection.quote(query)} IN NATURAL LANGUAGE MODE) DESC"))
             end
 
     scope = scope.limit(limit) if limit
-    scope.pluck(:id).map(&:to_s)
+    scope
+  end
+
+  def result
+    relation.pluck(:id).map(&:to_s)
   end
 end

@@ -45,9 +45,7 @@ module Lokka
 
     get '/search.json' do
       return if params[:query].blank?
-      search_result = Search.query(params[:query])
-      posts = Post.published.joins(:category).where(id: search_result).
-        sort_by {|post| search_result.index(post.id.to_s) }
+      posts = Search.relation(params[:query]).joins(:category)
       posts_hash = posts.each_with_object([]) {|post, result|
         result << {
           id: post.id,
