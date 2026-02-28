@@ -26,17 +26,6 @@ GIT
       sinatra
 
 GIT
-  remote: https://github.com/morygonzalez/tantiny.git
-  revision: c42331f76ac6d940539bceff8fdc60e722d6f552
-  specs:
-    tantiny (0.3.3)
-      concurrent-ruby (~> 1.0)
-      rake (~> 13.0)
-      ruby-next (~> 0.14.0)
-      rutie (~> 0.0.4)
-      thermite (~> 0)
-
-GIT
   remote: https://github.com/ridewithgps/rubyfit.git
   revision: 7268e76c3c66979697621fd4dc2d377ec4808895
   specs:
@@ -126,7 +115,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.3.4)
+    concurrent-ruby (1.3.6)
     crass (1.0.6)
     csv (3.3.5)
     database_cleaner-active_record (2.2.0)
@@ -138,6 +127,7 @@ GEM
     docile (1.4.1)
     domain_name (0.6.20240107)
     dotenv (3.1.7)
+    drb (2.2.3)
     erubi (1.13.1)
     event_stream_parser (1.0.0)
     execjs (2.10.0)
@@ -175,6 +165,7 @@ GEM
     ffi-compiler (1.3.2)
       ffi (>= 1.15.5)
       rake
+    fiddle (1.1.8)
     get_process_mem (1.0.0)
       bigdecimal (>= 2.0)
       ffi (~> 1.0)
@@ -203,7 +194,7 @@ GEM
     http-cookie (1.0.8)
       domain_name (~> 0.5)
     http-form_data (2.3.0)
-    i18n (1.14.7)
+    i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
     json (2.9.1)
@@ -226,7 +217,9 @@ GEM
     mini_magick (5.1.0)
     mini_portile2 (2.8.9)
     minitar (0.12.1)
-    minitest (5.25.4)
+    minitest (6.0.2)
+      drb (~> 2.0)
+      prism (~> 1.5)
     multi_json (1.15.0)
     multipart-post (2.4.1)
     mustermann (3.0.3)
@@ -248,10 +241,11 @@ GEM
       nokogiri (~> 1.6)
     ostruct (0.6.1)
     parallel (1.26.3)
-    parser (3.3.10.1)
+    parser (3.3.10.2)
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
+    prism (1.9.0)
     pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -331,13 +325,6 @@ GEM
       unicode-display_width (>= 2.4.0, < 4.0)
     rubocop-ast (1.38.0)
       parser (>= 3.3.1.0)
-    ruby-next (0.14.1)
-      ruby-next-core (= 0.14.1)
-      ruby-next-parser (>= 3.1.1.0)
-      unparser (~> 0.6.0)
-    ruby-next-core (0.14.1)
-    ruby-next-parser (3.4.0.2)
-      parser (>= 3.0.3.1)
     ruby-openai (8.3.0)
       event_stream_parser (>= 0.3.0, < 2.0.0)
       faraday (>= 1)
@@ -345,7 +332,6 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     rubyzip (3.2.2)
-    rutie (0.0.4)
     sassc (2.4.0)
       ffi (~> 1.9)
     simplecov (0.22.0)
@@ -381,6 +367,13 @@ GEM
       net-ssh (>= 2.8.0)
       ostruct
     sysexits (1.2.0)
+    tantiny (0.4.2)
+      concurrent-ruby (~> 1.0)
+      fiddle
+      ostruct
+      rake (~> 13.0)
+      rexml
+      thermite (~> 0)
     temple (0.10.3)
     thermite (0.13.0)
       minitar (~> 0.5)
@@ -399,16 +392,13 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
-    unparser (0.6.15)
-      diff-lcs (~> 1.3)
-      parser (>= 3.3.0)
     vacuum (4.2.0)
       aws-sigv4 (~> 1.0)
       http (>= 4.0, < 6.0)
     yard (0.9.37)
     yard-sinatra (1.0.0)
       yard (~> 0.7)
-    zeitwerk (2.6.18)
+    zeitwerk (2.7.5)
 
 PLATFORMS
   ruby
@@ -435,7 +425,6 @@ DEPENDENCIES
   cld
   coderay
   coffee-script
-  concurrent-ruby (< 1.3.5)
   database_cleaner-active_record
   dotenv
   exiftool
@@ -450,6 +439,7 @@ DEPENDENCIES
   kaminari-activerecord
   kaminari-sinatra!
   kramdown
+  logger
   marcel
   mini_magick
   mysql2
@@ -487,7 +477,7 @@ DEPENDENCIES
   slim
   sqlite3 (~> 1.4)
   sshkit
-  tantiny!
+  tantiny
   tilt (~> 2.1.0)
   tux
   vacuum
