@@ -68,6 +68,17 @@
     <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
   </div>
 </div>
+<div class="request-time">
+  <div id="nginx-request-time-today">
+    <h3><a href="/log-aggregation/nginx-request-time-today.txt">Nginx Request Time Today</a></h3>
+  </div>
+  <div id="nginx-request-time-yesterday">
+    <h3><a href="/log-aggregation/nginx-request-time-yesterday.txt">Nginx Request Time Yesterday</a></h3>
+  </div>
+  <div id="nginx-request-time-all">
+    <h3><a href="/log-aggregation/nginx-request-time-all.txt">Nginx Request Time</a></h3>
+  </div>
+</div>
 
 <script type="text/javascript">
   const getResponse = async (url) => {
@@ -97,7 +108,7 @@
     let text = await getText(response);
     let lastModified = new Date(response.headers.get('last-modified'));
     let maxContentLength = 19;
-    if (identifier.match(/status\-codes/)) {
+    if (identifier.match(/status\-codes/) || identifier.match(/request\-time/)) {
       maxContentLength = 35
     }
     let contentArray = text.split("\n").slice(0, maxContentLength);
@@ -150,17 +161,20 @@
     new Promise((resolve, reject) => generateElement('nginx-status-codes-today')),
     new Promise((resolve, reject) => generateElement('nginx-status-codes-yesterday')),
     new Promise((resolve, reject) => generateElement('nginx-status-codes-all')),
+    new Promise((resolve, reject) => generateElement('nginx-request-time-today')),
+    new Promise((resolve, reject) => generateElement('nginx-request-time-yesterday')),
+    new Promise((resolve, reject) => generateElement('nginx-request-time-all')),
   )
 
   Promise.all(promises);
 </script>
 
 <style>
-.ranking, .hit-rate {
+.ranking, .hit-rate, .request-time {
   display: flex;
   flex-wrap: wrap;
 }
-.ranking div, .hit-rate div {
+.ranking div, .hit-rate div, .request-time div {
   width: 33%;
 }
 pre {
@@ -168,7 +182,7 @@ pre {
   overflow-y: visible;
 }
 @media screen and (max-width: 640px) {
-  .ranking div, .hit-rate div {
+  .ranking div, .hit-rate div, .request-time div {
     width: 100%;
   }
 }
