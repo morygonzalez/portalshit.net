@@ -14,7 +14,7 @@ END{
   m=asorti(days,sorted_d)
   grand_sum=0
   grand_count=0
-  for(i=1;i<=m;i++){
+  for(i=m;i>=1;i--){
     d=sorted_d[i]
     avg=(count[d]>0?sum[d]/count[d]:0)
     printf "%-12s %12.3f %8d %12.3f\n",d,avg*1000,count[d],sum[d]*1000
