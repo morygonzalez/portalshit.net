@@ -6,7 +6,12 @@ source "$(dirname "$0")/lib/common.sh"
 process_request_time() {
   local period=${1:-"all"}
   local output="${LOG_AGGREGATION_DIR}/nginx-request-time-${period}.txt"
-  local awk_script="${APP_DIR}/bin/lib/nginx_request_time_hourly.awk"
+  local awk_script
+  if [ "$period" = "all" ]; then
+    awk_script="${APP_DIR}/bin/lib/nginx_request_time_daily.awk"
+  else
+    awk_script="${APP_DIR}/bin/lib/nginx_request_time_hourly.awk"
+  fi
 
   echo "Processing Request Time ($period)"
   find "${LOG_DIR}" -name "access.log*" \
