@@ -11,9 +11,6 @@ WORKDIR /app
 ENV IPADIC_VERSION=2.7.0-20070801
 ENV IPADIC_URL=https://github.com/shogo82148/mecab/releases/download/v0.996.10/mecab-ipadic-${IPADIC_VERSION}.tar.gz
 ENV PATH=$PATH:/root/.cargo/bin
-ENV CARGO=/root/.cargo/bin/cargo \
-    CARGO_TARGET_DIR=/root/target \
-    CARGO_TERM_COLOR=always
 ENV RUST_VERSION=1.93.1
 ENV MECAB_PATH=/usr/lib/x86_64-linux-gnu/libmecab.so.2
 ENV TZ=Asia/Tokyo
@@ -44,11 +41,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && /root/.cargo/bin/rustup toolchain install ${RUST_VERSION} \
     && /root/.cargo/bin/rustup default ${RUST_VERSION} \
-    # sccache: Rust ビルドキャッシュ
-    && curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.7.5/sccache-v0.7.5-x86_64-unknown-linux-musl.tar.gz -o /tmp/sccache.tgz \
-    && tar -xzf /tmp/sccache.tgz -C /tmp \
-    && install -m0755 /tmp/sccache-*/sccache /usr/local/bin/sccache \
-    && rm -rf /tmp/sccache* \
     # 掃除
     && rm -rf /var/lib/apt/lists/* /root/mecab-ipadic-neologd /root/extension-functions.c
 
@@ -62,9 +54,6 @@ COPY Gemfile.lock /app/
 RUN bash -lc 'gem install bundler:2.6.3 && \
               bundle config set path /usr/local/bundle && \
               bundle config set without postgresql && \
-              export RUSTC_WRAPPER=/usr/local/bin/sccache && \
-              export SCCACHE_DIR=/root/.cache/sccache && \
-              export SCCACHE_CACHE_SIZE=10G && \
               cd /app && bundle install -j4'
 
 # ============================================================

@@ -62,21 +62,6 @@ set :puma_access_log, '/var/www/app/portalshit/log/puma_access.log'
 set :puma_error_log, '/var/www/app/portalshit/log/puma_error.log'
 
 namespace :deploy do
-  desc 'Rebuild Tantiny native extension if missing'
-  task :rebuild_tantiny do
-    on roles(:web) do
-      within release_path do
-        tantiny_dir = capture(:bundle, :show, :tantiny).strip
-        tantiny_so = "#{tantiny_dir}/lib/tantiny.so"
-        unless test("[ -f #{tantiny_so} ]")
-          info 'tantiny.so not found, building with cargo...'
-          execute :bash, "-lc 'cd #{tantiny_dir} && cargo build --release && cp target/release/libtantiny.so lib/tantiny.so'"
-        end
-      end
-    end
-  end
-  after 'bundler:install', 'deploy:rebuild_tantiny'
-
   desc 'Build JavaScript'
   task :build_js do
     on roles(:web) do
