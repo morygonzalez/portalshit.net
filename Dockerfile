@@ -54,7 +54,9 @@ COPY Gemfile.lock /app/
 RUN bash -lc 'gem install bundler:2.6.3 && \
               bundle config set path /usr/local/bundle && \
               bundle config set without postgresql && \
-              cd /app && bundle install -j4'
+              cd /app && bundle install -j4' \
+    && rm -rf /usr/local/bundle/ruby/*/gems/tantiny-*/target \
+              /usr/local/bundle/ruby/*/cache
 
 # ============================================================
 # Stage 2: runtime — 実行用ステージ
