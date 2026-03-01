@@ -57,17 +57,6 @@
     <h3><a href="/log-aggregation/spam-block-rate-all.txt">Spam Block Rate</a></h3>
   </div>
 </div>
-<div class="status-codes">
-  <div id="nginx-status-codes-today">
-    <h3><a href="/log-aggregation/nginx-status-codes-today.txt">Nginx Status Codes Today</a></h3>
-  </div>
-  <div id="nginx-status-codes-yesterday">
-    <h3><a href="/log-aggregation/nginx-status-codes-yesterday.txt">Nginx Status Codes Yesterday</a></h3>
-  </div>
-  <div id="nginx-status-codes-all">
-    <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
-  </div>
-</div>
 <div class="request-time">
   <div id="nginx-request-time-today">
     <h3><a href="/log-aggregation/nginx-request-time-today.txt">Nginx Request Time Today</a></h3>
@@ -77,6 +66,17 @@
   </div>
   <div id="nginx-request-time-all">
     <h3><a href="/log-aggregation/nginx-request-time-all.txt">Nginx Request Time</a></h3>
+  </div>
+</div>
+<div class="status-codes">
+  <div id="nginx-status-codes-today">
+    <h3><a href="/log-aggregation/nginx-status-codes-today.txt">Nginx Status Codes Today</a></h3>
+  </div>
+  <div id="nginx-status-codes-yesterday">
+    <h3><a href="/log-aggregation/nginx-status-codes-yesterday.txt">Nginx Status Codes Yesterday</a></h3>
+  </div>
+  <div id="nginx-status-codes-all">
+    <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
   </div>
 </div>
 
@@ -109,7 +109,7 @@
     let lastModified = new Date(response.headers.get('last-modified'));
     let maxContentLength = 19;
     if (identifier.match(/status\-codes/) || identifier.match(/request\-time/)) {
-      maxContentLength = 35
+      maxContentLength = 40
     }
     let contentArray = text.split("\n").slice(0, maxContentLength);
     if (identifier.match(/ranking/)) {
@@ -170,11 +170,11 @@
 </script>
 
 <style>
-.ranking, .hit-rate, .request-time {
+.ranking, .hit-rate, .request-time, .status-codes {
   display: flex;
   flex-wrap: wrap;
 }
-.ranking div, .hit-rate div, .request-time div {
+.ranking div, .hit-rate div, .request-time div, .status-codes div {
   width: 33%;
 }
 pre {
@@ -182,7 +182,7 @@ pre {
   overflow-y: visible;
 }
 @media screen and (max-width: 640px) {
-  .ranking div, .hit-rate div, .request-time div {
+  .ranking div, .hit-rate div, .request-time div, .status-codes div {
     width: 100%;
   }
 }
