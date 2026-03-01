@@ -69,7 +69,12 @@ class Search
       return [] if tags.nil?
       tags.split(",").map(&:strip).map(&:downcase)
     when search_type == :all
-      [query.delete('"')]
+      tokenized = Tokenizer.run(query)
+      if tokenized.any?
+        [tokenized.join(' ')]
+      else
+        [query.delete('"')]
+      end
     when search_type == :category
       query.match(/category:(.+?)(?:\s|\z)/)
       ["/#{$1}"]
