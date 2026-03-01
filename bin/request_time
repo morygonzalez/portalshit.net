@@ -17,6 +17,9 @@ process_request_time() {
   find "${LOG_DIR}" -name "access.log*" \
     | xargs zcat -f \
     | filter_by_date "${period}" \
+    | grep -v 'upstream_response_time:-' \
+    | grep -vP 'request_uri:\S+\.(css|js|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|map)(\?|	)' \
+    | grep -v 'request_uri:/imageproxy/' \
     | /usr/bin/gawk -f "${awk_script}" \
     | tee "${output}"
 

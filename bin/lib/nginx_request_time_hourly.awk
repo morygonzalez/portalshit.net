@@ -2,7 +2,7 @@ BEGIN { FS="\t" }
 {
   for(i=1;i<=NF;i++){
     if($i~/^time:/){split($i,t,"T");split(t[2],hms,":");hour=hms[1]":00"}
-    if($i~/^request_time:/){gsub(/^request_time:/,"",$i);rt=$i+0}
+    if($i~/^upstream_response_time:/){gsub(/^upstream_response_time:/,"",$i);rt=$i+0}
   }
   sum[hour]+=rt
   count[hour]++
