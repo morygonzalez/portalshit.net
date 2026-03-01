@@ -5,6 +5,11 @@ class Tokenizer
     def run(text)
       self.new(text).tokenize
     end
+
+    def nm
+      require 'natto'
+      @nm ||= Natto::MeCab.new(userdic: File.expand_path('lib/tokenizer/userdic.dic'))
+    end
   end
 
   def initialize(text)
@@ -19,8 +24,7 @@ class Tokenizer
   end
 
   def nm
-    require 'natto'
-    @nm ||= Natto::MeCab.new(userdic: File.expand_path('lib/tokenizer/userdic.dic'))
+    self.class.nm
   end
 
   def words

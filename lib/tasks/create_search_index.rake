@@ -54,7 +54,7 @@ task :delete_old_index do
     key = File.basename(item, '.idx')
     files[key] = ctime
   end
-  meta_json = File.open('tmp/index/meta.json').read
+  meta_json = File.read(File.join(index_path, 'meta.json'))
   meta = JSON.parse(meta_json)
   used_indices = meta['segments'].map {|segment| segment['segment_id'].gsub(/\-/, '') }
   used_indices.each do |index|
