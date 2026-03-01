@@ -10,7 +10,7 @@ ENV PATH=$PATH:/root/.cargo/bin
 ENV CARGO=/root/.cargo/bin/cargo \
     CARGO_TARGET_DIR=/root/target \
     CARGO_TERM_COLOR=always
-ENV RUST_VERSION=1.77
+ENV RUST_VERSION=1.93.1
 # Debian の MeCab 共有ライブラリの一般的なパス（必要なら後で上書き可）
 ENV MECAB_PATH=/usr/lib/x86_64-linux-gnu/libmecab.so.2
 ENV TZ=Asia/Tokyo
@@ -21,7 +21,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
       libssl-dev libxml2-dev libxslt1-dev zlib1g zlib1g-dev tzdata \
       nodejs default-mysql-client default-libmysqlclient-dev less \
       mecab libmecab-dev mecab-ipadic-utf8 \
-      gcc make pkg-config wget \
+      gcc make pkg-config wget libffi-dev libclang-dev \
       libsqlite3-dev sqlite3 \
       imagemagick \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
