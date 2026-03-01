@@ -301,28 +301,4 @@ describe 'App' do
     end
   end
 
-  context 'when theme has coffee scripted js' do
-    before do
-      @file = 'public/theme/jarvi/script.coffee'
-      content = <<-COFFEE.strip_heredoc
-        console.log "Hello, It's me!"
-      COFFEE
-      File.open(@file, 'w') do |f|
-        f.write content
-      end
-    end
-
-    let(:expectation) do
-      "(function() {\n  console.log(\"Hello, It's me!\");\n\n}).call(this);\n"
-    end
-
-    after do
-      File.unlink(@file)
-    end
-
-    it 'should return compiled javascript' do
-      get '/theme/jarvi/script.js'
-      last_response.body.should eq(expectation)
-    end
-  end
 end

@@ -15,7 +15,7 @@ module Lokka
       set theme: proc { File.join(public_folder, 'theme') }
       set supported_templates: %w[erb haml slim]
       set supported_stylesheet_templates: %w[scss sass]
-      set supported_javascript_templates: %w[coffee]
+      set supported_javascript_templates: %w[]
       set :scss, {}
       set :sass, {}
       set :per_page, 10

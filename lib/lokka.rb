@@ -124,7 +124,6 @@ require 'aws-sdk-sesv2'
 require 'backports/latest'
 require 'builder'
 require 'coderay'
-require 'coffee-script'
 require 'sassc'
 require 'dotenv'
 Dotenv.overload

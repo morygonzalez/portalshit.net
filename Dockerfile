@@ -22,7 +22,7 @@ ENV TZ=Asia/Tokyo
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       bash build-essential curl git file sudo openssh-client ca-certificates \
       libssl-dev libxml2-dev libxslt1-dev zlib1g zlib1g-dev tzdata \
-      nodejs default-mysql-client default-libmysqlclient-dev \
+      default-mysql-client default-libmysqlclient-dev \
       mecab libmecab-dev mecab-ipadic-utf8 \
       gcc make pkg-config wget libffi-dev libclang-dev \
       libsqlite3-dev sqlite3 \
@@ -87,7 +87,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
       libsqlite3-0 sqlite3 \
       imagemagick \
       zlib1g tzdata \
-      nodejs \
       libimage-exiftool-perl \
       ca-certificates \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
