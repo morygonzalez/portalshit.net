@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source "$(dirname "$0")/lib/common.sh"
+
+# リクエストタイム集計処理
+process_request_time() {
+  local period=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/nginx-request-time-${period}.txt"
+  local awk_script="${APP_DIR}/bin/lib/nginx_request_time_hourly.awk"
+
+  echo "Processing Request Time ($period)"
+  find "${LOG_DIR}" -name "access.log*" \
+    | xargs zcat -f \
+    | filter_by_date "${period}" \
+    | /usr/bin/gawk -f "${awk_script}" \
+    | tee "${output}"
+
+  echo "Request time saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_request_time
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_request_time "$period"
+        ;;
+      *)
+        echo "Usage: $0 {[YYYY-MM-DD|today|yesterday|all]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"
