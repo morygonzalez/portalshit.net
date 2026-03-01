@@ -4,3 +4,14 @@ db/database.yml
 .rustup/
 log
 .bash_history
+.git
+node_modules
+**/node_modules
+tmp
+coverage
+.sass-cache
+.claude
+.local
+spec
+.github
+*.md
