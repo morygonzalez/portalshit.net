@@ -156,7 +156,7 @@ const execModalSearch = function(event) {
       const url = new URL(a.getAttribute('href'), window.location.origin);
       const tagMatch = url.pathname.match(/^\/tags\/(.+)/);
       if (tagMatch) {
-        keyword = `tag:${decodeURIComponent(tagMatch[1]).trim()}`;
+        keyword = decodeURIComponent(tagMatch[1]).trim();
       }
     } catch (_) {}
   }
