@@ -4,6 +4,10 @@ module Lokka
   module Before
     def self.registered(app)
       app.before do
+        # Remove params with keys that are invalid as Ruby instance variable names.
+        # Bots sometimes send URLs with "&amp;" instead of "&", creating keys like "amp;query".
+        params.reject! { |key, _| key !~ /\A[a-zA-Z_][a-zA-Z0-9_]*\z/ }
+
         @site = RequestStore[:site] ||= Site.first
         @title = @site.title
 
