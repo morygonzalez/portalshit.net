@@ -150,6 +150,16 @@ const execModalSearch = function(event) {
       }
     } catch (_) { /* 相対URLなど、失敗時は無視 */ }
   }
+  // ③ /tags/:name からタグ名を抽出
+  if (!keyword) {
+    try {
+      const url = new URL(a.getAttribute('href'), window.location.origin);
+      const tagMatch = url.pathname.match(/^\/tags\/(.+)/);
+      if (tagMatch) {
+        keyword = `tag:${decodeURIComponent(tagMatch[1]).trim()}`;
+      }
+    } catch (_) {}
+  }
 
   if (keyword) {
     event.preventDefault();
