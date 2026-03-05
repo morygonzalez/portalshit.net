@@ -39,6 +39,7 @@ plugin_old
 .claude/settings.local.json
 .claude/worktrees/
 
+lib/tokenizer/userdic.dic
 public/**/build/*.js
 public/**/dist/*.js
 public/og-image
