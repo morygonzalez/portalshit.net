@@ -62,19 +62,14 @@ set :puma_access_log, '/var/www/app/portalshit/log/puma_access.log'
 set :puma_error_log, '/var/www/app/portalshit/log/puma_error.log'
 
 namespace :deploy do
-  desc 'Compile MeCab userdic using neologd from Docker image'
+  desc 'Copy compiled MeCab userdic from Docker image'
   task :compile_userdic do
     on roles(:app) do
       within release_path do
         execute :docker, 'run', '--rm',
           '-v', "#{release_path}/lib/tokenizer:/work",
           'morygonzalez/portalshit:latest',
-          'mecab-dict-index',
-          '-d', '/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd',
-          '-u', '/work/userdic.dic',
-          '-f', 'utf-8',
-          '-t', 'utf-8',
-          '/work/userdic.csv'
+          'cp', '/app/lib/tokenizer/userdic.dic', '/work/userdic.dic'
       end
     end
   end
