@@ -66,20 +66,23 @@ class Entry
   end
 
   def images
-    doc = Nokogiri::HTML.fragment(body)
-    doc.css('img:root, figure:root > img, p:root > video, p:root img, .pswp-gallery__item > a > img').map {|item|
-      case item.name
-      when "img"
-        item.attributes["src"].value
-      when "video"
-        item.attributes["poster"]&.value
-      end
-    }
+    @images ||= begin
+      doc = Nokogiri::HTML.fragment(body)
+      doc.css('img:root, figure:root > img, p:root > video, p:root img, .pswp-gallery__item > a > img').map {|item|
+        case item.name
+        when "img"
+          item.attributes["src"].value
+        when "video"
+          item.attributes["poster"]&.value
+        end
+      }
+    end
   end
 
   def cover_image
-    if images.first && images.first.end_with?('jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF')
-      images.first
+    first_image = images.first
+    if first_image&.end_with?('jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF')
+      first_image
     else
       'https://portalshit.net/theme/portalshit/ogp_image.png'
     end

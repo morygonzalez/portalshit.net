@@ -2,7 +2,6 @@
   %h2= t('listing_categories')
   %p カテゴリーごとの最新記事を表示しています。各カテゴリーは最近記事が更新された順に並んでいます。
 
-- entry_lengths = Entry.unscoped.published.group(:category_id).count
 - @entries_group_by_category.each do |category, entries|
   %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
     %header
@@ -11,7 +10,7 @@
       .description= category.description
       %ul.meta
         %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: :long}
-        %li== 記事数 #{entry_lengths[category.id]}
+        %li== 記事数 #{@entry_lengths[category.id]}
     %section
       - post = entries.delete_if {|item| entries.index(0) == item }.first
       .new-entry

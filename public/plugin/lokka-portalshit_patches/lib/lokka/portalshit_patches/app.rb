@@ -29,6 +29,10 @@ module Lokka
       }
     end
 
+    after '/' do
+      cache_control :public, max_age: 5.minutes
+    end
+
     get '/index.atom' do
       @posts = Post.preload(:category, :user).
         published.
@@ -102,12 +106,14 @@ module Lokka
         result[entry.category] ||= []
         result[entry.category] << entry
       }
+      @entry_lengths = Entry.unscoped.published.group(:category_id).count
 
       @title = %Q(#{t('categories')} - #{@site.title})
 
       @bread_crumbs = [{ name: t('home'), link: '/' },
                        { name: t('categories') }]
 
+      cache_control :public, max_age: 5.minutes
       render_detect :categories
     end
   end
