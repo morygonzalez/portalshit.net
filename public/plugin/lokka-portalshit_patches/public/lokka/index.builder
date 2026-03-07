@@ -12,15 +12,22 @@ xml.feed(xmlns: 'http://www.w3.org/2005/Atom') do
   xml.link    type: 'application/atom+xml', ref: 'self', href: base_url + '/index.atom'
   xml.link    rel: 'hub', href: 'https://pubsubhubbub.appspot.com/'
 
+  mime_type_from_url = ->(url) {
+    case url
+    when /\.png$/i  then 'image/png'
+    when /\.gif$/i  then 'image/gif'
+    else 'image/jpeg'
+    end
+  }
+
   @posts.each do |post|
-    image = FastImage.new(post.cover_image)
     xml.entry do
       xml.id        'tag:' + base_url.gsub('http://', '') + ',' + post.created_at.to_s
       xml.title     post.title, type: 'html'
       xml.published post.created_at.to_s
       xml.updated   post.updated_at.to_s
       xml.link      type: 'html', rel: 'alternate', href: base_url + post.link
-      xml.link      type: image.type, rel: 'enclosure', href: post.cover_image, length: image.content_length
+      xml.link      type: mime_type_from_url.call(post.cover_image), rel: 'enclosure', href: post.cover_image
       xml.content   expand_associate_link(post.body), type: 'html'
       xml.author do
         xml.name post.user.nil? ? '' : post.user.name
