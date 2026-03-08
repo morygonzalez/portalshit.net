@@ -3,6 +3,14 @@ require 'activerecord-import'
 
 ENV['NEWRELIC_AGENT_ENABLED'] = 'false'
 
+module SimilarEntriesTask
+  @stale_entry_ids = []
+
+  class << self
+    attr_accessor :stale_entry_ids
+  end
+end
+
 class ExecutionDetector
   attr_reader :force, :message
 
@@ -13,32 +21,36 @@ class ExecutionDetector
   def run_execution?
     case
     when force.present? && force == 'true'
-      @message =  'This is a force execution because the force flag is set true.'
+      SimilarEntriesTask.stale_entry_ids = Entry.published.pluck(:id)
+      @message = "Force execution: processing all #{SimilarEntriesTask.stale_entry_ids.count} entries."
       true
-    when Similarity.count.zero?
-      @message = 'Run execution because there is no similarity records.'
+    when Similarity.count.zero? || EntryTermFrequency.count.zero?
+      SimilarEntriesTask.stale_entry_ids = Entry.published.pluck(:id)
+      @message = 'Run execution because there is no similarity/term frequency records.'
       true
-    when latest_entry_with_similarity.updated_at >= latest_published_entry.updated_at
-      @message = 'Skip similarity detection because the latest entry already has similar entries'
+    when stale_entry_ids.empty?
+      @message = 'Skip: no entries have been updated since last run.'
       false
     else
-      @message = 'Updating simimarity...'
+      SimilarEntriesTask.stale_entry_ids = stale_entry_ids
+      @message = "Updating similarity for #{stale_entry_ids.count} changed entries..."
       true
     end
   end
 
   private
 
-  def latest_updated_at
-    @latest_updated_at ||= Similarity.joins(:entry).maximum(:'entries.updated_at')
-  end
+  def stale_entry_ids
+    @stale_entry_ids ||= begin
+      tokenized_at = EntryTermFrequency
+        .select('entry_id, MAX(entry_updated_at) as last_tokenized_at')
+        .group(:entry_id)
+        .each_with_object({}) { |r, h| h[r.entry_id] = r.last_tokenized_at }
 
-  def latest_entry_with_similarity
-    @latest_entry_with_similarity ||= Entry.find_by(updated_at: latest_updated_at)
-  end
-
-  def latest_published_entry
-    @latest_published_entry ||= Entry.published.order(updated_at: :desc).first
+      Entry.published.pluck(:id, :updated_at).filter_map { |id, updated_at|
+        id if tokenized_at[id].nil? || tokenized_at[id] < updated_at
+      }
+    end
   end
 end
 
@@ -66,6 +78,8 @@ namespace :similar_entries do
 
   desc 'Extract term'
   task :extract_term do
+    stale_ids = SimilarEntriesTask.stale_entry_ids
+
     create_table_sql = <<~SQL
       DROP TABLE IF EXISTS tfidf;
       CREATE TABLE tfidf (
@@ -81,19 +95,40 @@ namespace :similar_entries do
     SQL
     db.execute_batch(create_table_sql)
 
-    insert_sql = 'INSERT INTO tfidf (`term`, `entry_id`, `term_count`) VALUES (?, ?, ?)'
-    Entry.includes(:category, :tags).published.find_each(batch_size: 100) do |entry|
-      text_to_tokenize = <<~HEREDOC.strip_heredoc
-        #{entry.title}
-        #{entry.raw_body})
-        #{entry.category&.title}
-        #{entry.tag_list.join(' ')}
-      HEREDOC
-      words = Tokenizer.run(text_to_tokenize)
-      frequency = words.each_with_object(Hash.new(0)) {|word, sum| sum[word] += 1; }
-      frequency.each do |word, count|
-        db.execute(insert_sql, [word, entry.id, count])
+    # stale なエントリだけ再トークナイズして MySQL に保存
+    if stale_ids.present?
+      EntryTermFrequency.where(entry_id: stale_ids).delete_all
+
+      new_frequencies = []
+      Entry.includes(:category, :tags).published.where(id: stale_ids).find_each(batch_size: 100) do |entry|
+        text_to_tokenize = <<~HEREDOC.strip_heredoc
+          #{entry.title}
+          #{entry.raw_body})
+          #{entry.category&.title}
+          #{entry.tag_list.join(' ')}
+        HEREDOC
+        words = Tokenizer.run(text_to_tokenize)
+        frequency = words.each_with_object(Hash.new(0)) { |word, sum| sum[word] += 1 }
+        frequency.each do |word, count|
+          new_frequencies << EntryTermFrequency.new(
+            entry_id: entry.id,
+            term: word,
+            term_count: count,
+            entry_updated_at: entry.updated_at
+          )
+        end
       end
+
+      EntryTermFrequency.import new_frequencies if new_frequencies.any?
+    end
+
+    # MySQL の全 term frequency を SQLite に一括ロード
+    db.transaction do
+      stmt = db.prepare('INSERT INTO tfidf (term, entry_id, term_count) VALUES (?, ?, ?)')
+      EntryTermFrequency.select(:term, :entry_id, :term_count).find_each(batch_size: 1000) do |etf|
+        stmt.execute(etf.term, etf.entry_id, etf.term_count)
+      end
+      stmt.close
     end
   end
 
@@ -165,6 +200,8 @@ namespace :similar_entries do
 
   desc 'Export calculation result to MySQL'
   task :export do
+    stale_ids = SimilarEntriesTask.stale_entry_ids
+
     create_similar_candidate_sql = <<~SQL
       DROP TABLE IF EXISTS similar_candidate;
       DROP INDEX IF EXISTS index_sc_parent_id;
@@ -220,14 +257,17 @@ namespace :similar_entries do
 
     results = {}
     db.results_as_hash = true
-    Entry.published.pluck(:id).each do |entry_id|
+
+    # stale なエントリのみ類似度を再計算
+    stale_ids.each do |entry_id|
       db.execute(extract_similar_entries_sql, [entry_id, entry_id, entry_id])
       similarities = db.execute(search_similar_entries_sql, [entry_id, entry_id, entry_id, entry_id])
       results[entry_id] = similarities
       db.execute('DELETE FROM similar_candidate WHERE parent_id = ?', [entry_id])
     end
 
-    Similarity.connection.execute('TRUNCATE table similarities;')
+    # stale なエントリの similarities だけ差し替え（TRUNCATE しない）
+    Similarity.where(entry_id: stale_ids).delete_all
 
     similarities = []
     results.each_value do |_similarities|
