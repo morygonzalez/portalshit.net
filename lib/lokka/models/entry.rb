@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'net/http'
+
 class Entry < ActiveRecord::Base
   has_many :comments
   has_many :approved_comments, -> { approved }, class_name: 'Comment'
@@ -21,6 +23,7 @@ class Entry < ActiveRecord::Base
 
   after_save :update_fields
   after_save :send_ping_to_pubsubhubbub
+  after_save :purge_atom_cache
 
   default_scope { order('entries.created_at DESC') }
   scope :published,   -> { where(draft: false) }
@@ -170,5 +173,17 @@ class Entry < ActiveRecord::Base
     if Lokka.production? && !draft
       system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
     end
+  end
+
+  def purge_atom_cache
+    return if draft
+
+    Net::HTTP.start('localhost', 80) do |http|
+      req = Net::HTTP::Get.new('/index.atom')
+      req['Cache-Purge'] = 'true'
+      http.request(req)
+    end
+  rescue StandardError => e
+    ActiveRecord::Base.logger&.warn "Failed to purge atom cache: #{e.message}"
   end
 end
