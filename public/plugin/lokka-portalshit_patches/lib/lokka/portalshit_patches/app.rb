@@ -41,7 +41,6 @@ module Lokka
         order(@site.default_order)
       @posts = apply_continue_reading(@posts)
 
-      cache_control :public, max_age: 5.minutes
       content_type 'application/atom+xml', charset: 'utf-8'
       builder :'plugin/lokka-portalshit_patches/public/lokka/index'
     end
@@ -113,7 +112,6 @@ module Lokka
       @bread_crumbs = [{ name: t('home'), link: '/' },
                        { name: t('categories') }]
 
-      cache_control :public, max_age: 5.minutes
       render_detect :categories
     end
   end
