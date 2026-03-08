@@ -73,6 +73,16 @@ namespace :deploy do
       end
     end
   end
+  desc 'Run database migrations'
+  task :migrate do
+    on roles(:app) do
+      within release_path do
+        execute '/var/www/app/.rbenv/bin/rbenv', 'exec', 'bundle', 'exec', 'rake', 'db:migrate', 'RACK_ENV=production'
+      end
+    end
+  end
+  before :restart, :migrate
+
   before :restart, :compile_userdic
 
   desc 'Build JavaScript'
