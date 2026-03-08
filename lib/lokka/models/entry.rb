@@ -23,7 +23,7 @@ class Entry < ActiveRecord::Base
 
   after_save :update_fields
   after_save :send_ping_to_pubsubhubbub
-  after_save :purge_atom_cache
+  after_commit :purge_atom_cache
 
   default_scope { order('entries.created_at DESC') }
   scope :published,   -> { where(draft: false) }
