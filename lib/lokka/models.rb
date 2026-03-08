@@ -17,6 +17,7 @@
   theme
   user
   similarity
+  entry_term_frequency
 ].each do |model|
   require "lokka/models/#{model}"
 end
