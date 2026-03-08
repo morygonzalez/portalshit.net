@@ -1,3 +1,4 @@
 user-agent: *
 disallow: /ogp
 disallow: /amazon
+Sitemap: https://portalshit.net/sitemap.xml
