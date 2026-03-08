@@ -36,6 +36,7 @@ class Tokenizer
       ignore_feature_regexp = /\A(記号|動詞|数|助詞|副詞|形容詞|接尾|代名詞|非自立|接続詞|連体詞|接頭詞|BOS\/EOS)/
       next if n.feature.match?(ignore_feature_regexp)
       next if n.surface.match?(/\A([0-9]+|[a-zA-Z]{1}|\p{hiragana}{1}|\p{katakana}{1})\Z/i) # 数字・アルファベット・平仮名・カタカナ一文字除去
+      next if n.surface.match?(/\A[^\p{L}\p{N}]+\Z/) # 記号・句読点のみのトークンを除外
       words << n.surface
     end
 
