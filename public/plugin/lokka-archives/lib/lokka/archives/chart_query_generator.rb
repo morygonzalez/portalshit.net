@@ -86,7 +86,7 @@ module Lokka
             COUNT(1) AS count
           FROM entries
           INNER JOIN categories ON categories.id = entries.category_id
-          WHERE entries.draft = FALSE
+          WHERE entries.publish_at IS NOT NULL AND entries.publish_at <= NOW()
             AND entries.type = 'Post'
           GROUP BY duration, category
           ORDER BY duration
@@ -110,7 +110,7 @@ module Lokka
           FROM date_series
           LEFT JOIN entries
             ON to_char(entries.created_at, 'YYYY-MM') = date_series.yearmonth
-            AND entries.draft = FALSE AND entries.type = 'Post'
+            AND entries.publish_at IS NOT NULL AND entries.publish_at <= NOW() AND entries.type = 'Post'
           LEFT JOIN categories ON categories.id = entries.category_id
           GROUP BY duration, category
           ORDER BY duration
@@ -136,7 +136,7 @@ module Lokka
             COUNT(1) AS count
           FROM entries
           INNER JOIN categories ON categories.id = entries.category_id
-          WHERE entries.draft = FALSE AND entries.type = 'Post'
+          WHERE entries.publish_at IS NOT NULL AND entries.publish_at <= NOW() AND entries.type = 'Post'
           GROUP BY duration, category
           ORDER BY duration
         SQL
@@ -158,7 +158,7 @@ module Lokka
           ) AS date_series
           LEFT JOIN entries
             ON DATE_FORMAT(entries.created_at, '%Y-%m') = date_series.yearmonth
-            AND entries.draft = FALSE AND entries.type = 'Post'
+            AND entries.publish_at IS NOT NULL AND entries.publish_at <= NOW() AND entries.type = 'Post'
           LEFT JOIN categories ON categories.id = entries.category_id
           GROUP BY duration, category
           ORDER BY duration
@@ -175,7 +175,7 @@ module Lokka
             COUNT(1) AS count
           FROM entries
           INNER JOIN categories ON categories.id = entries.category_id
-          WHERE entries.draft = 'f' AND entries.type = 'Post' #{year_filter}
+          WHERE entries.publish_at IS NOT NULL AND entries.publish_at <= datetime('now') AND entries.type = 'Post' #{year_filter}
           GROUP BY duration, category
           ORDER BY duration
         SQL

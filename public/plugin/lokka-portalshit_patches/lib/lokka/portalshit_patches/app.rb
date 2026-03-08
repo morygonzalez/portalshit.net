@@ -46,7 +46,7 @@ module Lokka
     end
 
     get '/sitemap.xml' do
-      @categories = Category.includes(:entries).where(entries: { draft: false }).all
+      @categories = Category.includes(:entries).where("entries.publish_at IS NOT NULL AND entries.publish_at <= ?", Time.current).all
       content_type 'application/xml', charset: 'utf-8'
       builder :'plugin/lokka-portalshit_patches/public/lokka/sitemap'
     end
@@ -92,7 +92,7 @@ module Lokka
             count(id) as entry_count,
             max(created_at) as last_created_at
           from entries
-          where entries.draft = false
+          where entries.publish_at IS NOT NULL AND entries.publish_at <= NOW()
           group by category_id
         ) as grouped_entries
         on grouped_entries.category_id = entries.category_id and find_in_set(id, entry_ids) between 1 and 4

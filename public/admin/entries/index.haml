@@ -1,4 +1,6 @@
-- if params[:draft] == 'true'
+- if params[:scheduled] == 'true'
+  %h2= t("listing_scheduled_#{@name.pluralize}")
+- elsif params[:draft] == 'true'
   %h2= t("listing_draft_#{@name.pluralize}")
 - else
   %h2= t("listing_#{@name.pluralize}")
@@ -7,6 +9,7 @@
   %li= link_to t('new'), url("/admin/#{@name.pluralize}/new")
   %li= link_to t('all'), url("/admin/#{@name.pluralize}")
   %li= link_to t('draft'), url("/admin/#{@name.pluralize}?draft=true")
+  %li= link_to t('scheduled'), url("/admin/#{@name.pluralize}?scheduled=true")
 
 %div.search
   %form(action="/admin/#{@name.pluralize}/search" method="get")
@@ -22,7 +25,13 @@
       %th{ colspan: 2 }
     - @entries.each_with_index do |entry, i|
       %tr{ class: (i + 1).odd? ? :odd : :even }
-        %td.status= entry.draft ? t('post_draft') : t('post_published')
+        %td.status
+          - if entry.scheduled?
+            = t('post_scheduled')
+          - elsif entry.draft?
+            = t('post_draft')
+          - else
+            = t('post_published')
         %td.title= link_to entry.title, url(entry.link)
         %td= entry.user.nil? ? '' : entry.user.name
         %td= l(entry.created_at, format: :long)

@@ -61,10 +61,11 @@
         = label_tag "#{@name}_fields_#{field_name.name}", caption: field_name.name
         %br/
         = text_field_tag "#{@name}[fields][#{field_name.name}]", id: "#{@name}_fields_#{field_name.name}", value: "#{@entry.new_record? ? (params[@name] ? params[@name]['fields'][field_name.name] : '') : @entry.send(field_name.name)}"
-    .field.draft
-      = f.label :draft, caption: t("#{@name}.draft")
+    .field.publish_at
+      = f.label :publish_at, caption: t("#{@name}.publish_at")
       %br/
-      = f.check_box :draft
+      = f.text_field :publish_at, type: 'datetime-local', value: @entry.publish_at&.strftime("%Y-%m-%dT%H:%M")
+      %small 空欄 = 下書き / 過去・現在 = 公開 / 未来 = 予約投稿
     .field.created_at
       = f.label :created_at, caption: t("#{@name}.created_at")
       %br/

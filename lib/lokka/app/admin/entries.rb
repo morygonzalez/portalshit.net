@@ -37,7 +37,13 @@ module Lokka
 
     def entries_index(entry_class)
       @name = entry_class.name.downcase
-      @entries = params[:draft] == 'true' ? entry_class.unpublished : entry_class
+      @entries = if params[:scheduled] == 'true'
+                   entry_class.scheduled
+                 elsif params[:draft] == 'true'
+                   entry_class.unpublished
+                 else
+                   entry_class
+                 end
       @entries = @entries.includes(:user, :category).page(params[:page]).per(settings.admin_per_page)
       haml :'admin/entries/index', layout: :'admin/layout'
     end
@@ -105,7 +111,7 @@ module Lokka
       (entry = entry_class.where(id: id).first) || raise(Sinatra::NotFound)
       entry.destroy
       flash[:notice] = t("#{name}_was_successfully_deleted")
-      if entry.draft
+      if entry.draft?
         redirect to("/admin/#{name.pluralize}?draft=true")
       else
         redirect to("/admin/#{name.pluralize}")

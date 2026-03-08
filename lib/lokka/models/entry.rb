@@ -26,8 +26,9 @@ class Entry < ActiveRecord::Base
   after_commit :purge_atom_cache
 
   default_scope { order('entries.created_at DESC') }
-  scope :published,   -> { where(draft: false) }
-  scope :unpublished, -> { where(draft: true) }
+  scope :published,   -> { where("publish_at IS NOT NULL AND publish_at <= ?", Time.current) }
+  scope :unpublished, -> { where(publish_at: nil) }
+  scope :scheduled,   -> { where("publish_at IS NOT NULL AND publish_at > ?", Time.current) }
   scope :posts,       -> { where(type: 'Post') }
   scope :pages,       -> { where(type: 'Page') }
   scope :recent,
@@ -88,6 +89,18 @@ class Entry < ActiveRecord::Base
     else
       long_description
     end
+  end
+
+  def draft?
+    publish_at.nil?
+  end
+
+  def scheduled?
+    publish_at.present? && publish_at > Time.current
+  end
+
+  def published?
+    publish_at.present? && publish_at <= Time.current
   end
 
   def fuzzy_slug
@@ -170,13 +183,13 @@ class Entry < ActiveRecord::Base
   private
 
   def send_ping_to_pubsubhubbub
-    if Lokka.production? && !draft
+    if Lokka.production? && published?
       system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
     end
   end
 
   def purge_atom_cache
-    return if draft
+    return unless published?
 
     Net::HTTP.start('localhost', 80) do |http|
       req = Net::HTTP::Get.new('/index.atom')

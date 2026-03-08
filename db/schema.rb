@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_03_08_000001) do
+ActiveRecord::Schema.define(version: 2026_03_08_000002) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -86,14 +86,14 @@ ActiveRecord::Schema.define(version: 2026_03_08_000001) do
     t.string "title"
     t.text "body"
     t.string "type", limit: 50, default: "", null: false, collation: "utf8mb3_general_ci"
-    t.boolean "draft", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text "frozen_tag_list", collation: "utf8mb3_general_ci"
     t.string "markup", collation: "utf8mb3_general_ci"
     t.text "summary"
+    t.datetime "publish_at"
     t.index ["created_at"], name: "index_entry_created_at"
-    t.index ["draft"], name: "index_entry_draft"
+    t.index ["publish_at"], name: "index_entries_on_publish_at"
     t.index ["slug"], name: "index_entry_slug"
     t.index ["title", "body"], name: "index_entry_fulltext", type: :fulltext
     t.index ["type"], name: "index_entry_type"
