@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_25_000000) do
+ActiveRecord::Schema.define(version: 2026_03_08_000001) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -97,6 +97,15 @@ ActiveRecord::Schema.define(version: 2026_02_25_000000) do
     t.index ["slug"], name: "index_entry_slug"
     t.index ["title", "body"], name: "index_entry_fulltext", type: :fulltext
     t.index ["type"], name: "index_entry_type"
+  end
+
+  create_table "entry_term_frequencies", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "entry_id", null: false
+    t.string "term", null: false
+    t.integer "term_count", default: 0, null: false
+    t.datetime "entry_updated_at", null: false
+    t.index ["entry_id", "term"], name: "index_entry_term_frequencies_on_entry_id_and_term", unique: true
+    t.index ["entry_id"], name: "index_entry_term_frequencies_on_entry_id"
   end
 
   create_table "field_names", id: :integer, charset: "utf8mb3", force: :cascade do |t|

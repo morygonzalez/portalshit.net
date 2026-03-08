@@ -119,13 +119,17 @@ namespace :similar_entries do
         end
       end
 
-      EntryTermFrequency.import new_frequencies if new_frequencies.any?
+      EntryTermFrequency.upsert_all(
+        new_frequencies.map { |f|
+          { entry_id: f.entry_id, term: f.term, term_count: f.term_count, entry_updated_at: f.entry_updated_at }
+        }
+      ) if new_frequencies.any?
     end
 
     # MySQL の全 term frequency を SQLite に一括ロード
     db.transaction do
       stmt = db.prepare('INSERT INTO tfidf (term, entry_id, term_count) VALUES (?, ?, ?)')
-      EntryTermFrequency.select(:term, :entry_id, :term_count).find_each(batch_size: 1000) do |etf|
+      EntryTermFrequency.select(:id, :term, :entry_id, :term_count).find_each(batch_size: 1000) do |etf|
         stmt.execute(etf.term, etf.entry_id, etf.term_count)
       end
       stmt.close
