@@ -93,7 +93,7 @@ WORKDIR /app
 COPY . /app
 COPY Gemfile.docker /app/Gemfile
 RUN mkdir -p log \
-    && mecab-dict-index \
+    && /usr/lib/mecab/mecab-dict-index \
          -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd \
          -u /app/lib/tokenizer/userdic.dic \
          -f utf-8 -t utf-8 \
