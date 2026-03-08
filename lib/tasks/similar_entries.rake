@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'activerecord-import'
 
 ENV['NEWRELIC_AGENT_ENABLED'] = 'false'
 
@@ -277,11 +276,9 @@ namespace :similar_entries do
     results.each_value do |_similarities|
       next unless _similarities.present?
       _similarities.each do |s|
-        params = { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'], score: s['score'] }
-        similarity = Similarity.new(params)
-        similarities << similarity
+        similarities << { entry_id: s['entry_id'], similar_entry_id: s['similar_entry_id'], score: s['score'] }
       end
     end
-    Similarity.import similarities
+    Similarity.insert_all(similarities) if similarities.any?
   end
 end
