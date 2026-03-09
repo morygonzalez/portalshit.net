@@ -151,6 +151,8 @@ namespace :similar_entries do
 
   desc 'Compute cosine similarities and update similarities table'
   task :compute_similarities do
+    require 'numo/narray'
+
     stale_ids = SimilarEntriesTask.stale_entry_ids
     puts "Computing similarities for #{stale_ids.count} entries..."
 
@@ -165,7 +167,8 @@ namespace :similar_entries do
     end
 
     entry_ids = all_embeddings.keys
-    vectors   = all_embeddings.values
+    # shape: [N, 1536]
+    matrix = Numo::DFloat[*all_embeddings.values]
 
     similarities = []
 
@@ -173,15 +176,16 @@ namespace :similar_entries do
       target_vec = all_embeddings[target_id]
       next unless target_vec
 
-      scores = entry_ids.map.with_index do |other_id, i|
-        next if other_id == target_id
-        score = target_vec.zip(vectors[i]).sum { |a, b| a * b }
-        [other_id, score]
-      end.compact
+      # 1回の行列演算で全エントリとのコサイン類似度（内積）を計算
+      scores = matrix.dot(Numo::DFloat[*target_vec])
 
-      top10 = scores.sort_by { |_, score| -score }.first(10)
-      top10.each do |similar_entry_id, score|
-        similarities << { entry_id: target_id, similar_entry_id: similar_entry_id, score: score }
+      top10 = entry_ids
+        .each_with_index
+        .reject { |id, _| id == target_id }
+        .max_by(10) { |_, i| scores[i] }
+
+      top10.each do |similar_entry_id, i|
+        similarities << { entry_id: target_id, similar_entry_id: similar_entry_id, score: scores[i] }
       end
     end
 
