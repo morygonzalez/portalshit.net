@@ -9,6 +9,7 @@ class Entry < ActiveRecord::Base
   has_many :tags, through: :taggings
   has_many :similarities
   has_many :similar_entries, through: :similarities
+  has_one  :entry_embedding
 
   belongs_to :user
   belongs_to :category

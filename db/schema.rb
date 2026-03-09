@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_03_08_000002) do
+ActiveRecord::Schema.define(version: 2026_03_09_000001) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -99,13 +99,13 @@ ActiveRecord::Schema.define(version: 2026_03_08_000002) do
     t.index ["type"], name: "index_entry_type"
   end
 
-  create_table "entry_term_frequencies", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "entry_embeddings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "entry_id", null: false
-    t.string "term", null: false
-    t.integer "term_count", default: 0, null: false
+    t.json "embedding", null: false
+    t.string "model", default: "text-embedding-3-small", null: false
+    t.integer "token_count"
     t.datetime "entry_updated_at", null: false
-    t.index ["entry_id", "term"], name: "index_entry_term_frequencies_on_entry_id_and_term", unique: true
-    t.index ["entry_id"], name: "index_entry_term_frequencies_on_entry_id"
+    t.index ["entry_id"], name: "index_entry_embeddings_on_entry_id", unique: true
   end
 
   create_table "field_names", id: :integer, charset: "utf8mb3", force: :cascade do |t|
