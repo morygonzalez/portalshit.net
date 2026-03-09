@@ -46,7 +46,7 @@ module Lokka
     end
 
     get '/sitemap.xml' do
-      @categories = Category.includes(:entries).where("entries.publish_at IS NOT NULL AND entries.publish_at <= ?", Time.current).all
+      @categories = Category.joins(:entries).where("entries.publish_at IS NOT NULL AND entries.publish_at <= ?", Time.current).distinct
       content_type 'application/xml', charset: 'utf-8'
       builder :'plugin/lokka-portalshit_patches/public/lokka/sitemap'
     end
