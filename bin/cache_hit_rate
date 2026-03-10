@@ -11,8 +11,8 @@ process_cache_hit_rate() {
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
     | filter_by_date "${period}" \
-    | grep 'cache_hit:' | grep -v 'cache_hit:-' \
-    | cut -f16 | sort | uniq -c \
+    | grep 'cache_status:' | grep -v 'cache_status:-' \
+    | cut -f17 | sort | uniq -c \
     | awk '{
         if ($2 ~ /HIT/) {
           hit = $1
