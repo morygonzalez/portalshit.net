@@ -1,0 +1,114 @@
+#!/bin/bash
+
+source "$(dirname "$0")/lib/common.sh"
+
+# 設定読み込み
+source "${CONFIG_DIR}/notify_errors.conf"
+
+POSITION_FILE="${LOG_DIR}/.notify_errors_position"
+ACCESS_LOG="${LOG_DIR}/access.log"
+FORMAT_AWK="${APP_DIR}/bin/lib/format_error_lines.awk"
+
+# 静的ファイルを除外しつつエラー行を抽出
+filter_errors() {
+  grep -P "\t${NOTIFY_STATUS_PATTERN}\t" \
+    | grep -vP 'request_uri:\S+\.(css|js|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|map)(\?|	)'
+}
+
+# エラー行を awk で整形してメール本文を生成
+build_mail_body() {
+  /usr/bin/gawk -v max_errors="$MAX_ERRORS_IN_MAIL" -f "$FORMAT_AWK"
+}
+
+# メール送信
+send_notification() {
+  local body="$1"
+  local subject="[portalshit] サーバーエラーが発生しました"
+
+  aws sesv2 send-email \
+    --region "${AWS_REGION}" \
+    --from-email-address "${NOTIFY_FROM}" \
+    --destination "ToAddresses=${NOTIFY_TO}" \
+    --content "Simple={Subject={Data='${subject}',Charset=UTF-8},Body={Text={Data=$(printf '%q' "$body"),Charset=UTF-8}}}"
+}
+
+# ログの差分を読み取る
+read_new_lines() {
+  local last_position=0
+  if [ -f "$POSITION_FILE" ]; then
+    last_position=$(cat "$POSITION_FILE")
+  fi
+
+  local current_size
+  current_size=$(stat -c %s "$ACCESS_LOG")
+
+  # ログローテーション検知
+  if [ "$current_size" -lt "$last_position" ]; then
+    last_position=0
+  fi
+
+  # 差分がなければ空文字を返す
+  if [ "$current_size" -eq "$last_position" ]; then
+    return
+  fi
+
+  dd if="$ACCESS_LOG" bs=1 skip="$last_position" count=$((current_size - last_position)) 2>/dev/null
+
+  # ポジションを更新
+  echo "$current_size" > "$POSITION_FILE"
+}
+
+# メイン処理
+main() {
+  local dry_run=false
+  local test_mode=false
+
+  for arg in "$@"; do
+    case "$arg" in
+      --dry-run) dry_run=true ;;
+      --test)    dry_run=true; test_mode=true ;;
+      *)
+        echo "Usage: $0 [--dry-run|--test]"
+        exit 1
+        ;;
+    esac
+  done
+
+  if [ ! -f "$ACCESS_LOG" ]; then
+    echo "Access log not found: ${ACCESS_LOG}" >&2
+    exit 1
+  fi
+
+  # エラー行を取得
+  local error_lines
+  if [ "$test_mode" = "true" ]; then
+    error_lines=$(tail -n 1000 "$ACCESS_LOG" | filter_errors)
+  else
+    error_lines=$(read_new_lines | filter_errors)
+  fi
+
+  if [ -z "$error_lines" ]; then
+    [ "$test_mode" = "true" ] && echo "テストモード: エラーは見つかりませんでした"
+    exit 0
+  fi
+
+  # awk でメール本文を生成
+  local body
+  body=$(echo "$error_lines" | build_mail_body)
+
+  if [ "$dry_run" = "true" ]; then
+    echo "=== ドライラン: メール送信をスキップ ==="
+    echo "To: ${NOTIFY_TO}"
+    echo "From: ${NOTIFY_FROM}"
+    echo ""
+    echo "$body"
+    exit 0
+  fi
+
+  send_notification "$body"
+  local total_count
+  total_count=$(echo "$error_lines" | wc -l)
+  echo "$(date '+%Y-%m-%d %H:%M:%S') Sent error notification: ${total_count} errors"
+}
+
+main "$@"
