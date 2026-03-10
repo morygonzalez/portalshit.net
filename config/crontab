@@ -32,3 +32,6 @@ BIN=/var/www/deploys/portalshit/current/bin
 # maintenance (every 10min)
 */10 * * * * $BIN/run_update_search_index
 */10 * * * * $BIN/run_update_similarity
+
+# 500 error mail (every 5 min)
+*/5 * * * * $BIN/notify_errors
