@@ -142,6 +142,16 @@ namespace :deploy do
       # execute :touch, release_path.join('tmp/restart.txt')
     end
   end
+  desc 'Update crontab'
+  task :update_crontab do
+    on roles(:app) do
+      within release_path do
+        execute :crontab, release_path.join('config/crontab')
+      end
+    end
+  end
+  after :publishing, :update_crontab
+
   after :publishing, :restart
 
   after :restart, :clear_cache do
