@@ -12,22 +12,27 @@ NGINX の LTSV アクセスログを監視し、`status:500` のリクエスト�
 
 | 項目 | 既存スクリプト | 本機能 |
 |------|---------------|--------|
-| 言語 | Bash | Bash |
+| 言語 | Bash + awk | Bash + awk |
 | 共通ライブラリ | `bin/lib/common.sh` | 同左を利用 |
-| ログ読み込み | `find + zcat -f` | `tail -n` で最新行のみ |
+| データ整形 | `bin/lib/*.awk` | `bin/lib/format_error_lines.awk` |
+| ログ読み込み | `find + zcat -f` | ポジションファイル + `dd` で差分のみ |
 | 実行方法 | 手動 or cron | cron（5分間隔） |
 
 ## アーキテクチャ
 
 ```
 cron (5分間隔)
-  └─ bin/notify_errors
+  └─ bin/notify_errors（Bash: ログ解析・メール送信）
        ├─ source bin/lib/common.sh （共通定数の利用）
-       ├─ tail でログの最新部分を読み取り
-       ├─ status:500 を grep で抽出
-       ├─ 該当行があれば aws ses send-email で通知
-       └─ ポジションファイルで重複通知を防止
+       ├─ ポジションファイルでログの差分を読み取り
+       ├─ status:5xx を grep で抽出
+       ├─ bin/lib/format_error_lines.awk（awk: LTSV パース・メール本文整形）
+       └─ aws sesv2 send-email で通知
 ```
+
+**役割分担:**
+- **Bash（`bin/notify_errors`）**: ポジション管理、ログ差分読み取り、エラー行の grep 抽出、メール送信
+- **awk（`bin/lib/format_error_lines.awk`）**: LTSV フィールドのパース、メール本文の組み立て・整形
 
 ## 詳細設計
 
@@ -83,12 +88,22 @@ aws sesv2 send-email \
 
 **認証:** サーバーの IAM ロールまたは `~/.aws/credentials` を利用（`log_backup` と同じ方式）。
 
-### 5. メール本文
+### 5. メール本文の整形: awk (`bin/lib/format_error_lines.awk`)
+
+既存の `bin/lib/nginx_request_time_daily.awk` 等と同じパターンで、LTSV のパースと整形を awk に委譲する。
+`notify_errors` からは `echo "$error_lines" | gawk -v max_errors=50 -f format_error_lines.awk` のようにパイプで呼び出す。
+
+**awk が行うこと:**
+- `FS="\t"` で LTSV をタブ分割
+- `time:`, `request_method:`, `request_uri:`, `status:`, `remote_addr:`, `request_time:` フィールドを抽出
+- `max_errors` 変数で表示件数を制御し、超過分は省略表示
+
+**出力例:**
 
 ```
-[portalshit.net] 500エラー通知
+[portalshit.net] サーバーエラー通知
 
-以下のリクエストで500エラーが発生しました。
+以下のリクエストでサーバーエラーが発生しました。
 
 ---
 発生時刻: 2026-03-10T12:34:56+09:00
@@ -98,12 +113,8 @@ aws sesv2 send-email \
 レスポンスタイム: 1.234s
 ---
 
-（複数件ある場合は連続して表示）
-
 合計: 3件
 ```
-
-LTSV の各フィールドをパースして人間が読みやすい形式にする。
 
 ### 6. 重複通知の防止
 
@@ -133,11 +144,12 @@ NOTIFY_STATUS_CODES="500"
 
 ```
 bin/
-├── notify_errors          # メインスクリプト（新規）
+├── notify_errors              # メインスクリプト（新規）
 ├── conf/
-│   └── notify_errors.conf # 設定ファイル（新規）
+│   └── notify_errors.conf     # 設定ファイル（新規）
 └── lib/
-    └── common.sh          # 既存（変更なし）
+    ├── common.sh              # 既存（変更なし）
+    └── format_error_lines.awk # LTSV パース・メール本文整形（新規）
 ```
 
 ## 考慮事項
