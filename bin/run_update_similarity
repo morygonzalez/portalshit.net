@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+DEPLOY_PATH=/var/www/deploys/portalshit
+FORCE=${1:-false}
+
+docker run --rm \
+  --add-host=host.docker.internal:host-gateway \
+  -e RACK_ENV=production \
+  -e RUBYOPT="-EUTF-8" \
+  -v "$DEPLOY_PATH/current:/app" \
+  -v "$DEPLOY_PATH/shared/db/database.docker.yml:/app/db/database.yml" \
+  -v "$DEPLOY_PATH/shared/.env:/app/.env" \
+  --workdir /app \
+  morygonzalez/portalshit:latest \
+  bundle exec rake "similar_entries[$FORCE]"
