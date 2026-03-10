@@ -18,6 +18,8 @@ BIN=/var/www/deploys/portalshit/current/bin
 20 1 * * * $BIN/request_time yesterday
 25 1 * * * $BIN/status_code yesterday
 
+30 1 * * * $BIN/log_backup
+
 # all (daily at 2:00, 5min apart)
 0 2 * * * $BIN/access_ranking all
 5 2 * * * $BIN/referer_ranking all
