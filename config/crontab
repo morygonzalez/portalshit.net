@@ -3,14 +3,11 @@ BIN=/var/www/deploys/portalshit/current/bin
 # today (hourly)
 0 * * * * $BIN/hourly_stats
 
-# yesterday (daily at 1:00)
-0 1 * * * $BIN/daily_stats_yesterday
-
-5 1 * * * $BIN/log_backup
-10 1 * * * $BIN/db_backup
-
-# all (daily at 2:00)
-0 2 * * * $BIN/daily_stats_all
+# daily (0:05〜)
+5 0 * * * $BIN/daily_stats_yesterday
+6 0 * * * $BIN/daily_stats_all
+8 0 * * * $BIN/log_backup
+9 0 * * * $BIN/db_backup
 
 # maintenance (every 10min)
 */10 * * * * $BIN/run_update_search_index
