@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BIN="$(dirname "$0")"
+
+"$BIN/access_ranking" all
+"$BIN/referer_ranking" all
+"$BIN/cache_hit_rate" all
+"$BIN/spam_block_rate" all
+"$BIN/request_time" all
+"$BIN/status_code" all
+"$BIN/ip_to_ignore"

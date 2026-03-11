@@ -1,34 +1,16 @@
 BIN=/var/www/deploys/portalshit/current/bin
 
-# today (hourly, 1min apart)
-0 * * * * $BIN/access_ranking today
-1 * * * * $BIN/referer_ranking today
-2 * * * * $BIN/cache_hit_rate today
-3 * * * * $BIN/spam_block_rate today
-4 * * * * $BIN/request_time today
-5 * * * * $BIN/status_code today
-6 * * * * $BIN/query_term_ranking all
-7 * * * * $BIN/query_term_ranking visitor
+# today (hourly)
+0 * * * * $BIN/hourly_stats
 
-# yesterday (daily at 1:00, 5min apart)
-0 1 * * * $BIN/access_ranking yesterday
-5 1 * * * $BIN/referer_ranking yesterday
-10 1 * * * $BIN/cache_hit_rate yesterday
-15 1 * * * $BIN/spam_block_rate yesterday
-20 1 * * * $BIN/request_time yesterday
-25 1 * * * $BIN/status_code yesterday
+# yesterday (daily at 1:00)
+0 1 * * * $BIN/daily_stats_yesterday
 
-30 1 * * * $BIN/log_backup
-35 1 * * * $BIN/db_backup
+5 1 * * * $BIN/log_backup
+10 1 * * * $BIN/db_backup
 
-# all (daily at 2:00, 5min apart)
-0 2 * * * $BIN/access_ranking all
-5 2 * * * $BIN/referer_ranking all
-10 2 * * * $BIN/cache_hit_rate all
-15 2 * * * $BIN/spam_block_rate all
-20 2 * * * $BIN/request_time all
-25 2 * * * $BIN/status_code all
-30 2 * * * $BIN/ip_to_ignore
+# all (daily at 2:00)
+0 2 * * * $BIN/daily_stats_all
 
 # maintenance (every 10min)
 */10 * * * * $BIN/run_update_search_index

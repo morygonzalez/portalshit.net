@@ -1,0 +1,10 @@
+#!/bin/bash
+
+BIN="$(dirname "$0")"
+
+"$BIN/access_ranking" yesterday
+"$BIN/referer_ranking" yesterday
+"$BIN/cache_hit_rate" yesterday
+"$BIN/spam_block_rate" yesterday
+"$BIN/request_time" yesterday
+"$BIN/status_code" yesterday

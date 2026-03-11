@@ -1,0 +1,12 @@
+#!/bin/bash
+
+BIN="$(dirname "$0")"
+
+"$BIN/access_ranking" today
+"$BIN/referer_ranking" today
+"$BIN/cache_hit_rate" today
+"$BIN/spam_block_rate" today
+"$BIN/request_time" today
+"$BIN/status_code" today
+"$BIN/query_term_ranking" all
+"$BIN/query_term_ranking" visitor
