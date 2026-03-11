@@ -3,13 +3,13 @@ set -e
 
 readonly DEPLOY_PATH=/var/www/deploys/portalshit
 readonly DB_NAME=portalshit
-readonly TIMESTAMP=$(date "+%Y-%m-%d-%H%M%S")
-readonly FILENAME="${TIMESTAMP}-${DB_NAME}.sql.gz"
+readonly DATE=$(date "+%Y-%m-%d")
+readonly FILENAME="${DATE}-${DB_NAME}.sql.gz"
 readonly TMPFILE="/tmp/${FILENAME}"
 readonly S3_PATH="s3://backup.portalshit.net/database/${FILENAME}"
 
 echo "Dumping database: ${DB_NAME}"
-mysqldump "${DB_NAME}" | gzip > "${TMPFILE}"
+mysqldump --no-tablespaces "${DB_NAME}" | gzip > "${TMPFILE}"
 
 echo "Uploading to S3: ${S3_PATH}"
 aws s3 cp "${TMPFILE}" "${S3_PATH}"
