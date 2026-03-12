@@ -47,7 +47,7 @@ module Lokka
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
       set :cookie_options, { secure: true }
 
-      require 'exception_notification/rack'
+      require 'exception_notification'
       require 'lokka/exception_notifier_ses'
       use ExceptionNotification::Rack,
         ses: {
