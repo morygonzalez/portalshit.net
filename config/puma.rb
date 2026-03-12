@@ -26,9 +26,9 @@ if ENV['RACK_ENV'] == 'production'
     require 'puma_worker_killer'
 
     PumaWorkerKiller.config do |config|
-      config.ram           = 300 # mb
-      config.frequency     = 5   # seconds
-      config.percent_usage = 0.70
+      config.ram           = 1024 # mb
+      config.frequency     = 5    # seconds
+      config.percent_usage = 0.80
       config.enable_rolling_restart
     end
   end
@@ -44,4 +44,4 @@ else
   prune_bundler
 end
 
-threads 0,8
+threads 2,4
