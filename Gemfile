@@ -9,7 +9,7 @@ gem 'activesupport', '~> 6.0'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
-gem 'exception_notification'
+gem 'exception_notification', '~> 4.5'
 gem 'backports', require: false
 gem 'bcrypt'
 gem 'builder'
