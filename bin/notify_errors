@@ -6,9 +6,7 @@ source "$(dirname "$0")/lib/common.sh"
 source "${CONFIG_DIR}/notify_errors.conf"
 
 POSITION_FILE="${LOG_DIR}/.notify_errors_position"
-PUMA_POSITION_FILE="${LOG_DIR}/.notify_errors_puma_position"
 ACCESS_LOG="${LOG_DIR}/access.log"
-PUMA_ERROR_LOG="${LOG_DIR}/puma_error.log"
 FORMAT_AWK="${APP_DIR}/bin/lib/format_error_lines.awk"
 
 # 静的ファイルを除外しつつエラー行を抽出
@@ -25,7 +23,7 @@ build_mail_body() {
 # メール送信
 send_notification() {
   local body="$1"
-  local subject="[portalshit] サーバーエラーが発生しました"
+  local subject="[portalshit] 502/504 エラーが発生しました"
 
   local json_file
   json_file=$(mktemp)
@@ -54,9 +52,8 @@ json.dump(payload, open(sys.argv[5], 'w'), ensure_ascii=False)
 
 # ポジションファイルから前回位置を取得
 get_last_position() {
-  local pos_file="${1:-$POSITION_FILE}"
-  if [ -f "$pos_file" ]; then
-    cat "$pos_file"
+  if [ -f "$POSITION_FILE" ]; then
+    cat "$POSITION_FILE"
   else
     echo 0
   fi
@@ -64,60 +61,15 @@ get_last_position() {
 
 # ログの差分を読み取る
 read_new_lines() {
-  local log_file="$1"
-  local last_position="$2"
-  local current_size="$3"
+  local last_position="$1"
+  local current_size="$2"
 
-  dd if="$log_file" bs=1 skip="$last_position" count=$((current_size - last_position)) 2>/dev/null
+  dd if="$ACCESS_LOG" bs=1 skip="$last_position" count=$((current_size - last_position)) 2>/dev/null
 }
 
 # ポジションを更新
 save_position() {
-  local pos_file="${1:-$POSITION_FILE}"
-  local position="$2"
-  echo "$position" > "$pos_file"
-}
-
-# puma_error.log からバックトレースを抽出
-# エラーヘッダ行とアプリコードのフレームのみ残し、gem フレームは省略
-extract_backtraces() {
-  grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} |^\t.*/releases/' \
-    | sed 's|/var/www/deploys/portalshit/releases/[0-9]*/|app/|'
-}
-
-# puma_error.log の差分を取得
-read_puma_backtraces() {
-  local mode="$1"
-
-  if [ ! -f "$PUMA_ERROR_LOG" ]; then
-    return
-  fi
-
-  local puma_lines=""
-  if [ "$mode" = "test" ]; then
-    puma_lines=$(tail -n 500 "$PUMA_ERROR_LOG")
-  else
-    local puma_last_position puma_current_size
-    puma_last_position=$(get_last_position "$PUMA_POSITION_FILE")
-    puma_current_size=$(stat -c %s "$PUMA_ERROR_LOG")
-
-    # ログローテーション検知
-    if [ "$puma_current_size" -lt "$puma_last_position" ]; then
-      puma_last_position=0
-    fi
-
-    # 差分がなければ終了
-    if [ "$puma_current_size" -eq "$puma_last_position" ]; then
-      return
-    fi
-
-    puma_lines=$(read_new_lines "$PUMA_ERROR_LOG" "$puma_last_position" "$puma_current_size")
-    # 後で save するためにサイズを出力
-    echo "$puma_current_size" > "${PUMA_POSITION_FILE}.pending"
-  fi
-
-  [ -z "$puma_lines" ] && return
-  echo "$puma_lines" | extract_backtraces
+  echo "$1" > "$POSITION_FILE"
 }
 
 # メイン処理
@@ -160,18 +112,12 @@ main() {
       exit 0
     fi
 
-    error_lines=$(read_new_lines "$ACCESS_LOG" "$last_position" "$current_size" | filter_errors)
+    error_lines=$(read_new_lines "$last_position" "$current_size" | filter_errors)
   fi
 
   if [ -z "$error_lines" ]; then
     # エラーなしでもポジションは進める（同じ範囲を再読みしないため）
-    if [ -n "$current_size" ]; then
-      save_position "$POSITION_FILE" "$current_size"
-      # puma 側もポジションを進める
-      if [ -f "$PUMA_ERROR_LOG" ]; then
-        stat -c %s "$PUMA_ERROR_LOG" > "$PUMA_POSITION_FILE"
-      fi
-    fi
+    [ -n "$current_size" ] && save_position "$current_size"
     [ "$test_mode" = "true" ] && echo "テストモード: エラーは見つかりませんでした"
     exit 0
   fi
@@ -179,23 +125,6 @@ main() {
   # awk でメール本文を生成
   local body
   body=$(echo "$error_lines" | build_mail_body)
-
-  # puma_error.log からバックトレースを取得して本文に追加
-  local backtraces
-  if [ "$test_mode" = "true" ]; then
-    backtraces=$(read_puma_backtraces "test")
-  else
-    backtraces=$(read_puma_backtraces)
-  fi
-
-  if [ -n "$backtraces" ]; then
-    body="${body}
-
-========================================
-Backtraces (puma_error.log)
-========================================
-${backtraces}"
-  fi
 
   if [ "$dry_run" = "true" ]; then
     echo "=== ドライラン: メール送信をスキップ ==="
@@ -207,11 +136,7 @@ ${backtraces}"
   fi
 
   if send_notification "$body"; then
-    save_position "$POSITION_FILE" "$current_size"
-    # puma_error.log のポジションも確定
-    if [ -f "${PUMA_POSITION_FILE}.pending" ]; then
-      mv "${PUMA_POSITION_FILE}.pending" "$PUMA_POSITION_FILE"
-    fi
+    save_position "$current_size"
     local total_count
     total_count=$(echo "$error_lines" | wc -l)
     echo "$(date '+%Y-%m-%d %H:%M:%S') Sent error notification: ${total_count} errors"

@@ -46,6 +46,15 @@ module Lokka
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
       set :cookie_options, { secure: true }
+
+      require 'exception_notification/rack'
+      require 'lokka/exception_notifier_ses'
+      use ExceptionNotification::Rack,
+        ses: {
+          to: 'morygonzalez@gmail.com',
+          from: 'portal shit! <info@portalshit.net>',
+          region: 'us-east-1'
+        }
     end
 
     configure :development do

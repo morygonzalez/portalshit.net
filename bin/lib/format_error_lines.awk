@@ -1,9 +1,10 @@
 BEGIN {
   FS = "\t"
   count = 0
-  print "[portalshit.net] サーバーエラー通知"
+  print "[portalshit.net] 502/504 エラー通知"
   print ""
-  print "以下のリクエストでサーバーエラーが発生しました。"
+  print "以下のリクエストで 502/504 エラーが発生しました。"
+  print "（Puma の過負荷またはタイムアウトが原因です）"
 }
 {
   time_val = ""; method = ""; uri = ""; status = ""; addr = ""; rt = ""
