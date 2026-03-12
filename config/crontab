@@ -1,7 +1,7 @@
 BIN=/var/www/deploys/portalshit/current/bin
 
 # today (hourly)
-0 * * * * $BIN/hourly_stats
+*/5 * * * * $BIN/hourly_stats
 
 # daily (0:05〜)
 5 0 * * * $BIN/daily_stats_yesterday
