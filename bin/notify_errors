@@ -25,37 +25,51 @@ send_notification() {
   local body="$1"
   local subject="[portalshit] サーバーエラーが発生しました"
 
+  local json_file
+  json_file=$(mktemp)
+  trap "rm -f '$json_file'" RETURN
+
+  # JSON ファイル経由で渡すことでクォーティング問題を回避
+  python3 -c "
+import json, sys
+payload = {
+    'Content': {
+        'Simple': {
+            'Subject': {'Data': sys.argv[1], 'Charset': 'UTF-8'},
+            'Body': {'Text': {'Data': sys.argv[2], 'Charset': 'UTF-8'}}
+        }
+    },
+    'FromEmailAddress': sys.argv[3],
+    'Destination': {'ToAddresses': [sys.argv[4]]}
+}
+json.dump(payload, open(sys.argv[5], 'w'), ensure_ascii=False)
+" "$subject" "$body" "$NOTIFY_FROM" "$NOTIFY_TO" "$json_file"
+
   aws sesv2 send-email \
     --region "${AWS_REGION}" \
-    --from-email-address "${NOTIFY_FROM}" \
-    --destination "ToAddresses=${NOTIFY_TO}" \
-    --content "Simple={Subject={Data='${subject}',Charset=UTF-8},Body={Text={Data=$(printf '%q' "$body"),Charset=UTF-8}}}"
+    --cli-input-json "file://${json_file}"
+}
+
+# ポジションファイルから前回位置を取得
+get_last_position() {
+  if [ -f "$POSITION_FILE" ]; then
+    cat "$POSITION_FILE"
+  else
+    echo 0
+  fi
 }
 
 # ログの差分を読み取る
 read_new_lines() {
-  local last_position=0
-  if [ -f "$POSITION_FILE" ]; then
-    last_position=$(cat "$POSITION_FILE")
-  fi
-
-  local current_size
-  current_size=$(stat -c %s "$ACCESS_LOG")
-
-  # ログローテーション検知
-  if [ "$current_size" -lt "$last_position" ]; then
-    last_position=0
-  fi
-
-  # 差分がなければ空文字を返す
-  if [ "$current_size" -eq "$last_position" ]; then
-    return
-  fi
+  local last_position="$1"
+  local current_size="$2"
 
   dd if="$ACCESS_LOG" bs=1 skip="$last_position" count=$((current_size - last_position)) 2>/dev/null
+}
 
-  # ポジションを更新
-  echo "$current_size" > "$POSITION_FILE"
+# ポジションを更新
+save_position() {
+  echo "$1" > "$POSITION_FILE"
 }
 
 # メイン処理
@@ -84,10 +98,26 @@ main() {
   if [ "$test_mode" = "true" ]; then
     error_lines=$(tail -n 1000 "$ACCESS_LOG" | filter_errors)
   else
-    error_lines=$(read_new_lines | filter_errors)
+    local last_position current_size
+    last_position=$(get_last_position)
+    current_size=$(stat -c %s "$ACCESS_LOG")
+
+    # ログローテーション検知
+    if [ "$current_size" -lt "$last_position" ]; then
+      last_position=0
+    fi
+
+    # 差分がなければ終了
+    if [ "$current_size" -eq "$last_position" ]; then
+      exit 0
+    fi
+
+    error_lines=$(read_new_lines "$last_position" "$current_size" | filter_errors)
   fi
 
   if [ -z "$error_lines" ]; then
+    # エラーなしでもポジションは進める（同じ範囲を再読みしないため）
+    [ -n "$current_size" ] && save_position "$current_size"
     [ "$test_mode" = "true" ] && echo "テストモード: エラーは見つかりませんでした"
     exit 0
   fi
@@ -105,10 +135,15 @@ main() {
     exit 0
   fi
 
-  send_notification "$body"
-  local total_count
-  total_count=$(echo "$error_lines" | wc -l)
-  echo "$(date '+%Y-%m-%d %H:%M:%S') Sent error notification: ${total_count} errors"
+  if send_notification "$body"; then
+    save_position "$current_size"
+    local total_count
+    total_count=$(echo "$error_lines" | wc -l)
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Sent error notification: ${total_count} errors"
+  else
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Failed to send notification. Position not advanced." >&2
+    exit 1
+  fi
 }
 
 main "$@"

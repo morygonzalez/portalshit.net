@@ -14,4 +14,4 @@ BIN=/var/www/deploys/portalshit/current/bin
 */10 * * * * $BIN/run_update_similarity
 
 # 500 error mail (every 5 min)
-*/5 * * * * $BIN/notify_errors
+*/5 * * * * $BIN/notify_errors 2>> /var/www/app/portalshit/log/notify_errors.log
