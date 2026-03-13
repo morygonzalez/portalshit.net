@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
 require 'date'
 
 require 'dify/dataset_client'
@@ -10,7 +9,7 @@ require 'dify/chunking_config'
 
 module Dify
   class KnowledgeExporter
-    attr_reader :api_base, :dataset_id, :dataset_token, :base_url, :state_file,
+    attr_reader :api_base, :dataset_id, :dataset_token, :base_url,
                 :dataset_client, :article_collector, :env
 
     def initialize(
@@ -18,7 +17,6 @@ module Dify
       dataset_id: ENV['DATASET_ID'],
       dataset_token: ENV['DATASET_API_KEY'],
       base_url: (ENV['BASE_URL'] || '').sub(%r{/\z}, ''),
-      state_file: ENV['STATE_FILE'] || '.dify_uploaded_names',
       summarize: nil,
       env: ENV
     )
@@ -26,7 +24,6 @@ module Dify
       @dataset_id = dataset_id
       @dataset_token = dataset_token
       @base_url = base_url
-      @state_file = state_file
       @env = env
       @summarize = summarize.nil? ? (env['SUMMARIZE'].to_s != '0') : summarize
       @summarizer = ArticleSummarizer.new if @summarize
@@ -42,50 +39,6 @@ module Dify
 
     def credentials_present?
       dataset_client.credentials_present?
-    end
-
-    def upload_yearly!(sleep_secs: nil, retries: nil, chunk_size: nil, chunk_delimiter: nil)
-      dataset_client.ensure_credentials!
-
-      params = resolve_params(sleep_secs: sleep_secs, retries: retries, chunk_size: chunk_size, chunk_delimiter: chunk_delimiter)
-      groups = article_collector.collect_by_year(label: 'upload_yearly')
-      done = load_done_set
-
-      File.open(state_file, 'a') do |state|
-        batch = []
-        groups.sort.each do |year, items|
-          if done.include?(year)
-            puts "[upload_yearly] skip (done): #{year}"
-            next
-          end
-
-          items = maybe_summarize(items, label: "upload_yearly/#{year}")
-          text = article_collector.compose_year_text(items, delimiter: params[:chunking].delimiter)
-          with_retry(params[:retries]) do
-            doc_id = dataset_client.create_document_by_text!(
-              name: year,
-              text: text,
-              process_rule: params[:chunking].process_rule
-            )
-            batch << build_metadata_entry(doc_id, year, items.size)
-            puts "[upload_yearly] ok #{year} (#{doc_id}) items=#{items.size}"
-          end
-
-          state.puts(year)
-          state.flush
-          sleep params[:sleep_secs]
-
-          flush_batch_if_full!(batch, params)
-        rescue Interrupt
-          warn "[upload_yearly] interrupted by user"; raise
-        rescue StandardError => e
-          warn "[upload_yearly] skip #{year}: #{e.class} #{e.message}"
-        end
-
-        flush_remaining_metadata!(batch, params)
-      end
-
-      puts "[upload_yearly] done. state: #{state_file}"
     end
 
     def refresh_yearly!(sleep_secs: nil, retries: nil, chunk_size: nil, chunk_delimiter: nil)
@@ -303,14 +256,6 @@ module Dify
           puts "[refresh_yearly] created #{year} (#{new_id})"
           new_id
         end
-      end
-    end
-
-    def load_done_set
-      if File.exist?(state_file)
-        File.readlines(state_file, chomp: true).to_set
-      else
-        Set.new
       end
     end
 

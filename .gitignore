@@ -35,7 +35,6 @@ plugin_old
 /config/filtered_locations.yml
 /.local/
 .bash_history
-.dify_uploaded_names
 .claude/settings.local.json
 .claude/worktrees/
 

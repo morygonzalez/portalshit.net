@@ -8,19 +8,6 @@ end
 require 'dify/knowledge_exporter'
 
 namespace :knowledge do
-  desc 'Upload posts grouped by year (one document per year)'
-  task :upload_yearly, [:sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
-    exporter = Dify::KnowledgeExporter.new
-    abort '[upload_yearly] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
-
-    exporter.upload_yearly!(
-      sleep_secs: args[:sleep_secs],
-      retries: args[:retries],
-      chunk_size: args[:chunk_size],
-      chunk_delimiter: args[:chunk_delimiter]
-    )
-  end
-
   # 年次ドキュメントを update_by_text! で置換（無ければ create）
   # 例:
   #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:refresh_yearly[1.2,6]"
