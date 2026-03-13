@@ -66,5 +66,14 @@ module Lokka
       logger.error "PopularKeywords error: #{e.class}: #{e.message}" if respond_to?(:logger)
       []
     end
+
+    def asset_timestamp(file_path)
+      return nil if file_path =~ /\?/
+
+      version = settings.asset_version
+      return nil if version.nil? || version.empty?
+
+      "?#{version}"
+    end
   end
 end

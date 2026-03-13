@@ -29,6 +29,14 @@ module Lokka
       }
     end
 
+    set :asset_version,
+      begin
+        revision_time_file = File.join(Lokka.root, 'REVISION_TIME')
+        if File.exist?(revision_time_file)
+          File.read(revision_time_file).strip
+        end
+      end
+
     after '/' do
       cache_control :public, max_age: 5.minutes
     end
