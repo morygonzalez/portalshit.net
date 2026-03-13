@@ -84,9 +84,4 @@ namespace :knowledge do
     end
   end
 
-  desc 'Export popular entry'
-  task :popular do
-    exporter = Dify::KnowledgeExporter.new
-    puts exporter.popular_entries_report
-  end
 end

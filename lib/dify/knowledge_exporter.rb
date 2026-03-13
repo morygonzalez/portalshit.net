@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
-
 require 'dify/dataset_client'
 require 'dify/article_collector'
 require 'dify/article_summarizer'
@@ -135,24 +133,6 @@ module Dify
 
       sleep params[:sleep_secs]
       puts "[update_year] done."
-    end
-
-    def popular_entries_report(limit: 20)
-      entries = Entry.popular(limit: limit)
-
-      lines = []
-      lines << "[period: recent_30d] [last_updated_at: #{Date.today}]"
-      lines << ""
-      lines << "# Popular Entries (last 30 days)"
-
-      entries.each.with_index(1) do |entry, i|
-        lines << "#{i}. #{entry.title} - #{article_collector.build_url_for(entry)}"
-        lines << "  published_at: #{entry.created_at}"
-        lines << "  blurb: #{entry.summary}"
-        lines << "  page_views: #{entry.pv}"
-      end
-
-      lines.join("\n")
     end
 
     private
