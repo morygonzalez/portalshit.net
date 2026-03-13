@@ -16,8 +16,9 @@
       %h3= title
     %section
       - post = entries.delete_if {|item| entries.index(0) == item }.first
-      .new-entry
-        = partial :_main_entry, locals: { post: post }
+      - if post
+        .new-entry
+          = partial :_main_entry, locals: { post: post }
       .past-entries
         - entries.each_with_index do |post, index|
           - next if index == 0
