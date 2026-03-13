@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+DEPLOY_PATH=/var/www/deploys/portalshit/current
+
+cd "$DEPLOY_PATH"
+bundle exec rake knowledge:touch
