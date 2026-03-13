@@ -37,10 +37,6 @@ module Dify
       @article_collector = ArticleCollector.new(base_url: base_url)
     end
 
-    def credentials_present?
-      dataset_client.credentials_present?
-    end
-
     def refresh_yearly!(sleep_secs: nil, retries: nil, chunk_size: nil, chunk_delimiter: nil)
       dataset_client.ensure_credentials!
 
@@ -240,7 +236,6 @@ module Dify
             text: text,
             process_rule: params[:chunking].process_rule
           )
-          name2id[year] = new_id
           puts "[refresh_yearly] created #{year} (#{new_id})"
           new_id
         end

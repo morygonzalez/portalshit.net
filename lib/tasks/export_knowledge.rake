@@ -14,8 +14,6 @@ namespace :knowledge do
   desc 'Refresh yearly documents (update_by_text; fallback to create if not exists)'
   task :refresh_yearly, [:sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     exporter = Dify::KnowledgeExporter.new
-    abort '[refresh_yearly] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
-
     exporter.refresh_yearly!(
       sleep_secs: args[:sleep_secs],
       retries: args[:retries],
@@ -27,8 +25,6 @@ namespace :knowledge do
   desc 'Repair metadata (re-apply period/count by listing documents)'
   task :repair_year_metadata, [:batch_size] do |_, args|
     exporter = Dify::KnowledgeExporter.new
-    abort '[repair_year_metadata] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
-
     exporter.repair_year_metadata!(batch_size: args[:batch_size])
   end
 
@@ -38,8 +34,6 @@ namespace :knowledge do
   desc '年指定で1件だけドキュメントを更新'
   task :update_year, [:year, :sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     exporter = Dify::KnowledgeExporter.new
-    abort '[update_year] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
-
     exporter.update_year!(
       year: args[:year],
       sleep_secs: args[:sleep_secs],
@@ -55,8 +49,6 @@ namespace :knowledge do
   desc 'Touch all documents to prevent auto-archiving'
   task :touch do
     exporter = Dify::KnowledgeExporter.new
-    abort '[touch] require ENV[DATASET_ID], ENV[DATASET_API_KEY]' unless exporter.credentials_present?
-
     exporter.touch_all!
   end
 

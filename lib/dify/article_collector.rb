@@ -49,8 +49,8 @@ module Dify
       counts
     end
 
-    def compose_year_text(posts, delimiter: nil)
-      formatter.compose_year_text(posts, **(delimiter ? { delimiter: delimiter } : {}))
+    def compose_year_text(posts, delimiter:)
+      formatter.compose_year_text(posts, delimiter: delimiter)
     end
 
     def build_url_for(post)

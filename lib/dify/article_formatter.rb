@@ -24,10 +24,8 @@ module Dify
       }
     end
 
-    def compose_year_text(posts, delimiter: "\n---\n\n")
+    def compose_year_text(posts, delimiter:)
       blocks = posts.map { |hash| compose_article_block(hash) }
-      return blocks.join("\n") if delimiter.nil?
-
       blocks.join(delimiter)
     end
 
