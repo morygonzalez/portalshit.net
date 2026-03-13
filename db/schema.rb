@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_03_09_000001) do
+ActiveRecord::Schema.define(version: 2026_03_14_000001) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -106,6 +106,16 @@ ActiveRecord::Schema.define(version: 2026_03_09_000001) do
     t.integer "token_count"
     t.datetime "entry_updated_at", null: false
     t.index ["entry_id"], name: "index_entry_embeddings_on_entry_id", unique: true
+  end
+
+  create_table "entry_summaries", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "entry_id", null: false
+    t.text "summary", null: false
+    t.string "content_hash", limit: 64, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["content_hash"], name: "index_entry_summaries_on_content_hash"
+    t.index ["entry_id"], name: "index_entry_summaries_on_entry_id", unique: true
   end
 
   create_table "field_names", id: :integer, charset: "utf8mb3", force: :cascade do |t|

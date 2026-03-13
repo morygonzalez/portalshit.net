@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'digest'
 require 'openai'
 
 module Dify
@@ -21,13 +22,20 @@ module Dify
     end
 
     def summarize_all(articles, label:)
+      cache = load_cache(articles)
+
       articles.map.with_index do |article, i|
-        if article[:content].to_s.length <= @max_chars
+        content = article[:content].to_s
+        if content.length <= @max_chars
           puts "[#{label}] skip(short) #{article[:title]}"
           article
+        elsif (cached = cache[article[:id]]) && cached[:content_hash] == content_hash(content)
+          puts "[#{label}] skip(cached) #{article[:title]}"
+          article.merge(content: cached[:summary])
         else
           puts "[#{label}] summarize (#{i + 1}/#{articles.size}) #{article[:title]}"
           summarized = summarize_one(article)
+          save_cache(article[:id], content, summarized[:content])
           sleep @sleep_secs if i < articles.size - 1
           summarized
         end
@@ -43,6 +51,28 @@ module Dify
     end
 
     private
+
+    def content_hash(text)
+      Digest::SHA256.hexdigest(text.to_s)
+    end
+
+    def load_cache(articles)
+      entry_ids = articles.map { |a| a[:id] }.compact
+      return {} if entry_ids.empty?
+
+      ::EntrySummary.where(entry_id: entry_ids).each_with_object({}) do |es, h|
+        h[es.entry_id] = { content_hash: es.content_hash, summary: es.summary }
+      end
+    end
+
+    def save_cache(entry_id, original_content, summary_text)
+      return unless entry_id
+
+      es = ::EntrySummary.find_or_initialize_by(entry_id: entry_id)
+      es.update!(summary: summary_text, content_hash: content_hash(original_content))
+    rescue StandardError => e
+      warn "[summarize_cache] failed to save cache for entry_id=#{entry_id}: #{e.class} #{e.message}"
+    end
 
     def call_openai(content)
       response = @client.responses.create(

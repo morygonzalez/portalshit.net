@@ -18,6 +18,7 @@
   user
   similarity
   entry_embedding
+  entry_summary
 ].each do |model|
   require "lokka/models/#{model}"
 end

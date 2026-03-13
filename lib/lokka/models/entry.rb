@@ -10,6 +10,7 @@ class Entry < ActiveRecord::Base
   has_many :similarities
   has_many :similar_entries, through: :similarities
   has_one  :entry_embedding
+  has_one  :entry_summary
 
   belongs_to :user
   belongs_to :category
