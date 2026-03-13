@@ -13,5 +13,9 @@ BIN=/var/www/deploys/portalshit/current/bin
 */10 * * * * $BIN/run_update_search_index
 */10 * * * * $BIN/run_update_similarity
 
+# weekly full rebuild (Sunday 4:00)
+0 4 * * 0 $BIN/run_update_similarity_force
+0 5 * * 0 $BIN/run_update_search_index_force
+
 # 500 error mail (every 5 min)
 */5 * * * * $BIN/notify_errors 2>> /var/www/app/portalshit/log/notify_errors.log
