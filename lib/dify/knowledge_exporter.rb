@@ -72,7 +72,6 @@ module Dify
     def repair_year_metadata!(batch_size: nil)
       dataset_client.ensure_credentials!
 
-      batch_size = (batch_size || 20).to_i
       name2id = build_name_to_docid_map
       counts = article_collector.count_by_year
 
@@ -86,26 +85,12 @@ module Dify
         build_metadata_entry(doc_id, year, cnt)
       end
 
-      if payloads.empty?
-        puts "[repair] nothing to update"
-        return
-      end
-
-      payloads.each_slice(batch_size) do |slice|
-        res = dataset_client.update_documents_metadata!(slice)
-        puts "[repair] updated #{slice.size} docs (status=#{res.code})"
-        sleep 1.0
-      rescue StandardError => e
-        warn "[repair] slice failed: #{e.class} #{e.message}"
-      end
-
-      puts "[repair] done."
+      update_metadata_in_batches!(payloads, label: 'repair', batch_size: batch_size)
     end
 
     def touch_all!(batch_size: nil)
       dataset_client.ensure_credentials!
 
-      batch_size = (batch_size || 20).to_i
       name2id = build_name_to_docid_map
       counts = article_collector.count_by_year
 
@@ -114,20 +99,7 @@ module Dify
         build_metadata_entry(doc_id, year, cnt)
       end
 
-      if payloads.empty?
-        puts "[touch] no documents found"
-        return
-      end
-
-      payloads.each_slice(batch_size) do |slice|
-        res = dataset_client.update_documents_metadata!(slice)
-        puts "[touch] touched #{slice.size} docs (status=#{res.code})"
-        sleep 1.0
-      rescue StandardError => e
-        warn "[touch] slice failed: #{e.class} #{e.message}"
-      end
-
-      puts "[touch] done. #{payloads.size} documents touched."
+      update_metadata_in_batches!(payloads, label: 'touch', batch_size: batch_size)
     end
 
     def update_year!(year:, sleep_secs: nil, retries: nil, chunk_size: nil, chunk_delimiter: nil)
@@ -140,10 +112,7 @@ module Dify
       doc_id  = name2id[year]
       raise "[update_year] document not found for year=#{year} (name must be exactly '#{year}')" unless doc_id
 
-      rows = article_collector.collect(label: 'update_year') do |post|
-        created_year = post.respond_to?(:created_at) ? post.created_at&.year&.to_s : nil
-        created_year == year
-      end
+      rows = article_collector.collect_for_year(year: year, label: 'update_year')
 
       if rows.empty?
         warn "[update_year] no posts found for year=#{year}; only metadata will be touched (count=0)"
@@ -217,6 +186,25 @@ module Dify
       return articles unless @summarize
 
       @summarizer.summarize_all(articles, label: label)
+    end
+
+    def update_metadata_in_batches!(payloads, label:, batch_size: nil)
+      batch_size = (batch_size || 20).to_i
+
+      if payloads.empty?
+        puts "[#{label}] nothing to update"
+        return
+      end
+
+      payloads.each_slice(batch_size) do |slice|
+        res = dataset_client.update_documents_metadata!(slice)
+        puts "[#{label}] updated #{slice.size} docs (status=#{res.code})"
+        sleep 1.0
+      rescue StandardError => e
+        warn "[#{label}] slice failed: #{e.class} #{e.message}"
+      end
+
+      puts "[#{label}] done. #{payloads.size} documents processed."
     end
 
     def build_metadata_entry(doc_id, year, count)

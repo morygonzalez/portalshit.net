@@ -25,8 +25,6 @@ module Dify
     end
 
     def create_document_by_text!(name:, text:, process_rule: nil)
-      ensure_credentials!
-
       response = http_post_json("/v1/datasets/#{dataset_id}/document/create-by-text", {
         name: name,
         text: text,
@@ -43,8 +41,6 @@ module Dify
     end
 
     def update_document_by_text!(document_id:, name:, text:, process_rule: nil)
-      ensure_credentials!
-
       response = http_post_json("/v1/datasets/#{dataset_id}/documents/#{document_id}/update_by_text", {
         name: name,
         text: text,
@@ -60,7 +56,6 @@ module Dify
     end
 
     def update_documents_metadata!(pairs)
-      ensure_credentials!
       return if pairs.nil? || pairs.empty?
 
       field_ids = {
@@ -90,8 +85,6 @@ module Dify
     end
 
     def list_all_documents(page_size: 100)
-      ensure_credentials!
-
       documents = []
       page = 1
 
@@ -115,8 +108,6 @@ module Dify
     private
 
     def http_get(path, query = {})
-      ensure_credentials!
-
       uri = URI.join(api_base, path)
       uri.query = URI.encode_www_form(query) unless query.empty?
 
@@ -129,8 +120,6 @@ module Dify
     end
 
     def http_post_json(path, body_hash)
-      ensure_credentials!
-
       uri = URI.join(api_base, path)
       request = Net::HTTP::Post.new(uri)
       request['Authorization'] = "Bearer #{dataset_token}"

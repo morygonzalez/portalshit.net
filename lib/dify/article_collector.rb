@@ -30,6 +30,13 @@ module Dify
       rows.group_by { |h| extract_year(h[:date]) }
     end
 
+    def collect_for_year(year:, label:)
+      year = year.to_s
+      collect(label: label) do |post|
+        post.respond_to?(:created_at) && post.created_at&.year&.to_s == year
+      end
+    end
+
     def count_by_year
       counts = Hash.new(0)
       scope.find_each do |post|

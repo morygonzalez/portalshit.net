@@ -73,10 +73,7 @@ namespace :knowledge do
     exporter  = Dify::KnowledgeExporter.new
     collector = exporter.article_collector
 
-    rows = collector.collect(label: 'summarize_preview') do |post|
-      created_year = post.respond_to?(:created_at) ? post.created_at&.year&.to_s : nil
-      created_year == year
-    end
+    rows = collector.collect_for_year(year: year, label: 'summarize_preview')
 
     rows = rows.first(limit) if limit.positive?
 
