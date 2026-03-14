@@ -11,17 +11,21 @@ jobs:
           RAILS_ENV: test
     steps:
       - checkout
-      # - run:
-      #     name: Database set up
-      #     command: |
-      #       : > db/test.sqlite3
-      #       RACK_ENV=test bundle exec rake db:migrate
-      # - run:
-      #     name: Run rspec
-      #     command: |
-      #       RACK_ENV=test bundle exec rspec --profile 10 \
-      #         --format progress \
-      #         $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+      - run:
+          name: Bundle install
+          command: |
+            bundle config set path /usr/local/bundle
+            bundle config set without 'mysql postgresql'
+            bundle install -j1
+      - run:
+          name: Database set up
+          command: |
+            : > db/test.sqlite3
+            RACK_ENV=test bundle exec rake db:migrate
+      - run:
+          name: Run rspec
+          command: |
+            RACK_ENV=test bundle exec rspec --format progress
       - run:
           name: Deploy to production
           command: |
