@@ -2,7 +2,7 @@
 
 BIN="$(dirname "$0")"
 
-"$BIN/access_ranking" all
+/usr/bin/docker start -a ga-data-fetch-30d | tee /var/www/app/portalshit/public/log-aggregation/access-ranking-all.txt
 "$BIN/referer_ranking" all
 "$BIN/cache_hit_rate" all
 "$BIN/spam_block_rate" all
