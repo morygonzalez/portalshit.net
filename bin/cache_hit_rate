@@ -6,32 +6,23 @@ source "$(dirname "$0")/lib/common.sh"
 process_cache_hit_rate() {
   local period=${1:-"all"}
   local output="${LOG_AGGREGATION_DIR}/cache-hit-rate-${period}.txt"
+  local awk_script
+
+  case "$period" in
+    today|yesterday|[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9])
+      awk_script="${APP_DIR}/bin/lib/cache_hit_rate_hourly.awk"
+      ;;
+    *)
+      awk_script="${APP_DIR}/bin/lib/cache_hit_rate_daily.awk"
+      ;;
+  esac
 
   echo "Processing Cache Hit Rate ($period)"
-  find ${APP_DIR}/log/access.log* \
+  find "${LOG_DIR}" -name "access.log*" \
     | xargs zcat -f \
     | filter_by_date "${period}" \
     | grep 'cache_status:' | grep -v 'cache_status:-' \
-    | cut -f17 | sort | uniq -c \
-    | awk '{
-        if ($2 ~ /HIT/) {
-          hit = $1
-        };
-        if ($2 ~ /EXPIRED/) {
-          expire = $1
-        };
-        if ($2 ~ /MISS/) {
-          miss = $1
-        };
-        sum+=$1
-      } END {
-        hit_rate = hit / sum * 100;
-        expired_rate = expire / sum * 100;
-        miss_rate = miss / sum * 100;
-        print "HIT\t" hit "\t(" hit_rate "%)"
-        print "EXPIRE\t" expire "\t(" expired_rate "%)"
-        print "MISS\t" miss "\t(" miss_rate "%)"
-      }' \
+    | /usr/bin/gawk -f "${awk_script}" \
     | tee "${output}"
 
   echo "Cache hit rate saved to: ${output}"
@@ -49,7 +40,7 @@ main() {
         process_cache_hit_rate "$period"
         ;;
       *)
-        echo "Usage: $0 {cache_hit_rate} {[YYYY-MM-DD|today|yesterday]}"
+        echo "Usage: $0 {[YYYY-MM-DD|today|yesterday|all]}"
         exit 1
         ;;
     esac

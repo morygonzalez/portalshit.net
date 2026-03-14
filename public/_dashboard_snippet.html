@@ -108,7 +108,7 @@
     let text = await getText(response);
     let lastModified = new Date(response.headers.get('last-modified'));
     let maxContentLength = 19;
-    if (identifier.match(/status\-codes/) || identifier.match(/request\-time/)) {
+    if (identifier.match(/status\-codes/) || identifier.match(/request\-time/) || identifier.match(/cache\-hit\-rate/)) {
       maxContentLength = 40
     }
     let contentArray = text.split("\n").slice(0, maxContentLength);
