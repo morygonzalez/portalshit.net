@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: /app
+    working_directory: ~/app
     docker:
       - image: morygonzalez/portalshit:latest
         auth:
@@ -19,7 +19,12 @@ jobs:
             bundle install -j1
       - run:
           name: Generate MeCab userdic
-          command: /app/docker-entrypoint.sh true
+          command: |
+            /usr/lib/mecab/mecab-dict-index \
+              -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd \
+              -u lib/tokenizer/userdic.dic \
+              -f utf-8 -t utf-8 \
+              lib/tokenizer/userdic.csv
       - run:
           name: Database set up
           command: |
