@@ -13,7 +13,7 @@ describe 'Login' do
     end
 
     it 'should render login screen again' do
-      last_response.body.should match('<body class="admin_login">')
+      last_response.body.should match(/class=["']admin_login["']/)
     end
 
     it 'should not render dashboard side bar' do

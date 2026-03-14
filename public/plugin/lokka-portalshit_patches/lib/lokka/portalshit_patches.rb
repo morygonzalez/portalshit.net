@@ -13,6 +13,8 @@ end
 
 class Entry
   after_commit do
+    next if destroyed?
+
     Search.add(self) unless self.reload.draft?
   end
 

@@ -37,7 +37,7 @@ describe '/admin/comments' do
       sample = attributes_for(:comment, entry_id: @post.id)
       post '/admin/comments', { comment: sample }
       last_response.should be_redirect
-      Post.find(@post.id).comments.should have(1).item
+      expect(Post.find(@post.id).comments.count).to eq(1)
     end
   end
 

@@ -12,7 +12,7 @@ describe Lokka::Helpers do
 
   describe 'months' do
     subject { months }
-    before  { create(:post, draft: true) }
+    before  { create(:post, publish_at: nil) }
 
     it { subject.count.should eq(0) }
   end
@@ -37,6 +37,7 @@ describe Lokka::PermalinkHelper do
 
   describe 'custom_permalink_fix' do
     it 'should return corrected URL by padding zero' do
+      create(:entry, created_at: '2011-01-09T23:45:45', slug: 'welcome')
       described_class.custom_permalink_fix('/2011/1/9/welcome').should eq('/2011/01/09/welcome')
     end
 

@@ -53,7 +53,11 @@ class Entry < ActiveRecord::Base
             tag_names = $1.split(",").map(&:strip)
             where(id: joins(:tags).where(tags: { name: tag_names }).select('entries.id'))
           else
-            where('MATCH (entries.title, entries.body) AGAINST (? in BOOLEAN MODE)', words)
+            if connection.adapter_name =~ /Mysql/i
+              where('MATCH (entries.title, entries.body) AGAINST (? in BOOLEAN MODE)', words)
+            else
+              where('entries.title LIKE :q OR entries.body LIKE :q', q: "%#{words}%")
+            end
           end
         }
 
