@@ -2,7 +2,8 @@
 
 class CreateActivityDataPoints < ActiveRecord::Migration[4.2]
   def change
-    create_table :activity_data_points, options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' do |t|
+    table_options = connection.adapter_name =~ /Mysql/i ? { options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' } : {}
+    create_table :activity_data_points, **table_options do |t|
       t.references :activity, foreign_key: true, null: false
 
       t.integer  :elapsed_seconds

@@ -9,6 +9,8 @@ module Lokka
     end
 
     def bread_crumb
+      return '' if @bread_crumbs.nil? || @bread_crumbs.empty?
+
       bread_crumb =
         @bread_crumbs[0..-2].each.with_index(1).
         inject('<ol itemscope itemtype="http://schema.org/BreadcrumbList">') do |html, (bread, index)|
@@ -52,7 +54,8 @@ module Lokka
     def not_found_candidates
       @not_found_candidates ||=
         begin
-          slugs = Entry.published.where.not('slug REGEXP ?', '^[0-9]+$').pluck(:slug)
+          all_slugs = Entry.published.where.not(slug: [nil, '']).pluck(:slug)
+          slugs = all_slugs.reject { |s| s.match?(/\A\d+\z/) }
           spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
           current_slug = request.path_info.split('/').last
           slug_candidate = spell_checker.correct(current_slug)

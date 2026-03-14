@@ -19,9 +19,9 @@ describe Lokka::EntryPreviewHandler do
       it 'Should respond HTML for body' do
         expect(result[:body]).to eq(
           <<~HTML
-            <h1>a</h1>
+            <h1 id="a">a</h1>
 
-            <h2>b</h2>
+            <h2 id="b">b</h2>
 
             <p>Test</p>
           HTML

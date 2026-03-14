@@ -40,8 +40,8 @@ describe 'App' do
         end
 
         context 'change the number displayed on 5' do
-          before { Site.first.update_attributes(per_page: 5) }
-          after { Site.first.update_attributes(per_page: 10) }
+          before { Site.first.update(per_page: 5) }
+          after { Site.first.update(per_page: 10) }
 
           it 'should displayed 5' do
             subject.scan(regexp).size.should eq(5)
@@ -70,6 +70,7 @@ describe 'App' do
             check: 'check',
             comment: {
               name: 'lokka tarou',
+              email: 'tarou@example.com',
               homepage: 'http://www.example.com/',
               body: 'good entry!'
             }
@@ -78,7 +79,7 @@ describe 'App' do
 
         it 'should add a comment to an article' do
           post "/#{@post.id}", params
-          Comment.should have(1).item
+          expect(Comment.count).to eq(1)
         end
       end
     end
@@ -223,12 +224,13 @@ describe 'App' do
           check: 'check',
           comment: {
             name: 'lokka tarou',
+            email: 'tarou@example.com',
             homepage: 'http://www.example.com/',
             body: 'good entry!'
           }
         }
         post '/2011/01/09/welcome-lokka', params
-        Comment.should have(1).item
+        expect(Comment.count).to eq(1)
       end
     end
 

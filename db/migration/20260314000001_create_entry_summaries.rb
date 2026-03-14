@@ -2,7 +2,8 @@
 
 class CreateEntrySummaries < ActiveRecord::Migration[6.0]
   def change
-    create_table :entry_summaries, options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' do |t|
+    table_options = connection.adapter_name =~ /Mysql/i ? { options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' } : {}
+    create_table :entry_summaries, **table_options do |t|
       t.integer :entry_id,     null: false
       t.text    :summary,      null: false
       t.string  :content_hash, null: false, limit: 64

@@ -22,7 +22,7 @@ describe '/admin/preview' do
         expect(last_response).to be_successful
         expect(JSON.parse(last_response.body)['body']).to eq(
           <<~HTML
-            <h2>Dinner</h2>
+            <h2 id="dinner">Dinner</h2>
 
             <ol>
             <li>Ramen</li>

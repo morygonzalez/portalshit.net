@@ -156,7 +156,7 @@ describe Post do
 
     context 'When next post is not published' do
       before do
-        @next_post.update(draft: true)
+        @next_post.update(publish_at: nil)
       end
 
       it { is_expected.to eq(@latest_post) }
@@ -179,7 +179,7 @@ describe Post do
 
     context 'When prev post is not published' do
       before do
-        @prev_post.update(draft: true)
+        @prev_post.update(publish_at: nil)
       end
 
       it { is_expected.to eq(@oldest_post) }

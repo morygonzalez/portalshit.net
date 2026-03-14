@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+ENV['RACK_ENV'] = 'test'
+ENV['LOKKA_ENV'] = 'test'
+
 require 'simplecov'
 
 SimpleCov.start do
@@ -19,7 +22,7 @@ require 'sinatra'
 require 'rack/test'
 require 'rspec'
 require 'rspec/its'
-require 'factory_girl'
+require 'factory_bot'
 require 'database_cleaner/active_record'
 require 'pry'
 
@@ -43,7 +46,7 @@ RSpec.configure do |config|
   config.include Rack::Test::Methods
   config.include LokkaTestMethods
   config.include Lokka::Helpers
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
