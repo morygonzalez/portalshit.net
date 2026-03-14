@@ -16,7 +16,7 @@ namespace :'theme:portalshit' do
     command = <<~SHELL
       export PATH="$HOME/.nodenv/bin:$PATH"
       eval "$(nodenv init -)"
-      cd #{__dir__} && ./node_modules/.bin/webpack --config webpack.config.js
+      cd #{__dir__} && npx webpack --config webpack.config.js
     SHELL
     fail unless system(command)
   end
