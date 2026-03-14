@@ -17,7 +17,7 @@ jobs:
           command: |
             bundle config set path vendor/bundle
             bundle config set without 'mysql postgresql'
-            bundle install -j4
+            bundle install -j1
       - save_cache:
           key: portalshit-{{ checksum "Gemfile.lock" }}
           paths:
