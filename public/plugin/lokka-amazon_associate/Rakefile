@@ -6,7 +6,7 @@ begin
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:spec) do |spec|
     spec.pattern = 'spec/lib/*_spec.rb'
-    spec.rspec_opts = ['-cfs']
+    spec.rspec_opts = ['--format', 'documentation']
   end
 rescue LoadError => e
   warn e

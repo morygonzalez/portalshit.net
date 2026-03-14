@@ -71,7 +71,7 @@ unless Lokka.production?
 
     RSpec::Core::RakeTask.new(spec: 'spec:setup') do |t|
       t.pattern = 'spec/**/*_spec.rb'
-      t.rspec_opts = ['-cfs']
+      t.rspec_opts = ['--format', 'documentation']
     end
     namespace :spec do
       RSpec::Core::RakeTask.new(unit: 'spec:setup') do |t|
