@@ -13,7 +13,10 @@ jobs:
       - checkout
       - restore_cache:
           key: portalshit-{{ checksum "Gemfile.lock" }}
-      - run: bundle install -j4 --path vendor/bundle --without mysql postgresql batch
+      - run:
+          command: |
+            bundle config set path vendor/bundle
+            bundle install -j4 --without mysql postgresql
       - save_cache:
           key: portalshit-{{ checksum "Gemfile.lock" }}
           paths:
