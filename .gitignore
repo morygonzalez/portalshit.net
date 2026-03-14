@@ -30,6 +30,7 @@ plugin_old
 /.sass-cache
 *.sql
 *.sql.gz
+node_modules/
 /public/**/node_modules
 /config/newrelic.yml
 /config/filtered_locations.yml

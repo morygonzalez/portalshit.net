@@ -12,10 +12,10 @@
     "set-value": "^4.0.1"
   },
   "devDependencies": {
-    "@babel/core": "7.11.6",
-    "@babel/preset-env": "7.11.5",
-    "babel-loader": "8.1.0",
-    "core-js": "3.16.0",
+    "@babel/core": "7.18.0",
+    "@babel/preset-env": "7.18.0",
+    "babel-loader": "^8.2.5",
+    "core-js": "3.22.7",
     "css-loader": "^7.1.2",
     "photoswipe": "^5.4.4",
     "style-loader": "^4.0.0",
@@ -24,7 +24,7 @@
     "webpack-manifest-plugin": "^5.0.0"
   },
   "scripts": {
-    "build": "./node_modules/.bin/webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "morygonzalez",

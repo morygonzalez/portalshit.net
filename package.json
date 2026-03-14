@@ -1,0 +1,21 @@
+{
+  "name": "portalshit-net",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "public/plugin/lokka-archives",
+    "public/plugin/lokka-activity_tracker",
+    "public/theme/portalshit",
+    "public/admin"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "build:archives": "npm run build -w lokka-archives",
+    "build:activity_tracker": "npm run build -w lokka-activity_tracker",
+    "build:theme": "npm run build -w portalshit",
+    "build:admin": "npm run build -w lokka-admin"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

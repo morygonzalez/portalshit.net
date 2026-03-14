@@ -26,11 +26,12 @@ JS の変更があったプロジェクトのみビルドすればよい。
 |---|---|---|---|
 | admin | `public/admin` | `npm run build` | `js/` |
 | theme | `public/theme/portalshit` | `npm run build` | `scripts/manifest.json` + JS |
-| archives | `public/plugin/lokka-archives` | `npm run production-build` | `assets/manifest.json` + JS |
+| archives | `public/plugin/lokka-archives` | `npm run build` | `assets/manifest.json` + JS |
+| activity_tracker | `public/plugin/lokka-activity_tracker` | `npm run build` | `assets/manifest.json` + JS |
 
 各プロジェクトで以下を実行する:
 
-1. 該当ディレクトリで `npm run build`（lokka-archives は `npm run production-build`）を実行
+1. 該当ディレクトリで `npm run build` を実行
 2. 生成された manifest.json やビルド成果物を `git add` する
 3. ビルド成果物を含めて `git commit` する
 
