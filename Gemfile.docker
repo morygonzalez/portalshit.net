@@ -174,12 +174,12 @@ end
 
 group :development, :test do
   gem 'database_cleaner-active_record'
-  gem 'factory_girl', '~> 4.0'
+  gem 'factory_bot', '~> 6.0'
   gem 'rack-test', require: 'rack/test'
   gem 'rspec', '~> 3.12'
   gem 'rspec-its'
   gem 'simplecov', require: false
-  gem 'sqlite3', '~> 1.4', group: :batch
+  gem 'sqlite3', '~> 1.4'
 end
 
 group :mysql do

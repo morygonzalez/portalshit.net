@@ -3,32 +3,37 @@ jobs:
   build:
     working_directory: ~/app
     docker:
-      - image: cimg/ruby:3.2-node
+      - image: morygonzalez/portalshit:latest
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
         environment:
           RAILS_ENV: test
     steps:
-      - run:
-          name: Update bundler
-          command: gem install bundler:2.4.22
       - checkout
-      - restore_cache:
-          key: portalshit-{{ checksum "Gemfile.lock" }}
-      - run: bundle install -j4 --path vendor/bundle --without mysql postgresql batch
-      - save_cache:
-          key: portalshit-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-      # - run:
-      #     name: Database set up
-      #     command: |
-      #       : > db/test.sqlite3
-      #       RACK_ENV=test bundle exec rake db:migrate
-      # - run:
-      #     name: Run rspec
-      #     command: |
-      #       RACK_ENV=test bundle exec rspec --profile 10 \
-      #         --format progress \
-      #         $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+      - run:
+          name: Bundle install
+          command: |
+            bundle config set path /usr/local/bundle
+            bundle config set without 'mysql postgresql'
+            bundle install -j1
+      - run:
+          name: Generate MeCab userdic
+          command: |
+            /usr/lib/mecab/mecab-dict-index \
+              -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd \
+              -u lib/tokenizer/userdic.dic \
+              -f utf-8 -t utf-8 \
+              lib/tokenizer/userdic.csv
+      - run:
+          name: Database set up
+          command: |
+            : > db/test.sqlite3
+            RACK_ENV=test bundle exec rake db:migrate
+      - run:
+          name: Run rspec
+          command: |
+            RACK_ENV=test bundle exec rspec --format progress
       - run:
           name: Deploy to production
           command: |
