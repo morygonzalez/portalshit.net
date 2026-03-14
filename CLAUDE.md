@@ -29,6 +29,15 @@
 - `bin/` — シェルスクリプト系バッチ処理
 - `lib/tasks/` — rake タスク
 
+## Docker
+
+- イメージ: `morygonzalez/portalshit:latest`（Docker Hub）
+- プロダクションでの用途:
+  - **デプロイ時**: MeCab ユーザー辞書（`userdic.dic`）をイメージからコピー（`deploy:compile_userdic` タスク）
+  - **cron**: 検索インデックス更新・類似記事更新などのバッチ処理（`bin/run_update_search_index` 等）
+- プロダクションではホスト側の `.env`、`database.yml`、アプリコード等を `-v` でマウントして実行するため、イメージ自体にシークレットを含める必要はない
+- CI（CircleCI）でもこのイメージをベースに使用
+
 ## cron
 
 - 設定ファイル: `config/crontab`
