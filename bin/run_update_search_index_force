@@ -7,6 +7,7 @@ docker run --rm \
   --user "$(id -u):$(id -g)" \
   --add-host=host.docker.internal:host-gateway \
   -e RACK_ENV=production \
+  -e BUNDLE_WITHOUT=development:test:postgresql \
   -e RUBYOPT="-EUTF-8" \
   -v "$DEPLOY_PATH/current:/app" \
   -v "$DEPLOY_PATH/shared/db/database.docker.yml:/app/db/database.yml" \
