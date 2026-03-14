@@ -34,9 +34,9 @@ jobs:
           name: Run rspec
           command: |
             RACK_ENV=test bundle exec rspec --format progress
-      - run:
-          name: Deploy to production
-          command: |
-            if [ ${CIRCLE_BRANCH} = 'portalshit' ]; then
-              bundle exec cap production deploy
-            fi
+      # - run:
+      #     name: Deploy to production
+      #     command: |
+      #       if [ ${CIRCLE_BRANCH} = 'portalshit' ]; then
+      #         bundle exec cap production deploy
+      #       fi
