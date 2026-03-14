@@ -4,6 +4,9 @@ jobs:
     working_directory: ~/app
     docker:
       - image: morygonzalez/portalshit:latest
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
         environment:
           RAILS_ENV: test
     steps:
