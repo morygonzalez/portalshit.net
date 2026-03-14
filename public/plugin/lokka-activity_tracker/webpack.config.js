@@ -1,14 +1,16 @@
 const path = require('path');
 const webpack = require('webpack');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: {
     index: './src/index.js',
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'build')
+    filename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'assets'),
+    clean: { keep: '.gitkeep' }
   },
   module: {
     rules: [
@@ -32,6 +34,9 @@ module.exports = {
       }
     ]
   },
-  plugins: [],
-  devtool: 'inline-source-map'
+  plugins: [
+    new WebpackManifestPlugin({
+      publicPath: ''
+    })
+  ]
 };

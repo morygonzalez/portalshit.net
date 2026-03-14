@@ -1,14 +1,20 @@
 const path = require('path');
 const webpack = require('webpack');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: {
-    index: './src/index.js',
+    index: './src/index.js'
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'build')
+    filename: '[name]-[fullhash].js',
+    path: path.resolve(__dirname, 'assets'),
+    clean: { keep: '.gitkeep' }
+  },
+  performance: {
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
   },
   module: {
     rules: [
@@ -29,7 +35,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
+    new WebpackManifestPlugin({
+      publicPath: ''
+    })
   ],
-  devtool: 'inline-source-map'
 };
