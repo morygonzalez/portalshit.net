@@ -96,11 +96,7 @@ module Lokka
     end
 
     def archives_javascript_path(file_name)
-      if Lokka.production?
-        "#{archives_assets_path}/#{archives_manifest[file_name]}"
-      else
-        "plugin/lokka-archives/build/#{file_name}"
-      end
+      "#{archives_assets_path}/#{archives_manifest[file_name]}"
     end
   end
 end

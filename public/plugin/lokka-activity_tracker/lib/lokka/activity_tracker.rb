@@ -230,11 +230,7 @@ module Lokka
     end
 
     def activity_tracker_javascript_path(file_name)
-      if Lokka.production?
-        "#{activity_tracker_assets_path}/#{activity_tracker_manifest[file_name]}"
-      else
-        "plugin/lokka-activity_tracker/build/#{file_name}"
-      end
+      "#{activity_tracker_assets_path}/#{activity_tracker_manifest[file_name]}"
     end
 
     def sanitize_filename(filename)
