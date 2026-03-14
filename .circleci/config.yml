@@ -3,25 +3,11 @@ jobs:
   build:
     working_directory: ~/app
     docker:
-      - image: cimg/ruby:3.2-node
+      - image: morygonzalez/portalshit:latest
         environment:
           RAILS_ENV: test
     steps:
-      - run:
-          name: Update bundler
-          command: gem install bundler:2.4.22
       - checkout
-      - restore_cache:
-          key: portalshit-{{ checksum "Gemfile.lock" }}
-      - run:
-          command: |
-            bundle config set path vendor/bundle
-            bundle config set without 'mysql postgresql'
-            bundle install -j1
-      - save_cache:
-          key: portalshit-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
       # - run:
       #     name: Database set up
       #     command: |
