@@ -9,7 +9,8 @@ module.exports = {
   },
   output: {
     filename: '[name].[contenthash].js',
-    path: path.resolve(__dirname, 'assets')
+    path: path.resolve(__dirname, 'assets'),
+    clean: { keep: '.gitkeep' }
   },
   module: {
     rules: [
