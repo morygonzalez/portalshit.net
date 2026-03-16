@@ -70,13 +70,12 @@ class Entry
   def images
     @images ||= begin
       doc = Nokogiri::HTML.fragment(body)
-      doc.css('img:root, figure:root > img, p:root > video, p:root img, .pswp-gallery__item > a > img').map {|item|
-        case item.name
-        when "img"
-          item.attributes["src"].value
-        when "video"
-          item.attributes["poster"]&.value
-        end
+      doc.css('img:root, figure:root > img, p:root > video, p:root img, .pswp-gallery__item > a > img').filter_map {|item|
+        src = case item.name
+              when "img"   then item.attributes["src"].value
+              when "video" then item.attributes["poster"]&.value
+              end
+        src unless src&.include?('/og-image/')
       }
     end
   end
