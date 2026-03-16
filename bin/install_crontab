@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+readonly APP_DIR="$(dirname "$0")/../"
+readonly CRONTAB_FRAGMENT=$(realpath "${APP_DIR}/config/crontab")
+readonly MARKER_BEGIN="# BEGIN portalshit"
+readonly MARKER_END="# END portalshit"
+
+# Get current crontab (empty string if none)
+current=$(crontab -l 2>/dev/null || true)
+
+# Remove existing portalshit section
+filtered=$(echo "${current}" | sed "/${MARKER_BEGIN}/,/${MARKER_END}/d")
+
+# Append new fragment
+new_crontab="${filtered}
+$(cat "${CRONTAB_FRAGMENT}")"
+
+# Install
+echo "${new_crontab}" | crontab -
+
+echo "Crontab updated with portalshit entries."

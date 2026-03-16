@@ -146,7 +146,7 @@ namespace :deploy do
   task :update_crontab do
     on roles(:app) do
       within release_path do
-        execute :crontab, release_path.join('config/crontab')
+        execute release_path.join('bin/install_crontab')
       end
     end
   end

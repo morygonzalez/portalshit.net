@@ -1,3 +1,4 @@
+# BEGIN portalshit
 BIN=/var/www/deploys/portalshit/current/bin
 
 # today (hourly)
@@ -22,3 +23,4 @@ BIN=/var/www/deploys/portalshit/current/bin
 
 # 500 error mail (every 5 min)
 */5 * * * * $BIN/notify_errors 2>> /var/www/app/portalshit/log/notify_errors.log
+# END portalshit
