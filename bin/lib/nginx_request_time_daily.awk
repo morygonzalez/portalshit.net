@@ -10,7 +10,7 @@ BEGIN { FS="\t" }
   days[day]
 }
 END{
-  printf "%-12s %10s %10s %10s %8s\n","Date","Avg(ms)","Med(ms)","Max(ms)","Count"
+  printf "%-10s %9s %9s %10s %8s\n","Date","Avg(ms)","Med(ms)","Max(ms)","Count"
 
   m=asorti(days,sorted_d)
   grand_sum=0
@@ -22,7 +22,7 @@ END{
     if(n%2==1) med=vals[d][int(n/2)+1]
     else med=(vals[d][n/2]+vals[d][n/2+1])/2
     max_val=vals[d][n]
-    printf "%-12s %10.0f %10.0f %10.0f %8d\n",d,avg*1000,med*1000,max_val*1000,count[d]
+    printf "%-10s %9.0f %9.0f %10.0f %8d\n",d,avg*1000,med*1000,max_val*1000,count[d]
     grand_sum+=sum[d]
     grand_count+=count[d]
   }
@@ -34,5 +34,5 @@ END{
   if(n%2==1) grand_med=all[int(n/2)+1]
   else grand_med=(all[n/2]+all[n/2+1])/2
   grand_max=all[n]
-  printf "%-12s %10.0f %10.0f %10.0f %8d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_count
+  printf "%-10s %9.0f %9.0f %10.0f %8d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_count
 }
