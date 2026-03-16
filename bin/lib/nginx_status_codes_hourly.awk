@@ -11,8 +11,8 @@ BEGIN { FS="\t" }
 END{
   n=asorti(statuses,sorted_s)
   printf "%-8s","Hour"
-  for(i=1;i<=n;i++) printf "%8s",sorted_s[i]
-  printf "%10s\n","Total"
+  for(i=1;i<=n;i++) printf "%6s",sorted_s[i]
+  printf "%7s\n","Total"
 
   m=asorti(hours,sorted_h)
   for(i=1;i<=m;i++){
@@ -21,15 +21,15 @@ END{
     total=0
     for(j=1;j<=n;j++){
       v=(count[h][sorted_s[j]]?count[h][sorted_s[j]]:0)
-      printf "%8d",v
+      printf "%6d",v
       total+=v
       sum[j]+=v
     }
-    printf "%10d\n",total
+    printf "%7d\n",total
     grand_total+=total
   }
 
   printf "%-8s","SUM"
-  for(j=1;j<=n;j++) printf "%8d",sum[j]
-  printf "%10d\n",grand_total
+  for(j=1;j<=n;j++) printf "%6d",sum[j]
+  printf "%7d\n",grand_total
 }
