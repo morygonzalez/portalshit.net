@@ -42,6 +42,8 @@ node_modules/
 lib/tokenizer/userdic.dic
 public/**/build/*.js
 public/**/dist/*.js
+public/**/assets/manifest.json
+public/**/scripts/manifest.json
 public/og-image
 public/log-aggregation
 npm-debug.log
