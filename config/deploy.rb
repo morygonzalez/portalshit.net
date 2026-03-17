@@ -43,6 +43,7 @@ append :linked_dirs,
   'tmp/index',
   'tmp/popular_entries',
   'vendor/bundle',
+  'node_modules',
   'public/log-aggregation',
   'public/og-image'
 
@@ -89,47 +90,8 @@ namespace :deploy do
   task :build_js do
     on roles(:web) do
       within release_path do
-        latest_release = capture(:ls, '-xr', releases_path).split[1]
-        latest_release_path = releases_path.join(latest_release)
-        assets_combinations = [
-          {
-            path: 'public/plugin/lokka-archives/assets',
-            command: %i[rake 'plugin:archives:build_js']
-          },
-          {
-            path: 'public/plugin/lokka-activity_tracker/assets',
-            command: %i[rake 'plugin:activity_tracker:build_js']
-          },
-          {
-            path: 'public/theme/portalshit/scripts',
-            command: %i[rake 'theme:portalshit:build_js']
-          }
-        ]
-        assets_combinations.each do |hash|
-          path, command = hash[:path], hash[:command]
-          info "Start building #{path}"
-          latest_assets_dir = latest_release_path.join(path)
-          release_assets_dir = release_path.join(path)
-          latest_manifest = latest_assets_dir.join('manifest.json')
-          release_manifest = release_assets_dir.join('manifest.json')
-          # check if directory exist
-          if [release_manifest, latest_manifest].map {|d| test "[ -e #{d} ]"}.uniq == [false]
-            info "Skip because both directories/files do not exist #{path}"
-            next
-          end
-          # check manifest diff
-          if test(:diff, '-Nqr', release_manifest, latest_manifest)
-            begin
-              execute(:cp, '-r', latest_assets_dir, File.dirname(release_assets_dir))
-              execute(:ls, release_assets_dir.join('*.js'))
-              info "Copying assets dir because the manifest file is not changed #{path}"
-              next
-            rescue SSHKit::Command::Failed
-              info "The manifest file is not changed but copying assets failed. Falling back to building JavaScripts #{path}"
-            end
-          end
-          execute(*command)
-        end
+        execute '$HOME/.nodenv/shims/npm', 'install'
+        execute '$HOME/.nodenv/shims/npm', 'run', 'build'
       end
     end
   end

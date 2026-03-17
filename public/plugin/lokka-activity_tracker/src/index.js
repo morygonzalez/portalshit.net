@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import ActivityPage from './ActivityPage'
 import ActivityEmbed from './ActivityEmbed'
@@ -13,9 +13,8 @@ function initActivityTracker() {
   if (activityRoot) {
     const activityHash = activityRoot.dataset.activityHash
     const i18n = parseI18n(activityRoot)
-    ReactDOM.render(
-      <ActivityPage activityHash={activityHash} i18n={i18n} />,
-      activityRoot
+    createRoot(activityRoot).render(
+      <ActivityPage activityHash={activityHash} i18n={i18n} />
     )
   }
 
@@ -25,9 +24,8 @@ function initActivityTracker() {
     const i18n = parseI18n(monthlyStatsRoot)
     const year = monthlyStatsRoot.dataset.year ? parseInt(monthlyStatsRoot.dataset.year, 10) : null
     const type = monthlyStatsRoot.dataset.type || null
-    ReactDOM.render(
-      <MonthlyStatsChart i18n={i18n} year={year} type={type} />,
-      monthlyStatsRoot
+    createRoot(monthlyStatsRoot).render(
+      <MonthlyStatsChart i18n={i18n} year={year} type={type} />
     )
   }
 
@@ -38,9 +36,8 @@ function initActivityTracker() {
 
     const activityHash = element.dataset.activityHash
     const i18n = parseI18n(element)
-    ReactDOM.render(
-      <ActivityEmbed activityHash={activityHash} i18n={i18n} />,
-      element
+    createRoot(element).render(
+      <ActivityEmbed activityHash={activityHash} i18n={i18n} />
     )
     element.dataset.rendered = 'true'
   })

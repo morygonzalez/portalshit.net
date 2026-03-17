@@ -1,19 +1,1 @@
 # frozen_string_literal: true
-
-namespace :'plugin:activity_tracker' do
-  desc 'Install dependencies'
-  task :install do
-    command = <<~SHELL
-      cd #{__dir__} && $HOME/.nodenv/shims/npm install
-    SHELL
-    fail unless system(command)
-  end
-
-  desc 'Build JavaScript'
-  task build_js: [:install] do
-    command = <<~SHELL
-      cd #{__dir__} && env NODE_ENV=production npx webpack --config webpack.config.js
-    SHELL
-    fail unless system(command)
-  end
-end

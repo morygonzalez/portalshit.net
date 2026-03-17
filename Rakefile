@@ -90,17 +90,5 @@ unless Lokka.production?
   end
 end
 
-namespace :admin do
-  desc 'Install dependencies for admin JavaScript'
-  task :install_deps do
-    system('cd public/admin && npm install')
-  end
-
-  desc 'Build admin js'
-  task build_js: [:install_deps] do
-    system('cd public/admin && npm run build')
-  end
-end
-
 Dir.glob('lib/tasks/*.rake').each {|f| load f }
 Dir.glob('public/{plugin,theme}/**/Rakefile').each {|f| load f }
