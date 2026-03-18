@@ -10,9 +10,9 @@ BIN=/var/www/deploys/portalshit/current/bin
 8 0 * * * $BIN/log_backup
 9 0 * * * $BIN/db_backup
 
-# maintenance (every 10min)
+# maintenance (every 10min, staggered to avoid OOM)
 */10 * * * * $BIN/run_update_search_index
-*/10 * * * * $BIN/run_update_similarity
+5,15,25,35,45,55 * * * * $BIN/run_update_similarity
 
 # weekly full rebuild (Sunday 4:00)
 0 4 * * 0 $BIN/run_update_similarity true

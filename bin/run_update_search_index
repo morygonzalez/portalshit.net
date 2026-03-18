@@ -5,6 +5,7 @@ DEPLOY_PATH=/var/www/deploys/portalshit
 FORCE=${1:-false}
 
 docker run --rm \
+  --memory=384m \
   --user "$(id -u):$(id -g)" \
   --add-host=host.docker.internal:host-gateway \
   -e RACK_ENV=production \

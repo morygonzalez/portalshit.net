@@ -8,6 +8,19 @@ module Lokka
         # Bots sometimes send URLs with "&amp;" instead of "&", creating keys like "amp;query".
         params.reject! { |key, _| key !~ /\A[a-zA-Z_][a-zA-Z0-9_]*\z/ }
 
+        # Force UTF-8 encoding on all string params to prevent
+        # Encoding::UndefinedConversionError and incompatible character encodings errors.
+        # Sinatra/Rack may produce ASCII-8BIT strings from URL-decoded route params.
+        params.each do |key, value|
+          if value.is_a?(String) && value.encoding != Encoding::UTF_8
+            value.force_encoding(Encoding::UTF_8)
+            unless value.valid_encoding?
+              params[key] = value.encode(Encoding::UTF_8, Encoding::ASCII_8BIT,
+                                         invalid: :replace, undef: :replace, replace: '?')
+            end
+          end
+        end
+
         @site = RequestStore[:site] ||= Site.first
         @title = @site.title
 
