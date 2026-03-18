@@ -6,9 +6,10 @@ module Lokka
       get '/server-metrics/:period' do
         halt 400 unless %w[today yesterday].include?(params[:period])
 
+        jst_today = Time.now.getlocal('+09:00').to_date
         target_date = case params[:period]
-                      when 'today'     then Date.today
-                      when 'yesterday' then Date.today - 1
+                      when 'today'     then jst_today
+                      when 'yesterday' then jst_today - 1
                       end
 
         metrics_dir = File.join(settings.root, 'log', 'server-metrics')
