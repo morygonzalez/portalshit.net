@@ -3,16 +3,27 @@
 module Lokka
   class App
     namespace '/admin' do
-      get '/server-metrics/:filename' do
-        filename = params[:filename]
-        halt 400 unless filename =~ /\A\d{4}-\d{2}\.tsv\z/
+      get '/server-metrics/:period' do
+        halt 400 unless %w[today yesterday].include?(params[:period])
+
+        target_date = case params[:period]
+                      when 'today'     then Date.today
+                      when 'yesterday' then Date.today - 1
+                      end
 
         metrics_dir = File.join(settings.root, 'log', 'server-metrics')
-        path = File.join(metrics_dir, filename)
-        halt 404 unless File.exist?(path)
+        tsv_path = File.join(metrics_dir, target_date.strftime('%Y-%m') + '.tsv')
+        halt 404 unless File.exist?(tsv_path)
 
-        content_type :text
-        send_file path
+        lines = File.readlines(tsv_path, chomp: true)
+        header = lines.first
+        date_prefix = target_date.strftime('%Y-%m-%d')
+        filtered = lines[1..].select { |line| line.start_with?(date_prefix) }
+
+        halt 404 if filtered.empty?
+
+        content_type 'text/tab-separated-values'
+        [header, *filtered].join("\n") + "\n"
       end
     end
   end

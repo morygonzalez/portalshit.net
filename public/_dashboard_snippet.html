@@ -80,8 +80,11 @@
   </div>
 </div>
 <div class="server-metrics">
-  <div id="server-metrics-latest">
-    <h3>Server Metrics (Latest)</h3>
+  <div id="server-metrics-today">
+    <h3>Server Metrics Today</h3>
+  </div>
+  <div id="server-metrics-yesterday">
+    <h3>Server Metrics Yesterday</h3>
   </div>
 </div>
 
@@ -174,32 +177,25 @@
   Promise.all(promises);
 
   // Server Metrics
-  const loadServerMetrics = async () => {
-    const now = new Date();
-    const filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}.tsv`;
-    const url = `/admin/server-metrics/${filename}`;
-    const response = await fetch(url);
-    if (!response.ok) return;
+  const labelMap = {
+    timestamp: 'Time', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
+    cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
+    mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
+    swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
+    disk_used_gb: 'Disk Used', disk_avail_gb: 'Disk Avail', disk_use_pct: 'Disk%'
+  };
 
-    const text = await response.text();
+  const buildMetricsTable = (text) => {
     const lines = text.trim().split('\n');
-    if (lines.length < 2) return;
+    if (lines.length < 2) return '<p>No data</p>';
 
     const headers = lines[0].split('\t');
-    const recent = lines.slice(-12).reverse();
-
-    const labelMap = {
-      timestamp: 'Time', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
-      cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
-      mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
-      swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
-      disk_used_gb: 'Disk Used', disk_avail_gb: 'Disk Avail', disk_use_pct: 'Disk%'
-    };
+    const rows = lines.slice(1).reverse();
 
     let html = '<table class="server-metrics-table"><thead><tr>';
     headers.forEach(h => { html += `<th>${labelMap[h] || h}</th>`; });
     html += '</tr></thead><tbody>';
-    recent.forEach(line => {
+    rows.forEach(line => {
       const cols = line.split('\t');
       html += '<tr>';
       cols.forEach((col, i) => {
@@ -218,11 +214,19 @@
       html += '</tr>';
     });
     html += '</tbody></table>';
-    html += `<p><a href="${url}">Download full TSV</a></p>`;
-
-    document.querySelector('#server-metrics-latest').insertAdjacentHTML('beforeend', html);
+    return html;
   };
-  loadServerMetrics();
+
+  const loadServerMetrics = async (period) => {
+    const url = `/admin/server-metrics/${period}`;
+    const response = await fetch(url);
+    if (!response.ok) return;
+    const text = await response.text();
+    const html = buildMetricsTable(text);
+    document.querySelector(`#server-metrics-${period}`).insertAdjacentHTML('beforeend', html);
+  };
+  loadServerMetrics('today');
+  loadServerMetrics('yesterday');
 </script>
 
 <style>
@@ -247,19 +251,22 @@
 .server-metrics-table td:first-child {
   text-align: left;
 }
-.ranking, .hit-rate, .request-time, .status-codes {
+.ranking, .hit-rate, .request-time, .status-codes, .server-metrics {
   display: flex;
   flex-wrap: wrap;
 }
 .ranking div, .hit-rate div, .request-time div, .status-codes div {
   width: 33%;
 }
+.server-metrics div {
+  width: 50%;
+}
 pre {
   tab-size: 12;
   overflow-y: visible;
 }
 @media screen and (max-width: 640px) {
-  .ranking div, .hit-rate div, .request-time div, .status-codes div {
+  .ranking div, .hit-rate div, .request-time div, .status-codes div, .server-metrics div {
     width: 100%;
   }
 }
