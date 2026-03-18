@@ -79,6 +79,11 @@
     <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
   </div>
 </div>
+<div class="server-metrics">
+  <div id="server-metrics-latest">
+    <h3>Server Metrics (Latest)</h3>
+  </div>
+</div>
 
 <script type="text/javascript">
   const getResponse = async (url) => {
@@ -167,9 +172,81 @@
   )
 
   Promise.all(promises);
+
+  // Server Metrics
+  const loadServerMetrics = async () => {
+    const now = new Date();
+    const filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}.tsv`;
+    const url = `/admin/server-metrics/${filename}`;
+    const response = await fetch(url);
+    if (!response.ok) return;
+
+    const text = await response.text();
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return;
+
+    const headers = lines[0].split('\t');
+    const recent = lines.slice(-12).reverse();
+
+    const labelMap = {
+      timestamp: 'Time', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
+      cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
+      mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
+      swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
+      disk_used_gb: 'Disk Used', disk_avail_gb: 'Disk Avail', disk_use_pct: 'Disk%'
+    };
+
+    let html = '<table class="server-metrics-table"><thead><tr>';
+    headers.forEach(h => { html += `<th>${labelMap[h] || h}</th>`; });
+    html += '</tr></thead><tbody>';
+    recent.forEach(line => {
+      const cols = line.split('\t');
+      html += '<tr>';
+      cols.forEach((col, i) => {
+        let val = col;
+        if (headers[i] === 'timestamp') {
+          val = col.replace(/T/, ' ').replace(/\+.*/, '');
+        } else if (headers[i].match(/mem_|swap_/)) {
+          val = `${col} MB`;
+        } else if (headers[i].match(/disk_(used|avail)/)) {
+          val = `${col} GB`;
+        } else if (headers[i] === 'disk_use_pct') {
+          val = `${col}%`;
+        }
+        html += `<td>${val}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    html += `<p><a href="${url}">Download full TSV</a></p>`;
+
+    document.querySelector('#server-metrics-latest').insertAdjacentHTML('beforeend', html);
+  };
+  loadServerMetrics();
 </script>
 
 <style>
+.server-metrics-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+.server-metrics-table th, .server-metrics-table td {
+  border: 1px solid #ddd;
+  padding: 4px 6px;
+  white-space: nowrap;
+  text-align: right;
+}
+.server-metrics-table th {
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+}
+.server-metrics-table td:first-child {
+  text-align: left;
+}
 .ranking, .hit-rate, .request-time, .status-codes {
   display: flex;
   flex-wrap: wrap;
