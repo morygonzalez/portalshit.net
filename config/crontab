@@ -21,6 +21,9 @@ BIN=/var/www/deploys/portalshit/current/bin
 # knowledge touch (every 5 days)
 0 3 */5 * * $BIN/run_knowledge_touch
 
+# server metrics (every 5 min)
+*/5 * * * * $BIN/collect_server_metrics
+
 # 500 error mail (every 5 min)
 */5 * * * * $BIN/notify_errors 2>> /var/www/app/portalshit/log/notify_errors.log
 # END portalshit

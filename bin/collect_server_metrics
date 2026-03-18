@@ -1,0 +1,50 @@
+#!/bin/bash
+set -euo pipefail
+
+readonly METRICS_DIR="/var/www/app/portalshit/log/server-metrics"
+readonly METRICS_FILE="${METRICS_DIR}/$(date '+%Y-%m').tsv"
+readonly HEADER="timestamp\tload_1m\tload_5m\tload_15m\tcpu_user\tcpu_system\tcpu_idle\tmem_total_mb\tmem_used_mb\tmem_available_mb\tswap_total_mb\tswap_used_mb\tdisk_used_gb\tdisk_avail_gb\tdisk_use_pct"
+
+dry_run=false
+if [ "${1:-}" = "--dry-run" ]; then
+  dry_run=true
+fi
+
+# タイムスタンプ
+timestamp=$(date '+%Y-%m-%dT%H:%M:%S%:z')
+
+# ロードアベレージ (/proc/loadavg)
+read -r load_1m load_5m load_15m _ _ < /proc/loadavg
+
+# CPU 使用率 (vmstat 1秒サンプリング、2行目を採用)
+read -r cpu_user cpu_system cpu_idle <<< \
+  "$(vmstat 1 2 | tail -1 | awk '{print $13, $14, $15}')"
+
+# メモリ (free -m)
+read -r mem_total mem_used mem_available <<< \
+  "$(free -m | awk '/^Mem:/ {print $2, $3, $7}')"
+
+# スワップ (free -m)
+read -r swap_total swap_used <<< \
+  "$(free -m | awk '/^Swap:/ {print $2, $3}')"
+
+# ディスク (df / パーティション)
+read -r disk_used disk_avail disk_use_pct <<< \
+  "$(df -BG / | awk 'NR==2 {gsub(/G|%/, ""); print $3, $4, $5}')"
+
+line="${timestamp}\t${load_1m}\t${load_5m}\t${load_15m}\t${cpu_user}\t${cpu_system}\t${cpu_idle}\t${mem_total}\t${mem_used}\t${mem_available}\t${swap_total}\t${swap_used}\t${disk_used}\t${disk_avail}\t${disk_use_pct}"
+
+if [ "$dry_run" = "true" ]; then
+  echo -e "${HEADER}"
+  echo -e "${line}"
+  exit 0
+fi
+
+mkdir -p "${METRICS_DIR}"
+
+# ファイルが存在しない or 空ならヘッダーを書く
+if [ ! -s "${METRICS_FILE}" ]; then
+  echo -e "${HEADER}" > "${METRICS_FILE}"
+fi
+
+echo -e "${line}" >> "${METRICS_FILE}"
