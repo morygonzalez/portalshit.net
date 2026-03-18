@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'lokka'
+require 'lokka/middleware/force_utf8'
 
 module Lokka
   class App < Sinatra::Base
@@ -27,6 +28,7 @@ module Lokka
         set style, style: :compressed
       end
       ::I18n.load_path += Dir["#{root}/i18n/*.yml"]
+      use Lokka::Middleware::ForceUtf8
       use RequestStore::Middleware
       register Sinatra::Flash
       register Padrino::Helpers
