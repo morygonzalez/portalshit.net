@@ -102,7 +102,7 @@ module Lokka
     def request_path
       path = '/' + request.url.split('/')[3..-1].join('/')
       path += '/' if path != '/' && request.url =~ %r{/$}
-      path.encode('UTF-8')
+      path.force_encoding('UTF-8')
     end
 
     def canonical_url
