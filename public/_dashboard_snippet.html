@@ -47,15 +47,6 @@
   <div id="cache-hit-rate-all">
     <h3><a href="/log-aggregation/cache-hit-rate-all.txt">Cache Hit Rate</a></h3>
   </div>
-  <div id="spam-block-rate-today">
-    <h3><a href="/log-aggregation/spam-block-rate-today.txt">Spam Block Rate Today</a></h3>
-  </div>
-  <div id="spam-block-rate-yesterday">
-    <h3><a href="/log-aggregation/spam-block-rate-yesterday.txt">Spam Block Rate Yesterday</a></h3>
-  </div>
-  <div id="spam-block-rate-all">
-    <h3><a href="/log-aggregation/spam-block-rate-all.txt">Spam Block Rate</a></h3>
-  </div>
 </div>
 <div class="request-time">
   <div id="nginx-request-time-today">
@@ -156,7 +147,7 @@
   }
 
   let promises = [];
-  ['access-ranking', 'referer-ranking', 'cache-hit-rate', 'spam-block-rate'].forEach(item => {
+  ['access-ranking', 'referer-ranking', 'cache-hit-rate'].forEach(item => {
     promises.push(
       new Promise((resolve, reject) => generateElement(`${item}-all`)),
       new Promise((resolve, reject) => generateElement(`${item}-today`)),
