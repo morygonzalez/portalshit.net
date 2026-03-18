@@ -75,7 +75,7 @@ module Lokka
 
     require 'lokka/app/admin.rb'
     %w[
-      categories comments entries posts pages field_names snippets tags themes users file_upload
+      categories comments entries posts pages field_names snippets tags themes users file_upload server_metrics
     ].each do |f|
       require "lokka/app/admin/#{f}"
     end
