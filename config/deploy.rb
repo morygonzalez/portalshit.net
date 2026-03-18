@@ -45,8 +45,7 @@ append :linked_dirs,
   'vendor/bundle',
   'node_modules',
   'public/log-aggregation',
-  'public/og-image',
-  'log/server-metrics'
+  'public/og-image'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
