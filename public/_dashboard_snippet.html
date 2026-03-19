@@ -175,30 +175,28 @@
     swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
     disk_used_gb: 'Disk Used', disk_avail_gb: 'Disk Avail', disk_use_pct: 'Disk%'
   };
+  const hiddenColumns = new Set(['disk_used_gb', 'disk_avail_gb', 'disk_use_pct']);
 
   const buildMetricsTable = (text) => {
     const lines = text.trim().split('\n');
     if (lines.length < 2) return '<p>No data</p>';
 
     const headers = lines[0].split('\t');
+    const visibleIndices = headers.map((h, i) => i).filter(i => !hiddenColumns.has(headers[i]));
     const rows = lines.slice(1).reverse();
 
     let html = '<table class="server-metrics-table"><thead><tr>';
-    headers.forEach(h => { html += `<th>${labelMap[h] || h}</th>`; });
+    visibleIndices.forEach(i => { html += `<th>${labelMap[headers[i]] || headers[i]}</th>`; });
     html += '</tr></thead><tbody>';
     rows.forEach(line => {
       const cols = line.split('\t');
       html += '<tr>';
-      cols.forEach((col, i) => {
-        let val = col;
+      visibleIndices.forEach(i => {
+        let val = cols[i];
         if (headers[i] === 'timestamp') {
-          val = col.replace(/T/, ' ').replace(/\+.*/, '');
+          val = cols[i].replace(/T/, ' ').replace(/\+.*/, '');
         } else if (headers[i].match(/mem_|swap_/)) {
-          val = `${col} MB`;
-        } else if (headers[i].match(/disk_(used|avail)/)) {
-          val = `${col} GB`;
-        } else if (headers[i] === 'disk_use_pct') {
-          val = `${col}%`;
+          val = `${cols[i]} MB`;
         }
         html += `<td>${val}</td>`;
       });
