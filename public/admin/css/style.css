@@ -466,6 +466,7 @@ label {
     -webkit-border-radius:8px;
     -moz-border-radius:8px;
     border-radius:8px;
+    overflow-x: auto;
 }
 
 #main a:link,
@@ -1174,6 +1175,7 @@ textarea#category_description
             background-color: #444444;
             box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
             transition-duration: .25s;
+            z-index: 9999;
 
             li.parent {
                 margin-bottom: 0;
@@ -1238,7 +1240,7 @@ textarea#category_description
             width: 26px;
             height: 26px;
             cursor: pointer;
-            z-index: 1;
+            z-index: 9999;
 
             > span, > span::before, > span::after {
                 display: block;
