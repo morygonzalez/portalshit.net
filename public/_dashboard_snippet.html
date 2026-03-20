@@ -167,37 +167,32 @@
 
   Promise.all(promises);
 
-  // Server Metrics
-  const labelMap = {
-    timestamp: 'Time', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
-    cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
-    mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
-    swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
-    disk_used_gb: 'Disk Used', disk_avail_gb: 'Disk Avail', disk_use_pct: 'Disk%'
-  };
-  const hiddenColumns = new Set(['disk_used_gb', 'disk_avail_gb', 'disk_use_pct']);
+  // Generic TSV to HTML table builder
+  const buildTsvTable = (text, options = {}) => {
+    const {
+      labelMap = {},
+      hiddenColumns = new Set(),
+      formatters = {},
+      reverse = false,
+      className = 'tsv-table'
+    } = options;
 
-  const buildMetricsTable = (text) => {
     const lines = text.trim().split('\n');
     if (lines.length < 2) return '<p>No data</p>';
 
     const headers = lines[0].split('\t');
     const visibleIndices = headers.map((h, i) => i).filter(i => !hiddenColumns.has(headers[i]));
-    const rows = lines.slice(1).reverse();
+    const rows = lines.slice(1);
+    if (reverse) rows.reverse();
 
-    let html = '<table class="server-metrics-table"><thead><tr>';
+    let html = `<table class="${className}"><thead><tr>`;
     visibleIndices.forEach(i => { html += `<th>${labelMap[headers[i]] || headers[i]}</th>`; });
     html += '</tr></thead><tbody>';
     rows.forEach(line => {
       const cols = line.split('\t');
       html += '<tr>';
       visibleIndices.forEach(i => {
-        let val = cols[i];
-        if (headers[i] === 'timestamp') {
-          val = cols[i].replace(/T/, ' ').replace(/\+.*/, '');
-        } else if (headers[i].match(/mem_|swap_/)) {
-          val = `${cols[i]} MB`;
-        }
+        const val = formatters[headers[i]] ? formatters[headers[i]](cols[i]) : cols[i];
         html += `<td>${val}</td>`;
       });
       html += '</tr>';
@@ -206,12 +201,35 @@
     return html;
   };
 
+  // Server Metrics
+  const suffixFormatter = (suffix) => (v) => `${v} ${suffix}`;
+  const serverMetricsOptions = {
+    labelMap: {
+      timestamp: 'Time', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
+      cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
+      mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
+      swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
+      disk_used_gb: 'Disk Used', disk_avail_gb: 'Disk Avail', disk_use_pct: 'Disk%'
+    },
+    hiddenColumns: new Set(['disk_used_gb', 'disk_avail_gb', 'disk_use_pct']),
+    formatters: {
+      timestamp: v => v.replace(/T/, ' ').replace(/\+.*/, ''),
+      mem_total_mb: suffixFormatter('MB'),
+      mem_used_mb: suffixFormatter('MB'),
+      mem_available_mb: suffixFormatter('MB'),
+      swap_total_mb: suffixFormatter('MB'),
+      swap_used_mb: suffixFormatter('MB'),
+    },
+    reverse: true,
+    className: 'server-metrics-table'
+  };
+
   const loadServerMetrics = async (period) => {
     const url = `/admin/server-metrics/${period}`;
     const response = await fetch(url);
     if (!response.ok) return;
     const text = await response.text();
-    const html = buildMetricsTable(text);
+    const html = buildTsvTable(text, serverMetricsOptions);
     document.querySelector(`#server-metrics-${period}`).insertAdjacentHTML('beforeend', html);
   };
   loadServerMetrics('today');
