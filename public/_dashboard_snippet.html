@@ -277,6 +277,15 @@ pre {
   tab-size: 12;
   overflow-y: visible;
 }
+@media (prefers-color-scheme: dark) {
+  #main .server-metrics-table th, #main .server-metrics-table td {
+    border-color: #555;
+  }
+  #main .server-metrics-table th {
+    background: #444444;
+    color: #CBCBCC;
+  }
+}
 @media screen and (max-width: 640px) {
   .ranking div, .hit-rate div, .request-time div, .status-codes div, .server-metrics div {
     width: 100%;
