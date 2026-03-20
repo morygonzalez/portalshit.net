@@ -21,6 +21,11 @@
 - **ORM**: ActiveRecord
 - **アプリケーションサーバー**: Puma
 - **全文検索**: tantiny
+- **フロントエンド**: ほとんど Sinatra + Slim だが、一部で Node.js + React を利用
+    - public/plugin/lokka-archives
+    - public/plugin/lokka-activity_tracker
+    - public/theme/portalshit
+    - public/admin
 
 ## プロジェクト構成
 
