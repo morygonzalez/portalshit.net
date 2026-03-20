@@ -16,9 +16,9 @@ timestamp=$(date '+%Y-%m-%dT%H:%M:%S%:z')
 # ロードアベレージ (/proc/loadavg)
 read -r load_1m load_5m load_15m _ _ < /proc/loadavg
 
-# CPU 使用率 (sar 直近の記録データ)
+# CPU 使用率 (sar 直近の記録データ、LC_ALL=C で24時間表記に統一)
 read -r cpu_user cpu_system cpu_idle <<< \
-  "$(sar -u | awk '!/^(Average|Linux|$)/ && !/CPU/ {user=$3; sys=$5; idle=$8} END {print user, sys, idle}')"
+  "$(LC_ALL=C sar -u | awk '!/^(Average|Linux|$)/ && !/CPU/ {user=$3; sys=$5; idle=$8} END {print user, sys, idle}')"
 
 # メモリ (free -m)
 read -r mem_total mem_used mem_available <<< \
