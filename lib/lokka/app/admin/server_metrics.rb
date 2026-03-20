@@ -30,7 +30,7 @@ module Lokka
         end
 
         # Aggregate to hourly averages
-        headers = header.split("\t")
+        headers = header.split("\t")[1..-1].unshift('hour')
         numeric_indices = (1...headers.length).to_a
 
         hourly_groups = filtered.group_by { |line| line[0, 13] } # "2026-03-19T14"
@@ -40,10 +40,10 @@ module Lokka
             values = columns.map { |c| c[i].to_f }
             (values.sum / values.size).round(2)
           end
-          [hour_prefix + ':00', *avg].join("\t")
+          [hour_prefix[11,12] + ':00', *avg].join("\t")
         end
 
-        [header, *averaged].join("\n") + "\n"
+        [headers.join("\t"), *averaged].join("\n") + "\n"
       end
     end
   end
