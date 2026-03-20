@@ -147,7 +147,7 @@
   }
 
   let promises = [];
-  ['access-ranking', 'referer-ranking', 'cache-hit-rate'].forEach(item => {
+  ['access-ranking', 'referer-ranking'].forEach(item => {
     promises.push(
       new Promise((resolve, reject) => generateElement(`${item}-all`)),
       new Promise((resolve, reject) => generateElement(`${item}-today`)),
@@ -163,6 +163,9 @@
     new Promise((resolve, reject) => generateElement('nginx-request-time-today')),
     new Promise((resolve, reject) => generateElement('nginx-request-time-yesterday')),
     new Promise((resolve, reject) => generateElement('nginx-request-time-all')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate-today')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate-yesterday')),
+    new Promise((resolve, reject) => generateElement('cache-hit-rate-all')),
   )
 
   Promise.all(promises);
@@ -205,7 +208,7 @@
   const suffixFormatter = (suffix) => (v) => `${v} ${suffix}`;
   const serverMetricsOptions = {
     labelMap: {
-      timestamp: 'Time', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
+      timestamp: 'Hour', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
       cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
       mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
       swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
@@ -213,7 +216,7 @@
     },
     hiddenColumns: new Set(['disk_used_gb', 'disk_avail_gb', 'disk_use_pct']),
     formatters: {
-      timestamp: v => v.replace(/T/, ' ').replace(/\+.*/, ''),
+      timestamp: v => v.replace(/.*T/, '').replace(/:\d{2}\+.*/, ''),
       mem_total_mb: suffixFormatter('MB'),
       mem_used_mb: suffixFormatter('MB'),
       mem_available_mb: suffixFormatter('MB'),
@@ -237,9 +240,10 @@
 </script>
 
 <style>
-.server-metrics-table {
+#main table.server-metrics-table {
   border-collapse: collapse;
   font-size: 12px;
+  min-width: 0;
   width: 100%;
 }
 #main .server-metrics-table th, #main .server-metrics-table td {
@@ -248,8 +252,9 @@
   white-space: nowrap;
   text-align: right;
 }
-.server-metrics-table th {
+#main .server-metrics-table th {
   background: #f5f5f5;
+  text-align: left;
 }
 .server-metrics-table td:first-child {
   text-align: left;
@@ -260,6 +265,7 @@
 }
 .ranking div, .hit-rate div, .request-time div, .status-codes div {
   width: 33%;
+  overflow-x: auto;
 }
 .server-metrics div {
   width: 50%;
