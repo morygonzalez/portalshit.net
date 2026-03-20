@@ -10,7 +10,7 @@ BEGIN { FS="\t" }
   hours[hour]
 }
 END{
-  printf "%-6s %7s %8s %8s %7s\n","Hour","Avg(ms)","Med(ms)","Max(ms)","Count"
+  printf "Hour\tAvg(ms)\tMed(ms)\tMax(ms)\tCount\n"
 
   m=asorti(hours,sorted_h)
   grand_sum=0
@@ -22,7 +22,7 @@ END{
     if(n%2==1) med=vals[h][int(n/2)+1]
     else med=(vals[h][n/2]+vals[h][n/2+1])/2
     max_val=vals[h][n]
-    printf "%-6s %7.0f %8.0f %8.0f %7d\n",h,avg*1000,med*1000,max_val*1000,count[h]
+    printf "%s\t%.0f\t%.0f\t%.0f\t%d\n",h,avg*1000,med*1000,max_val*1000,count[h]
     grand_sum+=sum[h]
     grand_count+=count[h]
   }
@@ -34,5 +34,5 @@ END{
   if(n%2==1) grand_med=all[int(n/2)+1]
   else grand_med=(all[n/2]+all[n/2+1])/2
   grand_max=all[n]
-  printf "%-6s %7.0f %8.0f %8.0f %7d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_count
+  printf "%s\t%.0f\t%.0f\t%.0f\t%d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_count
 }

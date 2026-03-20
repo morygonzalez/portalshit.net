@@ -10,26 +10,26 @@ BEGIN { FS="\t" }
 }
 END{
   n=asorti(statuses,sorted_s)
-  printf "%-8s","Hour"
-  for(i=1;i<=n;i++) printf "%6s",sorted_s[i]
-  printf "%7s\n","Total"
+  printf "Hour"
+  for(i=1;i<=n;i++) printf "\t%s",sorted_s[i]
+  printf "\tTotal\n"
 
   m=asorti(hours,sorted_h)
   for(i=1;i<=m;i++){
     h=sorted_h[i]
-    printf "%-8s",h
+    printf "%s",h
     total=0
     for(j=1;j<=n;j++){
       v=(count[h][sorted_s[j]]?count[h][sorted_s[j]]:0)
-      printf "%6d",v
+      printf "\t%d",v
       total+=v
       sum[j]+=v
     }
-    printf "%7d\n",total
+    printf "\t%d\n",total
     grand_total+=total
   }
 
-  printf "%-8s","SUM"
-  for(j=1;j<=n;j++) printf "%6d",sum[j]
-  printf "%7d\n",grand_total
+  printf "SUM"
+  for(j=1;j<=n;j++) printf "\t%d",sum[j]
+  printf "\t%d\n",grand_total
 }
