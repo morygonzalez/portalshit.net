@@ -72,10 +72,10 @@
 </div>
 <div class="server-metrics">
   <div id="server-metrics-today">
-    <h3>Server Metrics Today</h3>
+    <h3><a href="/admin/server-metrics/today">Server Metrics Today</a></h3>
   </div>
   <div id="server-metrics-yesterday">
-    <h3>Server Metrics Yesterday</h3>
+    <h3><a href="/admin/server-metrics/yesterday">Server Metrics Yesterday</a></h3>
   </div>
 </div>
 
@@ -208,7 +208,7 @@
   const suffixFormatter = (suffix) => (v) => `${v} ${suffix}`;
   const serverMetricsOptions = {
     labelMap: {
-      timestamp: 'Hour', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
+      hour: 'Hour', load_1m: 'Load 1m', load_5m: 'Load 5m', load_15m: 'Load 15m',
       cpu_user: 'CPU User%', cpu_system: 'CPU Sys%', cpu_idle: 'CPU Idle%',
       mem_total_mb: 'Mem Total', mem_used_mb: 'Mem Used', mem_available_mb: 'Mem Avail',
       swap_total_mb: 'Swap Total', swap_used_mb: 'Swap Used',
@@ -251,6 +251,7 @@
   padding: 2px 4px;
   white-space: nowrap;
   text-align: right;
+  min-width: 0px;
 }
 #main .server-metrics-table th {
   background: #f5f5f5;
@@ -263,12 +264,14 @@
   display: flex;
   flex-wrap: wrap;
 }
-.ranking div, .hit-rate div, .request-time div, .status-codes div {
-  width: 33%;
+.ranking div, .hit-rate div, .request-time div, .status-codes div, .server-metrics div {
+  width: 32%;
   overflow-x: auto;
+  padding: 3px;
 }
 .server-metrics div {
-  width: 50%;
+  width: 48%;
+  padding: 5px;
   overflow-x: auto;
 }
 pre {
