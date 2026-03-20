@@ -18,7 +18,7 @@ read -r load_1m load_5m load_15m _ _ < /proc/loadavg
 
 # CPU 使用率 (vmstat 1秒サンプリング、2行目を採用)
 read -r cpu_user cpu_system cpu_idle <<< \
-  "$(vmstat 1 2 | tail -1 | awk '{print $13, $14, $15}')"
+  "$(vmstat 5 2 | tail -1 | awk '{print $13, $14, $15}')"
 
 # メモリ (free -m)
 read -r mem_total mem_used mem_available <<< \
