@@ -1,4 +1,6 @@
 user-agent: *
 disallow: /ogp
 disallow: /amazon
+disallow: /search
+disallow: /tags
 Sitemap: https://portalshit.net/sitemap.xml
