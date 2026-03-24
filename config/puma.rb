@@ -21,12 +21,12 @@ if ENV['RACK_ENV'] == 'production'
 
   preload_app!
 
-  workers 1
+  workers 2
   before_fork do
     require 'puma_worker_killer'
 
     PumaWorkerKiller.config do |config|
-      config.ram           = 512 # mb
+      config.ram           = 768 # mb
       config.frequency     = 5    # seconds
       config.percent_usage = 0.80
       config.enable_rolling_restart
@@ -44,4 +44,4 @@ else
   prune_bundler
 end
 
-threads 4,8
+threads 2,4
