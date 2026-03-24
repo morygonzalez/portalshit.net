@@ -21,6 +21,7 @@ if ENV['RACK_ENV'] == 'production'
 
   preload_app!
 
+  worker_timeout 20
   workers 2
   before_fork do
     require 'puma_worker_killer'
