@@ -5,6 +5,7 @@ import 'photoswipe/style.css'
 import PhotoSwipeDynamicCaption from 'photoswipe-dynamic-caption-plugin'
 import 'photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css'
 
+import mediumZoom from 'medium-zoom'
 import SearchApp from './search'
 import ThemeObserver from './theme-observer'
 
@@ -176,6 +177,10 @@ const init = node => {
   observeSearchMenu();
   observeLinkClick(node);
   observeCloseModal();
+  mediumZoom('#content article .body img:not(.photo-gallery img)', {
+    margin: 24,
+    background: 'rgba(0, 0, 0, 0.8)',
+  });
   const lightbox = new PhotoSwipeLightbox({
     gallery: '.photo-gallery',
     children: '.pswp-gallery__item',
