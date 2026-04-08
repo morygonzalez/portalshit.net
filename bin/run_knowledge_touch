@@ -1,7 +1,18 @@
 #!/bin/bash
 set -e
 
-DEPLOY_PATH=/var/www/deploys/portalshit/current
+DEPLOY_PATH=/var/www/deploys/portalshit
 
-cd "$DEPLOY_PATH"
-bundle exec rake knowledge:touch
+docker run --rm \
+  --memory=384m \
+  --user "$(id -u):$(id -g)" \
+  --add-host=host.docker.internal:host-gateway \
+  -e RACK_ENV=production \
+  -e BUNDLE_WITHOUT=development:test:postgresql \
+  -e RUBYOPT="-EUTF-8" \
+  -v "$DEPLOY_PATH/current:/app" \
+  -v "$DEPLOY_PATH/shared/db/database.docker.yml:/app/db/database.yml" \
+  -v "$DEPLOY_PATH/shared/.env:/app/.env" \
+  --workdir /app \
+  morygonzalez/portalshit:latest \
+  bundle exec rake knowledge:touch
