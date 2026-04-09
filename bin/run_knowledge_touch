@@ -12,6 +12,7 @@ docker run --rm \
   -e RUBYOPT="-EUTF-8" \
   -v "$DEPLOY_PATH/current:/app" \
   -v "$DEPLOY_PATH/shared/db/database.docker.yml:/app/db/database.yml" \
+  -v "$DEPLOY_PATH/shared/tmp/index:/app/tmp/index" \
   -v "$DEPLOY_PATH/shared/.env:/app/.env" \
   --workdir /app \
   morygonzalez/portalshit:latest \
