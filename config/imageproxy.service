@@ -1,0 +1,17 @@
+[Unit]
+Description=imageproxy - caching image resize proxy
+After=docker.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+
+ExecStartPre=-/usr/bin/docker rm -f imageproxy
+ExecStart=/usr/bin/docker run --name imageproxy -p 8080:8080 ghcr.io/willnorris/imageproxy -addr 0.0.0.0:8080
+ExecStop=/usr/bin/docker stop imageproxy
+
+SyslogIdentifier=imageproxy
+
+[Install]
+WantedBy=default.target

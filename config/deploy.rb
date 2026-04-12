@@ -114,6 +114,19 @@ namespace :deploy do
   end
   after :publishing, :update_crontab
 
+  desc 'Install imageproxy systemd user service'
+  task :install_imageproxy_service do
+    on roles(:app) do
+      service_source = release_path.join('config/imageproxy.service')
+      service_dest = '/var/www/app/.config/systemd/user/imageproxy.service'
+      execute :cp, service_source, service_dest
+      execute :systemctl, '--user', 'daemon-reload'
+      execute :systemctl, '--user', 'enable', 'imageproxy'
+      execute :systemctl, '--user', 'restart', 'imageproxy'
+    end
+  end
+  after :publishing, :install_imageproxy_service
+
   after :publishing, :restart
 
   after :restart, :clear_cache do
