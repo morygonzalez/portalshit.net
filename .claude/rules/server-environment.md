@@ -1,4 +1,4 @@
-Production サーバーでアプリケーションを動かしているユーザーは `app`。
+Production サーバーでアプリケーションを動かしているユーザーは `app`（ホームディレクトリ: `/var/www/app`）。
 
 - cron の設定ファイルは `config/crontab` にある（app ユーザーの crontab として登録）
 - cron 内のスクリプトパスは `$BIN=/var/www/deploys/portalshit/current/bin` を基準にしている
