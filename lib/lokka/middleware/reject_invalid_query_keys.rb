@@ -10,6 +10,7 @@ module Lokka
     # we drop them at the edge with 400.
     class RejectInvalidQueryKeys
       VALID_KEY = /\A[A-Za-z_][A-Za-z0-9_]*\z/
+      STATIC_EXT = /\.(?:css|js|map|png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|otf|eot)\z/i
 
       def initialize(app)
         @app = app
@@ -17,7 +18,11 @@ module Lokka
 
       def call(env)
         query = env['QUERY_STRING']
-        if query.is_a?(String) && !query.empty?
+        path  = env['PATH_INFO']
+
+        if query.is_a?(String) && !query.empty? &&
+           query.include?('=') &&
+           !(path.is_a?(String) && STATIC_EXT.match?(path))
           params = Rack::Utils.parse_query(query) rescue nil
           if params.nil? || params.keys.any? { |k| !VALID_KEY.match?(k) }
             return [400, { 'Content-Type' => 'text/plain' }, ['Bad Request']]

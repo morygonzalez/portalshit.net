@@ -6,8 +6,8 @@ describe Lokka::Middleware::RejectInvalidQueryKeys do
   let(:inner_app) { ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['ok']] } }
   let(:middleware) { described_class.new(inner_app) }
 
-  def call(query)
-    env = Rack::MockRequest.env_for("/?#{query}")
+  def call(query, path: '/')
+    env = Rack::MockRequest.env_for("#{path}?#{query}")
     middleware.call(env)
   end
 
@@ -37,6 +37,35 @@ describe Lokka::Middleware::RejectInvalidQueryKeys do
   context 'with no query string' do
     it 'passes through empty query' do
       status, = middleware.call(Rack::MockRequest.env_for('/'))
+      expect(status).to eq 200
+    end
+  end
+
+  context 'with a valueless query (asset cache-buster)' do
+    it 'allows `?1234567890` style timestamps used by Padrino asset_path' do
+      status, = call('1761420123', path: '/theme/portalshit/style.css')
+      expect(status).to eq 200
+    end
+
+    it 'allows valueless queries on non-asset paths too' do
+      status, = call('1761420123')
+      expect(status).to eq 200
+    end
+  end
+
+  context 'with static asset paths' do
+    it 'skips validation for .css requests even if keys are odd' do
+      status, = call('v=1761420123', path: '/theme/portalshit/style.css')
+      expect(status).to eq 200
+    end
+
+    it 'skips validation for .js requests' do
+      status, = call('v=abc', path: '/theme/portalshit/app.js')
+      expect(status).to eq 200
+    end
+
+    it 'skips validation for image requests' do
+      status, = call('w=100&h=100', path: '/images/foo.png')
       expect(status).to eq 200
     end
   end
