@@ -2,6 +2,7 @@
 
 require 'lokka'
 require 'lokka/middleware/force_utf8'
+require 'lokka/middleware/reject_invalid_query_keys'
 
 module Lokka
   class App < Sinatra::Base
@@ -29,6 +30,7 @@ module Lokka
       end
       ::I18n.load_path += Dir["#{root}/i18n/*.yml"]
       use Lokka::Middleware::ForceUtf8
+      use Lokka::Middleware::RejectInvalidQueryKeys
       use RequestStore::Middleware
       register Sinatra::Flash
       register Padrino::Helpers
