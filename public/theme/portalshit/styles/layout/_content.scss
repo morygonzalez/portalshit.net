@@ -456,7 +456,7 @@
 // -- Tablet / small laptop --
 @media screen and (max-width: 1279px) {
   #content {
-    #recent_entries, #popular_entries, .category, .popular {
+    #recent_entries, .category, .popular {
       section {
         .new-entry {
           .content {
@@ -516,7 +516,7 @@
     width: 100%;
     padding: .5em 0;
 
-    #recent_entries, #popular_entries, .category, .popular {
+    #recent_entries, .category, .popular {
       header {
         .meta {
           display: block;
