@@ -78,7 +78,7 @@ pre {
   padding: 1.0em 1.5em;
   background-color: $various-bg;
   white-space: pre;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   color: #b5b2b2;
   text-shadow: none;
   font-family: $code-font;
@@ -95,7 +95,7 @@ p code, li code {
   background-color: $various-bg;
   border: 1px solid #333;
   padding: .2em .3em;
-  @include _border-radius;
+  border-radius: $radius;
 }
 
 blockquote:not([class]) {
@@ -104,7 +104,7 @@ blockquote:not([class]) {
   background-color: $various-bg;
   color: #c7c7c7;
   text-shadow: none;
-  @include _border-radius;
+  border-radius: $radius;
   @include _overflow-x-scroll;
 
   & > * {

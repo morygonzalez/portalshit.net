@@ -177,7 +177,7 @@
 
         .image {
           img {
-            @include _border_radius;
+            border-radius: $radius;
           }
 
           img.desktop {
@@ -235,38 +235,6 @@
         &:before {
           margin: 0 .3rem;
         }
-      }
-    }
-  }
-
-  #popular_entries > section {
-    .frequently-read-articles, .hotentry {
-      @include entries-list;
-
-      h4 {
-        margin-top: 0;
-      }
-
-      .items {
-        margin-top: 0;
-        padding-left: 0;
-
-        .item {
-          margin-top: 0;
-
-          .title {
-            .created_at {
-              margin-top: 0;
-            }
-          }
-        }
-      }
-
-      .bookmark_count {
-        display: none;
-        @include bookmark-count;
-        font-size: 0.7rem;
-        max-width: 70px;
       }
     }
   }
@@ -686,7 +654,7 @@
 
         code {
           font-size: 0.8em;
-          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
 
         iframe.wide {

@@ -1,0 +1,10 @@
+.item{ title: post.title, link: post.link, type: type }
+  .title
+    %h4.link= link_to post.title, post.link
+    %span.created_at= l(post.created_at.to_date, format: :long)
+  - if defined?(show_bookmark_count) && show_bookmark_count
+    .bookmark_count
+      = link_to "#{post.bookmark_count} users", post.bookmark_url
+  .description
+    .image= link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}"), post.link
+    .body= post.summary_or_description

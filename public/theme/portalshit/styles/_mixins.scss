@@ -40,10 +40,6 @@
   }
 }
 
-@mixin _border-radius {
-  border-radius: $radius;
-}
-
 @mixin _meta {
   font-size: 0.8em;
   color: $meta-text-color;
@@ -64,7 +60,6 @@
 
 @mixin _word-break {
   overflow-wrap: break-word;
-  word-wrap: break-word;
   word-break: break-word;
   hyphens: auto;
 }
@@ -75,7 +70,7 @@
 
 @mixin article-title {
   font-size: 1.2em;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   text-align: left;
   padding: 0;
   margin: 1em auto;
@@ -235,7 +230,7 @@
           img {
             width: 150px;
             max-width: 150px;
-            @include _border_radius;
+            border-radius: $radius;
           }
         }
 

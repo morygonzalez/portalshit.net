@@ -73,11 +73,11 @@
     > .highlight,
     > blockquote > .highlight {
       @include _monokai;
-      @include _border-radius;
+      border-radius: $radius;
       font-size: $code-font-size;
       pre {
         border: 1px solid #333;
-        @include _border-radius;
+        border-radius: $radius;
       }
     }
   }

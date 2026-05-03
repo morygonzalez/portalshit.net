@@ -1,9 +1,28 @@
 // =============================================================================
-// Entries list (similarity / referrers — uses entries-list mixin)
+// Entries list — shared component for .frequently-read-articles, .hotentry,
+// .referrers, .similar (sections that render a list of post summaries)
 // =============================================================================
 
-#content {
-  .referrers, .similar {
-    @include entries-list;
+#content .entries-list {
+  @include entries-list;
+
+  h4 {
+    margin-top: 0;
+  }
+
+  .items {
+    margin-top: 0;
+    padding-left: 0;
+
+    .item .title .created_at {
+      margin-top: 0;
+    }
+  }
+
+  .bookmark_count {
+    display: none;
+    @include bookmark-count;
+    font-size: 0.7rem;
+    max-width: 70px;
   }
 }

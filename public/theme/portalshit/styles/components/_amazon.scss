@@ -12,7 +12,7 @@
     color: #000;
     font-size: 16px;
     line-height: 150%;
-    @include _border-radius;
+    border-radius: $radius;
 
     .amazon-content {
       .item-title, .item-meta, .item-price {
