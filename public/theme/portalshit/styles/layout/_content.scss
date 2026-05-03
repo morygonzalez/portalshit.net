@@ -58,9 +58,6 @@
 
   #recent_entries, .category, .popular {
     header {
-      .title {
-      }
-
       .description {
         margin: 1rem 0 .5rem;
       }
@@ -557,12 +554,6 @@
           display: block;
           margin-left: 0;
           font-size: .8rem;
-        }
-      }
-
-      .frequetly-read-articles, .hotentry {
-        .items {
-          display: block;
         }
       }
 

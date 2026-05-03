@@ -42,8 +42,6 @@
 
 @mixin _border-radius {
   border-radius: $radius;
-  -moz-border-radius: $radius;
-  -webkit-border-radius: $radius;
 }
 
 @mixin _meta {
@@ -59,7 +57,7 @@
 
 @mixin _overflow-x-scroll {
   overflow-x: scroll;
-  &::-webkit-toolbar {
+  &::-webkit-scrollbar {
     display: none;
   }
 }

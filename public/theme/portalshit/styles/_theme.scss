@@ -87,21 +87,8 @@ html.dark-mode {
     }
   }
 
-  #content {
-    .archives,
-    .body,
-    .year-list,
-    .category-list,
-    .footer,
-    .pagination {
-      a {
-        text-shadow: -1px -1px 1px #180614;
-      }
-    }
-  }
 }
 
-// @media (prefers-color-scheme: light) {
 html.light-mode {
   strong {
     color: $light-emphasis-font-color;
@@ -229,13 +216,8 @@ html.light-mode {
       a {
         text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px;
 
-        &:link {
-          // color: $light-link-color;
-        }
         &:hover {
           color: $light-hover-link-color;
-        }
-        &:visited {
         }
       }
       blockquote a {
