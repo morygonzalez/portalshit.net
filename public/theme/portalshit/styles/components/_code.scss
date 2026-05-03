@@ -1,3 +1,7 @@
+// =============================================================================
+// Code highlighting (Monokai theme + .highlight wrapper)
+// =============================================================================
+
 @mixin _monokai {
   background: #272822;
   color: #f8f8f2;
@@ -62,4 +66,19 @@
   .vi  { color: #f08300; } /* Name.Variable.Instance */
   .vi  { color: #f8f8f2; } /* Name.Variable.Instance */
   .il  { color: #ae81ff; } /* Literal.Number.Integer.Long */
+}
+
+#content {
+  article .body {
+    > .highlight,
+    > blockquote > .highlight {
+      @include _monokai;
+      @include _border-radius;
+      font-size: $code-font-size;
+      pre {
+        border: 1px solid #333;
+        @include _border-radius;
+      }
+    }
+  }
 }

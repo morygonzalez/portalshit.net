@@ -1,0 +1,133 @@
+// =============================================================================
+// Archive (filter UI + archive-by-month listing)
+// =============================================================================
+
+#content {
+  .archive-filter {
+    display: flex;
+
+    .year-list, .category-list, .search-field, .entry-length {
+      margin: .25em;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .year-list, .category-list, .search-field {
+      color: #000;
+      font-size: 16px;
+    }
+
+    .search-field {
+      input {
+        width: 250px;
+        height: 40px;
+        border: solid 1px hsl(0, 0%, 80%);
+        padding-left: 10px;
+        border-radius: 4px;
+        font-size: 16px;
+        background: #ffffff;
+
+        &::-webkit-search-cancel-button {
+          margin-right: 8px;
+        }
+
+        &:focus {
+          outline-style: none;
+        }
+      }
+    }
+
+    .entry-length {
+      display: flex;
+      align-items: center;
+      p {
+        margin: auto .3em;
+      }
+    }
+  }
+
+  .archive-by-month {
+    h2 { display: none; }
+
+    ul {
+      list-style: disc;
+      -webkit-padding-start: 25px;
+
+      li {
+        margin: 1em auto;
+      }
+    }
+
+    .detail-information {
+      font-size: .85rem;
+
+      .created_at {
+        color: #7d7c7c;
+      }
+
+      .category {
+        padding-left: .5rem;
+        font-size: 0.9rem;
+      }
+
+      .tag {
+        font-size: .85rem;
+      }
+    }
+
+    .year-month {
+      list-style: none;
+
+      h3 {
+        display: flex;
+        justify-content: space-between;
+        margin-right: 1em;
+
+        .month {
+          flex-grow: 3;
+        }
+      }
+    }
+  }
+}
+
+// -- Mobile --
+@media screen and (max-width: 640px) {
+  #content .archive-filter {
+    flex-wrap: wrap;
+
+    .year-list, .category-list, .search-field, .entry-length {
+      max-width: 45%;
+      margin: 0;
+      padding: 0.5em;
+
+      li {
+        margin: 0;
+        font-size: 0.9em;
+      }
+    }
+
+    .search-field {
+      input {
+        max-width: 100%;
+      }
+    }
+
+    .entry-length {
+      width: 100%;
+    }
+  }
+
+  .archive-by-month {
+    ul {
+      list-style: disc !important;
+      -webkit-padding-start: 15px !important;
+    }
+
+    .detail-information {
+      font-size: 0.75em !important;
+      display: block !important;
+      margin-left: 0 !important;
+    }
+  }
+}

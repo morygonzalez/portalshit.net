@@ -1,0 +1,9 @@
+// =============================================================================
+// Entries list (similarity / referrers — uses entries-list mixin)
+// =============================================================================
+
+#content {
+  .referrers, .similar {
+    @include entries-list;
+  }
+}

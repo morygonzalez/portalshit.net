@@ -1,0 +1,299 @@
+// =============================================================================
+// Activity Tracker
+// =============================================================================
+
+#content {
+  .activities-list, .activity-detail, .activity-page {
+    margin: 1rem .5rem 4rem;
+
+    &:last-child {
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      margin-bottom: 1.5em;
+    }
+  }
+
+  .activity-detail-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    h2 {
+      margin-bottom: 1.5em;
+    }
+  }
+
+  .activity-logs-wrapper {
+    overflow-x: auto;
+
+    .activity-logs-inner {
+      width: max-content;
+      min-width: 100%;
+
+      table.activities {
+        table-layout: fixed;
+        width: 1260px;
+      }
+    }
+  }
+
+  .activity-summary {
+    margin-bottom: 16px;
+  }
+
+  .activity-splits-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+  }
+
+  .activity-month-caption {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    text-align: left;
+    caption-side: top;
+  }
+
+  .activity-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px 16px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    &.activity-stats-grid-compact {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px 12px;
+    }
+  }
+
+  .activity-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .activity-stat-label {
+    font-size: 0.875em;
+    letter-spacing: 0.02em;
+    color: $meta-text-color;
+  }
+
+  .activity-stat-value {
+    font-size: 1em;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html.dark-mode & {
+    .activity-stats-grid {
+      border-top-color: rgba(255, 255, 255, 0.12);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .activity-stat-label {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .activity-stat-value {
+      color: $dark-font-color;
+    }
+  }
+
+  html.light-mode & {
+    .activity-stat-value {
+      color: $light-font-color;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .activity-month-caption {
+      font-size: 1rem;
+    }
+
+    .activities-list {
+      table.activities {
+        font-size: 12px;
+        width: 800px;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+    }
+
+    .activity-stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px 12px;
+    }
+
+    .activity-stat-value {
+      font-size: 0.95em;
+    }
+  }
+
+  .metric-selector {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 12px;
+  }
+
+  .metric-selector-label {
+    font-size: 0.9em;
+    margin-right: 6px;
+  }
+
+  .metric-button {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .metric-button.active {
+    border-color: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+  }
+
+  .metric-button:hover {
+    border-color: rgba(0, 0, 0, 0.35);
+  }
+
+  html.dark-mode & {
+    .metric-button {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .metric-button.active {
+      border-color: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .metric-button:hover {
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+  }
+
+  // Range filters (distance / elevation sliders)
+  .range-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin: 8px 0 12px;
+    align-items: center;
+  }
+
+  .range-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .range-filter-label {
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+
+  .range-filter-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 160px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border: none;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+    }
+  }
+
+  .range-filter-value {
+    font-size: 0.85em;
+    white-space: nowrap;
+    min-width: 5em;
+  }
+
+  .range-filter-reset {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.85em;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    line-height: 1;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  html.dark-mode & {
+    .range-filter-slider {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .range-filter-reset {
+      border-color: rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    .range-filters {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .range-filter-slider {
+      width: 120px;
+    }
+  }
+
+  // Emoji markers for map start/finish points
+  .emoji-marker {
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

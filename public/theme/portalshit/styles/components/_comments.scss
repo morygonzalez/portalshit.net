@@ -1,0 +1,127 @@
+// =============================================================================
+// Comments listing + new comment form
+// =============================================================================
+
+.comments {
+  .flash-notice {
+    max-width: 780px;
+    margin: 1.5em auto;
+    padding: 1em 1.5em;
+    background-color: #dff0d8;
+    border: 1px solid #d0e9c6;
+    border-radius: 4px;
+    color: #3c763d;
+    font-size: 94%;
+  }
+
+  ul.comment-list {
+    list-style: none;
+    padding: 0;
+    margin: 3em .5em 5em;
+  }
+
+  .comment {
+    max-width: 780px;
+    margin: 2em auto 3em;
+    display: flex;
+    flex-wrap: wrap;
+
+    .body, .meta {
+      padding: 0;
+    }
+
+    .body {
+      width: 70%;
+      font-size: 94%;
+
+      p {
+        margin: .7em 0;
+        overflow: auto;
+      }
+    }
+
+    .meta {
+      @include _meta;
+      width: 30%;
+      list-style: none;
+      li.name, li.gravatar {
+        margin: 0;
+        max-width: 80px;
+        text-align: center;
+      }
+    }
+
+    .created_at {
+      font-size: 75%;
+      text-align: right;
+      width: 100%;
+    }
+  }
+}
+
+#comment_form {
+  margin: auto;
+  max-width: 500px;
+
+  .required {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 2px;
+  }
+
+  input, textarea {
+    font-size: 14px;
+    background: $various-bg;
+    color: #ffffff;
+    border-width: 1px;
+    border-style: ridge;
+    border-color: #fff;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+  }
+
+  #comment_name {
+    width: 300px;
+  }
+  #comment_email {
+    width: 300px;
+  }
+  #comment_homepage {
+    width: 480px;
+  }
+  #comment_body {
+    width: 480px;
+    height: 250px;
+  }
+}
+
+// -- Mobile --
+@media screen and (max-width: 640px) {
+  #content #comment_form {
+    margin: auto !important;
+    width: 95% !important;
+    padding-bottom: 1.5em;
+    $comment_form_width: 75% !important;
+
+    input[type="text"], textarea {
+      font-size: 16px;
+    }
+
+    #comment_name {
+      width: $comment_form_width;
+    }
+
+    #comment_email {
+      width: $comment_form_width;
+    }
+
+    #comment_homepage {
+      width: $comment_form_width;
+    }
+
+    #comment_body {
+      width: 95% !important;
+    }
+  }
+}

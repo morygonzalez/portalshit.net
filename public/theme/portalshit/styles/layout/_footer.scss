@@ -1,0 +1,82 @@
+// =============================================================================
+// Site footer (#footer)
+// =============================================================================
+
+#footer {
+  .bookmark_count {
+    @include bookmark-count;
+  }
+}
+
+#footer {
+  width: 100%;
+  display: grid;
+  padding: 1em 0 2em;
+  background: $footer-bg-color;
+  background-image: linear-gradient(to bottom, rgba(183,28,28,0.1), rgba(183,28,28,0.4), transparent);
+
+  aside {
+    width: 90%;
+    max-width: $content-max-width;
+    margin: 0 auto;
+    text-align: left;
+    display: flex;
+    justify-content: space-around;
+    font-size: 88%;
+
+    section {
+      width: 33%;
+
+      ul {
+        margin: auto 0.5rem;
+        padding: 0;
+        list-style-type: none;
+        color: $dark-font-color;
+
+        li {
+          margin: 5px 0;
+          padding: .25em 0;
+        }
+      }
+
+      img {
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .poweredby {
+    text-align: center;
+    margin-top: 2em;
+    font-size: 88%;
+  }
+
+  a {
+    &:link, &:visited {
+      color: #eaeaea;
+    }
+
+    &:hover {
+      color: #f60;
+    }
+  }
+}
+
+// -- Mobile --
+@media screen and (max-width: 640px) {
+  #footer {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    aside {
+      display: block;
+      margin: 0;
+      padding: .7em .6em;
+
+      section {
+        width: 100%;
+      }
+    }
+  }
+}

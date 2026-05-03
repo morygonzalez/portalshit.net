@@ -1,8 +1,26 @@
 @charset "utf-8";
-@import "styles/monokai";
-@import "styles/mixin";
+
+// Foundations (no output)
 @import "styles/variables";
-@import "styles/decoration";
-@import "styles/plugin";
-@import "styles/layout";
-@import "styles/mobile";
+@import "styles/mixins";
+
+// Base: typography, forms, tables, global resets
+@import "styles/base";
+
+// Theme overrides (dark / light mode)
+@import "styles/theme";
+
+// Components
+@import "styles/components/code";
+@import "styles/components/entries-list";
+@import "styles/components/archive";
+@import "styles/components/amazon";
+@import "styles/components/activity";
+@import "styles/components/comments";
+@import "styles/components/ogp";
+@import "styles/components/photoswipe";
+
+// Layout: site-level structure
+@import "styles/layout/header";
+@import "styles/layout/content";
+@import "styles/layout/footer";
