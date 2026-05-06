@@ -89,7 +89,7 @@ module Dify
 
       slices = document_ids.each_slice(batch_size).to_a
       slices.each_with_index do |slice, idx|
-        response = http_post_json(
+        response = http_patch_json(
           "/v1/datasets/#{dataset_id}/documents/status/enable",
           { document_ids: slice }
         )
@@ -138,8 +138,16 @@ module Dify
     end
 
     def http_post_json(path, body_hash)
+      http_request_json(Net::HTTP::Post, path, body_hash)
+    end
+
+    def http_patch_json(path, body_hash)
+      http_request_json(Net::HTTP::Patch, path, body_hash)
+    end
+
+    def http_request_json(klass, path, body_hash)
       uri = URI.join(api_base, path)
-      request = Net::HTTP::Post.new(uri)
+      request = klass.new(uri)
       request['Authorization'] = "Bearer #{dataset_token}"
       request['Content-Type']  = 'application/json'
       request.body = JSON.dump(body_hash)
