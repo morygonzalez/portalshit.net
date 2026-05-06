@@ -85,7 +85,18 @@ module Dify
     def touch_all!(batch_size: nil)
       dataset_client.ensure_credentials!
 
-      name2id = build_name_to_docid_map
+      documents = dataset_client.list_all_documents
+
+      disabled_ids = documents.reject { |d| d['enabled'] }.map { |d| d['id'] }
+      if disabled_ids.empty?
+        puts "[touch] all #{documents.size} documents already enabled"
+      else
+        dataset_client.enable_documents!(disabled_ids)
+        puts "[touch] re-enabled #{disabled_ids.size}/#{documents.size} documents"
+        sleep 1.0
+      end
+
+      name2id = documents.each_with_object({}) { |d, h| h[d['name'].to_s] = d['id'] }
       counts = article_collector.count_by_year
 
       payloads = name2id.sort.filter_map do |(year, doc_id)|

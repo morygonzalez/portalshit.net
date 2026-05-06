@@ -84,6 +84,24 @@ module Dify
       response
     end
 
+    def enable_documents!(document_ids, batch_size: 50, sleep_secs: 1.0)
+      return if document_ids.nil? || document_ids.empty?
+
+      slices = document_ids.each_slice(batch_size).to_a
+      slices.each_with_index do |slice, idx|
+        response = http_post_json(
+          "/v1/datasets/#{dataset_id}/documents/status/enable",
+          { document_ids: slice }
+        )
+        code = response.code.to_i
+        unless code == 200 || code == 204
+          raise "enable documents failed #{response.code} #{response.body}"
+        end
+
+        sleep sleep_secs if idx < slices.size - 1
+      end
+    end
+
     def list_all_documents(page_size: 100)
       documents = []
       page = 1
