@@ -1,4 +1,6 @@
 require 'digest'
+require 'tmpdir'
+require 'fileutils'
 require 'yaml'
 require_relative '../photo_gallery'
 require_relative 'metadata_store'
@@ -36,12 +38,15 @@ module Lokka
             processed_data
           else
             sleep 1 if index > 0
-            @uploader.upload(filepath, s3_filename) if @do_upload
 
             exif = ExifExtractor.new(filepath).to_hash
             lat, lng = mask_private_location(exif[:latitude], exif[:longitude])
-            location_result = build_location(lat, lng)
 
+            if @do_upload
+              upload_file(filepath, s3_filename, strip_gps: lat.nil? && exif[:latitude])
+            end
+
+            location_result = build_location(lat, lng)
             build_image_hash(filename, s3_filename, exif.merge(latitude: lat, longitude: lng), location_result)
           end
         end
@@ -51,6 +56,19 @@ module Lokka
       end
 
       private
+
+      def upload_file(filepath, s3_filename, strip_gps: false)
+        if strip_gps
+          Dir.mktmpdir do |tmpdir|
+            tmp_path = File.join(tmpdir, File.basename(filepath))
+            FileUtils.cp(filepath, tmp_path)
+            system('exiftool', '-overwrite_original', '-gps:all=', tmp_path)
+            @uploader.upload(tmp_path, s3_filename)
+          end
+        else
+          @uploader.upload(filepath, s3_filename)
+        end
+      end
 
       def mask_private_location(latitude, longitude)
         return [latitude, longitude] unless latitude && longitude
