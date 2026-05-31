@@ -1,4 +1,5 @@
 require 'digest'
+require 'yaml'
 require_relative '../photo_gallery'
 require_relative 'metadata_store'
 require_relative 's3_uploader'
@@ -38,9 +39,10 @@ module Lokka
             @uploader.upload(filepath, s3_filename) if @do_upload
 
             exif = ExifExtractor.new(filepath).to_hash
-            location_result = build_location(exif[:latitude], exif[:longitude])
+            lat, lng = mask_private_location(exif[:latitude], exif[:longitude])
+            location_result = build_location(lat, lng)
 
-            build_image_hash(filename, s3_filename, exif, location_result)
+            build_image_hash(filename, s3_filename, exif.merge(latitude: lat, longitude: lng), location_result)
           end
         end
 
@@ -49,6 +51,19 @@ module Lokka
       end
 
       private
+
+      def mask_private_location(latitude, longitude)
+        return [latitude, longitude] unless latitude && longitude
+
+        private_zones = self.class.filtered_locations
+        return [latitude, longitude] if private_zones.empty?
+
+        in_private_zone = private_zones.any? do |zone|
+          haversine_distance(latitude, longitude, zone[:latitude], zone[:longitude]) <= zone[:radius]
+        end
+
+        in_private_zone ? [nil, nil] : [latitude, longitude]
+      end
 
       def build_location(latitude, longitude)
         if latitude && longitude
@@ -86,6 +101,43 @@ module Lokka
           reverse_geocode_raw: location_result[:raw],
           keywords: exif[:keywords]
         }
+      end
+
+      def haversine_distance(lat1, lng1, lat2, lng2)
+        r = 6_371_000 # Earth's radius in meters
+        lat1_rad = lat1 * Math::PI / 180
+        lat2_rad = lat2 * Math::PI / 180
+        delta_lat = (lat2 - lat1) * Math::PI / 180
+        delta_lng = (lng2 - lng1) * Math::PI / 180
+        a = Math.sin(delta_lat / 2)**2 +
+            Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(delta_lng / 2)**2
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        r * c
+      end
+
+      def self.filtered_locations
+        return @filtered_locations if defined?(@filtered_locations)
+
+        config_path = File.join(Lokka.root, 'config', 'filtered_locations.yml')
+        @filtered_locations = if File.exist?(config_path)
+                                raw = YAML.safe_load(File.read(config_path), permitted_classes: [Symbol]) || []
+                                raw.select { |loc| loc.is_a?(Hash) }.filter_map do |loc|
+                                  lat = loc['latitude']&.to_f
+                                  lng = loc['longitude']&.to_f
+                                  next nil unless lat && lng && lat != 0 && lng != 0
+
+                                  { latitude: lat, longitude: lng, radius: (loc['radius'] || 300).to_f }
+                                end
+                              else
+                                lat = ENV['ACTIVITY_TRACKER_HOME_LAT']&.to_f
+                                lng = ENV['ACTIVITY_TRACKER_HOME_LNG']&.to_f
+                                radius = (ENV['ACTIVITY_TRACKER_HOME_RADIUS'] || 300).to_f
+                                if lat && lng && lat != 0 && lng != 0
+                                  [{ latitude: lat, longitude: lng, radius: radius }]
+                                else
+                                  []
+                                end
+                              end
       end
     end
   end
