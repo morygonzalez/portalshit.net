@@ -137,25 +137,16 @@ module Lokka
         return @filtered_locations if defined?(@filtered_locations)
 
         config_path = File.join(Lokka.root, 'config', 'filtered_locations.yml')
-        @filtered_locations = if File.exist?(config_path)
-                                raw = YAML.safe_load(File.read(config_path), permitted_classes: [Symbol]) || []
-                                raw.select { |loc| loc.is_a?(Hash) }.filter_map do |loc|
-                                  lat = loc['latitude']&.to_f
-                                  lng = loc['longitude']&.to_f
-                                  next nil unless lat && lng && lat != 0 && lng != 0
+        return @filtered_locations = [] unless File.exist?(config_path)
 
-                                  { latitude: lat, longitude: lng, radius: (loc['radius'] || 300).to_f }
-                                end
-                              else
-                                lat = ENV['ACTIVITY_TRACKER_HOME_LAT']&.to_f
-                                lng = ENV['ACTIVITY_TRACKER_HOME_LNG']&.to_f
-                                radius = (ENV['ACTIVITY_TRACKER_HOME_RADIUS'] || 300).to_f
-                                if lat && lng && lat != 0 && lng != 0
-                                  [{ latitude: lat, longitude: lng, radius: radius }]
-                                else
-                                  []
-                                end
-                              end
+        raw = YAML.safe_load(File.read(config_path), permitted_classes: [Symbol]) || []
+        @filtered_locations = raw.select { |loc| loc.is_a?(Hash) }.filter_map do |loc|
+          lat = loc['latitude']&.to_f
+          lng = loc['longitude']&.to_f
+          next nil unless lat && lng && lat != 0 && lng != 0
+
+          { latitude: lat, longitude: lng, radius: (loc['radius'] || 300).to_f }
+        end
       end
     end
   end
