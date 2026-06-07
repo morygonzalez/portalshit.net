@@ -9,7 +9,7 @@ module Lokka
     include Padrino::Helpers::TranslationHelpers
 
     configure do
-      enable :method_override, :raise_errors, :static, :sessions
+      enable :method_override, :raise_errors, :static
       set :app_file, __FILE__
       set :root, File.expand_path('../..', __dir__)
       set public_folder: proc { File.join(root, 'public') }
@@ -24,6 +24,11 @@ module Lokka
       set :admin_per_page, 200
       set :default_locale, 'en'
       set :session_secret, ENV['SESSION_SECRET'] || SecureRandom.hex(64)
+      set :sessions,
+          expire_after: 60 * 60 * 24 * 30,
+          same_site: :lax,
+          httponly: true,
+          secure: production?
       set :protect_from_csrf, true
       supported_stylesheet_templates.each do |style|
         set style, style: :compressed
@@ -49,7 +54,6 @@ module Lokka
       set :cache_output_dir, -> { "#{public_folder}/system/cache/" }
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
-      set :cookie_options, { secure: true }
 
       require 'exception_notification'
       require 'lokka/exception_notifier_ses'
