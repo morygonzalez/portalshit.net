@@ -1,1 +1,1 @@
-useragent:.+?(bot|feed|wget|curl|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|media|subscribe|slurp|phantomjs|winds|slepnirsiteupdates|flipboard|guzzlehttp|go-http-client|dataprovider|sermush|woorank|parser)
+useragent:.+?(bot|feed|wget|curl|fetcher|crawler|proxy|bubing|fastladder|ruby|aol\sreader|proximic|hatena|media|subscribe|slurp|phantomjs|winds|slepnirsiteupdates|flipboard|guzzlehttp|go-http-client|dataprovider|sermush|woorank|parser|Chrome/142\.0\.0\.0 Safari/537\.36$)
