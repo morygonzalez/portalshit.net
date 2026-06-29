@@ -2,6 +2,13 @@
 set -e
 
 DEPLOY_PATH=/var/www/deploys/portalshit
+ENV_FILE="$DEPLOY_PATH/shared/.env"
+
+# Source .env on the host so Dify credentials can be passed explicitly to Docker.
+# Without this, the container relies on dotenv loading inside the rake task,
+# which can silently fail and leave API credentials unset.
+# shellcheck source=/dev/null
+set -a; [ -f "$ENV_FILE" ] && source "$ENV_FILE"; set +a
 
 docker run --rm \
   --memory=384m \
@@ -10,10 +17,18 @@ docker run --rm \
   -e RACK_ENV=production \
   -e BUNDLE_WITHOUT=development:test:postgresql \
   -e RUBYOPT="-EUTF-8" \
+  -e DATASET_ID \
+  -e DATASET_API_KEY \
+  -e DIFY_API_BASE \
+  -e BASE_URL \
+  -e PERIOD_ID \
+  -e COUNT_ID \
+  -e METADATA_ID_PERIOD \
+  -e METADATA_ID_COUNT \
   -v "$DEPLOY_PATH/current:/app" \
   -v "$DEPLOY_PATH/shared/db/database.docker.yml:/app/db/database.yml" \
   -v "$DEPLOY_PATH/shared/tmp/index:/app/tmp/index" \
-  -v "$DEPLOY_PATH/shared/.env:/app/.env" \
+  -v "$ENV_FILE:/app/.env" \
   --workdir /app \
   morygonzalez/portalshit:latest \
   bundle exec rake knowledge:touch

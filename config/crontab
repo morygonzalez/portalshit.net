@@ -19,7 +19,7 @@ BIN=/var/www/deploys/portalshit/current/bin
 0 5 * * 0 $BIN/run_update_search_index true
 
 # knowledge touch (every 5 days)
-0 3 */5 * * $BIN/run_knowledge_touch
+0 3 */5 * * $BIN/run_knowledge_touch >> /var/www/app/portalshit/log/knowledge_touch.log 2>&1
 
 # server metrics (every 5 min)
 2,7,12,17,22,27,32,37,42,47,52,57 * * * * $BIN/collect_server_metrics
