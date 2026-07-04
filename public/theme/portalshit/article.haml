@@ -2,13 +2,13 @@
   %header
     %h2.title{ itemprop: 'name' }= link_to post.title, post.link, itemprop: 'url'
     .meta
-      %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+      %time{ datetime: post.created_at.iso8601 }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
       - if post.category
         == | @#{link_to post.category.title, "/category/#{post.category.slug}/", itemprop: 'articleSection'}
     %aside{ style: 'display: none'}
       %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
-      %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
-      %time{ datetime: post.updated_at.to_s(:db), itemprop: 'dateModified' }= post.updated_at
+      %time{ datetime: post.created_at.iso8601, itemprop: 'datePublished' }= post.created_at
+      %time{ datetime: post.updated_at.iso8601, itemprop: 'dateModified' }= post.updated_at
       %span{ itemprop: 'headline' }= post.long_description
       %span{ itemprop: 'author' }= post.user.name
       %div{ itemprop: :publisher, itemscope: true, itemtype: 'https://schema.org/Person' }

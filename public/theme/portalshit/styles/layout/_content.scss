@@ -262,6 +262,13 @@
       .meta {
         @include _meta;
         margin: .5em;
+
+        .updated {
+          margin-left: .4em;
+          font-size: .85em;
+          opacity: .65;
+          cursor: help;
+        }
       }
     }
 

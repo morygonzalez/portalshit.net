@@ -104,7 +104,8 @@ module Lokka
           'og:title'                  => @entry.title,
           'og:description'            => extract_description,
           'og:image'                  => og_image,
-          'og:article:published_time' => @entry.created_at,
+          'article:published_time'    => @entry.created_at.iso8601,
+          'article:modified_time'     => @entry.updated_at.iso8601,
           'og:article:author'         => @entry.user.name
         }
       end
