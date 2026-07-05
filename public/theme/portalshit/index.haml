@@ -18,12 +18,12 @@
   %section
     = cache_fragment :"index-poular-articles-#{I18n.locale}", expires_in: 1.hour do
       %section.entries-list.frequently-read-articles
-        %h3= link_to '最近よく読まれている記事', '/popular/recent'
+        %h3= link_to t('popular_entries_recent'), '/popular/recent'
         .items
           - Entry.includes(:category).popular(limit: 6).each do |post|
             = partial :_entry_list_item, locals: { post: post, type: 'frequency' }
       %section.entries-list.hotentry
-        %h3= link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena-bookmark'
+        %h3= link_to t('popular_entries_hatena-bookmark'), '/popular/hatena-bookmark'
         .items
           - Entry.includes(:category).hotentry(limit: 6).each do |post|
             = partial :_entry_list_item, locals: { post: post, type: 'hotentry', show_bookmark_count: true }

@@ -274,3 +274,27 @@ ja:
        previous: "&lsaquo; 前のページ"
        next: "次のページ &rsaquo;"
        truncate: "..."
+  theme:
+    nav:
+      about: About
+      archives: Archives
+    theme_switcher:
+      label: テーマ
+      os_default: OSの設定に従う
+      light: ライト
+      dark: ダーク
+    section:
+      archives_categories: 過去記事・カテゴリー
+    categories:
+      description: カテゴリーごとの最新記事を表示しています。各カテゴリーは最近記事が更新された順に並んでいます。
+    last_updated: 最終更新
+    entry_count: 記事数
+    read_more_in_category: "%{category}の記事をもっと読む"
+    edited: (編集済み)
+    comment:
+      thanks: コメントありがとうございました。管理者の確認後にサイトに反映されます。反映されたらメールでお知らせします。
+      note: ※コメントは管理者の確認後に反映されます
+    related:
+      referrers: この記事を参照している記事
+      similar: この記事に似ている記事
+    bookmark_users: "%{count} users"

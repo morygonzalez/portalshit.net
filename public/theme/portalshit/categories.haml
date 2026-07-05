@@ -1,6 +1,6 @@
 %section
   %h2= t('listing_categories')
-  %p カテゴリーごとの最新記事を表示しています。各カテゴリーは最近記事が更新された順に並んでいます。
+  %p= t('theme.categories.description')
 
 - @entries_group_by_category.each do |category, entries|
   %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
@@ -9,8 +9,8 @@
         = link_to category.title, category.link
       .description= category.description
       %ul.meta
-        %li.last_updated_at== 最終更新 #{l entries.map(&:created_at).max, format: :long}
-        %li== 記事数 #{@entry_lengths[category.id]}
+        %li.last_updated_at== #{t('theme.last_updated')} #{l entries.map(&:created_at).max, format: :long}
+        %li== #{t('theme.entry_count')} #{@entry_lengths[category.id]}
     %section
       - post = entries.delete_if {|item| entries.index(0) == item }.first
       .new-entry
@@ -20,5 +20,6 @@
           - next if index == 0
           = partial :_other_entries, locals: { post: post }
     %footer
-      - title = %Q(<q><span class="#{category.slug}">#{category.title}</span></q>の記事をもっと読む).html_safe
+      - category_link = %(<span class="#{category.slug}">#{category.title}</span>)
+      - title = %Q(<q>#{t('theme.read_more_in_category', category: category_link)}</q>).html_safe
       %p.read-more= link_to title, category.link

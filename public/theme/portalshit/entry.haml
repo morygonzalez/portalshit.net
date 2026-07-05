@@ -12,7 +12,7 @@
     %section.meta
       %time{ datetime: @entry.created_at.iso8601 }= l(@entry.created_at, format: :long)
       - if @entry.updated_at.to_date > @entry.created_at.to_date
-        %time.updated{ datetime: @entry.updated_at.iso8601, itemprop: 'dateModified', title: "最終更新: #{l(@entry.updated_at, format: :long)}" } (編集済み)
+        %time.updated{ datetime: @entry.updated_at.iso8601, itemprop: 'dateModified', title: "#{t('theme.last_updated')}: #{l(@entry.updated_at, format: :long)}" }= t('theme.edited')
       - if @entry.category
         == | @#{link_to @entry.category.title, "/category/#{@entry.category.slug}/", itemprop: 'articleSection'}
     %aside{ style: 'display: none'}
@@ -50,7 +50,7 @@
   %section.comments
     %h3#comments-section= t('comments')
     - if params[:comment_submitted]
-      .flash-notice コメントありがとうございました。管理者の確認後にサイトに反映されます。反映されたらメールでお知らせします。
+      .flash-notice= t('theme.comment.thanks')
     %ul.comment-list
       - @entry.approved_comments.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}

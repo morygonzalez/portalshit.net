@@ -29,31 +29,31 @@
             %li.theme
               %button
                 %i.fas.fa-adjust
-                Theme
+                = t('theme.theme_switcher.label')
               .theme-menu.modal
                 %ul
                   %li
                     %button.theme-default.theme-button
                       %i.fas.fa-adjust
-                      OS Default
+                      = t('theme.theme_switcher.os_default')
                   %li
                     %button.theme-light.theme-button
                       %i.far.fa-sun
-                      Light
+                      = t('theme.theme_switcher.light')
                   %li
                     %button.theme-dark.theme-button
                       %i.far.fa-moon
-                      Dark
+                      = t('theme.theme_switcher.dark')
             %li.about
               %i.fas.fa-info-circle
-              = link_to 'About', '/about'
+              = link_to t('theme.nav.about'), '/about'
             %li.archives
               %i.fas.fa-archive
-              = link_to 'Archives', '/archives'
+              = link_to t('theme.nav.archives'), '/archives'
             %li.search
               %button{ accesskey: 's' }
                 %i.fas.fa-search
-                %span Search
+                %span= t('search')
               = cache_fragment :modal_popular_query_term, shared: true, expires_in: 2.hours do
                 #search_form.modal{'data-popular-keywords': popular_keywords }
 
@@ -70,23 +70,23 @@
     %footer#footer
       %aside
         %section.popular-entries
-          %h3= link_to '人気の記事', '/popular'
+          %h3= link_to t('popular_entries'), '/popular'
           %ul.entry-list
             %li
               <i class="fas fa-calendar"></i>
-              = link_to '今日よく読まれている記事', '/popular/today'
+              = link_to t('popular_entries_today'), '/popular/today'
             %li
               <i class="fas fa-calendar-day"></i>
-              = link_to '昨日よく読まれた記事', '/popular/yesterday'
+              = link_to t('popular_entries_yesterday'), '/popular/yesterday'
             %li
               <i class="fas fa-calendar-alt"></i>
-              = link_to '最近よく読まれている記事', '/popular/recent'
+              = link_to t('popular_entries_recent'), '/popular/recent'
             %li
               <i class="fas fa-bookmark"></i>
-              = link_to 'はてなブックマークで注目を集めた記事', '/popular/hatena-bookmark'
+              = link_to t('popular_entries_hatena-bookmark'), '/popular/hatena-bookmark'
 
         %section.archives
-          %h3 過去記事・カテゴリー
+          %h3= t('theme.section.archives_categories')
           %ul
             %li
               <i class="fas fa-archive"></i>
@@ -96,7 +96,7 @@
               = link_to t('listing_categories'), '/categories'
 
         %section.about
-          %h3 このサイトについて
+          %h3= t('about')
           %ul
             %li.about
               = image_tag 'https://portalshit.net/imageproxy/24/https://portalshit.net/theme/portalshit/ogp_image.png', width: 24

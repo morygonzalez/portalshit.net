@@ -274,3 +274,27 @@ en:
        previous: "&lsaquo; 前のページ"
        next: "次のページ &rsaquo;"
        truncate: "..."
+  theme:
+    nav:
+      about: About
+      archives: Archives
+    theme_switcher:
+      label: Theme
+      os_default: OS Default
+      light: Light
+      dark: Dark
+    section:
+      archives_categories: Archives & Categories
+    categories:
+      description: Shows recent entries by category. Categories are sorted by the most recently updated entry.
+    last_updated: Last updated
+    entry_count: Entries
+    read_more_in_category: "Read more from %{category}"
+    edited: (edited)
+    comment:
+      thanks: Thank you for your comment. It will appear on the site after being approved by an administrator, and you'll be notified by email once it is.
+      note: "※ Comments are subject to administrator approval before appearing on the site."
+    related:
+      referrers: Articles referencing this post
+      similar: Similar articles
+    bookmark_users: "%{count} users"

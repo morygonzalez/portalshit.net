@@ -2,7 +2,7 @@
   %h3.title{ itemprop: 'name' }
     = link_to post.title, post.link, itemprop: 'url'
   .meta
-    %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: '%Y年%m月%d日 (%a)')
+    %time{ datetime: post.created_at.to_s(:db) }= l(post.created_at.to_date, format: :long)
   %aside{ style: 'display: none'}
     %meta{ content: post.link, itemprop: 'mainEntityOfPage', itemscope: true, itemtype: 'https://schema.org/WebPage' }
     %time{ datetime: post.created_at.to_s(:db), itemprop: 'datePublished' }= post.created_at
