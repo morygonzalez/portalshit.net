@@ -78,7 +78,10 @@ module Lokka
       end
 
       def extract_description
-        content = strip_tags(@entry.summary_or_description).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
+        source = @entry.summary_or_description.to_s
+          .gsub(%r{<script\b[^>]*>.*?</script>}mi, ' ')
+          .gsub(%r{<style\b[^>]*>.*?</style>}mi, ' ')
+        content = strip_tags(source).strip.gsub(/[\t]+/, ' ').gsub(/[\r\n]/, '')
         content = @site.meta_description if content.blank?
         truncate(content, length: 100)
       end

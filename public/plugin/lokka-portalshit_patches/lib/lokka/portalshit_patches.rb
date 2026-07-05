@@ -54,6 +54,8 @@ class Entry
 
   def long_description(limit = 120)
     content = body.
+      gsub(%r{<script\b[^>]*>.*?</script>}mi, ' ').
+      gsub(%r{<style\b[^>]*>.*?</style>}mi, ' ').
       gsub(%r{<figcaption>.*?</figcaption>}m, '').
       gsub(/<\/?[^>]*>/, '').
       gsub(/[\t]+/, ' ').
