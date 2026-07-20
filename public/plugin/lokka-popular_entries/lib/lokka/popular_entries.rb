@@ -185,11 +185,19 @@ class Entry
         result[slug] = { bookmark_count: bookmark_count.to_i, bookmark_url: bookmark_url }
       end
 
-      house_bookmark_old = slugs.delete('thought-on-own-house')
-      house_bookmark_new = slugs['thoughts-on-own-house']
-      if house_bookmark_old && house_bookmark_new
-        house_bookmark_count = house_bookmark_old[:bookmark_count] + house_bookmark_new[:bookmark_count]
-        slugs['thoughts-on-own-house'][:bookmark_count] = house_bookmark_count
+      slug_redirects = {
+        'thought-on-own-house' => 'thoughts-on-own-house',
+        'internet-is-becomming-inconvenient' => 'internet-becomes-inconvenient'
+      }
+      slug_redirects.each do |old_slug, new_slug|
+        old_bookmark = slugs.delete(old_slug)
+        next unless old_bookmark
+
+        if slugs[new_slug]
+          slugs[new_slug][:bookmark_count] += old_bookmark[:bookmark_count]
+        else
+          slugs[new_slug] = old_bookmark
+        end
       end
 
       slugs.sort_by {|_, item| item[:bookmark_count] }.reverse.to_h
