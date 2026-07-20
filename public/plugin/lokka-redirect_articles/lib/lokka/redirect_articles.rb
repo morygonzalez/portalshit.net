@@ -19,7 +19,11 @@ module Lokka
       end
 
       app.get '/2014/12/11/thought-on-own-house' do
-        redirect '/2014/12/11/thoughts-on-own-house', :permanent
+        redirect '/2014/12/11/thoughts-on-own-house', 301
+      end
+
+      app.get '/2023/01/15/internet-is-becomming-inconvenient' do
+        redirect '/2023/01/15/internet-becomes-inconvenient', 301
       end
     end
   end
