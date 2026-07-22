@@ -3,7 +3,7 @@
 # ============================================================
 # Stage 1: builder — ビルド専用ステージ
 # ============================================================
-FROM ruby:3.2.7-slim AS builder
+FROM ruby:3.4.10-slim AS builder
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -61,7 +61,7 @@ RUN bash -lc 'gem install bundler:2.6.3 && \
 # ============================================================
 # Stage 2: runtime — 実行用ステージ
 # ============================================================
-FROM ruby:3.2.7-slim AS runtime
+FROM ruby:3.4.10-slim AS runtime
 
 ENV TZ=Asia/Tokyo
 ENV MECAB_PATH=/usr/lib/x86_64-linux-gnu/libmecab.so.2
