@@ -85,8 +85,9 @@ namespace :knowledge do
   end
 
   # 人気記事（直近30日）を Dify データセットに同期
+  # 年次記事とは別のデータセットに保存する（POPULAR_DATASET_ID で指定）
   # 使い方:
-  #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:popular[20]"
+  #   POPULAR_DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:popular[20]"
   desc '人気記事（直近30日）を Dify データセットに同期'
   task :popular, [:limit] do |_, args|
     exporter = Dify::KnowledgeExporter.new

@@ -10,12 +10,14 @@ require 'dify/chunking_config'
 module Dify
   class KnowledgeExporter
     attr_reader :api_base, :dataset_id, :dataset_token, :base_url,
-                :dataset_client, :article_collector, :env
+                :dataset_client, :popular_dataset_client, :article_collector, :env
 
     def initialize(
       api_base: ENV.fetch('DIFY_API_BASE', 'https://api.dify.ai'),
       dataset_id: ENV['DATASET_ID'],
       dataset_token: ENV['DATASET_API_KEY'],
+      popular_dataset_id: ENV['POPULAR_DATASET_ID'],
+      popular_dataset_token: ENV['POPULAR_DATASET_API_KEY'] || ENV['DATASET_API_KEY'],
       base_url: (ENV['BASE_URL'] || '').sub(%r{/\z}, ''),
       summarize: nil,
       env: ENV
@@ -33,6 +35,12 @@ module Dify
         dataset_id: dataset_id,
         dataset_token: dataset_token,
         env: env
+      )
+      @popular_dataset_client = DatasetClient.new(
+        api_base: api_base,
+        dataset_id: popular_dataset_id,
+        dataset_token: popular_dataset_token,
+        env: { 'PERIOD_ID' => env['POPULAR_PERIOD_ID'], 'COUNT_ID' => env['POPULAR_COUNT_ID'] }
       )
       @article_collector = ArticleCollector.new(base_url: base_url)
     end
@@ -149,7 +157,7 @@ module Dify
     end
 
     def sync_popular!(limit: nil, sleep_secs: nil, retries: nil)
-      dataset_client.ensure_credentials!
+      popular_dataset_client.ensure_credentials!
 
       limit      = (limit || env['POPULAR_LIMIT'] || 20).to_i
       retries    = (retries || default_retries).to_i
@@ -158,21 +166,21 @@ module Dify
       entries = Entry.popular(limit: limit)
       text = compose_popular_text(entries)
 
-      name2id = build_name_to_docid_map
+      name2id = build_name_to_docid_map(popular_dataset_client)
       doc_id  = name2id['popular']
 
       with_retry(retries) do
         if doc_id
-          dataset_client.update_document_by_text!(document_id: doc_id, name: 'popular', text: text)
+          popular_dataset_client.update_document_by_text!(document_id: doc_id, name: 'popular', text: text)
           puts "[sync_popular] updated popular (#{doc_id}) items=#{entries.size}"
         else
-          doc_id = dataset_client.create_document_by_text!(name: 'popular', text: text)
+          doc_id = popular_dataset_client.create_document_by_text!(name: 'popular', text: text)
           puts "[sync_popular] created popular (#{doc_id}) items=#{entries.size}"
         end
       end
 
       with_retry(retries) do
-        dataset_client.update_documents_metadata!(
+        popular_dataset_client.update_documents_metadata!(
           [{ document_id: doc_id, metadata: { 'period' => 'recent_30d', 'count' => entries.size } }]
         )
         puts "[sync_popular] updated metadata for popular (#{doc_id})"
@@ -294,8 +302,8 @@ module Dify
       )
     end
 
-    def build_name_to_docid_map
-      dataset_client.list_all_documents.each_with_object({}) do |document, map|
+    def build_name_to_docid_map(client = dataset_client)
+      client.list_all_documents.each_with_object({}) do |document, map|
         map[document['name'].to_s] = document['id']
       end
     end
