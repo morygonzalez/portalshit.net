@@ -13,7 +13,7 @@
   gap: .8em;
   text-align: left;
 
-  --dify-chat-bg: #{$dark-main-background-color};
+  --dify-chat-bg: rgb(33, 33, 33);
   --dify-chat-fg: #{$dark-font-color};
   --dify-chat-border: rgba(255, 255, 255, .12);
   --dify-chat-accent: #{$dark-hover-link-color};
