@@ -48,6 +48,7 @@ module Lokka
       @posts = apply_continue_reading(@posts)
 
       @title = "Search by #{h(@query)}"
+      @robots = 'noindex'
 
       @bread_crumbs = [{ name: t('home'), link: '/' },
                        { name: @query }]
