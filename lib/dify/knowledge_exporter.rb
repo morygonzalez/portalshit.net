@@ -252,9 +252,9 @@ module Dify
 
       blocks = entries.each.with_index(1).map do |entry, i|
         <<~TXT.chomp
-          順位: #{i}位（アクセス数の多い順）
-          タイトル: #{entry.title}
-          URL: #{article_collector.build_url_for(entry)}
+          rank: #{i}
+          title: #{entry.title}
+          url: #{article_collector.build_url_for(entry)}
           published_at: #{entry.created_at}
           blurb: #{entry.summary}
           page_views: #{entry.pv}
@@ -275,9 +275,9 @@ module Dify
 
       blocks = entries.each.with_index(1).map do |entry, i|
         <<~TXT.chomp
-          順位: #{i}位（ブックマーク数の多い順）
-          タイトル: #{entry.title}
-          URL: #{article_collector.build_url_for(entry)}
+          rank: #{i}
+          title: #{entry.title}
+          url: #{article_collector.build_url_for(entry)}
           published_at: #{entry.created_at}
           blurb: #{entry.summary}
           bookmark_count: #{entry.bookmark_count}
