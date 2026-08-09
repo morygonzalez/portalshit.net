@@ -9,8 +9,8 @@ process_ip_to_ignore() {
   echo "Processing Ignore IPs "
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
-    | grep -viP ${UA_TO_IGNORE} \
-    | grep -viP ${REFERER_TO_IGNORE} \
+    | grep -viP "${UA_TO_IGNORE}" \
+    | grep -viP "${REFERER_TO_IGNORE}" \
     | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
     | cut -f2 | sed -e 's/remote_addr://' \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
