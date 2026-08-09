@@ -226,16 +226,19 @@ module Dify
       header = <<~TXT.chomp
         # 直近30日 アクセス数ランキング（直近の人気度）
         このドキュメントは直近30日間のページビュー（アクセス数）に基づいて記事をランキングしたものです。直近どの記事が読まれているか、直近の人気度を示す指標です。
+        各記事の「順位」はアクセス数の多い順（降順）の並び順であり、重要度や優先度を表すものではありません。順位の数字が小さいほどアクセス数が多いことを意味します。
         話題になった度合い・反響の大きさを知りたい場合は、はてなブックマーク数に基づく別ドキュメント「hatena_bookmark」を参照してください。
         last_updated_at: #{Date.today}
       TXT
 
       blocks = entries.each.with_index(1).map do |entry, i|
         <<~TXT.chomp
-          #{i}. #{entry.title} - #{article_collector.build_url_for(entry)}
-            published_at: #{entry.created_at}
-            blurb: #{entry.summary}
-            page_views: #{entry.pv}
+          順位: #{i}位（アクセス数の多い順）
+          タイトル: #{entry.title}
+          URL: #{article_collector.build_url_for(entry)}
+          published_at: #{entry.created_at}
+          blurb: #{entry.summary}
+          page_views: #{entry.pv}
         TXT
       end
 
@@ -246,17 +249,20 @@ module Dify
       header = <<~TXT.chomp
         # はてなブックマーク数ランキング（反響の大きさ）
         このドキュメントははてなブックマークのブックマーク数に基づいて記事をランキングしたものです。特定の期間に限らない累積の値で、話題になった度合い・反響の大きさを示す指標です。
+        各記事の「順位」はブックマーク数の多い順（降順）の並び順であり、重要度や優先度を表すものではありません。順位の数字が小さいほどブックマーク数が多いことを意味します。
         直近どの記事が読まれているか、直近の人気度を知りたい場合はアクセス数に基づく別ドキュメント「popular」を参照してください。
         last_updated_at: #{Date.today}
       TXT
 
       blocks = entries.each.with_index(1).map do |entry, i|
         <<~TXT.chomp
-          #{i}. #{entry.title} - #{article_collector.build_url_for(entry)}
-            published_at: #{entry.created_at}
-            blurb: #{entry.summary}
-            bookmark_count: #{entry.bookmark_count}
-            bookmark_url: #{entry.bookmark_url}
+          順位: #{i}位（ブックマーク数の多い順）
+          タイトル: #{entry.title}
+          URL: #{article_collector.build_url_for(entry)}
+          published_at: #{entry.created_at}
+          blurb: #{entry.summary}
+          bookmark_count: #{entry.bookmark_count}
+          bookmark_url: #{entry.bookmark_url}
         TXT
       end
 
