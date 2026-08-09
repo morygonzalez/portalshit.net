@@ -28,6 +28,7 @@ docker run --rm \
   -v "$DEPLOY_PATH/current:/app" \
   -v "$DEPLOY_PATH/shared/db/database.docker.yml:/app/db/database.yml" \
   -v "$DEPLOY_PATH/shared/tmp/index:/app/tmp/index" \
+  -v "$DEPLOY_PATH/shared/public/log-aggregation:/app/public/log-aggregation" \
   -v "$ENV_FILE:/app/.env" \
   --workdir /app \
   morygonzalez/portalshit:latest \
