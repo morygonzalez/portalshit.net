@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'date'
+
 require 'dify/dataset_client'
 require 'dify/article_collector'
 require 'dify/article_summarizer'
@@ -146,7 +148,57 @@ module Dify
       puts "[update_year] done."
     end
 
+    def sync_popular!(limit: nil, sleep_secs: nil, retries: nil)
+      dataset_client.ensure_credentials!
+
+      limit      = (limit || env['POPULAR_LIMIT'] || 20).to_i
+      retries    = (retries || default_retries).to_i
+      sleep_secs = (sleep_secs || default_sleep_secs).to_f
+
+      entries = Entry.popular(limit: limit)
+      text = compose_popular_text(entries)
+
+      name2id = build_name_to_docid_map
+      doc_id  = name2id['popular']
+
+      with_retry(retries) do
+        if doc_id
+          dataset_client.update_document_by_text!(document_id: doc_id, name: 'popular', text: text)
+          puts "[sync_popular] updated popular (#{doc_id}) items=#{entries.size}"
+        else
+          doc_id = dataset_client.create_document_by_text!(name: 'popular', text: text)
+          puts "[sync_popular] created popular (#{doc_id}) items=#{entries.size}"
+        end
+      end
+
+      with_retry(retries) do
+        dataset_client.update_documents_metadata!(
+          [{ document_id: doc_id, metadata: { 'period' => 'recent_30d', 'count' => entries.size } }]
+        )
+        puts "[sync_popular] updated metadata for popular (#{doc_id})"
+      end
+
+      sleep sleep_secs
+      puts "[sync_popular] done."
+    end
+
     private
+
+    def compose_popular_text(entries)
+      lines = []
+      lines << "[period: recent_30d] [last_updated_at: #{Date.today}]"
+      lines << ""
+      lines << "# Popular Entries (last 30 days)"
+
+      entries.each.with_index(1) do |entry, i|
+        lines << "#{i}. #{entry.title} - #{article_collector.build_url_for(entry)}"
+        lines << "  published_at: #{entry.created_at}"
+        lines << "  blurb: #{entry.summary}"
+        lines << "  page_views: #{entry.pv}"
+      end
+
+      lines.join("\n")
+    end
 
     def default_sleep_secs
       (env['SLEEP_SECS'] || '7').to_f
