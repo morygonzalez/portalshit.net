@@ -6,6 +6,7 @@ module.exports = {
   mode: 'production',
   entry: {
     index: './src/index.js',
+    chat: './src/chat/index.js',
   },
   output: {
     filename: '[name]-[hash].js',

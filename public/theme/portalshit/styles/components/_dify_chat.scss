@@ -1,0 +1,504 @@
+// =============================================================================
+// Dify chat widget (floating bubble)
+// =============================================================================
+
+.dify-chat-widget {
+  position: fixed;
+  right: 1.2em;
+  bottom: 1.2em;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .8em;
+  text-align: left;
+
+  --dify-chat-bg: #{$dark-main-background-color};
+  --dify-chat-fg: #{$dark-font-color};
+  --dify-chat-border: rgba(255, 255, 255, .12);
+  --dify-chat-accent: #{$dark-hover-link-color};
+  --dify-chat-bubble-bg: #{$footer-bg-color};
+  --dify-chat-user-bubble-bg: #{$dark-hover-link-color};
+  --dify-chat-input-bg: rgba(0, 0, 0, .3);
+
+  html.light-mode & {
+    --dify-chat-bg: #fff;
+    --dify-chat-fg: #16160e;
+    --dify-chat-border: rgba(0, 0, 0, .1);
+    --dify-chat-accent: #{$light-hover-link-color};
+    --dify-chat-bubble-bg: #{$footer-bg-color};
+    --dify-chat-user-bubble-bg: #{$light-hover-link-color};
+    --dify-chat-input-bg: #f2f2f2;
+  }
+}
+
+.dify-chat-launcher {
+  position: relative;
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--dify-chat-bubble-bg);
+  color: #fff;
+  font-size: 1.4em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &.is-open {
+    background-color: var(--dify-chat-accent);
+  }
+}
+
+.dify-chat-panel {
+  position: relative;
+  width: 480px;
+  max-width: calc(100vw - 2.4em);
+  height: 720px;
+  max-height: calc(100vh - 6em);
+  display: flex;
+  flex-direction: column;
+  background: var(--dify-chat-bg);
+  color: var(--dify-chat-fg);
+  border: 1px solid var(--dify-chat-border);
+  border-radius: $radius * 2;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+  overflow: hidden;
+  transition: width .15s ease, height .15s ease;
+
+  &.is-fullscreen {
+    position: fixed;
+    inset: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    transition: none;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .7em 1em;
+    border-bottom: 1px solid var(--dify-chat-border);
+    font-weight: 600;
+  }
+
+  &__close {
+    border: none;
+    background: none;
+    color: var(--dify-chat-fg);
+    opacity: .7;
+    font-size: 1em;
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .4em .8em;
+    border-bottom: 1px solid var(--dify-chat-border);
+  }
+
+  &__reset {
+    border: none;
+    background: none;
+    color: var(--dify-chat-fg);
+    opacity: .7;
+    font-size: .8em;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__footer {
+    border-top: 1px solid var(--dify-chat-border);
+    padding: .6em .8em;
+    display: flex;
+    align-items: center;
+    gap: .5em;
+  }
+}
+
+.dify-chat-size-switcher {
+  display: flex;
+  gap: .25em;
+
+  button {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--dify-chat-border);
+    background: none;
+    color: var(--dify-chat-fg);
+    border-radius: $radius;
+    font-size: .75em;
+    cursor: pointer;
+    opacity: .75;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &.is-active {
+      opacity: 1;
+      border-color: var(--dify-chat-accent);
+      color: var(--dify-chat-accent);
+    }
+  }
+}
+
+.dify-chat-resize-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  touch-action: none;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 7px;
+    height: 7px;
+    border-top: 2px solid var(--dify-chat-border);
+    border-left: 2px solid var(--dify-chat-border);
+    opacity: .7;
+  }
+
+  &:hover::before {
+    opacity: 1;
+    border-color: var(--dify-chat-accent);
+  }
+}
+
+.dify-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: .8em;
+
+  .dify-chat-panel.is-fullscreen & {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+.dify-chat-message {
+  max-width: 85%;
+  padding: .6em .9em;
+  border-radius: $radius * 2;
+  font-size: .92em;
+  line-height: 1.5;
+  @include _word-break;
+
+  &--user {
+    align-self: flex-end;
+    background-color: var(--dify-chat-user-bubble-bg);
+    color: #fff;
+  }
+
+  &--assistant {
+    align-self: flex-start;
+    background-color: var(--dify-chat-input-bg);
+  }
+
+  // フルスクリーン時は記事本文 (#content .body) と同じ組版に揃える
+  // (em は直近の親基準になるため、.92em を打ち消すにはここで上書きする)
+  .dify-chat-panel.is-fullscreen & {
+    font-size: 1em;
+    line-height: 180%;
+  }
+
+  &__body {
+    max-width: 780px;
+
+    p {
+      margin: 0 0 .6em;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    pre, code {
+      font-family: $code-font;
+      font-size: $code-font-size;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: .6em;
+      border-radius: $radius;
+      background: rgba(0, 0, 0, .25);
+    }
+
+    a .fa-link {
+      margin-right: .35em;
+      font-size: .85em;
+    }
+
+    .dify-chat-panel.is-fullscreen & p {
+      margin: 1.5em 0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__typing {
+    display: flex;
+    gap: .3em;
+    padding: .2em 0;
+
+    span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: .4;
+      animation: dify-chat-typing 1s infinite ease-in-out;
+
+      &:nth-child(2) { animation-delay: .15s; }
+      &:nth-child(3) { animation-delay: .3s; }
+    }
+  }
+
+  &__error {
+    margin-top: .4em;
+    color: #ff8a8a;
+    font-size: .85em;
+  }
+
+  &__citations {
+    margin: .6em 0 0;
+    padding-left: 1.2em;
+    font-size: .8em;
+    opacity: .75;
+
+    .fa-link {
+      margin-right: .35em;
+      font-size: .9em;
+    }
+  }
+}
+
+@keyframes dify-chat-typing {
+  0%, 80%, 100% { opacity: .3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+
+.dify-chat-error {
+  margin: 0 1em .6em;
+  padding: .5em .8em;
+  border-radius: $radius;
+  background: rgba(255, 0, 0, .15);
+  color: #ff8a8a;
+  font-size: .85em;
+}
+
+.dify-chat-suggested {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4em;
+  padding: 0 1em .6em;
+
+  &__item {
+    border: 1px solid var(--dify-chat-border);
+    background: none;
+    color: var(--dify-chat-fg);
+    border-radius: $radius * 3;
+    padding: .35em .8em;
+    font-size: .8em;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--dify-chat-accent);
+      color: var(--dify-chat-accent);
+    }
+  }
+}
+
+.dify-chat-input {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  gap: .4em;
+  background: var(--dify-chat-input-bg);
+  border-radius: $radius * 2;
+  padding: .3em .3em .3em .8em;
+
+  textarea {
+    flex: 1;
+    resize: none;
+    overflow-y: auto;
+    border: none;
+    background: none;
+    color: var(--dify-chat-fg);
+    font-size: .9em;
+    line-height: 1.4;
+    max-height: 6em;
+    padding: .4em 0;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__send {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--dify-chat-accent);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:disabled {
+      opacity: .4;
+      cursor: default;
+    }
+  }
+}
+
+.dify-chat-stop {
+  border: 1px solid var(--dify-chat-border);
+  background: none;
+  color: var(--dify-chat-fg);
+  border-radius: $radius * 3;
+  padding: .4em .9em;
+  font-size: .8em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dify-chat-ogp {
+  display: flex;
+  align-items: stretch;
+  gap: .8em;
+  margin: .6em 0;
+  padding: .6em;
+  border: 1px solid var(--dify-chat-border);
+  border-radius: $radius;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+
+  &:hover {
+    border-color: var(--dify-chat-accent);
+  }
+
+  &__image,
+  &__image-skeleton {
+    flex: 0 0 88px;
+    width: 88px;
+    height: 88px;
+    border-radius: $radius;
+    object-fit: cover;
+    background-color: rgba(128, 128, 128, .2);
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .3em;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: .95em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  &__description {
+    font-size: .82em;
+    opacity: .75;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  &__host {
+    font-size: .75em;
+    opacity: .6;
+
+    .fa-link {
+      margin-right: .35em;
+    }
+  }
+
+  &--loading {
+    cursor: default;
+
+    .dify-chat-ogp__title {
+      opacity: .6;
+    }
+  }
+
+  &--fallback {
+    display: inline-flex;
+    align-items: center;
+    padding: .3em .6em;
+
+    .fa-link {
+      margin-right: .35em;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .dify-chat-widget {
+    right: .6em;
+    bottom: .6em;
+  }
+
+  .dify-chat-panel {
+    width: calc(100vw - 1.2em) !important;
+    height: calc(100vh - 5.5em) !important;
+  }
+
+  .dify-chat-resize-handle {
+    display: none;
+  }
+}
