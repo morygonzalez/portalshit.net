@@ -156,7 +156,7 @@ module Dify
       puts "[update_year] done."
     end
 
-    def sync_popular!(limit: nil, sleep_secs: nil, retries: nil, chunk_delimiter: nil)
+    def sync_popular!(limit: nil, sleep_secs: nil, retries: nil)
       limit = (limit || env['POPULAR_LIMIT'] || 20).to_i
       entries = Entry.popular(limit: limit)
 
@@ -167,12 +167,11 @@ module Dify
         entries: entries,
         compose: ->(delimiter) { compose_popular_text(entries, delimiter: delimiter) },
         sleep_secs: sleep_secs,
-        retries: retries,
-        chunk_delimiter: chunk_delimiter
+        retries: retries
       )
     end
 
-    def sync_hatena_bookmark!(limit: nil, sleep_secs: nil, retries: nil, chunk_delimiter: nil)
+    def sync_hatena_bookmark!(limit: nil, sleep_secs: nil, retries: nil)
       limit = (limit || env['HATENA_BOOKMARK_LIMIT'] || 20).to_i
       entries = Entry.hotentry(limit: limit)
 
@@ -183,30 +182,48 @@ module Dify
         entries: entries,
         compose: ->(delimiter) { compose_hatena_bookmark_text(entries, delimiter: delimiter) },
         sleep_secs: sleep_secs,
-        retries: retries,
-        chunk_delimiter: chunk_delimiter
+        retries: retries
       )
     end
 
     private
 
-    def sync_popular_document!(label:, doc_name:, period:, entries:, compose:, sleep_secs:, retries:, chunk_delimiter:)
+    # ランキングの並び順がそのまま重要度として誤読されるのを防ぐため、
+    # 個別記事ごとに分割せず常に1ドキュメント=1チャンクとして送る。
+    # separator に本文中に出現しない文字列を使うことで分割自体を無効化する。
+    def single_chunk_process_rule
+      {
+        mode: 'custom',
+        rules: {
+          pre_processing_rules: [],
+          segmentation: {
+            max_tokens: (env['POPULAR_CHUNK_MAX_TOKENS'] || 8000).to_i,
+            chunk_overlap: 0,
+            separators: ["NOSPLIT_SEPARATOR_9f3d2a1c"],
+            separator: "NOSPLIT_SEPARATOR_9f3d2a1c",
+            strategy: 'separator'
+          }
+        }
+      }
+    end
+
+    def sync_popular_document!(label:, doc_name:, period:, entries:, compose:, sleep_secs:, retries:)
       popular_dataset_client.ensure_credentials!
 
       retries    = (retries || default_retries).to_i
       sleep_secs = (sleep_secs || default_sleep_secs).to_f
-      chunking   = build_chunking_config(chunk_size: nil, chunk_delimiter: chunk_delimiter)
-      text = compose.call(chunking.delimiter)
+      text = compose.call("\n---\n\n")
+      process_rule = single_chunk_process_rule
 
       name2id = build_name_to_docid_map(popular_dataset_client)
       doc_id  = name2id[doc_name]
 
       with_retry(retries) do
         if doc_id
-          popular_dataset_client.update_document_by_text!(document_id: doc_id, name: doc_name, text: text, process_rule: chunking.process_rule)
+          popular_dataset_client.update_document_by_text!(document_id: doc_id, name: doc_name, text: text, process_rule: process_rule)
           puts "[#{label}] updated #{doc_name} (#{doc_id}) items=#{entries.size}"
         else
-          doc_id = popular_dataset_client.create_document_by_text!(name: doc_name, text: text, process_rule: chunking.process_rule)
+          doc_id = popular_dataset_client.create_document_by_text!(name: doc_name, text: text, process_rule: process_rule)
           puts "[#{label}] created #{doc_name} (#{doc_id}) items=#{entries.size}"
         end
       end
