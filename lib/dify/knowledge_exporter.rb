@@ -157,7 +157,7 @@ module Dify
     end
 
     def sync_popular!(limit: nil, sleep_secs: nil, retries: nil)
-      limit = (limit || env['POPULAR_LIMIT'] || 20).to_i
+      limit = (limit || env['POPULAR_LIMIT'] || 10).to_i
       entries = Entry.popular(limit: limit)
 
       sync_popular_document!(
@@ -172,7 +172,7 @@ module Dify
     end
 
     def sync_hatena_bookmark!(limit: nil, sleep_secs: nil, retries: nil)
-      limit = (limit || env['HATENA_BOOKMARK_LIMIT'] || 20).to_i
+      limit = (limit || env['HATENA_BOOKMARK_LIMIT'] || 8).to_i
       entries = Entry.hotentry(limit: limit)
 
       sync_popular_document!(
@@ -191,13 +191,15 @@ module Dify
     # ランキングの並び順がそのまま重要度として誤読されるのを防ぐため、
     # 個別記事ごとに分割せず常に1ドキュメント=1チャンクとして送る。
     # separator に本文中に出現しない文字列を使うことで分割自体を無効化する。
+    # Dify の custom segment 長は 50〜4000 の範囲でなければならない制約があるため、
+    # 4000 を超えないよう limit（記事件数）側で本文サイズを抑える必要がある。
     def single_chunk_process_rule
       {
         mode: 'custom',
         rules: {
           pre_processing_rules: [],
           segmentation: {
-            max_tokens: (env['POPULAR_CHUNK_MAX_TOKENS'] || 8000).to_i,
+            max_tokens: (env['POPULAR_CHUNK_MAX_TOKENS'] || 4000).to_i,
             chunk_overlap: 0,
             separators: ["NOSPLIT_SEPARATOR_9f3d2a1c"],
             separator: "NOSPLIT_SEPARATOR_9f3d2a1c",
