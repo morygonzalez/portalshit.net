@@ -123,7 +123,25 @@ module Dify
       documents
     end
 
+    def delete_document!(document_id)
+      response = http_delete("/v1/datasets/#{dataset_id}/documents/#{document_id}")
+      code = response.code.to_i
+      raise "delete document failed #{response.code} #{response.body}" unless code == 200 || code == 204
+
+      response
+    end
+
     private
+
+    def http_delete(path)
+      uri = URI.join(api_base, path)
+      request = Net::HTTP::Delete.new(uri)
+      request['Authorization'] = "Bearer #{dataset_token}"
+
+      Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        http.request(request)
+      end
+    end
 
     def http_get(path, query = {})
       uri = URI.join(api_base, path)
