@@ -12,7 +12,7 @@ process_ip_to_ignore() {
     | grep -viP "${UA_TO_IGNORE}" \
     | grep -viP "${REFERER_TO_IGNORE}" \
     | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
-    | cut -f2 | sed -e 's/remote_addr://' \
+    | cut -f3 | sed -e 's/remote_addr://' \
     | sed -e 's/\?.*//' | grep -vP '^/$' \
     | sort | uniq -c | sort -nr | head -200 | sed -r 's/^[ \t]+//g' \
     | sed -e 's/^[[:digit:]]\+\s//' \
