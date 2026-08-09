@@ -93,4 +93,13 @@ namespace :knowledge do
     exporter = Dify::KnowledgeExporter.new
     exporter.sync_popular!(limit: args[:limit])
   end
+
+  # はてなブックマーク人気記事を popular とは別ドキュメントとして Dify データセットに同期
+  # 使い方:
+  #   POPULAR_DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:hatena_bookmark[20]"
+  desc 'はてなブックマーク人気記事を Dify データセットに同期'
+  task :hatena_bookmark, [:limit] do |_, args|
+    exporter = Dify::KnowledgeExporter.new
+    exporter.sync_hatena_bookmark!(limit: args[:limit])
+  end
 end

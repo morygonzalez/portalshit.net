@@ -36,4 +36,4 @@ docker run --rm \
   -v "$ENV_FILE:/app/.env" \
   --workdir /app \
   morygonzalez/portalshit:latest \
-  bundle exec rake knowledge:popular
+  bundle exec rake knowledge:popular knowledge:hatena_bookmark

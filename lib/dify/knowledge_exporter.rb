@@ -157,41 +157,70 @@ module Dify
     end
 
     def sync_popular!(limit: nil, sleep_secs: nil, retries: nil, chunk_delimiter: nil)
+      limit = (limit || env['POPULAR_LIMIT'] || 20).to_i
+      entries = Entry.popular(limit: limit)
+
+      sync_popular_document!(
+        label: 'sync_popular',
+        doc_name: 'popular',
+        period: 'recent_30d',
+        entries: entries,
+        compose: ->(delimiter) { compose_popular_text(entries, delimiter: delimiter) },
+        sleep_secs: sleep_secs,
+        retries: retries,
+        chunk_delimiter: chunk_delimiter
+      )
+    end
+
+    def sync_hatena_bookmark!(limit: nil, sleep_secs: nil, retries: nil, chunk_delimiter: nil)
+      limit = (limit || env['HATENA_BOOKMARK_LIMIT'] || 20).to_i
+      entries = Entry.hotentry(limit: limit)
+
+      sync_popular_document!(
+        label: 'sync_hatena_bookmark',
+        doc_name: 'hatena_bookmark',
+        period: 'hatena_bookmark',
+        entries: entries,
+        compose: ->(delimiter) { compose_hatena_bookmark_text(entries, delimiter: delimiter) },
+        sleep_secs: sleep_secs,
+        retries: retries,
+        chunk_delimiter: chunk_delimiter
+      )
+    end
+
+    private
+
+    def sync_popular_document!(label:, doc_name:, period:, entries:, compose:, sleep_secs:, retries:, chunk_delimiter:)
       popular_dataset_client.ensure_credentials!
 
-      limit      = (limit || env['POPULAR_LIMIT'] || 20).to_i
       retries    = (retries || default_retries).to_i
       sleep_secs = (sleep_secs || default_sleep_secs).to_f
       chunking   = build_chunking_config(chunk_size: nil, chunk_delimiter: chunk_delimiter)
-
-      entries = Entry.popular(limit: limit)
-      text = compose_popular_text(entries, delimiter: chunking.delimiter)
+      text = compose.call(chunking.delimiter)
 
       name2id = build_name_to_docid_map(popular_dataset_client)
-      doc_id  = name2id['popular']
+      doc_id  = name2id[doc_name]
 
       with_retry(retries) do
         if doc_id
-          popular_dataset_client.update_document_by_text!(document_id: doc_id, name: 'popular', text: text, process_rule: chunking.process_rule)
-          puts "[sync_popular] updated popular (#{doc_id}) items=#{entries.size}"
+          popular_dataset_client.update_document_by_text!(document_id: doc_id, name: doc_name, text: text, process_rule: chunking.process_rule)
+          puts "[#{label}] updated #{doc_name} (#{doc_id}) items=#{entries.size}"
         else
-          doc_id = popular_dataset_client.create_document_by_text!(name: 'popular', text: text, process_rule: chunking.process_rule)
-          puts "[sync_popular] created popular (#{doc_id}) items=#{entries.size}"
+          doc_id = popular_dataset_client.create_document_by_text!(name: doc_name, text: text, process_rule: chunking.process_rule)
+          puts "[#{label}] created #{doc_name} (#{doc_id}) items=#{entries.size}"
         end
       end
 
       with_retry(retries) do
         popular_dataset_client.update_documents_metadata!(
-          [{ document_id: doc_id, metadata: { 'period' => 'recent_30d', 'count' => entries.size } }]
+          [{ document_id: doc_id, metadata: { 'period' => period, 'count' => entries.size } }]
         )
-        puts "[sync_popular] updated metadata for popular (#{doc_id})"
+        puts "[#{label}] updated metadata for #{doc_name} (#{doc_id})"
       end
 
       sleep sleep_secs
-      puts "[sync_popular] done."
+      puts "[#{label}] done."
     end
-
-    private
 
     def compose_popular_text(entries, delimiter:)
       header = "[period: recent_30d] [last_updated_at: #{Date.today}]\n\n# Popular Entries (last 30 days)"
@@ -202,6 +231,22 @@ module Dify
             published_at: #{entry.created_at}
             blurb: #{entry.summary}
             page_views: #{entry.pv}
+        TXT
+      end
+
+      ([header] + blocks).join(delimiter)
+    end
+
+    def compose_hatena_bookmark_text(entries, delimiter:)
+      header = "[period: hatena_bookmark] [last_updated_at: #{Date.today}]\n\n# Hatena Bookmark Popular Entries"
+
+      blocks = entries.each.with_index(1).map do |entry, i|
+        <<~TXT.chomp
+          #{i}. #{entry.title} - #{article_collector.build_url_for(entry)}
+            published_at: #{entry.created_at}
+            blurb: #{entry.summary}
+            bookmark_count: #{entry.bookmark_count}
+            bookmark_url: #{entry.bookmark_url}
         TXT
       end
 
