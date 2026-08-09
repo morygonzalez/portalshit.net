@@ -179,7 +179,7 @@ module Dify
       sync_popular_document!(
         label: 'sync_hatena_bookmark',
         doc_name: 'hatena_bookmark',
-        period: 'hatena_bookmark',
+        period: 'all_time',
         entries: entries,
         compose: ->(delimiter) { compose_hatena_bookmark_text(entries, delimiter: delimiter) },
         sleep_secs: sleep_secs,
@@ -223,7 +223,12 @@ module Dify
     end
 
     def compose_popular_text(entries, delimiter:)
-      header = "[period: recent_30d] [last_updated_at: #{Date.today}]\n\n# Popular Entries (last 30 days)"
+      header = <<~TXT.chomp
+        # 直近30日 アクセス数ランキング（直近の人気度）
+        このドキュメントは直近30日間のページビュー（アクセス数）に基づいて記事をランキングしたものです。直近どの記事が読まれているか、直近の人気度を示す指標です。
+        話題になった度合い・反響の大きさを知りたい場合は、はてなブックマーク数に基づく別ドキュメント「hatena_bookmark」を参照してください。
+        last_updated_at: #{Date.today}
+      TXT
 
       blocks = entries.each.with_index(1).map do |entry, i|
         <<~TXT.chomp
@@ -238,7 +243,12 @@ module Dify
     end
 
     def compose_hatena_bookmark_text(entries, delimiter:)
-      header = "[period: hatena_bookmark] [last_updated_at: #{Date.today}]\n\n# Hatena Bookmark Popular Entries"
+      header = <<~TXT.chomp
+        # はてなブックマーク数ランキング（反響の大きさ）
+        このドキュメントははてなブックマークのブックマーク数に基づいて記事をランキングしたものです。特定の期間に限らない累積の値で、話題になった度合い・反響の大きさを示す指標です。
+        直近どの記事が読まれているか、直近の人気度を知りたい場合はアクセス数に基づく別ドキュメント「popular」を参照してください。
+        last_updated_at: #{Date.today}
+      TXT
 
       blocks = entries.each.with_index(1).map do |entry, i|
         <<~TXT.chomp
