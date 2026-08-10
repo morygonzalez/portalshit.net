@@ -81,6 +81,8 @@
   &.is-fullscreen {
     position: fixed;
     inset: 0;
+    // ボーダー分 (2px) がビューポートからはみ出さないようにする
+    box-sizing: border-box;
     width: 100vw !important;
     height: 100vh !important;
     height: 100dvh !important;
@@ -203,6 +205,9 @@
 .dify-chat-messages {
   flex: 1;
   overflow-y: auto;
+  // フルスクリーン時に width: 100% を指定するため、padding が
+  // パネル幅からはみ出さないよう border-box にしておく
+  box-sizing: border-box;
   padding: 1em;
   display: flex;
   flex-direction: column;
@@ -499,11 +504,13 @@
     bottom: .6em;
   }
 
+  // 通常はスクリプト側 (useIsMobile) がフルスクリーン (.is-fullscreen) を
+  // 強制するため、以下は matchMedia が使えない環境向けのフォールバック。
+  // ウィジェットは画面下端を基準に上へ伸びるため、ランチャーバブル (56px) と
+  // gap (.8em) + 上下の余白 (1.2em) を差し引かないとヘッダーが画面上部にはみ出す。
+  // iOS Safari では 100vh が URL バー分だけ大きいので dvh を優先する
   .dify-chat-panel {
     width: calc(100vw - 1.2em) !important;
-    // ウィジェットは画面下端を基準に上へ伸びるため、ランチャーバブル (56px) と
-    // gap (.8em) + 上下の余白 (1.2em) を差し引かないとヘッダーが画面上部にはみ出す。
-    // iOS Safari では 100vh が URL バー分だけ大きいので dvh を優先する
     height: calc(100vh - 56px - 2em) !important;
     height: calc(100dvh - 56px - 2em) !important;
   }
@@ -514,8 +521,16 @@
 
   // スマートフォンでは常に画面いっぱいに表示するのでサイズ切り替えは不要。
   // 「新しい会話」ボタンだけを右寄せで残す
+  // (通常はスクリプト側で描画自体をスキップする)
   .dify-chat-size-switcher {
     display: none;
+  }
+
+  // iOS Safari は font-size が 16px 未満の入力欄にフォーカスすると
+  // 自動でズームしてしまう。モバイルの body は 15px (.9em = 13.5px) のため
+  // ここで 16px に引き上げてズームを防ぐ
+  .dify-chat-input textarea {
+    font-size: 16px;
   }
 
   .dify-chat-panel__toolbar {
