@@ -63,7 +63,11 @@
   width: 480px;
   max-width: calc(100vw - 2.4em);
   height: 720px;
+  // iOS Safari の 100vh は URL バーを隠した状態 (large viewport) の高さになるため、
+  // 実際に見えている領域より大きくなりパネル上部が画面外にはみ出す。
+  // dvh (dynamic viewport) を使い、非対応ブラウザ向けに vh をフォールバックとして残す
   max-height: calc(100vh - 6em);
+  max-height: calc(100dvh - 6em);
   display: flex;
   flex-direction: column;
   background: var(--dify-chat-bg);
@@ -79,8 +83,10 @@
     inset: 0;
     width: 100vw !important;
     height: 100vh !important;
+    height: 100dvh !important;
     max-width: 100vw;
     max-height: 100vh;
+    max-height: 100dvh;
     border-radius: 0;
     transition: none;
   }
@@ -487,7 +493,7 @@
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 640px) {
   .dify-chat-widget {
     right: .6em;
     bottom: .6em;
@@ -495,10 +501,30 @@
 
   .dify-chat-panel {
     width: calc(100vw - 1.2em) !important;
-    height: calc(100vh - 5.5em) !important;
+    // ウィジェットは画面下端を基準に上へ伸びるため、ランチャーバブル (56px) と
+    // gap (.8em) + 上下の余白 (1.2em) を差し引かないとヘッダーが画面上部にはみ出す。
+    // iOS Safari では 100vh が URL バー分だけ大きいので dvh を優先する
+    height: calc(100vh - 56px - 2em) !important;
+    height: calc(100dvh - 56px - 2em) !important;
   }
 
   .dify-chat-resize-handle {
     display: none;
+  }
+
+  // スマートフォンでは常に画面いっぱいに表示するのでサイズ切り替えは不要。
+  // 「新しい会話」ボタンだけを右寄せで残す
+  .dify-chat-size-switcher {
+    display: none;
+  }
+
+  .dify-chat-panel__toolbar {
+    justify-content: flex-end;
+    padding: .3em .8em;
+  }
+
+  // 縦幅を稼ぐためヘッダーを詰める
+  .dify-chat-panel__header {
+    padding: .5em .8em;
   }
 }
