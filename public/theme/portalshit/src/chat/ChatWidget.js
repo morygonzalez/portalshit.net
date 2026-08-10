@@ -51,12 +51,23 @@ const ChatWidget = () => {
     if (hydratedRef.current) return
     hydratedRef.current = true
 
+    let parameters
     try {
-      const parameters = await fetchParameters()
-      parametersRef.current = parameters
-      setOpeningSuggestions(parameters.suggested_questions || [])
+      parameters = await fetchParameters()
+    } catch (_e) {
+      setError('チャットの初期化に失敗しました')
+      return
+    }
 
-      if (conversationIdRef.current) {
+    parametersRef.current = parameters
+    setOpeningSuggestions(parameters.suggested_questions || [])
+
+    // 保存済みの会話 ID は localStorage に残り続けるため、Dify 側で会話が
+    // 削除されていたりアプリを作り直していたりすると履歴取得が 404 になる。
+    // その場合は会話 ID を捨てて新しい会話として開き直す
+    // (ここで失敗してもオープナーの表示は妨げない)
+    if (conversationIdRef.current) {
+      try {
         const history = await fetchHistory({
           conversationId: conversationIdRef.current,
           user: userIdRef.current
@@ -75,13 +86,14 @@ const ChatWidget = () => {
           setMessages(historyMessages)
           return
         }
+      } catch (_e) {
+        conversationIdRef.current = null
+        setStoredConversationId(null)
       }
+    }
 
-      if (parameters.opening_statement) {
-        setMessages([{ id: nextId(), role: 'assistant', content: parameters.opening_statement }])
-      }
-    } catch (_e) {
-      setError('チャットの初期化に失敗しました')
+    if (parameters.opening_statement) {
+      setMessages([{ id: nextId(), role: 'assistant', content: parameters.opening_statement }])
     }
   }, [])
 
@@ -222,6 +234,11 @@ const ChatWidget = () => {
     )
   }, [])
 
+  // Dify の「開始質問」はユーザーがまだ発言していない間だけ出す。
+  // messages.length で判定すると、オープナーを設定した時点で messages が
+  // 1件になり開始質問が一度も表示されなくなってしまう
+  const hasUserMessage = messages.some((message) => message.role === 'user')
+
   // スマートフォンでは画面が狭くサイズ切り替えの意味がないため、
   // 常にフルスクリーン (「大」モード相当) にする。ランチャーバブルは
   // 非表示になり、閉じるのはヘッダーの × ボタンから
@@ -261,7 +278,7 @@ const ChatWidget = () => {
           {error && <div className="dify-chat-error">{error}</div>}
 
           <SuggestedQuestions
-            questions={messages.length === 0 ? openingSuggestions : suggestedQuestions}
+            questions={hasUserMessage ? suggestedQuestions : openingSuggestions}
             onSelect={handleSend}
           />
 
