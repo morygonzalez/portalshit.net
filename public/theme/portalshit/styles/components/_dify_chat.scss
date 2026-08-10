@@ -277,6 +277,13 @@
     .dify-chat-panel.is-fullscreen & p {
       margin: 1.5em 0;
 
+      // 段落間だけを空けたいので、バブルの上下端では余白を殺す。
+      // first-child を外すと先頭の段落に 1.5em の上マージンが残り、
+      // バブル内の上だけに余白ができてしまう
+      &:first-child {
+        margin-top: 0;
+      }
+
       &:last-child {
         margin-bottom: 0;
       }
