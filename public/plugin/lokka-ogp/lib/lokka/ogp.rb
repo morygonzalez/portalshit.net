@@ -39,4 +39,7 @@ class Entry
   alias short_body ogp_fetched_short_body
 end
 
-Faraday.default_connection = Faraday.new(headers: { user_agent: 'OpenGraphReader' })
+Faraday.default_connection = Faraday.new(
+  headers: { user_agent: 'OpenGraphReader' },
+  request: { open_timeout: 5, timeout: 5 }
+)

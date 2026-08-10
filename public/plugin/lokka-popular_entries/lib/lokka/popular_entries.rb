@@ -147,17 +147,19 @@ class Entry
       dir = File.expand_path('tmp/popular_entries')
       FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
       cache_path = File.join(dir, "hatena-bookmark.cache")
-      cache_file = File.open(cache_path, 'w+')
-      cached_content = cache_file.read
 
-      if File.mtime(cache_path) > Time.now - 1.hour && cached_content.present?
-        slugs = Marshal.load(cached_content)
-      else
-        slugs = retrieve_bookmarks
-        Marshal.dump(slugs, cache_file)
-      end
+      slugs =
+        if File.exist?(cache_path) && File.mtime(cache_path) > Time.now - 1.hour
+          Marshal.load(File.read(cache_path))
+        else
+          begin
+            retrieve_bookmarks.tap {|result| File.write(cache_path, Marshal.dump(result)) }
+          rescue StandardError
+            raise unless File.exist?(cache_path)
 
-      cache_file.close
+            Marshal.load(File.read(cache_path))
+          end
+        end
 
       entries = includes(:category, :tags).published.where(slug: slugs.keys)
       entries = entries.sort_by {|entry| slugs.keys.index(entry.slug) }
@@ -172,7 +174,7 @@ class Entry
     def retrieve_bookmarks
       ua = 'AppleWebKit/604.5.6 (KHTML, like Gecko) Reeder/3.1.2 Safari/604.5.6'
       url = 'https://b.hatena.ne.jp/site/portalshit.net/?sort=count&mode=rss'
-      content = URI.open(url, 'User-Agent' => ua).read
+      content = URI.open(url, 'User-Agent' => ua, open_timeout: 5, read_timeout: 5).read
       parsed = Hash.from_xml(content)
 
       slugs = parsed['RDF']['item'].each_with_object({}) do |item, result|

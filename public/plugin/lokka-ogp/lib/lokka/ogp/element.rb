@@ -99,7 +99,7 @@ module Lokka
 
       def doc
         @doc ||= begin
-                   connection = Faraday.new do |builder|
+                   connection = Faraday.new(request: { open_timeout: 5, timeout: 5 }) do |builder|
                      builder.response :follow_redirects
                      builder.adapter Faraday.default_adapter
                    end
@@ -111,7 +111,7 @@ module Lokka
       end
 
       def oembed_result
-        connection = Faraday.new do |builder|
+        connection = Faraday.new(request: { open_timeout: 5, timeout: 5 }) do |builder|
           builder.response :follow_redirects
           builder.adapter Faraday.default_adapter
         end
