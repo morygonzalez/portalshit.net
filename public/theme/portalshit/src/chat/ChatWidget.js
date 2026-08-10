@@ -243,7 +243,7 @@ const ChatWidget = () => {
           {!isFullscreen && <ResizeHandle panelRef={panelRef} onResizeEnd={handleResizeEnd} />}
 
           <div className="dify-chat-panel__header">
-            <span>チャット</span>
+            <span>ポータルシット問いかけ君</span>
             <button type="button" className="dify-chat-panel__close" onClick={handleClose} aria-label="チャットを閉じる">
               <i className="fas fa-times" />
             </button>
