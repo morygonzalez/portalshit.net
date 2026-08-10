@@ -2,6 +2,7 @@
 
 require 'open-uri'
 require 'fileutils'
+require 'tempfile'
 require 'faraday_middleware'
 require 'addressable'
 
@@ -62,8 +63,12 @@ module Lokka
 
       def create
         FileUtils.mkdir_p(CACHE_DIR)
-        File.open(cache_path, 'w') do |file|
-          file.puts html
+        content = html
+        Tempfile.create(['ogp-', '.tmp'], CACHE_DIR) do |file|
+          file.write(content)
+          file.flush
+          file.fsync
+          File.rename(file.path, cache_path)
         end
         true
       rescue Errno::ENAMETOOLONG => e

@@ -114,16 +114,24 @@ module Lokka
 
         begin
           fetcher = Lokka::OGP::Fetcher.new(url)
-          fetcher.fetch
-          element = fetcher.element
+          # lokka-ogp が1か月保存しているカードHTMLを読み取る。Element の
+          # title/description/image を再度呼ぶと、キャッシュが存在していても
+          # OpenGraphReader が外部サイトへ再アクセスしてしまう。
+          doc = Nokogiri::HTML.fragment(fetcher.cached_html.to_s)
+          card = doc.at_css('.ogp')
 
-          cache_control :public, max_age: 3600
+          title = card&.at_css('.ogp-summary h3')&.text
+          description = card&.at_css('.ogp-summary .description')&.text
+          image = card&.at_css('.ogp-image img')&.[]('src')
+          host = card&.at_css('.ogp-summary .host')&.text
+
+          cache_control :public, max_age: 2_592_000
           {
             url: url,
-            title: element.title.to_s,
-            description: element.description.to_s,
-            image: Lokka::DifyChat.secure_image_url(element.image),
-            host: element.host.to_s
+            title: title.to_s,
+            description: description.to_s,
+            image: image.to_s,
+            host: host.presence || parsed.host.to_s
           }.to_json
         rescue StandardError => e
           logger.error("[dify_chat] ogp fetch failed: #{e.class}: #{e.message}") if respond_to?(:logger)

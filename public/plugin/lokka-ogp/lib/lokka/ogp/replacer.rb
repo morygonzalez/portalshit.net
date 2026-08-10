@@ -23,11 +23,7 @@ module Lokka
               url = node.xpath('./a').first.attributes["href"].value
               next if url.blank?
               fetcher = Lokka::OGP::Fetcher.new(url)
-              if fetcher.fetch
-                element = fetcher.element
-                path = "#{Lokka.root}/tmp/ogp/#{element.uname}"
-                html = File.open(path).read
-              end
+              html = fetcher.cached_html
               node.replace(html)
             end
             doc.to_s.html_safe
