@@ -5,6 +5,7 @@ import ChatInput from './ChatInput'
 import SuggestedQuestions from './SuggestedQuestions'
 import ResizeHandle from './ResizeHandle'
 import SizeSwitcher from './SizeSwitcher'
+import useIsMobile from './useIsMobile'
 import { SIZE_PRESETS, DEFAULT_SIZE_MODE } from './sizePresets'
 import { streamChatMessage, fetchParameters, fetchHistory, fetchSuggested, stopMessage } from './api'
 import {
@@ -31,6 +32,7 @@ const ChatWidget = () => {
   const [sizeMode, setSizeMode] = useState(() => (
     getStoredSizeMode() || (getStoredPanelSize() ? 'custom' : DEFAULT_SIZE_MODE)
   ))
+  const isMobile = useIsMobile()
 
   const panelRef = useRef(null)
   const userIdRef = useRef(null)
@@ -220,7 +222,10 @@ const ChatWidget = () => {
     )
   }, [])
 
-  const isFullscreen = sizeMode === 'large'
+  // スマートフォンでは画面が狭くサイズ切り替えの意味がないため、
+  // 常にフルスクリーン (「大」モード相当) にする。ランチャーバブルは
+  // 非表示になり、閉じるのはヘッダーの × ボタンから
+  const isFullscreen = isMobile || sizeMode === 'large'
   const panelDimensions = isFullscreen
     ? undefined
     : sizeMode === 'custom' && panelSize
@@ -245,7 +250,7 @@ const ChatWidget = () => {
           </div>
 
           <div className="dify-chat-panel__toolbar">
-            <SizeSwitcher sizeMode={sizeMode} onChange={handleSizeModeChange} />
+            {!isMobile && <SizeSwitcher sizeMode={sizeMode} onChange={handleSizeModeChange} />}
             <button type="button" className="dify-chat-panel__reset" onClick={handleNewConversation}>
               新しい会話
             </button>
