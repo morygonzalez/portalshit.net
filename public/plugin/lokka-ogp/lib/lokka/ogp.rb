@@ -3,6 +3,8 @@
 require 'fastimage'
 require 'open_graph_reader'
 require_relative 'ogp/generator'
+require_relative 'ogp/card'
+require_relative 'ogp/local_entry'
 require_relative 'ogp/fetcher'
 require_relative 'ogp/helpers'
 require_relative 'ogp/replacer'
@@ -17,6 +19,10 @@ module Lokka
       app.helpers OGP::Helpers
 
       app.before do
+        # 本文中のリンクが自サイト宛かどうかの判定に使う。これがあるので
+        # 開発環境の localhost などは設定なしで自ホストとして扱われる。
+        RequestStore[:ogp_self_host] ||= request.host
+
         content_for :header do
           ogp.merge(twitter_card).to_meta_tags
         end
