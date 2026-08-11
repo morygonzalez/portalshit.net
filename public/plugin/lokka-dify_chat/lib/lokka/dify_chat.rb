@@ -113,26 +113,47 @@ module Lokka
         halt 400, { error: 'invalid url' }.to_json unless parsed.is_a?(URI::HTTP)
 
         begin
-          fetcher = Lokka::OGP::Fetcher.new(url)
-          # lokka-ogp が1か月保存しているカードHTMLを読み取る。Element の
-          # title/description/image を再度呼ぶと、キャッシュが存在していても
-          # OpenGraphReader が外部サイトへ再アクセスしてしまう。
-          doc = Nokogiri::HTML.fragment(fetcher.cached_html.to_s)
-          card = doc.at_css('.ogp')
+          # 自サイトの記事は Puma のスレッドを自己リクエストで塞がないよう、
+          # HTTP を一切発行せず DB から直接カード情報を組み立てる。チャットが
+          # 自サイトの記事を引用するたびに自分自身へ GET しに行っていたのが
+          # 過去の 504 の原因。
+          if Lokka::OGP::LocalEntry.self_host?(url)
+            local = Lokka::OGP::LocalEntry.find_entry(url)&.then {|entry| Lokka::OGP::LocalEntry.new(entry, url) }
+            halt 404, { error: 'entry not found' }.to_json if local.nil?
 
-          title = card&.at_css('.ogp-summary h3')&.text
-          description = card&.at_css('.ogp-summary .description')&.text
-          image = card&.at_css('.ogp-image img')&.[]('src')
-          host = card&.at_css('.ogp-summary .host')&.text
+            cache_control :public, max_age: 2_592_000
+            {
+              url: url,
+              title: local.title,
+              description: local.description,
+              image: local.image_url,
+              host: local.host
+            }.to_json
+          else
+            fetcher = Lokka::OGP::Fetcher.new(url)
+            # lokka-ogp が1か月保存しているカードHTMLを読み取る。Element の
+            # title/description/image を再度呼ぶと、キャッシュが存在していても
+            # OpenGraphReader が外部サイトへ再アクセスしてしまう。
+            html = fetcher.cached_html
+            halt 404, { error: 'card not available' }.to_json if html.blank?
 
-          cache_control :public, max_age: 2_592_000
-          {
-            url: url,
-            title: title.to_s,
-            description: description.to_s,
-            image: image.to_s,
-            host: host.presence || parsed.host.to_s
-          }.to_json
+            doc = Nokogiri::HTML.fragment(html)
+            card = doc.at_css('.ogp')
+
+            title = card&.at_css('.ogp-summary h3')&.text
+            description = card&.at_css('.ogp-summary .description')&.text
+            image = card&.at_css('.ogp-image img')&.[]('src')
+            host = card&.at_css('.ogp-summary .host')&.text
+
+            cache_control :public, max_age: 2_592_000
+            {
+              url: url,
+              title: title.to_s,
+              description: description.to_s,
+              image: image.to_s,
+              host: host.presence || parsed.host.to_s
+            }.to_json
+          end
         rescue StandardError => e
           logger.error("[dify_chat] ogp fetch failed: #{e.class}: #{e.message}") if respond_to?(:logger)
           status 502

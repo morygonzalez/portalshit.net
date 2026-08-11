@@ -9,6 +9,8 @@ require 'addressable'
 module Lokka
   module OGP
     class Element
+      include Card
+
       CACHE_DIR = "#{Lokka.root}/tmp/ogp"
 
       attr_reader :url
@@ -146,46 +148,15 @@ module Lokka
           doc&.xpath('//head/meta[@name="description"]')&.first.try(:[], 'content')&.to_s
       end
 
-      def secure_image
-        if use_proxy?
-          "https://portalshit.net/imageproxy/200/#{image}"
-        else
-          image
-        end
-      end
-
-      def use_proxy?
-        exclude_regexp = /(githubusercontent|=\d|token=\w+)/
-        image.to_s.start_with?('http') && !image.to_s.match(exclude_regexp)
-      end
-
       def html
-        template = if youtube?
-                     <<~ERUBY
-                       <div class="iframe-container youtube">
-                         <%= oembed_result['html'] %>
-                       </div>
-                     ERUBY
-                   else
-                     <<~ERUBY
-                       <div class="ogp">
-                         <a href="<%= url %>" class="ogp-link" target="_parent">
-                           <div class="ogp-element">
-                             <div class="ogp-image">
-                               <img src="<%= secure_image %>" alt="<%= html_escape(title) %>" />
-                             </div>
-                             <div class="ogp-summary">
-                               <h3><%= html_escape(title) %></h3>
-                               <p class="description"><%= html_escape(description) %></p>
-                               <p class="host"><%= host %></p>
-                             </div>
-                           </div>
-                         </a>
-                       </div>
-                     ERUBY
-                   end
-        erb = ERB.new(template)
-        erb.result(binding)
+        return card_html unless youtube?
+
+        template = <<~ERUBY
+          <div class="iframe-container youtube">
+            <%= oembed_result['html'] %>
+          </div>
+        ERUBY
+        ERB.new(template).result(binding)
       end
     end
   end
