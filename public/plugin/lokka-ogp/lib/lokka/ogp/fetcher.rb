@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'timeout'
+
 module Lokka
   module OGP
     class Fetcher
@@ -19,7 +21,9 @@ module Lokka
           lock.flock(File::LOCK_EX)
           return true if element.exist?
 
-          element.create
+          # 外部サイトへの複数回の逐次リクエストが積み重なって Puma のスレッドを
+          # 長時間占有しないよう、取得処理全体に上限時間を設ける。
+          Timeout.timeout(8) { element.create }
         end
       rescue URI::InvalidURIError => e
         puts e.message

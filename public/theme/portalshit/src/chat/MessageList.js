@@ -64,7 +64,9 @@ const splitIntoLines = (inlineTokens) => {
 const isStandaloneLinkLine = (line) => line.length === 1 && line[0].type === 'link'
 
 // メッセージ本文を「通常のMarkdown HTML」と「OGPカード」のセグメント列に分割する
-const buildSegments = (text, linkTitleMap) => {
+// pending (ストリーミング中) の間は、まだ完成していないURLを繰り返しOGPカード化・
+// フェッチしてしまうのを避けるため、単独リンク行もOGPカード化せず通常のリンクとして描画する
+const buildSegments = (text, linkTitleMap, pending) => {
   const blockTokens = marked.lexer(text || '', { breaks: true, gfm: true })
   const renderer = buildRenderer(linkTitleMap)
   const segments = []
@@ -94,7 +96,7 @@ const buildSegments = (text, linkTitleMap) => {
     splitIntoLines(token.tokens).forEach((line) => {
       if (line.length === 0) return
 
-      if (isStandaloneLinkLine(line)) {
+      if (!pending && isStandaloneLinkLine(line)) {
         const link = line[0]
         flushHtml()
         segments.push({
@@ -120,8 +122,8 @@ const Message = ({ message }) => {
     [message.citations]
   )
   const segments = useMemo(
-    () => buildSegments(message.content, linkTitleMap),
-    [message.content, linkTitleMap]
+    () => buildSegments(message.content, linkTitleMap, message.pending),
+    [message.content, linkTitleMap, message.pending]
   )
 
   if (message.role === 'user') {
