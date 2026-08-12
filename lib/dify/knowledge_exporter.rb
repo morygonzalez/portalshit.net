@@ -157,7 +157,7 @@ module Dify
     end
 
     def sync_popular!(limit: nil, sleep_secs: nil, retries: nil)
-      limit = (limit || env['POPULAR_LIMIT'] || 10).to_i
+      limit = (limit || env['POPULAR_LIMIT'] || 5).to_i
       entries = Entry.popular(limit: limit)
 
       sync_popular_document!(
@@ -172,7 +172,7 @@ module Dify
     end
 
     def sync_hatena_bookmark!(limit: nil, sleep_secs: nil, retries: nil)
-      limit = (limit || env['HATENA_BOOKMARK_LIMIT'] || 8).to_i
+      limit = (limit || env['HATENA_BOOKMARK_LIMIT'] || 5).to_i
       entries = Entry.hotentry(limit: limit)
 
       sync_popular_document!(
