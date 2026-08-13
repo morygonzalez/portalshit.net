@@ -26,6 +26,9 @@
         border-radius: 4px;
         font-size: 16px;
         background: #ffffff;
+        // 背景がモードによらず白なので、文字色やクリアボタンなどブラウザ既定の
+        // 描画も明るい配色で固定する（html 側の `color-scheme` を打ち消す）。
+        color-scheme: light;
 
         &::-webkit-search-cancel-button {
           margin-right: 8px;
