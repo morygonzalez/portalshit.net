@@ -1,0 +1,25 @@
+#!/bin/bash
+# OGP キャッシュ (tmp/ogp) の掃除。
+#
+# Element#exist? は 1 か月より古いキャッシュを無効とみなすので、それより古い
+# ファイルは残しておいても二度と使われない。第三者がユニークな URL を投げ続けて
+# キャッシュファイルを無限に増やす攻撃に対する保険でもある。
+set -eu
+
+readonly APP_DIR="$(dirname "$0")/.."
+readonly CACHE_DIR="${APP_DIR}/tmp/ogp"
+
+if [ ! -d "${CACHE_DIR}" ]; then
+  exit 0
+fi
+
+# カード HTML 本体。ファイル名は URL の MD5 なので拡張子で除外する。
+find "${CACHE_DIR}" -type f ! -name '*.lock' ! -name 'ogp-*.tmp' -mtime +30 -delete
+
+# 中身は空だが、対応するキャッシュが消えた後のロックも一緒に片付ける。
+find "${CACHE_DIR}" -type f -name '*.lock' -mtime +30 -delete
+
+# 取得中にプロセスが落ちて取り残された Tempfile。
+find "${CACHE_DIR}" -type f -name 'ogp-*.tmp' -mtime +1 -delete
+
+exit 0

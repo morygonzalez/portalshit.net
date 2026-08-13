@@ -18,6 +18,10 @@ module Lokka
         return false if LocalEntry.self_host?(url)
         return true if element.exist?
 
+        # 取得先が公開サイトかどうかを名前解決して確かめる。キャッシュに当たる
+        # 場合は DNS を引かせたくないので、exist? の後に置いている。
+        return false unless UrlGuard.safe?(url)
+
         # 同じ URL が同時に表示された場合、各リクエストが外部サイトへ OGP を
         # 取りに行くのを防ぐ。ロック取得後にキャッシュを再確認する。
         FileUtils.mkdir_p(Element::CACHE_DIR)
@@ -34,6 +38,16 @@ module Lokka
         end
       rescue URI::InvalidURIError => e
         puts e.message
+      end
+
+      # 外部への HTTP を一切発行せず、既にあるキャッシュだけを返す。第三者が
+      # URL を指定できる経路（/api/chat/ogp）から呼ぶためのもので、踏み台に
+      # されないよう「新規取得は本文のレンダリング時だけ」に閉じるのが目的。
+      # 期限切れでも表示できるものがあれば返す。
+      def existing_html
+        return nil unless File.exist?(cache_path)
+
+        File.read(cache_path)
       end
 
       def cached_html
