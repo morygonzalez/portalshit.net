@@ -64,30 +64,27 @@ class ThemeObserver {
     }
   }
 
+  // ラベルはサーバー側が i18n で出力したものをそのまま使う。ここで
+  // 書き換えてよいのはアイコンと選択中の項目だけ。
   initThemeMenu()  {
     const button = document.querySelector('.theme button');
     const themeMenuModal = document.querySelector('.theme-menu');
     const colorPreference = this.getColorPreference();
-    let selectedMode, selectedTheme, selectedThemeIcon;
+    let selectedTheme, selectedThemeIcon;
 
-    if (colorPreference) {
-      selectedMode = colorPreference;
-      selectedTheme = selectedMode === 'light-mode' ? 'Light' : 'Dark';
-      selectedThemeIcon = selectedTheme === 'Light' ? 'sun' : 'moon';
-      button.innerHTML = `<i class="far fa-${selectedThemeIcon}"></i><span>Theme</span>`;
+    if (colorPreference === 'light-mode') {
+      selectedTheme = 'light';
+      selectedThemeIcon = 'far fa-sun';
+    } else if (colorPreference === 'dark-mode') {
+      selectedTheme = 'dark';
+      selectedThemeIcon = 'far fa-moon';
     } else {
-      selectedTheme = 'OS Default';
-      selectedThemeIcon = 'adjust';
-      button.innerHTML = '<i class="fas fa-adjust"></i><span>Theme</span>';
+      selectedTheme = 'default';
+      selectedThemeIcon = 'fas fa-adjust';
     }
 
-    if (selectedTheme === 'Light') {
-      themeMenuModal.querySelector('button.theme-light').parentNode.classList.add('selected');
-    } else if (selectedTheme === 'Dark') {
-      themeMenuModal.querySelector('button.theme-dark').parentNode.classList.add('selected');
-    } else {
-      themeMenuModal.querySelector('button.theme-default').parentNode.classList.add('selected');
-    }
+    button.querySelector('i').className = selectedThemeIcon;
+    themeMenuModal.querySelector(`button.theme-${selectedTheme}`).parentNode.classList.add('selected');
   }
 
   observeThemeMenu()  {
