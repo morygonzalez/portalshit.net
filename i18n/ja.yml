@@ -278,11 +278,12 @@ ja:
     nav:
       about: About
       archives: Archives
+      search: Search
     theme_switcher:
-      label: テーマ
-      os_default: OSの設定に従う
-      light: ライト
-      dark: ダーク
+      label: Theme
+      os_default: OS Default
+      light: Light
+      dark: Dark
     section:
       archives_categories: 過去記事・カテゴリー
     categories:
