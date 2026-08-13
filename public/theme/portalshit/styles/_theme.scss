@@ -1,8 +1,25 @@
 // =============================================================================
 // Theme overrides: dark-mode / light-mode
+//
+// クラス指定とメディアクエリの両方を出力する仕組みは
+// styles/_mixins.scss の色モード用ミックスインを参照。
 // =============================================================================
 
+// ブラウザ既定の描画色（キャンバス背景・スクロールバー・フォーム部品）も
+// カラーモードに合わせる。CSS 適用前の白い一瞬を減らす効果もある。
+:root {
+  color-scheme: light dark;
+}
+
 html.dark-mode {
+  color-scheme: dark;
+}
+
+html.light-mode {
+  color-scheme: light;
+}
+
+@include dark-mode-root {
   body {
     color: $dark-font-color;
     text-shadow: -1px -1px -1px #1d1a1a;
@@ -89,7 +106,7 @@ html.dark-mode {
 
 }
 
-html.light-mode {
+@include light-mode-root {
   strong {
     color: $light-emphasis-font-color;
   }

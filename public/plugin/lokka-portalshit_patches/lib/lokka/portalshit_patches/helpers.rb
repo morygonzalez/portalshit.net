@@ -38,6 +38,18 @@ module Lokka
       request.cookies['prefers-color-scheme']
     end
 
+    # `<meta name="color-scheme">` 用の値。
+    # スタイルシートが読み込まれる前のキャンバス背景・スクロールバーの色を
+    # 確定させ、初回描画時のチラつきを抑える。
+    # 明示指定がない場合は OS 設定に従わせる。
+    def color_scheme
+      case color_mode
+      when 'dark-mode' then 'dark'
+      when 'light-mode' then 'light'
+      else 'light dark'
+      end
+    end
+
     def portalshit_manifest
       @portalshit_manifest ||= \
         begin
