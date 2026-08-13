@@ -26,7 +26,41 @@ module Lokka
       end
     end
 
+    # チャット API はサイト上のウィジェットからしか呼ばれない。Origin か
+    # Referer が自サイトのものでなければ拒否することで、curl などでの直叩きを
+    # 落とす。Dify のクレジットを第三者に消費されるのと、/api/chat/ogp を
+    # 踏み台にされるのを防ぐのが目的。
+    #
+    # ブラウザの fetch() は同一オリジンの POST に Origin を、GET に Referer を
+    # 付ける。どちらも無い場合は通さない。
+    def self.same_site_request?(request)
+      source = request.env['HTTP_ORIGIN'].presence || request.referer.presence
+      return false if source.blank?
+
+      host = URI.parse(source.to_s).host.to_s.downcase
+      return false if host.empty?
+
+      allowed_hosts(request).include?(host)
+    rescue URI::Error
+      false
+    end
+
+    # LocalEntry.self_hosts は RequestStore 経由でリクエストホストを含むが、
+    # プラグインの before フィルタの実行順に依存したくないので、ここでも
+    # request.host を明示的に足しておく（開発環境の localhost 対策）。
+    def self.allowed_hosts(request)
+      hosts = Lokka::OGP::LocalEntry.self_hosts
+      hosts + [request.host.to_s.downcase]
+    end
+
     def self.registered(app)
+      app.before '/api/chat/*' do
+        unless Lokka::DifyChat.same_site_request?(request)
+          content_type :json
+          halt 403, { error: 'forbidden' }.to_json
+        end
+      end
+
       app.post '/api/chat/messages' do
         client = Lokka::DifyChat.client
         halt 503, { error: 'chat is not configured' }.to_json unless client.credentials_present?
@@ -131,10 +165,15 @@ module Lokka
             }.to_json
           else
             fetcher = Lokka::OGP::Fetcher.new(url)
-            # lokka-ogp が1か月保存しているカードHTMLを読み取る。Element の
-            # title/description/image を再度呼ぶと、キャッシュが存在していても
-            # OpenGraphReader が外部サイトへ再アクセスしてしまう。
-            html = fetcher.cached_html
+            # lokka-ogp が保存済みのカード HTML を読むだけ。existing_html は
+            # キャッシュが無くても取得しに行かないので、任意の URL を渡して
+            # サーバーに外部サイトを叩かせる踏み台にはできない。新規取得は
+            # 記事本文のレンダリング時だけに閉じている。
+            #
+            # チャットが引用するリンクは記事本文由来なのでレンダリング時に
+            # キャッシュ済み。未キャッシュなら 404 を返し、ウィジェット側は
+            # 素のリンク表示にフォールバックする。
+            html = fetcher.existing_html
             halt 404, { error: 'card not available' }.to_json if html.blank?
 
             doc = Nokogiri::HTML.fragment(html)

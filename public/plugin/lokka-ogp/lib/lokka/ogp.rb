@@ -3,6 +3,7 @@
 require 'fastimage'
 require 'open_graph_reader'
 require_relative 'ogp/generator'
+require_relative 'ogp/url_guard'
 require_relative 'ogp/card'
 require_relative 'ogp/local_entry'
 require_relative 'ogp/fetcher'
@@ -45,7 +46,13 @@ class Entry
   alias short_body ogp_fetched_short_body
 end
 
+# OpenGraphReader は Faraday のデフォルト接続を使うため、ここに SSRF ガードを
+# 挟むことで og:* の取得も検証対象になる。Faraday を使っているのは lokka-ogp
+# だけなので、デフォルト接続を書き換えても他プラグインへの影響はない。
 Faraday.default_connection = Faraday.new(
   headers: { user_agent: 'OpenGraphReader' },
   request: { open_timeout: 5, timeout: 5 }
-)
+) do |builder|
+  builder.use Lokka::OGP::SafeUrlMiddleware
+  builder.adapter Faraday.default_adapter
+end

@@ -1,0 +1,55 @@
+# Dify チャット API のレート制限（nginx 側で設定する）。
+#
+# アプリ側では Origin / Referer が自サイトのものかを見て弾いているが、
+# ヘッダは偽装できるので、これ単体では総量を抑えられない。本番の Puma は
+# workers 2 × threads 2,4 で最大 8 スレッドしかなく、特に SSE で応答する
+# /api/chat/messages は 1 リクエストが応答完了までスレッドを占有するため、
+# 同時接続数を絞らないとサイト全体が 504 になる。
+#
+# 反映方法:
+#   1. http {} の中身を nginx.conf（または conf.d/*.conf）へ
+#   2. server {} の中身を portalshit.net の server ブロックへ
+#   3. sudo nginx -t && sudo systemctl reload nginx
+
+# --- http {} コンテキスト ---------------------------------------------------
+
+# OGP カードはチャットの 1 応答につき数件まとめて飛ぶのでやや緩め。
+limit_req_zone $binary_remote_addr zone=chat_api:10m rate=60r/m;
+
+# メッセージ送信は Dify / OpenAI のクレジットを消費するので厳しめ。
+limit_req_zone $binary_remote_addr zone=chat_messages:10m rate=10r/m;
+
+# SSE の同時接続数。Puma のスレッドを枯渇させないための上限。
+limit_conn_zone $binary_remote_addr zone=chat_conn:10m;
+
+limit_req_status 429;
+limit_conn_status 429;
+
+# --- server {} コンテキスト -------------------------------------------------
+# proxy_pass / proxy_set_header の行は既存の location の設定に合わせること。
+
+location = /api/chat/messages {
+    limit_req zone=chat_messages burst=5 nodelay;
+    limit_conn chat_conn 2;
+
+    # SSE なのでバッファリングとタイムアウトの設定が必要（既存設定があれば流用）
+    proxy_buffering off;
+    proxy_read_timeout 300s;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://app;
+}
+
+location ^~ /api/chat/ {
+    limit_req zone=chat_api burst=20 nodelay;
+    limit_conn chat_conn 4;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://app;
+}

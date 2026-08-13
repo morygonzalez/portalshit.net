@@ -91,6 +91,12 @@ module Lokka
     end
 
     not_found do
+      # JSON API の 404 でテーマの 404 ページを描画しない。パーマリンクの
+      # 探索と全ページのレンダリングはどちらも重く、/api/chat/ogp のように
+      # 「キャッシュが無ければ 404」を日常的に返す経路では無駄が大きい。
+      # halt が入れた JSON のボディをそのまま返す。
+      return body if request.path_info.start_with?('/api/')
+
       if custom_permalink?
         return redirect(request.path.sub(%r{/$}, '')) if %r{/$}.match?(request.path)
 

@@ -101,10 +101,6 @@ module Lokka
 
       def doc
         @doc ||= begin
-                   connection = Faraday.new(request: { open_timeout: 5, timeout: 5 }) do |builder|
-                     builder.response :follow_redirects
-                     builder.adapter Faraday.default_adapter
-                   end
                    response = connection.get(url_to_request)
                    Nokogiri::HTML(response.body)
                  rescue StandardError
@@ -113,12 +109,19 @@ module Lokka
       end
 
       def oembed_result
-        connection = Faraday.new(request: { open_timeout: 5, timeout: 5 }) do |builder|
-          builder.response :follow_redirects
-          builder.adapter Faraday.default_adapter
-        end
         response = connection.get(url_to_request)
         JSON.parse(response.body)
+      end
+
+      # SafeUrlMiddleware を follow_redirects より下に積むことで、リダイレクト
+      # 先の URL も 1 ホップごとに検証される。外部ホストから 127.0.0.1 へ 302
+      # させる SSRF の回避策を塞ぐため、順番を入れ替えないこと。
+      def connection
+        @connection ||= Faraday.new(request: { open_timeout: 5, timeout: 5 }) do |builder|
+          builder.response :follow_redirects
+          builder.use SafeUrlMiddleware
+          builder.adapter Faraday.default_adapter
+        end
       end
 
       def title_fallback
