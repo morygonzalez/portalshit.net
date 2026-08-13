@@ -1,34 +1,17 @@
+// カラーモードの適用は原則 CSS が担当する。
+//
+//   - 明示指定あり … サーバーがクッキーを見て html に `dark-mode` /
+//     `light-mode` クラスを出力する
+//   - 明示指定なし … クラスを付けず、CSS の `prefers-color-scheme`
+//     メディアクエリに任せる
+//
+// JS でクラスを付け外しすると初回描画に間に合わずチラつくため、ここでは
+// テーマメニューの操作とクッキーの読み書きのみを扱う。
 class ThemeObserver {
   constructor() {
     this.initColorMode();
     this.observeThemeMenu();
     this.observeThemeSelect();
-    this.observeOSThemeChange();
-  }
-
-  getCurrentColorMode()  {
-    const colorPreference = this.getColorPreference();
-    let mode;
-
-    if (colorPreference) {
-      mode = colorPreference;
-    } else {
-      mode = this.getOSDefaultColorMode();
-    }
-
-    return mode;
-  }
-
-  getOSDefaultColorMode()  {
-    let mode;
-
-    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      mode = 'light-mode';
-    } else {
-      mode = 'dark-mode';
-    }
-
-    return mode;
   }
 
   getColorPreference()  {
@@ -59,17 +42,25 @@ class ThemeObserver {
     return mode;
   }
 
+  // 通常はサーバーがクッキーを見てクラスを出力済みなので何もしない。
+  // ブラウザキャッシュから復元された HTML など、クッキーとクラスが食い違って
+  // いる場合のみ補正する。明示指定がないときはクラスを付けない（CSS 側の
+  // `prefers-color-scheme` に従わせる）。
   initColorMode()  {
     const colorPreference = this.getColorPreference();
-    const serverDetectedColorMode = this.getServerDetectedColorMode();
 
-    if (serverDetectedColorMode) {
-      // do nothing
-    } else if (!serverDetectedColorMode && colorPreference) {
-      document.documentElement.classList.add(colorPreference);
-    } else if (!serverDetectedColorMode && !colorPreference) {
-      const defaultMode = this.getOSDefaultColorMode();
-      document.documentElement.classList.add(defaultMode);
+    if (this.getServerDetectedColorMode() === colorPreference) {
+      return;
+    }
+
+    this.applyColorMode(colorPreference);
+  }
+
+  applyColorMode(colorMode)  {
+    document.documentElement.classList.remove('light-mode', 'dark-mode');
+
+    if (colorMode) {
+      document.documentElement.classList.add(colorMode);
     }
   }
 
@@ -139,45 +130,15 @@ class ThemeObserver {
     }
   }
 
-  observeOSThemeChange() {
-    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e)  => {
-      const colorPreference = this.getColorPreference();
-
-      if (colorPreference) {
-        return;
-      }
-
-      let newColorMode;
-      const colorModes = ['light-mode', 'dark-mode'];
-
-      if (e.matches) {
-        newColorMode = 'light-mode';
-      } else {
-        newColorMode = 'dark-mode';
-      }
-
-      const currentColorMode = colorModes.find(item => item != newColorMode);
-      document.documentElement.classList.remove(currentColorMode);
-      document.documentElement.classList.add(newColorMode);
-    })
-  }
-
   changeTheme(newColorMode) {
-    const currentColorMode = this.getCurrentColorMode();
-    document.documentElement.classList.remove(currentColorMode);
-
     if (newColorMode) {
       document.cookie = `prefers-color-scheme=${newColorMode};max-age=604800;path=/`;
-      document.documentElement.classList.add(newColorMode);
     } else {
+      // OS 設定に従う。クラスを外すと CSS の `prefers-color-scheme` が効く。
       document.cookie = `prefers-color-scheme=;max-age=0;path=/`;
-      this.fallBackToDefaultTheme();
     }
-  }
 
-  fallBackToDefaultTheme()  {
-    const newColorMode = this.getOSDefaultColorMode();
-    document.documentElement.classList.add(newColorMode);
+    this.applyColorMode(newColorMode);
   }
 }
 

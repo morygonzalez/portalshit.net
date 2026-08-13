@@ -1,3 +1,71 @@
+// =============================================================================
+// Color mode helpers
+//
+// カラーモードの指定は 2 通りある。
+//
+//   1. ユーザーが明示的に選択した場合 … `prefers-color-scheme` クッキーを元に
+//      サーバーが html へ `dark-mode` / `light-mode` クラスを出力する
+//   2. OS 設定に従う場合（クッキーなし） … html にクラスが付かない
+//
+// 2 の場合に JS でクラスを付けていたため、JS が実行されるまで配色が確定せず
+// 画面読み込み時にチラつきが発生していた。クラス指定と同じスタイルを
+// `prefers-color-scheme` メディアクエリでも出力しておくことで、JS を待たずに
+// 初回描画から正しい配色になる。
+//
+// クラスあり（明示指定）とメディアクエリ側の `:not()` は排他なので、
+// 両方がマッチして競合することはない。
+// =============================================================================
+
+// ネスト内で使う（`html.dark-mode &` の置き換え）
+@mixin dark-mode {
+  html.dark-mode & {
+    @content;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not(.light-mode) & {
+      @content;
+    }
+  }
+}
+
+@mixin light-mode {
+  html.light-mode & {
+    @content;
+  }
+
+  @media (prefers-color-scheme: light) {
+    html:not(.dark-mode) & {
+      @content;
+    }
+  }
+}
+
+// トップレベルで使う（`html.dark-mode { ... }` の置き換え）
+@mixin dark-mode-root {
+  html.dark-mode {
+    @content;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not(.light-mode) {
+      @content;
+    }
+  }
+}
+
+@mixin light-mode-root {
+  html.light-mode {
+    @content;
+  }
+
+  @media (prefers-color-scheme: light) {
+    html:not(.dark-mode) {
+      @content;
+    }
+  }
+}
+
 @mixin footer-common {
   margin: 1.5em 0;
   text-align: right;
@@ -91,7 +159,7 @@
       margin-left: -0.2em;
     }
 
-    html.dark-mode & {
+    @include dark-mode {
       text-shadow: $dark-text-shadow-color 0 1px 0;
 
       &:link, &:visited {
@@ -112,7 +180,7 @@
       }
     }
 
-    html.light-mode & {
+    @include light-mode {
       text-shadow: #{$light-text-shadow-color} -0.5px -0.5px 1px !important;
 
       &:link, &:visited {

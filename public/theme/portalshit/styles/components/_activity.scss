@@ -94,7 +94,7 @@
     text-overflow: ellipsis;
   }
 
-  html.dark-mode & {
+  @include dark-mode {
     .activity-stats-grid {
       border-top-color: rgba(255, 255, 255, 0.12);
       border-bottom-color: rgba(255, 255, 255, 0.12);
@@ -109,7 +109,7 @@
     }
   }
 
-  html.light-mode & {
+  @include light-mode {
     .activity-stat-value {
       color: $light-font-color;
     }
@@ -173,7 +173,7 @@
     border-color: rgba(0, 0, 0, 0.35);
   }
 
-  html.dark-mode & {
+  @include dark-mode {
     .metric-button {
       border-color: rgba(255, 255, 255, 0.2);
     }
@@ -261,7 +261,7 @@
     }
   }
 
-  html.dark-mode & {
+  @include dark-mode {
     .range-filter-slider {
       background: rgba(255, 255, 255, 0.15);
     }

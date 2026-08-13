@@ -21,7 +21,7 @@
   --dify-chat-user-bubble-bg: #{$dark-hover-link-color};
   --dify-chat-input-bg: rgba(0, 0, 0, .3);
 
-  html.light-mode & {
+  @include light-mode {
     --dify-chat-bg: #fff;
     --dify-chat-fg: #16160e;
     --dify-chat-border: rgba(0, 0, 0, .1);
