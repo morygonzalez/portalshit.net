@@ -278,6 +278,7 @@ en:
     nav:
       about: About
       archives: Archives
+      search: Search
     theme_switcher:
       label: Theme
       os_default: OS Default
