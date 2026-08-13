@@ -140,6 +140,10 @@
               transform: translate(-50%, 0);
               margin-top: 1px;
               background: $modal-bg-color;
+              // モーダルはモードによらず明るい背景色なので、中のフォーム部品も
+              // ブラウザ既定の明るい配色で描画させる（html 側の `color-scheme`
+              // を打ち消す）。
+              color-scheme: light;
               border-radius: 5px;
               width: 40vw;
               min-width: 640px;
