@@ -7,3 +7,4 @@ BIN="$(dirname "$0")"
 "$BIN/cache_hit_rate" yesterday
 "$BIN/request_time" yesterday
 "$BIN/status_code" yesterday
+"$BIN/chat_api_count" yesterday

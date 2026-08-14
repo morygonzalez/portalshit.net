@@ -7,5 +7,6 @@ BIN="$(dirname "$0")"
 "$BIN/cache_hit_rate" today
 "$BIN/request_time" today
 "$BIN/status_code" today
+"$BIN/chat_api_count" today
 "$BIN/query_term_ranking" all
 "$BIN/query_term_ranking" visitor
