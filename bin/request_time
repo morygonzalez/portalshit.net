@@ -3,6 +3,11 @@
 source "$(dirname "$0")/lib/common.sh"
 
 # リクエストタイム集計処理
+#
+# Dify チャット API（/api/chat/）は除外する。/api/chat/messages は SSE で
+# 応答するため 1 リクエストが数十秒スレッドを占有し、通常のページ表示と
+# 同列に集計すると平均・中央値・最大値が歪むため。呼び出し回数は
+# bin/chat_api_count で別途集計している。
 process_request_time() {
   local period=${1:-"all"}
   local output="${LOG_AGGREGATION_DIR}/nginx-request-time-${period}.txt"
@@ -20,6 +25,7 @@ process_request_time() {
     | grep -v 'upstream_response_time:-' \
     | grep -vP 'request_uri:\S+\.(css|js|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|map)(\?|	)' \
     | grep -v 'request_uri:/imageproxy/' \
+    | grep -v 'request_uri:/api/chat/' \
     | /usr/bin/gawk -f "${awk_script}" \
     | tee "${output}"
 

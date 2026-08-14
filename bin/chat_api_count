@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source "$(dirname "$0")/lib/common.sh"
+
+# Dify チャット API の呼び出し回数集計処理
+#
+# /api/chat/messages は SSE で応答するためリクエストタイム集計からは
+# 除外している（bin/request_time 参照）。代わりに呼び出し回数をここで数える。
+process_chat_api_count() {
+  local period=${1:-"all"}
+  local output="${LOG_AGGREGATION_DIR}/chat-api-count-${period}.txt"
+  local awk_script
+  if [ "$period" = "all" ]; then
+    awk_script="${APP_DIR}/bin/lib/nginx_chat_api_daily.awk"
+  else
+    awk_script="${APP_DIR}/bin/lib/nginx_chat_api_hourly.awk"
+  fi
+
+  echo "Processing Chat API Count ($period)"
+  find "${LOG_DIR}" -name "access.log*" \
+    | xargs zcat -f \
+    | filter_by_date "${period}" \
+    | grep 'request_uri:/api/chat/' \
+    | /usr/bin/gawk -f "${awk_script}" \
+    | tee "${output}"
+
+  echo "Chat API count saved to: ${output}"
+}
+
+# メイン処理
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_chat_api_count
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_chat_api_count "$period"
+        ;;
+      *)
+        echo "Usage: $0 {[YYYY-MM-DD|today|yesterday|all]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"
