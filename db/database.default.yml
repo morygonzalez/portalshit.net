@@ -30,20 +30,24 @@
 # test:
 #   url: <%= ENV['DATABASE_URL'] || "sqlite3://#{root}/db/test.sqlite3" %>
 
+# pool は config/puma.rb の threads の最大値以上にすること。下回るとスレッドが
+# コネクションを取り合って ActiveRecord::ConnectionTimeoutError になる。
 default: &default
-  pool: 5
+  pool: 10
   timeout: 5000
 
 development:
+  <<: *default
   adapter: sqlite3
   database: <%= root %>/db/development.sqlite3
 
 test:
+  <<: *default
   adapter: sqlite3
   database: <%= root %>/db/test.sqlite3
 
 production:
-  <<: &default
+  <<: *default
   adapter: mysql2
   encoding: utf8
   database: lokka
