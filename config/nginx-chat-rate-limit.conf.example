@@ -2,9 +2,13 @@
 #
 # アプリ側では Origin / Referer が自サイトのものかを見て弾いているが、
 # ヘッダは偽装できるので、これ単体では総量を抑えられない。本番の Puma は
-# workers 2 × threads 2,4 で最大 8 スレッドしかなく、特に SSE で応答する
+# workers 1 × threads 2,8 で最大 8 スレッドしかなく、特に SSE で応答する
 # /api/chat/messages は 1 リクエストが応答完了までスレッドを占有するため、
 # 同時接続数を絞らないとサイト全体が 504 になる。
+#
+# アプリ側にも同時ストリーム数の上限（既定 4 本、超過分は 429）があり、
+# そちらが最終的な保険。ここでの制限は Puma までリクエストを届かせないための
+# 前段の防御。
 #
 # 反映方法:
 #   1. http {} の中身を nginx.conf（または conf.d/*.conf）へ
@@ -19,8 +23,13 @@ limit_req_zone $binary_remote_addr zone=chat_api:10m rate=60r/m;
 # メッセージ送信は Dify / OpenAI のクレジットを消費するので厳しめ。
 limit_req_zone $binary_remote_addr zone=chat_messages:10m rate=10r/m;
 
-# SSE の同時接続数。Puma のスレッドを枯渇させないための上限。
+# SSE の同時接続数（IP ごと）。1 人が大量に張るのを防ぐ。
 limit_conn_zone $binary_remote_addr zone=chat_conn:10m;
+
+# SSE の同時接続数（サイト全体）。上の IP ごとの制限では総量を抑えられない
+# ため（別 IP から 4 人来れば 8 スレッドが埋まる）、サイト全体の上限も置く。
+# Puma の 8 スレッドのうち半分までをチャットに許し、残りを記事ページ用に残す。
+limit_conn_zone $server_name zone=chat_conn_global:10m;
 
 limit_req_status 429;
 limit_conn_status 429;
@@ -31,6 +40,7 @@ limit_conn_status 429;
 location = /api/chat/messages {
     limit_req zone=chat_messages burst=5 nodelay;
     limit_conn chat_conn 2;
+    limit_conn chat_conn_global 4;
 
     # SSE なのでバッファリングとタイムアウトの設定が必要（既存設定があれば流用）
     proxy_buffering off;
