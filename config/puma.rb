@@ -31,8 +31,18 @@ if ENV['RACK_ENV'] == 'production'
   before_fork do
     require 'puma_worker_killer'
 
+    # ram は「クラスタ全体に割り当てる RAM」で、実効しきい値は ram * percent_usage。
+    # 768 は worker 2 本時代の値で、workers 1 にした後の実測（master 185MB +
+    # worker 424MB = 609MB）は 768 * 0.80 = 614MB の 99% に達していた。worker が
+    # 数 MB 育っただけで reaper が発火し、しかも worker が 1 本しかないので回収の
+    # たびに数秒の断が出てしまう。
+    #
+    # マシン 1966MB のうち他の常駐（soba-hozuki 226MB + mysqld 165MB + docker や
+    # nginx 等 240MB ≒ 630MB）を引くと portalshit には 900MB 程度まで割ける。
+    # しきい値 720MB なら worker は 535MB まで育ってから回収される計算で、通常
+    # 運用では発火せず、本当に肥大したときだけ効く。
     PumaWorkerKiller.config do |config|
-      config.ram                       = 768 # mb
+      config.ram                       = 900 # mb（クラスタ全体。しきい値は 720MB）
       config.frequency                 = 5   # seconds
       config.percent_usage             = 0.80
       config.rolling_restart_frequency = 6 * 3600 # seconds
