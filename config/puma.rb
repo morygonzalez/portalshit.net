@@ -4,7 +4,6 @@ directory File.expand_path(File.join(File.dirname(__FILE__), '../'))
 rackup 'config.ru'
 
 environment ENV['RACK_ENV'] || 'development'
-port 3000
 
 if ENV['RACK_ENV'] == 'production'
   deploy_dir = File.path('/var/www/app/portalshit')
@@ -22,16 +21,26 @@ if ENV['RACK_ENV'] == 'production'
   preload_app!
 
   worker_timeout 20
-  workers 2
+
+  # メモリ 2GB のサーバーに Lokka を 2 本同居させているため、worker は 1 本に絞る。
+  # CPU は常時 99% アイドルなので worker を増やす意味がなく、worker 1 本ぶんの
+  # RSS（実測 300〜440MB）を解放するほうが効果が大きい。同時処理数は
+  # workers 1 × threads 8 = 8 で、以前の workers 2 × threads 4 と同じ。
+  workers 1
+
   before_fork do
     require 'puma_worker_killer'
 
     PumaWorkerKiller.config do |config|
-      config.ram           = 768 # mb
-      config.frequency     = 5    # seconds
-      config.percent_usage = 0.80
-      config.enable_rolling_restart
+      config.ram                       = 768 # mb
+      config.frequency                 = 5   # seconds
+      config.percent_usage             = 0.80
+      config.rolling_restart_frequency = 6 * 3600 # seconds
     end
+
+    # config だけでは reaper は動かない。start を呼ばないと ram / percent_usage の
+    # 監視が一切行われず、閾値を超えても worker が回収されない。
+    PumaWorkerKiller.start
   end
 
   on_restart do
@@ -40,9 +49,15 @@ if ENV['RACK_ENV'] == 'production'
   end
 
 else
+  # production は unix socket のみで待ち受ける。ここで TCP を開くと nginx を迂回して
+  # 直接叩けてしまい、nginx 側のレート制限・同時接続制限がバイパスされる。
+  port 3000
+
   stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true
   workers 0
   prune_bundler
 end
 
-threads 2,4
+# SSE（/api/chat/messages）は応答完了までスレッドを 1 本占有する。スレッドは I/O 待ちで
+# GVL を解放するので CPU 負荷はほぼ増えない。db/database.yml の pool はこの値以上にすること。
+threads 2, 8
