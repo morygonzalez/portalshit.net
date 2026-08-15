@@ -8,7 +8,15 @@ Restart=always
 RestartSec=5
 
 ExecStartPre=-/usr/bin/docker rm -f imageproxy
-ExecStart=/usr/bin/docker run --name imageproxy -p 8080:8080 ghcr.io/willnorris/imageproxy -addr 0.0.0.0:8080
+# ホスト側は 127.0.0.1 に固定する。imageproxy は nginx の /imageproxy/ 経由でしか
+# 使わないため外部に公開する必要がなく、-p 8080:8080 だと全インターフェースで
+# 待ち受けてしまう。しかも Docker は iptables の DOCKER チェーンに直接ルールを
+# 挿すため、ufw で 8080 を塞いでいても公開ポートは素通りする。
+#
+# コンテナ側の -addr は 0.0.0.0:8080 のままにすること。これはコンテナの
+# ネットワーク名前空間内のアドレスで、Docker のポートフォワードが届くために
+# 必要。ここを 127.0.0.1 にするとコンテナ外から到達できなくなる。
+ExecStart=/usr/bin/docker run --name imageproxy -p 127.0.0.1:8080:8080 ghcr.io/willnorris/imageproxy -addr 0.0.0.0:8080
 ExecStop=/usr/bin/docker stop imageproxy
 
 SyslogIdentifier=imageproxy
