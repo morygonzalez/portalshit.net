@@ -58,7 +58,11 @@ set :bundle_without, %w{test postgresql sqlite batch}.join(' ')
 set :puma_conf, '/var/www/app/portalshit/config/puma.rb'
 set :user, 'app'
 set :puma_systemctl_user, fetch(:user)
-set :puma_service_unit_env_vars, ['RACK_ENV=production', 'RUBYOPT=-EUTF-8']
+# MALLOC_ARENA_MAX: glibc はスレッドごとに独立した malloc arena（最大 64MB）を
+# 作るため、threads 2,8 の構成では未返却メモリが積み上がって RSS が膨らむ。
+# 実測では worker の RSS 316MB のうち 283MB（89.6%）が匿名メモリで、起動直後の
+# ベースライン 123MB から +160MB 育っていた。arena を 2 個に絞って抑える。
+set :puma_service_unit_env_vars, ['RACK_ENV=production', 'RUBYOPT=-EUTF-8', 'MALLOC_ARENA_MAX=2']
 set :puma_access_log, '/var/www/app/portalshit/log/puma_access.log'
 set :puma_error_log, '/var/www/app/portalshit/log/puma_error.log'
 
