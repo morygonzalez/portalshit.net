@@ -13,20 +13,10 @@ module Lokka
         }
       }
 
+      # インデックス本体は Search.index が持つ。ここで set :search_index に
+      # proc を渡すと、Sinatra は proc をゲッターの本体そのものにするため
+      # 参照するたびに Tantiny::Index を開き直すことになる。
       set :search_index_path , File.join(Lokka.root, 'tmp', 'index')
-
-      set :search_index, -> {
-        Tantiny::Index.new(search_index_path) do
-          id :id
-          string :title
-          text :title_tokenized
-          facet :category
-          text :category_tokenized
-          text :tags
-          text :body
-          date :date
-        end
-      }
     end
 
     set :asset_version,

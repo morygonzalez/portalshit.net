@@ -3,6 +3,46 @@
 require 'spec_helper'
 
 RSpec.describe Search do
+  # Tantiny::Index は開くたびにファイルディスクリプタと mmap を消費するので、
+  # 1 プロセスに 1 つだけであることを固定する。以前は Sinatra の
+  # set :search_index に proc を渡しており、参照するたびに開き直る形だった。
+  describe '.index' do
+    around do |example|
+      Search.instance_variable_set(:@index, nil)
+      example.run
+      Search.instance_variable_set(:@index, nil)
+    end
+
+    it 'returns the same object every time' do
+      allow(Search).to receive(:build_index).and_return(Object.new)
+
+      expect(Search.index).to equal(Search.index)
+    end
+
+    it 'builds the index only once no matter how many times it is read' do
+      allow(Search).to receive(:build_index).and_return(Object.new)
+
+      5.times { Search.index }
+
+      expect(Search).to have_received(:build_index).once
+    end
+
+    it 'builds the index only once under concurrent access' do
+      # 生成に時間がかかる状況を作り、ロックが無ければ複数スレッドが
+      # それぞれ開いてしまうことを検出する。
+      allow(Search).to receive(:build_index) do
+        sleep 0.01
+        Object.new
+      end
+
+      results = Queue.new
+      Array.new(8) { Thread.new { results << Search.index } }.each(&:join)
+      indexes = Array.new(results.size) { results.pop }
+
+      expect(indexes.uniq.size).to eq 1
+    end
+  end
+
   describe '#search_type' do
     it 'returns :tag for tag: prefix' do
       expect(Search.new('tag:ruby').search_type).to eq(:tag)

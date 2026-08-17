@@ -1,9 +1,20 @@
 require 'tokenizer'
 
 class Search
-  @@index = Lokka::App.search_index
+  INDEX_MUTEX = Mutex.new
 
   class << self
+    # Tantiny::Index は 1 プロセスに 1 つだけ持つ。開くたびにファイル
+    # ディスクリプタと mmap を消費するので、二重生成は避ける。
+    #
+    # 初回参照まで遅らせているのは、preload_app! を使っていると
+    # クラス定義時＝fork 前の master で開くことになるため。worker 側で
+    # 開き直すほうが fork を跨いだ状態の継承がなく安全で、テスト実行時に
+    # 実インデックスを開いてしまう副作用もなくなる。
+    def index
+      @index || INDEX_MUTEX.synchronize { @index ||= build_index }
+    end
+
     def query(query, limit = 10)
       instance = self.new(query, limit)
       instance.result
@@ -15,7 +26,7 @@ class Search
       body_tokenized = Tokenizer.run(entry.raw_body).join(' ')
       category_tokenized = Tokenizer.run(entry.category.title).join(' ') if entry.category
 
-      @@index << {
+      index << {
         id: entry.id,
         title: entry.title,
         title_tokenized: title_tokenized,
@@ -26,7 +37,22 @@ class Search
         date: entry.created_at
       }
 
-      @@index.reload
+      index.reload
+    end
+
+    private
+
+    def build_index
+      Tantiny::Index.new(Lokka::App.search_index_path) do
+        id :id
+        string :title
+        text :title_tokenized
+        facet :category
+        text :category_tokenized
+        text :tags
+        text :body
+        date :date
+      end
     end
   end
 
@@ -97,13 +123,13 @@ class Search
   end
 
   def exec_query(keyword)
-    @@index.send(query_type, fields, keyword)
+    index.send(query_type, fields, keyword)
   end
 
   def queries
     case keywords.length
     when 0
-      @@index.empty_query
+      index.empty_query
     when 1
       exec_query(keywords[0])
     else
@@ -116,9 +142,15 @@ class Search
 
   def result
     if limit
-      @@index.search(queries, limit: limit)
+      index.search(queries, limit: limit)
     else
-      @@index.search(queries)
+      index.search(queries)
     end
+  end
+
+  private
+
+  def index
+    Search.index
   end
 end
