@@ -1,7 +1,9 @@
 #!/bin/bash
 #
 # imageproxy のサムネイル配信を「imageproxy 直」「nginx 経由」の 2 層で叩いて、
-# どちらの層で壊れているかを切り分ける。
+# どちらの層で壊れているかを切り分ける。あわせて、nginx が壊れたパスを
+# upstream へ転写していないか（config/nginx-imageproxy.conf.example 参照）を
+# 判定する。
 #
 # 使い方:
 #   bin/check_imageproxy                       # 既定の画像・既定のオプションで確認
@@ -18,53 +20,46 @@ SITE_URL="${SITE_URL:-https://portalshit.net}"
 REMOTE_URL="${1:-https://portalshit.net/theme/portalshit/ogp_image.png}"
 OPTIONS="${2:-x400}"
 
+body_file="/tmp/check_imageproxy.$$"
+err_file="/tmp/check_imageproxy_err.$$"
+trap 'rm -f "${body_file}" "${err_file}"' EXIT
+
 exit_status=0
+last_body=''
+last_content_type=''
 
 probe() {
   local label="$1"
   local url="$2"
-  local response status content_type body
+  local response status
 
   echo "== ${label}"
   echo "   GET ${url}"
 
-  if ! response=$(curl -sS --max-time 20 -o "/tmp/check_imageproxy.$$" \
-    -w '%{http_code} %{content_type}' "${url}" 2>"/tmp/check_imageproxy_err.$$"); then
-    echo "   => 接続失敗: $(cat "/tmp/check_imageproxy_err.$$")"
-    rm -f "/tmp/check_imageproxy.$$" "/tmp/check_imageproxy_err.$$"
+  last_body=''
+  last_content_type=''
+
+  if ! response=$(curl -sS --path-as-is --max-time 20 -o "${body_file}" \
+    -w '%{http_code} %{content_type}' "${url}" 2>"${err_file}"); then
+    echo "   => 接続失敗: $(cat "${err_file}")"
     exit_status=1
     echo
     return
   fi
-  rm -f "/tmp/check_imageproxy_err.$$"
 
   status="${response%% *}"
-  content_type="${response#* }"
-  echo "   => ${status} ${content_type} ($(wc -c < "/tmp/check_imageproxy.$$") bytes)"
+  last_content_type="${response#* }"
+  echo "   => ${status} ${last_content_type} ($(wc -c < "${body_file}") bytes)"
 
-  case "${content_type}" in
+  case "${last_content_type}" in
     image/*)
       ;;
     *)
-      exit_status=1
-      body=$(head -c 500 "/tmp/check_imageproxy.$$")
+      last_body=$(head -c 500 "${body_file}")
       echo "   -- レスポンス本文 --"
-      echo "${body}" | sed 's/^/   /'
-      # imageproxy のエラーには「imageproxy が受け取ったリクエスト URI」が
-      # そのまま入っている。ここが /<オプション>/<リモートURL> になっていない
-      # なら、パスを壊しているのは imageproxy ではなく手前の nginx。
-      case "${body}" in
-        *'malformed URL'*)
-          echo "   -- ヒント --"
-          echo "   引用符内が imageproxy の受け取ったパス。"
-          echo "   /${OPTIONS}/... 以外（例: //imageproxy/${OPTIONS}/...）になっていれば"
-          echo "   nginx の proxy_pass 設定が原因。config/nginx-imageproxy.conf.example を参照。"
-          ;;
-      esac
+      echo "${last_body}" | sed 's/^/   /'
       ;;
   esac
-
-  rm -f "/tmp/check_imageproxy.$$"
   echo
 }
 
@@ -72,16 +67,41 @@ echo "リモート画像: ${REMOTE_URL}"
 echo "変換オプション: ${OPTIONS}"
 echo
 
-# 1. imageproxy に直接。ここが 200 なら imageproxy 本体とネットワークは健全で、
+# 1. imageproxy に直接。ここが 200 なら imageproxy 本体と外部への到達性は健全で、
 #    問題は nginx 側にある。
 probe "imageproxy 直 (${IMAGEPROXY_ADDR})" \
   "http://${IMAGEPROXY_ADDR}/${OPTIONS}/${REMOTE_URL}"
+case "${last_content_type}" in
+  image/*) ;;
+  *) exit_status=1 ;;
+esac
 
 # 2. nginx 経由。テーマや各プラグインが HTML に埋めているのはこの形。
 probe "nginx 経由 (${SITE_URL})" \
   "${SITE_URL}/imageproxy/${OPTIONS}/${REMOTE_URL}"
+case "${last_content_type}" in
+  image/*) ;;
+  *) exit_status=1 ;;
+esac
 
-# 3. nginx に入っている /imageproxy/ の設定を表示する（読めれば）。
+# 3. パスに /imageproxy/ が 2 回現れる壊れたリクエスト。
+#    nginx が $request_uri を rewrite で転写している設定だと、余った
+#    /imageproxy/ ごと upstream に渡って
+#      malformed URL "//imageproxy/..."
+#    になる。転写していなければ imageproxy が素直に 400 を返すだけで、
+#    引用符内が // で始まることはない。
+probe "壊れたパスの扱い（nginx が転写していないかの確認）" \
+  "${SITE_URL}/imageproxy//imageproxy/${OPTIONS}/${REMOTE_URL}"
+case "${last_body}" in
+  *'malformed URL "//'*)
+    exit_status=1
+    echo "   !! nginx が壊れたパスを upstream に転写している。"
+    echo "   !! config/nginx-imageproxy.conf.example の location に差し替えること。"
+    echo
+    ;;
+esac
+
+# 4. nginx に入っている /imageproxy/ の設定を表示する（読めれば）。
 if command -v nginx >/dev/null 2>&1; then
   echo "== nginx の /imageproxy/ 設定"
   if nginx -T 2>/dev/null | grep -q imageproxy; then
