@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# imageproxy のサムネイル配信を「imageproxy 直」「nginx 経由」の 2 層で叩いて、
+# どちらの層で壊れているかを切り分ける。
+#
+# 使い方:
+#   bin/check_imageproxy                       # 既定の画像・既定のオプションで確認
+#   bin/check_imageproxy <画像URL> [オプション] # 例: bin/check_imageproxy https://... x400
+#
+# 環境変数:
+#   IMAGEPROXY_ADDR  imageproxy の待ち受け先（既定 127.0.0.1:8080）
+#   SITE_URL         nginx 経由で叩くサイト URL（既定 https://portalshit.net）
+
+set -u
+
+IMAGEPROXY_ADDR="${IMAGEPROXY_ADDR:-127.0.0.1:8080}"
+SITE_URL="${SITE_URL:-https://portalshit.net}"
+REMOTE_URL="${1:-https://portalshit.net/theme/portalshit/ogp_image.png}"
+OPTIONS="${2:-x400}"
+
+exit_status=0
+
+probe() {
+  local label="$1"
+  local url="$2"
+  local response status content_type body
+
+  echo "== ${label}"
+  echo "   GET ${url}"
+
+  if ! response=$(curl -sS --max-time 20 -o "/tmp/check_imageproxy.$$" \
+    -w '%{http_code} %{content_type}' "${url}" 2>"/tmp/check_imageproxy_err.$$"); then
+    echo "   => 接続失敗: $(cat "/tmp/check_imageproxy_err.$$")"
+    rm -f "/tmp/check_imageproxy.$$" "/tmp/check_imageproxy_err.$$"
+    exit_status=1
+    echo
+    return
+  fi
+  rm -f "/tmp/check_imageproxy_err.$$"
+
+  status="${response%% *}"
+  content_type="${response#* }"
+  echo "   => ${status} ${content_type} ($(wc -c < "/tmp/check_imageproxy.$$") bytes)"
+
+  case "${content_type}" in
+    image/*)
+      ;;
+    *)
+      exit_status=1
+      body=$(head -c 500 "/tmp/check_imageproxy.$$")
+      echo "   -- レスポンス本文 --"
+      echo "${body}" | sed 's/^/   /'
+      # imageproxy のエラーには「imageproxy が受け取ったリクエスト URI」が
+      # そのまま入っている。ここが /<オプション>/<リモートURL> になっていない
+      # なら、パスを壊しているのは imageproxy ではなく手前の nginx。
+      case "${body}" in
+        *'malformed URL'*)
+          echo "   -- ヒント --"
+          echo "   引用符内が imageproxy の受け取ったパス。"
+          echo "   /${OPTIONS}/... 以外（例: //imageproxy/${OPTIONS}/...）になっていれば"
+          echo "   nginx の proxy_pass 設定が原因。config/nginx-imageproxy.conf.example を参照。"
+          ;;
+      esac
+      ;;
+  esac
+
+  rm -f "/tmp/check_imageproxy.$$"
+  echo
+}
+
+echo "リモート画像: ${REMOTE_URL}"
+echo "変換オプション: ${OPTIONS}"
+echo
+
+# 1. imageproxy に直接。ここが 200 なら imageproxy 本体とネットワークは健全で、
+#    問題は nginx 側にある。
+probe "imageproxy 直 (${IMAGEPROXY_ADDR})" \
+  "http://${IMAGEPROXY_ADDR}/${OPTIONS}/${REMOTE_URL}"
+
+# 2. nginx 経由。テーマや各プラグインが HTML に埋めているのはこの形。
+probe "nginx 経由 (${SITE_URL})" \
+  "${SITE_URL}/imageproxy/${OPTIONS}/${REMOTE_URL}"
+
+# 3. nginx に入っている /imageproxy/ の設定を表示する（読めれば）。
+if command -v nginx >/dev/null 2>&1; then
+  echo "== nginx の /imageproxy/ 設定"
+  if nginx -T 2>/dev/null | grep -q imageproxy; then
+    nginx -T 2>/dev/null | grep -n -A 12 'location .*imageproxy' | sed 's/^/   /'
+  else
+    echo "   nginx -T を読めなかった（sudo nginx -T | grep -A 12 imageproxy を手で実行する）"
+  fi
+  echo
+fi
+
+if [ "${exit_status}" -ne 0 ]; then
+  echo "画像を返せていない層がある。上の出力を確認すること。"
+fi
+
+exit "${exit_status}"

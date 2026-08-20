@@ -1,0 +1,95 @@
+# imageproxy（/imageproxy/ 配下）を nginx から proxy する設定。
+#
+# ## 症状
+#
+# サムネイルの代わりに imageproxy のエラーが返る:
+#
+#   invalid request URL: malformed URL
+#   "//imageproxy/x400/https://resources.portalshit.net/xxxxxxxx":
+#   must provide absolute remote URL
+#
+# ## 原因の読み方
+#
+# imageproxy の URLError は「imageproxy が受け取ったリクエスト URI」をそのまま
+# %q で出す（data.go の URLError.Error）。つまり上のエラーが出ているとき、
+# nginx は upstream へ
+#
+#   //imageproxy/x400/https://resources.portalshit.net/xxxxxxxx
+#
+# を投げている。imageproxy 側の解釈は次のとおり:
+#
+#   1. 先頭のスラッシュを 1 つだけ落とす → /imageproxy/x400/https://...
+#   2. 絶対 URL ではないので「最初のセグメント = 変換オプション」として分割
+#      → オプション "" ／ リモート URL "imageproxy/x400/https://..."
+#   3. リモート URL が相対パスなので must provide absolute remote URL
+#
+# 本来 imageproxy に届くべきパスは
+#
+#   /x400/https://resources.portalshit.net/xxxxxxxx
+#
+# であり、実際には (a) /imageproxy/ プレフィックスが剥がれていない、
+# (b) 先頭にスラッシュが 1 つ多い、の 2 つが同時に起きている。これは
+# proxy_pass の URI 部に $request_uri や $uri を足したときの典型的な結果
+# （"/" + "/imageproxy/x400/..." = "//imageproxy/x400/..."）。
+#
+#   # これをやると壊れる
+#   location /imageproxy/ {
+#       proxy_pass http://127.0.0.1:8080/$request_uri;
+#   }
+#
+# nginx は proxy_pass に URI 部（末尾の "/" 以降）を書けば location にマッチ
+# した分を自動で差し替えるので、$request_uri / $uri を足す必要はない。
+#
+# imageproxy 本体（willnorris.com/go/imageproxy）に各パスを食わせた結果:
+#
+#   //imageproxy/x400/https://resources...  => 報告されたエラーと完全に一致
+#   /imageproxy/x400/https://resources...   => 同じエラー（スラッシュ 1 つ違い）
+#   /x400/https://resources...              => OK
+#   /x400/https:/resources...               => OK（merge_slashes で潰れても復元される）
+#
+# ## 反映方法
+#
+#   1. 下の location を portalshit.net の server ブロックへ（既存の
+#      /imageproxy/ 用 location があれば置き換える）
+#   2. sudo nginx -t && sudo systemctl reload nginx
+#   3. bin/check_imageproxy で imageproxy 直・nginx 経由の 2 層を確認
+
+# --- server {} コンテキスト -------------------------------------------------
+
+location /imageproxy/ {
+    # location と proxy_pass の両方に末尾スラッシュを付けること。これで
+    # /imageproxy/x400/https://... → /x400/https://... に差し替えられる。
+    # 末尾スラッシュを片方でも落とすとパスがずれて上記のエラーになる。
+    #
+    # $request_uri / $uri は絶対に足さない（原因の項を参照）。
+    #
+    # imageproxy はホストの 127.0.0.1:8080 でだけ待ち受けている
+    # （config/imageproxy.service）。公開 IP やホスト名を書くと届かない。
+    proxy_pass http://127.0.0.1:8080/;
+
+    # リモート URL 中の "https://" は nginx の merge_slashes（既定 on）で
+    # "https:/" に潰れるが、imageproxy 側が ^(https?):/+ を復元するため実害は
+    # ない。merge_slashes off にはしないこと。off にすると "//imageproxy/..."
+    # のような二重スラッシュのリクエストが location にマッチしなくなり、
+    # 別の 404 / 502 を生む。
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # imageproxy は自前のディスクキャッシュを持たない設定で動かしているので
+    # （-cache 未指定 = メモリのみ）、リサイズ結果は nginx 側で持たせる。
+    # proxy_cache_path は http {} コンテキストに置くこと:
+    #
+    #   proxy_cache_path /var/cache/nginx/imageproxy levels=1:2
+    #       keys_zone=imageproxy:16m max_size=2g inactive=30d use_temp_path=off;
+    #
+    # proxy_cache imageproxy;
+    # proxy_cache_valid 200 30d;
+    # proxy_cache_valid 404 1m;
+    # proxy_cache_key $uri;
+    # add_header X-Cache-Status $upstream_cache_status;
+
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 30s;
+}
