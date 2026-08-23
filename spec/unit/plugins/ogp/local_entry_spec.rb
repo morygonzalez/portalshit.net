@@ -102,6 +102,16 @@ RSpec.describe Lokka::OGP::LocalEntry do
       expect(no_image_local.image).to eq(described_class::FALLBACK_IMAGE)
     end
 
+    it 'does not nest imageproxy URLs when the first image is already proxied (e.g. gallery cover image)' do
+      entry.update(
+        body: '<p><img src="https://portalshit.net/imageproxy/1280x/https://resources.portalshit.net/photo.jpg"></p>'
+      )
+      nested_local = described_class.new(entry, 'https://portalshit.net/welcome-lokka')
+      expect(nested_local.image_url).to eq(
+        'https://portalshit.net/imageproxy/200/https://resources.portalshit.net/photo.jpg'
+      )
+    end
+
     it 'prefers the summary column for description when present' do
       entry.update(summary: '要約テキスト')
       expect(local.description).to eq('要約テキスト')

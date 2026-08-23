@@ -99,6 +99,23 @@ RSpec.describe 'Entry portalshit_patches' do
       entry.instance_variable_set(:@images, nil)
       expect(entry.images).to include('thumb.jpg')
     end
+
+    it 'unwraps an already imageproxy-wrapped src (e.g. gallery cover image)' do
+      entry.update(body: '<img src="https://portalshit.net/imageproxy/1280x/https://resources.portalshit.net/photo.jpg">')
+      entry.instance_variable_set(:@long_body_with_figure, nil)
+      entry.instance_variable_set(:@images, nil)
+      expect(entry.images).to include('https://resources.portalshit.net/photo.jpg')
+    end
+
+    it 'unwraps multiple levels of nesting' do
+      entry.update(
+        body: '<img src="https://portalshit.net/imageproxy/200x200/https://portalshit.net/imageproxy/1280x/' \
+              'https://resources.portalshit.net/photo.jpg">'
+      )
+      entry.instance_variable_set(:@long_body_with_figure, nil)
+      entry.instance_variable_set(:@images, nil)
+      expect(entry.images).to include('https://resources.portalshit.net/photo.jpg')
+    end
   end
 
   describe '#cover_image' do
@@ -121,6 +138,13 @@ RSpec.describe 'Entry portalshit_patches' do
       entry.instance_variable_set(:@long_body_with_figure, nil)
       entry.instance_variable_set(:@images, nil)
       expect(entry.cover_image).to eq('https://portalshit.net/theme/portalshit/ogp_image.png')
+    end
+
+    it 'returns the unwrapped URL when the first image is already imageproxy-wrapped' do
+      entry.update(body: '<img src="https://portalshit.net/imageproxy/1280x/https://resources.portalshit.net/photo.jpg">')
+      entry.instance_variable_set(:@long_body_with_figure, nil)
+      entry.instance_variable_set(:@images, nil)
+      expect(entry.cover_image).to eq('https://resources.portalshit.net/photo.jpg')
     end
   end
 end

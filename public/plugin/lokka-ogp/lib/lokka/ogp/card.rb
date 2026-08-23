@@ -11,6 +11,7 @@ module Lokka
     # インクルード先に url / title / description / image / host が必要。
     module Card
       IMAGEPROXY_BASE_URL = 'https://portalshit.net/imageproxy/200'
+      IMAGEPROXY_PREFIX_REGEXP = %r{\Ahttps://portalshit\.net/imageproxy/[^/]+/}.freeze
       PROXY_EXCLUDE_REGEXP = /(githubusercontent|=\d|token=\w+)/.freeze
 
       TEMPLATE = <<~ERUBY
@@ -37,11 +38,19 @@ module Lokka
       end
 
       def secure_image
-        use_proxy? ? "#{IMAGEPROXY_BASE_URL}/#{image}" : image
+        use_proxy? ? "#{IMAGEPROXY_BASE_URL}/#{unwrap_imageproxy(image)}" : image
       end
 
       def use_proxy?
         image.to_s.start_with?('http') && !image.to_s.match(PROXY_EXCLUDE_REGEXP)
+      end
+
+      # image が既に imageproxy 経由の URL の場合、二重にプロキシしないよう
+      # 元の URL まで剥がす（ネストが多重にあっても全部剥がす）。
+      def unwrap_imageproxy(url)
+        unwrapped = url.to_s
+        unwrapped = unwrapped.sub(IMAGEPROXY_PREFIX_REGEXP, '') while unwrapped.match?(IMAGEPROXY_PREFIX_REGEXP)
+        unwrapped
       end
     end
   end

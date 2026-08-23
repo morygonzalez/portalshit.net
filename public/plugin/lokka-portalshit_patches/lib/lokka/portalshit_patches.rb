@@ -69,6 +69,8 @@ class Entry
     body.sub(/<!-- ?toc ?-->/, "<h3>Table of Contents</h3>\n#{toc}").html_safe
   end
 
+  IMAGEPROXY_PREFIX_REGEXP = %r{\Ahttps://portalshit\.net/imageproxy/[^/]+/}.freeze
+
   def images
     @images ||= begin
       doc = Nokogiri::HTML.fragment(body)
@@ -77,7 +79,10 @@ class Entry
               when "img"   then item.attributes["src"].value
               when "video" then item.attributes["poster"]&.value
               end
-        src unless src&.include?('/og-image/')
+        next if src.blank?
+        next if src.include?('/og-image/')
+
+        unwrap_imageproxy(src)
       }
     end
   end
@@ -89,6 +94,17 @@ class Entry
     else
       'https://portalshit.net/theme/portalshit/ogp_image.png'
     end
+  end
+
+  private
+
+  # 本文中の画像が既に imageproxy 経由の URL（ギャラリーのカバー画像など）だと
+  # テーマが imageproxy/SIZE/#{cover_image} のように再度包んでネストしてしまう
+  # ので、元の URL まで剥がしておく（ネストが多重にあっても全部剥がす）。
+  def unwrap_imageproxy(url)
+    unwrapped = url.to_s
+    unwrapped = unwrapped.sub(IMAGEPROXY_PREFIX_REGEXP, '') while unwrapped.match?(IMAGEPROXY_PREFIX_REGEXP)
+    unwrapped
   end
 end
 
