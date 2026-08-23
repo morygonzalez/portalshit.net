@@ -1,0 +1,122 @@
+# imageproxy（/imageproxy/ 配下）を nginx から proxy する設定。
+#
+# ## 症状
+#
+#   invalid request URL: malformed URL
+#   "//imageproxy/x400/https://resources.portalshit.net/xxxxxxxx":
+#   must provide absolute remote URL
+#
+# ## 原因（nginx 1.24 で再現済み）
+#
+# imageproxy の URLError は「imageproxy が受け取ったリクエスト URI」をそのまま
+# %q で出す。つまり imageproxy には //imageproxy/x400/... が届いている。
+# 現行設定
+#
+#   location ^~ /imageproxy/ {
+#           if ($request_uri ~ "/imageproxy/(.+)") {
+#                   set $path $1;
+#                   rewrite .* /$path break;
+#           }
+#           proxy_pass http://127.0.0.1:8080/;
+#   }
+#
+# に各リクエストを通して upstream が受け取るリクエストラインを実測した結果:
+#
+#   /imageproxy/x400/https://host/img          -> /x400/https://host/img        OK
+#   /imageproxy//imageproxy/x400/https://host/img
+#                                              -> //imageproxy/x400/https://host/img  ← 症状と一致
+#   /imageproxy/x400/https://host/a%20b.jpg    -> /x400/https://host/a%252520b.jpg     ← 壊れる
+#   /imageproxy/x400/https://host/x.jpg?v=1    -> /x400/https://host/x.jpg%3Fv=1?v=1   ← 壊れる
+#
+# 正規表現 /imageproxy/(.+) は先頭で固定されておらず、しかも $1 をそのまま
+# パスとして再利用するため、
+#
+#   (a) パスに /imageproxy/ が 2 回現れるリクエストが来ると、余った
+#       /imageproxy/ ごと upstream のパスに転写される（先頭が // になる）
+#   (b) $request_uri はエスケープ済みの生文字列なので、rewrite の結果を
+#       nginx がもう一度エスケープして %20 が %252520 になる
+#   (c) $request_uri はクエリ文字列も含むため、? がパスに埋め込まれた上に
+#       args も付き、二重に付く
+#
+# (a) が今回のエラー。(b)(c) は URL にエンコード文字やクエリを含む画像で
+# 恒常的にサムネイルが壊れる（S3 側では別ファイル名になり 404）。
+#
+# なお、この if / rewrite は「canonicalization で https:// の // が潰れるのを
+# 防ぐ」ために入れたものだが、imageproxy 側は受け取った ^(https?):/+ を
+# https:// に復元する（data.go の parseURL / reCleanedURL）。実際に
+# /x400/https:/host/img を imageproxy 本体に食わせると
+# https://host/img として解決される。つまりこの回避策は不要。
+#
+# ## 反映方法
+#
+#   1. 下の location で既存の /imageproxy/ の location を置き換える
+#   2. sudo nginx -t && sudo systemctl reload nginx
+#   3. bin/check_imageproxy で確認
+#
+# ## 誰が壊れた URL を投げているかを調べる
+#
+#   grep -F 'imageproxy//imageproxy' /var/log/nginx/access.log | tail
+#
+# この設定にすれば壊れた URL は upstream へ転写されず imageproxy が素直に
+# 400 を返すだけになるが、リクエスト元（referer / UA）は確認しておくとよい。
+
+# --- server {} コンテキスト -------------------------------------------------
+
+location ^~ /imageproxy/ {
+        # if / rewrite は使わない。proxy_pass に URI 部（末尾の "/"）を書けば
+        # nginx が location にマッチした分（/imageproxy/）だけを差し替える。
+        # $request_uri を経由しないので、余分な /imageproxy/ が転写されることも、
+        # エスケープが二重に掛かることもない。
+        #
+        # リモート URL の https:// は merge_slashes（既定 on）で https:/ に
+        # 潰れるが、imageproxy が復元するので問題ない。
+        #
+        # imageproxy はホストの 127.0.0.1:8080 でのみ待ち受けている
+        # （config/imageproxy.service）。
+        proxy_pass http://127.0.0.1:8080/;
+
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_cache portalshit_cache;
+        proxy_cache_valid 200 30d;
+        # 壊れた URL を投げ続けるクローラで upstream を叩かないよう、エラーも
+        # 短時間だけキャッシュしておく（設定を直した直後は
+        # proxy_cache_bypass や cache 削除で流すこと）。
+        proxy_cache_valid 400 404 1m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        add_header X-Cache-Status $upstream_cache_status;
+        proxy_read_timeout 15s;
+}
+
+# ## リモート URL のパスに連続スラッシュが含まれる場合
+#
+# 上の設定は merge_slashes によってリモート URL 側の // も 1 つに潰す
+# （https://host/a//b.jpg -> https://host/a/b.jpg）。そういう URL を扱う必要が
+# 出たときだけ、$request_uri を使う版に戻す。ただし先頭を固定し、
+# 「オプション + http(s):// のリモート URL」の形だけを書き換えること。
+# 形が合わないリクエストは rewrite されず、素の proxy_pass で imageproxy に
+# 渡って 400 になる（余分なパスが転写されない）。
+#
+#   location ^~ /imageproxy/ {
+#           if ($request_uri ~ "^/imageproxy/([^/]+/https?://[^?]+)$") {
+#                   set $path $1;
+#                   rewrite .* /$path break;
+#           }
+#           proxy_pass http://127.0.0.1:8080/;
+#           ...
+#   }
+#
+# この版でも (b) のエスケープ二重化は残るので、エンコード文字を含む画像 URL を
+# 使う場合は上の if なし版を選ぶこと。
+#
+# ## ついでに: imageproxy は誰でも使える踏み台になっている
+#
+# -allowHosts を付けていないため、/imageproxy/ に到達できる相手は任意のホストの
+# 画像を取得・変換させられる。自サイトの画像しか通さないなら
+# config/imageproxy.service の ExecStart に
+#
+#   -allowHosts resources.portalshit.net,portalshit.net
+#
+# を足しておくとよい。
