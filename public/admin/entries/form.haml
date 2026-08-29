@@ -25,12 +25,17 @@
         %li
           = label_tag :preview, for: 'preview-preview', caption: 'Preview'
           = radio_button_tag :ipreview, value: 'preview', id: 'preview-preview'
-      .image-picker
-        %label.button.image-picker__button{ for: "#{@name}_image_picker" }= t('image_picker_label')
-        %input.image-picker__input{ id: "#{@name}_image_picker", type: :file, accept: 'image/*', multiple: true, hidden: true }
-        %span.image-picker__status{ 'aria-live': 'polite' }
       #editor
         %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", cols: 50 }= @entry.raw_body
+      .image-picker
+        %label.image-picker__button{ for: "#{@name}_image_picker" }
+          %svg.image-picker__icon{ xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', 'aria-hidden': 'true', focusable: 'false' }
+            %rect{ x: '3', y: '4', width: '18', height: '16', rx: '2', ry: '2', fill: 'none', stroke: 'currentColor', 'stroke-width': '2' }
+            %circle{ cx: '8.5', cy: '9.5', r: '1.5', fill: 'currentColor' }
+            %path{ d: 'M4 17l5-5 3 3 4-4 4 4', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }
+          %span.visually-hidden= t('image_picker_label')
+        %input.image-picker__input{ id: "#{@name}_image_picker", type: :file, accept: 'image/*', multiple: true, hidden: true }
+        %span.image-picker__status{ 'aria-live': 'polite' }
       #preview
   #form-aside
     .field.slug
