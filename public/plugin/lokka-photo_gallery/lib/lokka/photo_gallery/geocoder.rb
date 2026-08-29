@@ -20,9 +20,15 @@ module Lokka
         response = URI.open(url, 'User-Agent' => 'portalshit.net/1.0 (morygonzalez@gmail.com)')
         data = JSON.parse(response.read).with_indifferent_access
         address = data['address']
-        location = %(#{address['province']}#{address['city']}#{address['suburb']}#{address['neighbourhood']})
-        if address['amenity']
-          location = %(#{address['amenity']}（#{location}）)
+        location = if address['city']
+                     %(#{address['province']}#{address['city']}#{address['suburb']}#{address['neighbourhood']})
+                   elsif address['town']
+                     %(#{address['province']}#{address['county']}#{address['town']}#{address['quarter']})
+                   elsif address['village']
+                     %(#{address['province']}#{address['county']}#{address['village']})
+                   end
+        if marker =  address['historic'] || address['amenity']
+          location = %(#{marker}（#{location}）)
         end
         licence_text, licence_url = parse_licence(data['licence'])
 
