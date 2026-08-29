@@ -101,11 +101,17 @@ class PhotoGalleryPicker {
       thumb.src = image.thumb_url;
       thumb.alt = image.filename;
 
+      // EXIF にタイトルがなければファイル名で埋める。入力欄に出すだけでなく
+      // image 側にも入れておかないと、編集されなかったときに空のまま送られる。
+      const defaultTitle = image.title || this.baseName(image.filename);
+      image.title = defaultTitle;
+      image.alt = defaultTitle;
+
       const title = document.createElement('input');
       title.type = 'text';
       title.className = 'gallery-review__title';
       title.placeholder = 'タイトル';
-      title.value = image.title || '';
+      title.value = defaultTitle;
       title.oninput = () => {
         image.title = title.value;
         image.alt = title.value;
@@ -164,6 +170,10 @@ class PhotoGalleryPicker {
     const position = before.length + html.length + 2;
     textarea.setSelectionRange(position, position);
     textarea.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  baseName(filename) {
+    return String(filename || '').replace(/\.[^.]+$/, '');
   }
 
   setStatus(text) {
