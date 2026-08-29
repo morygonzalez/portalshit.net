@@ -82,9 +82,9 @@ class FileUploader {
       return;
     }
 
-    // Reassigned (not addEventListener) so re-instantiating FileUploader on
-    // markup change always targets the current editor, without stacking
-    // duplicate listeners on this persistent input.
+    // addEventListener ではなく代入にしているのは、markup 切り替えのたびに
+    // FileUploader が再生成されても、この永続的な input に古いリスナーを
+    // 積み重ねず、常に最新の editor を対象にするため。
     input.onchange = () => {
       this.uploadFiles(Array.from(input.files));
       input.value = '';
