@@ -1308,6 +1308,9 @@ textarea#category_description
         max-width: 100%;
     }
 
+    /* 固定表示されるヘッダーとメニューの重なり順。z-index を指定しないと
+       本文側の位置指定要素（.field.body やバブル）に覆われてしまうため、
+       本文 (〜5) より上、通知 (1000) とギャラリー確認 (1100) より下に置く。 */
     #header {
         h1 {
             display: none;
@@ -1319,6 +1322,7 @@ textarea#category_description
         overflow-y: scroll;
         overflow-x: hidden;
         width: 100%;
+        z-index: 900;
     }
 
     #content {
@@ -1361,6 +1365,7 @@ textarea#category_description
             left: -100%;
             width: 220px;
             height: 100%;
+            z-index: 950;
             margin: 0;
             padding: 55px 0;
             list-style: none;
@@ -1424,12 +1429,15 @@ textarea#category_description
             }
         }
 
+        /* メニューより手前に置く。同じ重なり順だと開いた後に #menu-box に
+           覆われてしまい、ボタンを押しても閉じられなくなる。 */
         #menu-button {
             position: fixed;
             top: 25px;
             left: 20px;
             width: 26px;
             height: 26px;
+            z-index: 960;
             cursor: pointer;
 
             > span, > span::before, > span::after {
