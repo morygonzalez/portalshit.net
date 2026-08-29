@@ -39,6 +39,7 @@ class FormObserver {
     const previewTab = document.querySelector('ul.preview-edit');
     console.log(preview_body)
     previewTab.style.display = 'none';
+    this.toggleImagePicker(false);
     this.quill = new Quill('#editor', {
       modules: {
         toolbar:[
@@ -60,6 +61,7 @@ class FormObserver {
     const textarea = this.textarea;
     const previewTab = document.querySelector('ul.preview-edit');
     previewTab.style.display = 'block';
+    this.toggleImagePicker(true);
     this.quill = Quill.find(document.querySelector('#editor'));
     if (this.quill) {
       const qlToolbar = document.querySelector('.ql-toolbar');
@@ -72,6 +74,13 @@ class FormObserver {
       editor.setAttribute('id', 'editor');
       editor.appendChild(textarea);
       previewTab.parentNode.insertBefore(editor, previewTab.nextSibling);
+    }
+  }
+
+  toggleImagePicker(visible) {
+    const picker = document.querySelector('.image-picker');
+    if (picker) {
+      picker.style.display = visible ? 'block' : 'none';
     }
   }
 
@@ -152,6 +161,7 @@ class FormObserver {
       preview.style.display = 'none';
       editor.style.display = 'block';
       preview.innerHTML = '';
+      this.toggleImagePicker(true);
     });
     previewRadio.addEventListener('change', async (e) => {
       editor = document.querySelector('#editor');
@@ -193,6 +203,7 @@ figure {
         .finally(setTimeout(resizeIframe, 300));
       editor.style.display = 'none';
       preview.style.display = 'block';
+      this.toggleImagePicker(false);
     });
   }
 
