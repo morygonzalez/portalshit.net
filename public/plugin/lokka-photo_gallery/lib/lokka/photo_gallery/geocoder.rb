@@ -19,8 +19,11 @@ module Lokka
         throttle
         response = URI.open(url, 'User-Agent' => 'portalshit.net/1.0 (morygonzalez@gmail.com)')
         data = JSON.parse(response.read).with_indifferent_access
-
-        location = data['display_name'].split(', ')[0..-3].reverse[0..4].join
+        address = data['address']
+        location = %(#{address['province']}#{address['city']}#{address['suburb']}#{address['neighbourhood']})
+        if address['amenity']
+          location = %(#{address['amenity']}（#{location}）)
+        end
         licence_text, licence_url = parse_licence(data['licence'])
 
         {
