@@ -1,5 +1,6 @@
 import FormObserver from './FormObserver'
 import FileUploader from './FileUploader'
+import PhotoGalleryPicker from './PhotoGalleryPicker'
 
 let editor;
 
@@ -7,6 +8,7 @@ const initEditorUpload = () => {
   editor = document.querySelector('#editor');
   if (editor) {
     new FileUploader(editor);
+    new PhotoGalleryPicker(editor);
   }
 }
 

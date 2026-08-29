@@ -2,22 +2,22 @@
 <%- all_items = [*(@cover ? [[@cover, true]] : []), *@images.map { |img| [img, false] }] -%>
 <%- all_items.each do |item, is_cover| -%>
   <div class="pswp-gallery__item<%= ' cover' if is_cover %>">
-    <a href="<%= item[:url] %>" data-pswp-width="<%= item[:width] %>" data-pswp-height="<%= item[:height] %>" data-taken-at="<%= item[:taken_at] %>">
-      <img src="<%= image_src(item, cover: is_cover) %>" alt="<%= item[:alt] %>">
+    <a href="<%= h item[:url] %>" data-pswp-width="<%= h item[:width] %>" data-pswp-height="<%= h item[:height] %>" data-taken-at="<%= h item[:taken_at] %>">
+      <img src="<%= h image_src(item, cover: is_cover) %>" alt="<%= h item[:alt] %>">
     </a>
     <ul class="pswp-caption-content">
-      <li class="title"><%= item[:title] %></li>
-      <li class="meta">カメラ: <%= item[:camera] %></li>
-      <li class="meta">レンズ: <%= item[:lens] %></li>
-      <li class="meta">F値: <%= item[:f_number] %></li>
-      <li class="meta">シャッタースピード: <%= item[:shutter_speed] %></li>
-      <li class="meta">ISO感度: <%= item[:iso] %></li>
-      <li class="meta">焦点距離: <%= item[:focal_length] %></li>
-      <li class="meta">撮影日時: <%= item[:taken_at] %></li>
+      <li class="title"><%= h item[:title] %></li>
+      <li class="meta">カメラ: <%= h item[:camera] %></li>
+      <li class="meta">レンズ: <%= h item[:lens] %></li>
+      <li class="meta">F値: <%= h item[:f_number] %></li>
+      <li class="meta">シャッタースピード: <%= h item[:shutter_speed] %></li>
+      <li class="meta">ISO感度: <%= h item[:iso] %></li>
+      <li class="meta">焦点距離: <%= h item[:focal_length] %></li>
+      <li class="meta">撮影日時: <%= h item[:taken_at] %></li>
     <%- if item[:location].present? -%>
       <li class="meta">
-        撮影場所: <%= item[:location] %><br />
-        <span class="licence"><a href="<%= item[:licence_url] %>"><%= item[:licence_text] %></a></span>
+        撮影場所: <%= h item[:location] %><br />
+        <span class="licence"><a href="<%= h item[:licence_url] %>"><%= h item[:licence_text] %></a></span>
       </li>
     <%- end -%>
     </ul>

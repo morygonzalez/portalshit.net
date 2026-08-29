@@ -1029,18 +1029,29 @@ textarea#category_description
     position: relative;
 }
 
-.image-picker {
+/* ステータスは絶対配置でバブルの外に出すので、コンテナはバブルぶんの
+   大きさだけを持つ。フローに入れるとメッセージの長さでバブルが左にずれる。 */
+.image-picker,
+.photo-gallery-picker {
     position: absolute;
     right: 16px;
-    bottom: 16px;
     z-index: 5;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    width: 48px;
+    height: 48px;
     margin-bottom: 0;
 }
 
-.image-picker__button {
+.image-picker {
+    bottom: 16px;
+}
+
+/* 画像追加バブルの真上に積む (バブル 48px + 間隔 12px) */
+.photo-gallery-picker {
+    bottom: 76px;
+}
+
+.image-picker__button,
+.photo-gallery-picker__button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1050,37 +1061,148 @@ textarea#category_description
     margin-bottom: 0;
     border: none;
     border-radius: 50%;
-    background-color: #f2813c;
     color: #fff;
     cursor: pointer;
     box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
     transition: transform .15s ease;
 }
 
-.image-picker__button:hover {
+.image-picker__button {
+    background-color: #f2813c;
+}
+
+.photo-gallery-picker__button {
+    background-color: #41527e;
+}
+
+.image-picker__button:hover,
+.photo-gallery-picker__button:hover {
     transform: scale(1.05);
 }
 
-.image-picker__icon {
+.image-picker__icon,
+.photo-gallery-picker__icon {
     width: 22px;
     height: 22px;
 }
 
-.image-picker__input[hidden] {
+.image-picker__input[hidden],
+.photo-gallery-picker__input[hidden] {
     display: none;
 }
 
-.image-picker__status {
+.image-picker__status,
+.photo-gallery-picker__status {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 8px;
+    box-sizing: border-box;
+    /* right: 100% を基準にすると利用可能幅が 0 と計算され、単語境界のない
+       日本語が 1 文字ずつ折り返されてしまう。max-content で内容幅を確保し、
+       長すぎるときだけ max-width で折り返させる。 */
+    width: max-content;
+    max-width: 60vw;
     font-size: 0.8em;
+    line-height: 1.4;
+    text-align: right;
     color: #fff;
     background: rgba(0, 0, 0, .7);
     padding: 4px 10px;
     border-radius: 12px;
+}
+
+.image-picker__status:empty,
+.photo-gallery-picker__status:empty {
+    display: none;
+}
+
+/* エディタ枠ではなくビューポートを覆う。#editor の高さはスマートフォンでは
+   小さく、枠内に収めると一覧がほとんど見えなくなるため。 */
+.gallery-review {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 16px;
+    background: rgba(0, 0, 0, .55);
+}
+
+/* display: flex が [hidden] の既定値を上書きしてしまうため明示的に戻す */
+.gallery-review[hidden] {
+    display: none;
+}
+
+.gallery-review__inner {
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+}
+
+.gallery-review__heading {
+    margin: 0 0 6px;
+}
+
+.gallery-review__description {
+    margin: 0 0 15px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.gallery-review__list {
+    margin: 0 0 15px;
+    padding: 0;
+    list-style: none;
+}
+
+.gallery-review__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.gallery-review__thumb {
+    width: 56px;
+    height: 56px;
+    flex: none;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #eee;
+}
+
+#entry .gallery-review__title {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+}
+
+.gallery-review__cover-label {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85em;
     white-space: nowrap;
 }
 
-.image-picker__status:empty {
-    display: none;
+.gallery-review__actions {
+    display: flex;
+    gap: 10px;
+}
+
+.gallery-review__actions .button {
+    margin-bottom: 0;
 }
 
 .visually-hidden {

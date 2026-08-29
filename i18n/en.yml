@@ -41,6 +41,12 @@ en:
   preview: Preview
   delete: Delete
   image_picker_label: Add images
+  photo_gallery_picker_label: Create gallery
+  gallery_review:
+    heading: Review gallery
+    description: Enter titles and choose a cover photo. Photos are ordered by capture time.
+    insert: Insert into body
+    cancel: Cancel
   about: About this site
   recent_entries: Recent Entries
   recent_comments: Recent Comments
