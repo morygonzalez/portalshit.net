@@ -1029,15 +1029,15 @@ textarea#category_description
     position: relative;
 }
 
+/* ステータスは絶対配置でバブルの外に出すので、コンテナはバブルぶんの
+   大きさだけを持つ。フローに入れるとメッセージの長さでバブルが左にずれる。 */
 .image-picker,
 .photo-gallery-picker {
     position: absolute;
     right: 16px;
     z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
+    width: 48px;
+    height: 48px;
     margin-bottom: 0;
 }
 
@@ -1057,7 +1057,6 @@ textarea#category_description
     justify-content: center;
     width: 48px;
     height: 48px;
-    flex: none;
     padding: 0;
     margin-bottom: 0;
     border: none;
@@ -1094,12 +1093,24 @@ textarea#category_description
 
 .image-picker__status,
 .photo-gallery-picker__status {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 8px;
+    box-sizing: border-box;
+    /* right: 100% を基準にすると利用可能幅が 0 と計算され、単語境界のない
+       日本語が 1 文字ずつ折り返されてしまう。max-content で内容幅を確保し、
+       長すぎるときだけ max-width で折り返させる。 */
+    width: max-content;
+    max-width: 60vw;
     font-size: 0.8em;
+    line-height: 1.4;
+    text-align: right;
     color: #fff;
     background: rgba(0, 0, 0, .7);
     padding: 4px 10px;
     border-radius: 12px;
-    white-space: nowrap;
 }
 
 .image-picker__status:empty,
