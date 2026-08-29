@@ -78,10 +78,11 @@ class FormObserver {
   }
 
   toggleImagePicker(visible) {
-    const picker = document.querySelector('.image-picker');
-    if (picker) {
-      picker.style.display = visible ? 'block' : 'none';
-    }
+    document.querySelectorAll('.image-picker, .photo-gallery-picker').forEach((picker) => {
+      // 表示側で block を入れると CSS の display: flex を壊すので、
+      // インラインスタイルを外して CSS の値に戻す。
+      picker.style.display = visible ? '' : 'none';
+    });
   }
 
   adjustTextareaHeight() {

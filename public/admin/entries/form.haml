@@ -36,6 +36,23 @@
           %span.visually-hidden= t('image_picker_label')
         %input.image-picker__input{ id: "#{@name}_image_picker", type: :file, accept: 'image/*', multiple: true, hidden: true }
         %span.image-picker__status{ 'aria-live': 'polite' }
+      .photo-gallery-picker
+        %label.photo-gallery-picker__button{ for: "#{@name}_gallery_picker" }
+          %svg.photo-gallery-picker__icon{ xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', 'aria-hidden': 'true', focusable: 'false' }
+            %rect{ x: '7', y: '3', width: '14', height: '14', rx: '2', ry: '2', fill: 'none', stroke: 'currentColor', 'stroke-width': '2' }
+            %path{ d: 'M17 21H5a2 2 0 0 1-2-2V7', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round' }
+            %path{ d: 'M8 13l3-3 2 2 3-3 5 5', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }
+          %span.visually-hidden= t('photo_gallery_picker_label')
+        %input.photo-gallery-picker__input{ id: "#{@name}_gallery_picker", type: :file, accept: 'image/*', multiple: true, hidden: true }
+        %span.photo-gallery-picker__status{ 'aria-live': 'polite' }
+      .gallery-review{ hidden: true }
+        .gallery-review__inner
+          %h3.gallery-review__heading= t('gallery_review.heading')
+          %p.gallery-review__description= t('gallery_review.description')
+          %ul.gallery-review__list
+          .gallery-review__actions
+            %button.button.gallery-review__insert{ type: :button }= t('gallery_review.insert')
+            %button.button.gallery-review__cancel{ type: :button }= t('gallery_review.cancel')
       #preview
   #form-aside
     .field.slug

@@ -41,6 +41,12 @@ ja:
   preview: プレビュー
   delete: 削除
   image_picker_label: 画像を追加
+  photo_gallery_picker_label: ギャラリーを作成
+  gallery_review:
+    heading: ギャラリーの確認
+    description: タイトルを入力し、カバーにする写真を選んでください。並び順は撮影日時順です。
+    insert: 本文に挿入
+    cancel: キャンセル
   about: このサイトについて
   recent_entries: 最近のエントリー
   recent_comments: 最近のコメント
