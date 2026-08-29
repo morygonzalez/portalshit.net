@@ -27,10 +27,10 @@ module Lokka
 
         begin
           status 201
-          PhotoGallery::PhotoProcessor
-            .new(do_upload: true)
-            .process(file[:tempfile].path, filename: filename)
-            .to_json
+          PhotoGallery::PhotoProcessor.
+            new(do_upload: true).
+            process(file[:tempfile].path, filename: filename).
+            to_json
         rescue StandardError => e
           logger.error "[photo_gallery] #{e.class}: #{e.message}" if respond_to?(:logger) && logger
           halt 500, { message: e.message }.to_json
