@@ -53,9 +53,9 @@ module Lokka
       parsed = JSON.parse(raw.to_s, symbolize_names: true)
       return [] unless parsed.is_a?(Array)
 
-      parsed
-        .filter_map { |item| item.slice(*PhotoGallery::RENDERABLE_KEYS) if item.is_a?(Hash) }
-        .sort_by { |item| item[:taken_at].to_s }
+      parsed.
+        filter_map { |item| item.slice(*PhotoGallery::RENDERABLE_KEYS) if item.is_a?(Hash) }.
+        sort_by { |item| item[:taken_at].to_s }
     rescue JSON::ParserError
       []
     end
