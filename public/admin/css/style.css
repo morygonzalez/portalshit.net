@@ -1025,6 +1025,25 @@ textarea#category_description
     border: dashed 0.5em #f2813c;
 }
 
+.image-picker {
+    margin-bottom: 10px;
+}
+
+.image-picker__button {
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+.image-picker__input[hidden] {
+    display: none;
+}
+
+.image-picker__status {
+    margin-left: 10px;
+    font-size: 0.85em;
+    color: #666;
+}
+
 .ql-snow.ql-toolbar:after, .ql-snow .ql-toolbar:after {
     clear: none !important;
 }
@@ -1095,6 +1114,20 @@ textarea#category_description
         width: 100%;
         min-width: 100%;
         padding: 0;
+    }
+
+    .image-picker__button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        padding: 12px 15px;
+    }
+
+    .image-picker__status {
+        display: block;
+        margin-left: 0;
+        margin-top: 5px;
     }
 
     textarea, select,

@@ -2,6 +2,7 @@ class FileUploader {
   constructor(editor) {
     this.editor = editor;
     this.observeDragAndDrop();
+    this.observeFilePicker();
   };
 
   isAvailable() {
@@ -75,42 +76,86 @@ class FileUploader {
     this.editor.dataset.uploadObserved = true;
   };
 
-  upload(file, needLineBreak) {
+  observeFilePicker() {
+    const input = document.querySelector('.image-picker__input');
+    if (!input) {
+      return;
+    }
+
+    // Reassigned (not addEventListener) so re-instantiating FileUploader on
+    // markup change always targets the current editor, without stacking
+    // duplicate listeners on this persistent input.
+    input.onchange = () => {
+      this.uploadFiles(Array.from(input.files));
+      input.value = '';
+    };
+  };
+
+  async uploadFiles(files) {
+    const images = files.filter(file => /^image\//.test(file.type));
+    if (images.length === 0) {
+      return;
+    }
+
+    const status = document.querySelector('.image-picker__status');
+    for (const [index, file] of images.entries()) {
+      if (status) {
+        status.textContent = `アップロード中… (${index + 1}/${images.length})`;
+      }
+      const needLineBreak = index !== images.length - 1;
+      try {
+        await this.upload(file, needLineBreak);
+      } catch (error) {
+        if (status) {
+          status.textContent = `アップロードに失敗しました: ${file.name}`;
+        }
+        return;
+      }
+    }
+    if (status) {
+      status.textContent = `${images.length}枚アップロードしました`;
+      setTimeout(() => { status.textContent = ''; }, 3000);
+    }
+  };
+
+  async upload(file, needLineBreak) {
     const editor = this.editor;
     const textarea = editor.querySelector('textarea');
     const ajaxData = new FormData();
-    const self = this;
     ajaxData.append('file', file);
-    fetch('/admin/attachments', {
-      method: 'POST',
-      body: ajaxData
-    })
-      .then(response => {
-        if (textarea) {
-          editor.classList.add('is-uploading');
-          if (textarea) {
-            textarea.setAttribute('disabled', true);
-          }
-        }
-        response.json()
-          .then(data => {
-            console.log(data.message);
-            editor.classList.add('is-success');
-            if (textarea) {
-              textarea.removeAttribute('disabled');
-              const imageTag = self.detectImageTag(file, data.url);
-              self.insertImage(imageTag, needLineBreak);
-            }
-          })
-          .catch(data => {
-            editor.classList.add('is-error');
-            textarea.removeAttribute('disabled');
-            console.error(data.message);
-          })
-          .finally(() => {
-            editor.classList.remove('is-uploading');
-          });
-    });
+
+    editor.classList.remove('is-success', 'is-error');
+    if (textarea) {
+      editor.classList.add('is-uploading');
+      textarea.setAttribute('disabled', true);
+    }
+
+    try {
+      const response = await fetch('/admin/attachments', {
+        method: 'POST',
+        body: ajaxData
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Upload failed');
+      }
+      console.log(data.message);
+      editor.classList.add('is-success');
+      if (textarea) {
+        const imageTag = this.detectImageTag(file, data.url);
+        this.insertImage(imageTag, needLineBreak);
+      }
+      return data;
+    } catch (error) {
+      editor.classList.add('is-error');
+      console.error(error.message);
+      throw error;
+    } finally {
+      editor.classList.remove('is-uploading');
+      if (textarea) {
+        textarea.removeAttribute('disabled');
+      }
+    }
   };
 
   insertImage(imageTag, needLineBreak) {

@@ -25,6 +25,10 @@
         %li
           = label_tag :preview, for: 'preview-preview', caption: 'Preview'
           = radio_button_tag :ipreview, value: 'preview', id: 'preview-preview'
+      .image-picker
+        %label.button.image-picker__button{ for: "#{@name}_image_picker" }= t('image_picker_label')
+        %input.image-picker__input{ id: "#{@name}_image_picker", type: :file, accept: 'image/*', multiple: true, hidden: true }
+        %span.image-picker__status{ 'aria-live': 'polite' }
       #editor
         %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", cols: 50 }= @entry.raw_body
       #preview
