@@ -161,6 +161,7 @@ class FormObserver {
       preview.style.display = 'none';
       editor.style.display = 'block';
       preview.innerHTML = '';
+      this.toggleImagePicker(true);
     });
     previewRadio.addEventListener('change', async (e) => {
       editor = document.querySelector('#editor');
@@ -202,6 +203,7 @@ figure {
         .finally(setTimeout(resizeIframe, 300));
       editor.style.display = 'none';
       preview.style.display = 'block';
+      this.toggleImagePicker(false);
     });
   }
 
