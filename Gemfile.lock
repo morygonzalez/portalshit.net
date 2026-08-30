@@ -97,7 +97,7 @@ GEM
     aws-sigv4 (1.11.0)
       aws-eventstream (~> 1, >= 1.0.2)
     backports (3.25.0)
-    base64 (0.2.0)
+    base64 (0.3.0)
     bcrypt (3.1.20)
     better_errors (2.10.1)
       erubi (>= 1.0.0)
@@ -247,8 +247,7 @@ GEM
       prism (~> 1.5)
     multi_json (1.15.0)
     multipart-post (2.4.1)
-    mustermann (3.0.3)
-      ruby2_keywords (~> 0.0.1)
+    mustermann (3.1.1)
     mysql2 (0.5.7)
       bigdecimal
     natto (1.2.0)
