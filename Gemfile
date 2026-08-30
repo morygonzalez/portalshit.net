@@ -75,7 +75,7 @@ group :development, :test do
   gem 'rspec', '~> 3.12'
   gem 'rspec-its'
   gem 'simplecov', require: false
-  gem 'sqlite3', '~> 2.0'
+  gem 'sqlite3', '~> 1.4'
 end
 
 group :mysql do
