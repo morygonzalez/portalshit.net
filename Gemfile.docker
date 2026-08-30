@@ -93,6 +93,7 @@ gem 'rubyzip', require: 'zip'
 gem 'vacuum'
 gem 'cld'
 
+gem 'addressable'
 gem 'fastimage'
 gem 'open_graph_reader'
 gem 'faraday_middleware'

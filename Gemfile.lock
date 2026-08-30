@@ -71,6 +71,8 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
     airbrussh (1.6.2)
       sshkit (>= 1.6.1, != 1.7.0)
     ast (2.4.3)
@@ -312,6 +314,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
       reline (>= 0.6.0)
+    public_suffix (7.0.5)
     puma (8.0.2)
       nio4r (~> 2.0)
     puma_worker_killer (1.0.0)
@@ -490,6 +493,7 @@ DEPENDENCIES
   activerecord (~> 6.0)
   activerecord-import
   activesupport (~> 6.0)
+  addressable
   awesome_print
   aws-sdk-s3
   aws-sdk-sesv2
