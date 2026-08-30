@@ -10,10 +10,10 @@ describe '/admin/attachments' do
       before do
         Aws.config[:s3] = {
           stub_responses: {
-            list_buckets: {}
+            list_buckets: {},
+            put_object: {}
           }
         }
-        Aws::S3::Bucket.any_instance.stub(:upload_file).and_return(true)
         Option.aws_access_key_id = 'foo'
         Option.aws_secret_access_key = 'bar'
         Option.s3_region = 'ap-northeast-1'
@@ -30,10 +30,10 @@ describe '/admin/attachments' do
       before do
         Aws.config[:s3] = {
           stub_responses: {
-            list_buckets: {}
+            list_buckets: {},
+            put_object: {}
           }
         }
-        Aws::S3::Bucket.any_instance.stub(:upload_file).and_return(true)
         Option.aws_access_key_id = 'foo'
         Option.aws_secret_access_key = 'bar'
         Option.s3_region = 'ap-northeast-1'

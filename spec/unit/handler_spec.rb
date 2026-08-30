@@ -60,8 +60,7 @@ end
 
 describe Lokka::FileUploadHandler do
   before do
-    Aws.config[:s3] = { stub_responses: { list_buckets: {} } }
-    Aws::S3::Bucket.any_instance.stub(:upload_file).and_return(true)
+    Aws.config[:s3] = { stub_responses: { list_buckets: {}, put_object: {} } }
     Option.aws_access_key_id = 'foo'
     Option.aws_secret_access_key = 'bar'
     Option.s3_region = 'ap-northeast-1'

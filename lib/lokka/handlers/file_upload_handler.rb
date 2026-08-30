@@ -35,8 +35,10 @@ module Lokka
     end
 
     def upload
-      bucket.object(filename).upload_file(
+      transfer_manager.upload_file(
         tempfile.path,
+        bucket: Option.s3_bucket_name,
+        key: filename,
         content_type: content_type,
         cache_control: 'max-age=2592000,s-maxage=31536000'
       )
@@ -65,6 +67,10 @@ module Lokka
 
     def s3
       @s3 ||= Aws::S3::Resource.new(region: Option.s3_region, credentials: credentials)
+    end
+
+    def transfer_manager
+      @transfer_manager ||= Aws::S3::TransferManager.new(client: s3.client)
     end
 
     def domain_name
