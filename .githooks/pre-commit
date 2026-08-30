@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Gemfile / プラグイン・テーマの Gemfile がステージされていたら
+# bin/docker_gemfile で Gemfile.docker を再生成し、同じコミットに含める。
+#
+set -e
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+# ステージされた変更に Gemfile が含まれるか判定（Gemfile.lock は除外）
+if git diff --cached --name-only --diff-filter=ACMR | grep -qE '(^|/)Gemfile$'; then
+  echo "pre-commit: Gemfile の変更を検出 → bin/docker_gemfile を実行"
+  ./bin/docker_gemfile
+
+  if ! git diff --quiet -- Gemfile.docker; then
+    git add Gemfile.docker
+    echo "pre-commit: Gemfile.docker を再生成してコミットに追加しました"
+  fi
+fi

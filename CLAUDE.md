@@ -49,6 +49,12 @@
 - プロダクションではホスト側の `.env`、`database.yml`、アプリコード等を `-v` でマウントして実行するため、イメージ自体にシークレットを含める必要はない
 - CI（CircleCI）でもこのイメージをベースに使用
 
+### Gemfile.docker
+
+- `Gemfile.docker` は `bin/docker_gemfile` が各 `Gemfile`（ルート・プラグイン・テーマ）を連結して生成するファイル。手で編集しない
+- `.githooks/pre-commit` が、`Gemfile` をステージしたコミット時に自動で再生成し同じコミットに含める
+- フックを有効化するにはクローンごとに一度だけ実行: `git config core.hooksPath .githooks`
+
 ## cron
 
 - 設定ファイル: `config/crontab`
