@@ -60,7 +60,7 @@ describe '/admin/posts' do
 
     it 'should redirect to edit page' do
       expect(last_response).to be_redirect
-      expect(last_response.header['Location']).to match(%r{/admin/posts/\d+/edit})
+      expect(last_response.headers['Location']).to match(%r{/admin/posts/\d+/edit})
     end
   end
 
