@@ -128,7 +128,6 @@ GEM
     drb (2.2.3)
     erubi (1.13.1)
     event_stream_parser (1.0.0)
-    exception_notification (2.4.1)
     exiftool (1.4.3)
       json
     factory_bot (6.6.0)
@@ -473,7 +472,6 @@ DEPENDENCIES
   coderay
   database_cleaner-active_record
   dotenv
-  exception_notification
   exiftool
   factory_bot (~> 6.0)
   faraday_middleware

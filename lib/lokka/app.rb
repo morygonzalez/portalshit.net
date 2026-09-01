@@ -55,9 +55,8 @@ module Lokka
       require 'rack/ssl-enforcer'
       use Rack::SslEnforcer, except_agents: /ELB-HealthChecker/
 
-      require 'exception_notification'
-      require 'lokka/exception_notifier_ses'
-      use ExceptionNotification::Rack,
+      require 'lokka/middleware/exception_notifier'
+      use Lokka::Middleware::ExceptionNotifier,
         ses: {
           to: 'morygonzalez@gmail.com',
           from: 'portal shit! <info@portalshit.net>',

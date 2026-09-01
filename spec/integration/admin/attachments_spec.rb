@@ -18,6 +18,10 @@ describe '/admin/attachments' do
         Option.aws_secret_access_key = 'bar'
         Option.s3_region = 'ap-northeast-1'
         Option.s3_bucket_name = 'dummy'
+        Option.s3_domain_name = 's3.example.com'
+        # Stub the actual S3 transfer so the spec does not depend on the
+        # installed aws-sdk-s3 version (Aws::S3::TransferManager) or on network.
+        allow_any_instance_of(Lokka::FileUploadHandler).to receive(:upload).and_return(true)
       end
 
       it 'should be success' do
