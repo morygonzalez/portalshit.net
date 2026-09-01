@@ -35,29 +35,12 @@ GEM
   remote: https://rubygems.org/
   specs:
     RedCloth (4.3.4)
-    actionmailer (6.1.7.10)
-      actionpack (= 6.1.7.10)
-      actionview (= 6.1.7.10)
-      activejob (= 6.1.7.10)
-      activesupport (= 6.1.7.10)
-      mail (~> 2.5, >= 2.5.4)
-      rails-dom-testing (~> 2.0)
-    actionpack (6.1.7.10)
-      actionview (= 6.1.7.10)
-      activesupport (= 6.1.7.10)
-      rack (~> 2.0, >= 2.0.9)
-      rack-test (>= 0.6.3)
-      rails-dom-testing (~> 2.0)
-      rails-html-sanitizer (~> 1.0, >= 1.2.0)
     actionview (6.1.7.10)
       activesupport (= 6.1.7.10)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activejob (6.1.7.10)
-      activesupport (= 6.1.7.10)
-      globalid (>= 0.3.6)
     activemodel (6.1.7.10)
       activesupport (= 6.1.7.10)
     activerecord (6.1.7.10)
@@ -138,7 +121,6 @@ GEM
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0)
     database_cleaner-core (2.1.0)
-    date (3.5.1)
     debug_inspector (1.2.0)
     diff-lcs (1.6.2)
     domain_name (0.6.20260829)
@@ -146,9 +128,7 @@ GEM
     drb (2.2.3)
     erubi (1.13.1)
     event_stream_parser (1.0.0)
-    exception_notification (4.6.0)
-      actionmailer (>= 5.2, < 9)
-      activesupport (>= 5.2, < 9)
+    exception_notification (2.4.1)
     exiftool (1.4.3)
       json
     factory_bot (6.6.0)
@@ -194,8 +174,6 @@ GEM
     get_process_mem (1.0.0)
       bigdecimal (>= 2.0)
       ffi (~> 1.0)
-    globalid (1.4.0)
-      activesupport (>= 6.1)
     gpx (1.2.2)
       csv
       nokogiri (~> 1.7)
@@ -236,17 +214,10 @@ GEM
     loofah (2.25.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
-    mail (2.9.1)
-      logger
-      mini_mime (>= 0.1.1)
-      net-imap
-      net-pop
-      net-smtp
     marcel (1.2.1)
     method_source (1.1.0)
     mini_magick (5.3.3)
       logger
-    mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitar (0.12.1)
     minitest (6.0.6)
@@ -259,19 +230,10 @@ GEM
       bigdecimal
     natto (1.2.0)
       ffi (>= 1.9.0)
-    net-imap (0.6.6)
-      date
-      net-protocol
-    net-pop (0.1.2)
-      net-protocol
-    net-protocol (0.3.0)
-      timeout
     net-scp (4.1.0)
       net-ssh (>= 2.6.5, < 8.0.0)
     net-sftp (4.0.0)
       net-ssh (>= 5.0.0, < 8.0.0)
-    net-smtp (0.5.1)
-      net-protocol
     net-ssh (7.3.3)
     nio4r (2.7.5)
     nokogiri (1.19.4)
@@ -322,20 +284,23 @@ GEM
       get_process_mem (>= 0.2)
       puma (>= 2.7)
     racc (1.8.1)
-    rack (2.2.24)
+    rack (3.2.7)
     rack-flash (0.1.2)
       rack
-    rack-protection (3.2.0)
+    rack-protection (4.2.1)
       base64 (>= 0.1.0)
-      rack (~> 2.2, >= 2.2.4)
+      logger (>= 1.6.0)
+      rack (>= 3.0.0, < 4)
     rack-recaptcha2 (1.0.0)
       json
+    rack-session (2.1.2)
+      base64 (>= 0.1.0)
+      rack (>= 3.0.0)
     rack-ssl-enforcer (0.2.9)
     rack-test (2.2.0)
       rack (>= 1.3)
-    rackup (1.0.1)
-      rack (< 3)
-      webrick
+    rackup (2.3.1)
+      rack (>= 3)
     rails-dom-testing (2.3.0)
       activesupport (>= 5.0.0)
       minitest
@@ -402,16 +367,18 @@ GEM
     sassc (2.4.0)
       ffi (~> 1.9)
     simplecov (1.1.1)
-    sinatra (3.2.0)
+    sinatra (4.2.1)
+      logger (>= 1.6.0)
       mustermann (~> 3.0)
-      rack (~> 2.2, >= 2.2.4)
-      rack-protection (= 3.2.0)
+      rack (>= 3.0.0, < 4)
+      rack-protection (= 4.2.1)
+      rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
-    sinatra-contrib (3.2.0)
+    sinatra-contrib (4.2.1)
       multi_json (>= 0.0.2)
       mustermann (~> 3.0)
-      rack-protection (= 3.2.0)
-      sinatra (= 3.2.0)
+      rack-protection (= 4.2.1)
+      sinatra (= 4.2.1)
       tilt (~> 2.0)
     sinatra-flash (0.3.0)
       sinatra (>= 1.0.0)
@@ -449,7 +416,6 @@ GEM
       tomlrb (~> 1.2)
     thor (1.5.0)
     tilt (2.1.0)
-    timeout (0.6.1)
     tomlrb (1.3.0)
     tux (0.3.0)
       ripl (>= 0.3.5)
@@ -463,7 +429,6 @@ GEM
     unicode-emoji (4.2.0)
     vacuum (5.1.0)
       http (>= 5.0)
-    webrick (1.9.2)
     yard (0.9.45)
     yard-sinatra (1.0.0)
       yard (~> 0.7)
@@ -508,7 +473,7 @@ DEPENDENCIES
   coderay
   database_cleaner-active_record
   dotenv
-  exception_notification (~> 4.5)
+  exception_notification
   exiftool
   factory_bot (~> 6.0)
   faraday_middleware
@@ -553,7 +518,7 @@ DEPENDENCIES
   rubyzip
   sassc
   simplecov
-  sinatra
+  sinatra (~> 4.0)
   sinatra-cache!
   sinatra-contrib
   sinatra-flash
