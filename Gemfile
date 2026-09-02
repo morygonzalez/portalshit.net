@@ -5,7 +5,7 @@ ruby '~> 3.2'
 
 gem 'activerecord', '~> 6.0'
 gem 'activerecord-import'
-gem 'activesupport', '~> 6.0'
+gem 'activesupport', '~> 7.0'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
