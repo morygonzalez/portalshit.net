@@ -32,6 +32,24 @@
   <div id="referer-ranking-all">
     <h3><a href="/log-aggregation/referer-ranking-all.txt">Referer Ranking</a></h3>
   </div>
+  <div id="client-error-ip-ranking-today">
+    <h3><a href="/log-aggregation/client-error-ip-ranking-today.txt">4xx IP Ranking Today</a></h3>
+  </div>
+  <div id="client-error-ip-ranking-yesterday">
+    <h3><a href="/log-aggregation/client-error-ip-ranking-yesterday.txt">4xx IP Ranking Yesterday</a></h3>
+  </div>
+  <div id="client-error-ip-ranking-all">
+    <h3><a href="/log-aggregation/client-error-ip-ranking-all.txt">4xx IP Ranking</a></h3>
+  </div>
+  <div id="client-error-path-ranking-today">
+    <h3><a href="/log-aggregation/client-error-path-ranking-today.txt">4xx Path Ranking Today</a></h3>
+  </div>
+  <div id="client-error-path-ranking-yesterday">
+    <h3><a href="/log-aggregation/client-error-path-ranking-yesterday.txt">4xx Path Ranking Yesterday</a></h3>
+  </div>
+  <div id="client-error-path-ranking-all">
+    <h3><a href="/log-aggregation/client-error-path-ranking-all.txt">4xx Path Ranking</a></h3>
+  </div>
   <div id="query-term-ranking-all">
     <h3><a href="/log-aggregation/query-term-ranking-all.txt">Query Term Ranking All</a></h3>
   </div>
@@ -105,6 +123,14 @@
     }
   }
 
+  const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
+
   const generateElement = async identifier => {
     let url = `/log-aggregation/${identifier}.txt`;
     let selector = `#${identifier}`;
@@ -150,6 +176,14 @@
           case 'referer-ranking-yesterday':
             href = match[1];
             return `${count} <a href="${href}" rel="noreferrer">${href}</a>`;
+          case 'client-error-ip-ranking-all':
+          case 'client-error-ip-ranking-today':
+          case 'client-error-ip-ranking-yesterday':
+          case 'client-error-path-ranking-all':
+          case 'client-error-path-ranking-today':
+          case 'client-error-path-ranking-yesterday':
+            path = match.slice(1).join(' ');
+            return `${count} ${escapeHtml(path)}`;
           default:
             break;
         }
@@ -160,7 +194,7 @@
   }
 
   let promises = [];
-  ['access-ranking', 'referer-ranking'].forEach(item => {
+  ['access-ranking', 'referer-ranking', 'client-error-ip-ranking', 'client-error-path-ranking'].forEach(item => {
     promises.push(
       new Promise((resolve, reject) => generateElement(`${item}-all`)),
       new Promise((resolve, reject) => generateElement(`${item}-today`)),

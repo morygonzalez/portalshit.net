@@ -6,8 +6,10 @@ readonly LOG_AGGREGATION_DIR=$(realpath "${APP_DIR}/public/log-aggregation")
 yesterday_date=$(date -d "yesterday" "+%Y-%m-%d")
 cp ${LOG_AGGREGATION_DIR}/access-ranking-{yesterday,${yesterday_date}}.txt
 cp ${LOG_AGGREGATION_DIR}/referer-ranking-{yesterday,${yesterday_date}}.txt
+cp ${LOG_AGGREGATION_DIR}/client-error-ip-ranking-{yesterday,${yesterday_date}}.txt
+cp ${LOG_AGGREGATION_DIR}/client-error-path-ranking-{yesterday,${yesterday_date}}.txt
 
-files=`find ${LOG_AGGREGATION_DIR} -type f -regextype posix-egrep -regex '.+/(access|referer)-ranking-[0-9]{4}-[0-9]{2}-[0-9]{2}\.txt'`
+files=`find ${LOG_AGGREGATION_DIR} -type f -regextype posix-egrep -regex '.+/(access|referer|client-error-(ip|path))-ranking-[0-9]{4}-[0-9]{2}-[0-9]{2}\.txt'`
 
 for file in ${files} ; do
   aws s3 cp --acl "public-read" ${file} s3://backup.portalshit.net/log/

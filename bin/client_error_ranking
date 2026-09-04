@@ -1,0 +1,83 @@
+#!/bin/bash
+
+source "$(dirname "$0")/lib/common.sh"
+
+# 400 系レスポンスを送信元 IP とリクエスト URI ごとに集計する。
+process_client_error_ranking() {
+  local period=${1:-"all"}
+  local ip_output="${LOG_AGGREGATION_DIR}/client-error-ip-ranking-${period}.txt"
+  local path_output="${LOG_AGGREGATION_DIR}/client-error-path-ranking-${period}.txt"
+  local work_dir
+
+  work_dir=$(mktemp -d)
+  trap "rm -rf '${work_dir}'" EXIT HUP INT TERM
+
+  echo "Processing Client Error Ranking ($period)"
+  find "${LOG_DIR}" -name "access.log*" -print0 \
+    | xargs -0 zcat -f \
+    | filter_by_date "${period}" \
+    | awk -F'\t' -v ip_file="${work_dir}/ips" -v path_file="${work_dir}/paths" '
+        {
+          ip = ""
+          path = ""
+          status = ""
+          for (i = 1; i <= NF; i++) {
+            if ($i ~ /^remote_addr:/) {
+              ip = $i
+              sub(/^remote_addr:/, "", ip)
+            } else if ($i ~ /^request_uri:/) {
+              path = $i
+              sub(/^request_uri:/, "", path)
+            } else if ($i ~ /^status:/) {
+              status = $i
+              sub(/^status:/, "", status)
+            }
+          }
+          if (status ~ /^4[0-9][0-9]$/) {
+            if (ip != "") print ip >> ip_file
+            if (path != "") print path >> path_file
+          }
+        }
+      '
+
+  rank_values "${work_dir}/ips" | tee "${ip_output}"
+  rank_values "${work_dir}/paths" | tee "${path_output}"
+
+  echo "Client error IP ranking saved to: ${ip_output}"
+  echo "Client error path ranking saved to: ${path_output}"
+
+  rm -rf "${work_dir}"
+  trap - EXIT HUP INT TERM
+}
+
+rank_values() {
+  local input=$1
+
+  if [ -f "${input}" ]; then
+    LC_ALL=C sort "${input}" \
+      | uniq -c \
+      | sort -nr \
+      | head -100 \
+      | sed -e 's/^[[:space:]]*//'
+  fi
+}
+
+main() {
+  local period="${1:-}"
+
+  if [ $# -eq 0 ]; then
+    process_client_error_ranking
+  else
+    case "$period" in
+      [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]|today|yesterday|all)
+        process_client_error_ranking "$period"
+        ;;
+      *)
+        echo "Usage: $0 {[YYYY-MM-DD|today|yesterday|all]}"
+        exit 1
+        ;;
+    esac
+  fi
+}
+
+main "$@"
