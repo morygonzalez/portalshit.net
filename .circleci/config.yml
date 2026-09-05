@@ -18,6 +18,26 @@ jobs:
             bundle config set without 'mysql postgresql'
             bundle install -j1
       - run:
+          name: DEBUG diagnostics
+          command: |
+            echo "--- pwd/id/env ---"
+            pwd
+            id
+            echo "HOME=$HOME"
+            env | grep -i bundle
+            echo "--- Gemfile pins ---"
+            grep -nE "activerecord|activesupport" Gemfile
+            echo "--- Gemfile.lock pins ---"
+            grep -nE "^    (activerecord|activesupport) \(" Gemfile.lock
+            echo "--- bundle list ---"
+            bundle list 2>&1 | grep -iE "activerecord|activesupport"
+            echo "--- installed gem dirs ---"
+            ls /usr/local/bundle/ruby/*/gems/ | grep -E "^activerecord|^activesupport"
+            echo "--- bundle exec check ---"
+            bundle exec ruby -e "require 'active_support'; puts ActiveSupport::VERSION::STRING" || true
+            echo "--- BUNDLE_GEMFILE ---"
+            bundle env 2>&1 | grep -iE "gemfile|path" || true
+      - run:
           name: Generate MeCab userdic
           command: |
             /usr/lib/mecab/mecab-dict-index \
