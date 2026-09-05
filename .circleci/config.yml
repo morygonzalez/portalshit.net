@@ -9,6 +9,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
         environment:
           RAILS_ENV: test
+          BUNDLE_GEMFILE: /app/app/Gemfile
     steps:
       - checkout
       - run:
@@ -17,25 +18,6 @@ jobs:
             bundle config set path /usr/local/bundle
             bundle config set without 'mysql postgresql'
             bundle install -j1
-      - run:
-          name: DEBUG diagnostics
-          command: |
-            echo "--- ruby-level pwd/realpath ---"
-            ruby -e "puts Dir.pwd; puts File.realpath('.'); puts File.exist?('Gemfile'); puts File.exist?('./Gemfile')"
-            echo "--- Bundler.default_gemfile ---"
-            ruby -rbundler -e "puts Bundler.default_gemfile" || true
-            echo "--- readlink /app/app ---"
-            readlink -f /app/app 2>&1
-            echo "--- /app/app contents ---"
-            ls -la /app/app | head -20
-            echo "--- diff /app/Gemfile vs ./Gemfile ---"
-            diff /app/Gemfile ./Gemfile && echo IDENTICAL || echo DIFFERENT
-            echo "--- ./Gemfile realpath ---"
-            realpath ./Gemfile
-            echo "--- bundle config list (all sources) ---"
-            bundle config list 2>&1 || true
-            echo "--- BUNDLE_GEMFILE env ---"
-            printenv BUNDLE_GEMFILE || echo "(not set)"
       - run:
           name: Generate MeCab userdic
           command: |
