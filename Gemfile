@@ -3,9 +3,9 @@
 source 'https://rubygems.org'
 ruby '~> 3.2'
 
-gem 'activerecord', '~> 6.0'
+gem 'activerecord', '~> 8.0'
 gem 'activerecord-import'
-gem 'activesupport', '~> 6.0'
+gem 'activesupport', '~> 8.0'
 gem 'awesome_print'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sesv2'
@@ -74,7 +74,7 @@ group :development, :test do
   gem 'rspec', '~> 3.12'
   gem 'rspec-its'
   gem 'simplecov', require: false
-  gem 'sqlite3', '~> 1.4'
+  gem 'sqlite3', '~> 2.1'
 end
 
 group :mysql do

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/morygonzalez/kaminari-sinatra.git
-  revision: 45cba48c36981189e6f2d5da98e9acd68e35004d
+  revision: 2cda83a72883eaa44540e1141059feba79c09f9f
   specs:
     kaminari-sinatra (1.0.1)
       actionview
@@ -35,25 +35,33 @@ GEM
   remote: https://rubygems.org/
   specs:
     RedCloth (4.3.4)
-    actionview (6.1.7.10)
-      activesupport (= 6.1.7.10)
+    actionview (8.1.3.1)
+      activesupport (= 8.1.3.1)
       builder (~> 3.1)
-      erubi (~> 1.4)
-      rails-dom-testing (~> 2.0)
-      rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activemodel (6.1.7.10)
-      activesupport (= 6.1.7.10)
-    activerecord (6.1.7.10)
-      activemodel (= 6.1.7.10)
-      activesupport (= 6.1.7.10)
+      erubi (~> 1.11)
+      rails-dom-testing (~> 2.2)
+      rails-html-sanitizer (~> 1.6)
+    activemodel (8.1.3.1)
+      activesupport (= 8.1.3.1)
+    activerecord (8.1.3.1)
+      activemodel (= 8.1.3.1)
+      activesupport (= 8.1.3.1)
+      timeout (>= 0.4.0)
     activerecord-import (2.3.0)
       activerecord (>= 4.2)
-    activesupport (6.1.7.10)
-      concurrent-ruby (~> 1.0, >= 1.0.2)
+    activesupport (8.1.3.1)
+      base64
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.3.1)
+      connection_pool (>= 2.2.5)
+      drb
       i18n (>= 1.6, < 2)
+      json
+      logger (>= 1.4.2)
       minitest (>= 5.1)
-      tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0, >= 2.0.5)
+      uri (>= 0.13.1)
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
     airbrussh (1.6.2)
@@ -61,7 +69,7 @@ GEM
     ast (2.4.3)
     awesome_print (1.9.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1282.0)
+    aws-partitions (1.1283.0)
     aws-sdk-core (3.254.1)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -77,7 +85,7 @@ GEM
       aws-sdk-core (~> 3, >= 3.254.1)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
-    aws-sdk-sesv2 (1.106.0)
+    aws-sdk-sesv2 (1.107.0)
       aws-sdk-core (~> 3, >= 3.254.0)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -115,6 +123,7 @@ GEM
       ffi
     coderay (1.1.3)
     concurrent-ruby (1.3.8)
+    connection_pool (3.0.2)
     crass (1.0.7)
     csv (3.3.6)
     database_cleaner-active_record (2.2.2)
@@ -123,7 +132,7 @@ GEM
     database_cleaner-core (2.1.0)
     debug_inspector (1.2.0)
     diff-lcs (1.6.2)
-    domain_name (0.6.20260829)
+    domain_name (0.6.20260902)
     dotenv (3.2.0)
     drb (2.2.3)
     erubi (1.13.1)
@@ -177,7 +186,7 @@ GEM
       csv
       nokogiri (~> 1.7)
       rake
-    haml (7.5.0)
+    haml (7.5.1)
       prism (>= 1.1.0)
       temple (>= 0.8.2)
       thor
@@ -215,7 +224,7 @@ GEM
       nokogiri (>= 1.12.0)
     marcel (1.2.1)
     method_source (1.1.0)
-    mini_magick (5.3.3)
+    mini_magick (5.4.0)
       logger
     mini_portile2 (2.8.9)
     minitar (0.12.1)
@@ -362,10 +371,11 @@ GEM
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    rubyzip (3.5.0)
+    rubyzip (3.6.0)
     sassc (2.4.0)
       ffi (~> 1.9)
-    simplecov (1.1.1)
+    securerandom (0.4.1)
+    simplecov (1.2.0)
     sinatra (4.2.1)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
@@ -384,14 +394,18 @@ GEM
     slim (5.2.2)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
-    sqlite3 (1.7.3)
+    sqlite3 (2.9.6)
       mini_portile2 (~> 2.8.0)
-    sqlite3 (1.7.3-aarch64-linux)
-    sqlite3 (1.7.3-arm-linux)
-    sqlite3 (1.7.3-arm64-darwin)
-    sqlite3 (1.7.3-x86-linux)
-    sqlite3 (1.7.3-x86_64-darwin)
-    sqlite3 (1.7.3-x86_64-linux)
+    sqlite3 (2.9.6-aarch64-linux-gnu)
+    sqlite3 (2.9.6-aarch64-linux-musl)
+    sqlite3 (2.9.6-arm-linux-gnu)
+    sqlite3 (2.9.6-arm-linux-musl)
+    sqlite3 (2.9.6-arm64-darwin)
+    sqlite3 (2.9.6-x86-linux-gnu)
+    sqlite3 (2.9.6-x86-linux-musl)
+    sqlite3 (2.9.6-x86_64-darwin)
+    sqlite3 (2.9.6-x86_64-linux-gnu)
+    sqlite3 (2.9.6-x86_64-linux-musl)
     sshkit (1.25.1)
       base64
       logger
@@ -415,6 +429,7 @@ GEM
       tomlrb (~> 1.2)
     thor (1.5.0)
     tilt (2.1.0)
+    timeout (0.6.1)
     tomlrb (1.3.0)
     tux (0.3.0)
       ripl (>= 0.3.5)
@@ -426,12 +441,12 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
+    uri (1.1.1)
     vacuum (5.1.0)
       http (>= 5.0)
     yard (0.9.45)
     yard-sinatra (1.0.0)
       yard (~> 0.7)
-    zeitwerk (2.8.3)
 
 PLATFORMS
   aarch64-linux
@@ -450,9 +465,9 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth
-  activerecord (~> 6.0)
+  activerecord (~> 8.0)
   activerecord-import
-  activesupport (~> 6.0)
+  activesupport (~> 8.0)
   addressable
   awesome_print
   aws-sdk-s3
@@ -521,7 +536,7 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-flash
   slim
-  sqlite3 (~> 1.4)
+  sqlite3 (~> 2.1)
   sshkit
   tantiny
   tilt (~> 2.1.0)
