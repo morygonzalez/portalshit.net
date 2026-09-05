@@ -9,6 +9,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
         environment:
           RAILS_ENV: test
+          BUNDLE_GEMFILE: /app/app/Gemfile
     steps:
       - checkout
       - run:
