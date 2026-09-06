@@ -3,6 +3,10 @@
 source "$(dirname "$0")/lib/common.sh"
 
 # 400 系レスポンスを送信元 IP とリクエスト URI ごとに集計する。
+#
+# 各行は「件数 キー ステータス内訳」の形式で、内訳を見れば nginx の
+# limit_req が返した 429 なのか、存在しない URL への 404 なのかを区別できる
+# （429 が大半なら、件数が多くてもスロットリング自体は効いている）。
 process_client_error_ranking() {
   local period=${1:-"all"}
   local ip_output="${LOG_AGGREGATION_DIR}/client-error-ip-ranking-${period}.txt"
@@ -16,29 +20,9 @@ process_client_error_ranking() {
   find "${LOG_DIR}" -name "access.log*" -print0 \
     | xargs -0 zcat -f \
     | filter_by_date "${period}" \
-    | awk -F'\t' -v ip_file="${work_dir}/ips" -v path_file="${work_dir}/paths" '
-        {
-          ip = ""
-          path = ""
-          status = ""
-          for (i = 1; i <= NF; i++) {
-            if ($i ~ /^remote_addr:/) {
-              ip = $i
-              sub(/^remote_addr:/, "", ip)
-            } else if ($i ~ /^request_uri:/) {
-              path = $i
-              sub(/^request_uri:/, "", path)
-            } else if ($i ~ /^status:/) {
-              status = $i
-              sub(/^status:/, "", status)
-            }
-          }
-          if (status ~ /^4[0-9][0-9]$/) {
-            if (ip != "") print ip >> ip_file
-            if (path != "") print path >> path_file
-          }
-        }
-      '
+    | /usr/bin/gawk -f "${APP_DIR}/bin/lib/client_error_ranking.awk" \
+        -v ip_file="${work_dir}/ips" \
+        -v path_file="${work_dir}/paths"
 
   rank_values "${work_dir}/ips" | tee "${ip_output}"
   rank_values "${work_dir}/paths" | tee "${path_output}"
@@ -54,11 +38,7 @@ rank_values() {
   local input=$1
 
   if [ -f "${input}" ]; then
-    LC_ALL=C sort "${input}" \
-      | uniq -c \
-      | sort -nr \
-      | head -100 \
-      | sed -e 's/^[[:space:]]*//'
+    LC_ALL=C sort -nr "${input}" | head -100
   fi
 }
 

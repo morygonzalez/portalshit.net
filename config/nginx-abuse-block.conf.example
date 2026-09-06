@@ -1,0 +1,117 @@
+# スロットリングを入れても 4xx ランキングの件数が減らないときの設定。
+#
+# ## 症状
+#
+# nginx に limit_req を入れたのに /log-aggregation/client-error-ip-ranking-today.txt
+# の件数が減らず、まだ大量にアクセスされているように見える。
+#
+# ## まず「本当に効いていないのか」を確かめる
+#
+# limit_req で弾いたリクエストも access.log には 429 として記録される。
+# 4xx ランキングは「アプリに届いた回数」ではなく「nginx が 4xx を返した回数」
+# なので、スロットリングが効くほどランキングの件数はむしろ増える。
+#
+# bin/client_error_ranking はステータスの内訳を出すので、
+#
+#   12345 203.0.113.9 429:12300 404:45
+#
+# のように 429 が大半なら、リクエストは nginx で止まっていてアプリ（Puma）には
+# 届いていない。この場合サイトが落ちる心配はなく、あとは「帯域と nginx の
+# ワーカーを食われるのが惜しいか」という判断になる。
+#
+# 逆に 404 が大半なら limit_req のゾーンや location がそのリクエストに
+# 掛かっていない。まず location のマッチを疑うこと。
+#
+# なお bin/status_code は upstream_response_time が "-" の行を捨てるため、
+# nginx が自前で返した 429 / 403 / 444 は「Nginx Status Codes」の表には
+# 出てこない。あの表に 429 が無いことは「制限が効いていない」根拠にならない。
+#
+# ## limit_req で減らせないもの
+#
+#   - limit_req は超過分を捨てるだけで、相手が投げるのをやめるわけではない。
+#     TCP 接続・TLS ハンドシェイク・nginx のワーカーは消費し続ける。
+#   - ゾーンのキーが $binary_remote_addr なので、送信元 IP を分散されると
+#     1 IP あたりのレートが上限に届かず素通りする。
+#   - burst ... nodelay は「平均レート」の制限なので、瞬間的には burst の分だけ
+#     まとめて通る。
+#
+# 相手が単一 IP からの機械的なスキャンなら、下の (1)(2) のように limit_req より
+# 前の段階で切ったほうが安い。
+#
+# ## 反映方法
+#
+#   1. http {} の中身を nginx.conf（または conf.d/*.conf）へ
+#   2. server {} の中身を portalshit.net の server ブロックへ
+#   3. sudo nginx -t && sudo systemctl reload nginx
+#   4. 翌時間の bin/client_error_ranking today で件数が落ちたか確認する
+#
+# チャット API 用のレート制限は config/nginx-chat-rate-limit.conf.example にある。
+# 併用する場合、limit_req_zone の名前が重複しないようにすること。
+
+# --- http {} コンテキスト ---------------------------------------------------
+
+# サイト全体への緩いレート制限。人間の閲覧では踏まない程度に開けておき、
+# 明らかな連打だけを落とす。記事ページは proxy_cache に載るので、ここを
+# 通り抜けても Puma まで行くとは限らない。
+limit_req_zone $binary_remote_addr zone=site:10m rate=120r/m;
+
+limit_req_status 429;
+# 弾いた分を error.log に出す。多すぎるなら warn を notice に下げる。
+limit_req_log_level warn;
+
+# 常習犯の IP / レンジ。bin/client_error_ranking の内訳を見て、429 を出し続けて
+# いる送信元だけを足す。
+#
+#   /etc/nginx/blocked_ips.conf の中身の例:
+#     203.0.113.9     1;
+#     198.51.100.0/24 1;
+#
+#   置き場所を conf.d/ にしないこと。conf.d/*.conf は nginx.conf 側の include で
+#   http {} に読み込まれてしまい、geo の中身が http コンテキストの命令として
+#   解釈されて起動に失敗する。
+#
+#   include 先が存在しないと nginx は起動しないので、登録する IP がまだ無くても
+#   空ファイルを作っておくこと（touch /etc/nginx/blocked_ips.conf）。
+geo $blocked_ip {
+    default 0;
+    include /etc/nginx/blocked_ips.conf;
+}
+
+# --- server {} コンテキスト -------------------------------------------------
+
+# (1) ブロック対象の IP は何も返さずに接続を切る。
+#     444 は nginx 独自のステータスで、レスポンスを返さず接続を閉じる。
+#     access.log には status:444 として残るので、集計で効果を確認できる。
+if ($blocked_ip) {
+    return 444;
+}
+
+# (2) このサイトに存在しない系のスキャン。WordPress / PHP / 設定ファイル狙いは
+#     アプリに通す意味がないので、limit_req に掛ける前にここで切る。
+#     ログも要らなければ access_log off; を足す（ただし効果の確認はできなくなる）。
+location ~* (^/(wp-|wordpress|xmlrpc\.php)|\.(php|aspx?|cgi|env|git|sql|bak)$|/\.(env|git)) {
+    return 444;
+}
+
+# (3) 上記に当たらない通常のリクエスト。既存の location / の設定に
+#     limit_req の行だけを足すこと（proxy_pass などは既存のものを使う）。
+location / {
+    limit_req zone=site burst=60 nodelay;
+
+    # 以下は既存の設定に合わせる
+    # proxy_cache portalshit_cache;
+    # proxy_pass http://app;
+}
+
+# ## それでも減らないとき
+#
+# 送信元 IP が毎回変わる（ボットネット / クラウドの広いレンジ）場合、IP 単位の
+# 制限も deny も追いつかない。その場合の選択肢:
+#
+#   - UA で切る。map $http_user_agent $bad_ua { ... } を http {} に置き、
+#     server {} で if ($bad_ua) { return 444; }。ただし UA は偽装できる。
+#   - fail2ban で access.log の 429 / 444 を監視し、閾値を超えた IP を
+#     一定時間 iptables で落とす。nginx より手前で切れるので一番安い。
+#   - Cloudflare 等を前段に置く。なおその場合 $binary_remote_addr は
+#     Cloudflare の IP になるため、real_ip_header CF-Connecting-IP と
+#     set_real_ip_from を設定しないと limit_req が全ユーザーで共有されてしまう。
