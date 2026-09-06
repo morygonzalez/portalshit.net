@@ -305,4 +305,5 @@ en:
     related:
       referrers: Articles referencing this post
       similar: Similar articles
+      prevnext: Previous & Next Articles
     bookmark_users: "%{count} users"

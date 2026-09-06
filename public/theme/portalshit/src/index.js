@@ -107,13 +107,13 @@ const observeSearchMenu = () => {
 }
 
 const observeLinkClick = (node) => {
-  const selectors = '.referrers .item a, .similar .item a, .frequently-read-articles .item a, .hotentry .item a';
+  const selectors = '.referrers .item a, .similar .item a, .frequently-read-articles .item a, .hotentry .item a, .prevnext-articles .item a';
   node.querySelectorAll(selectors).forEach(element => {
     element.onclick = (e) => {
       const target = e.target;
-      const item = target.closest('li.item');
+      const item = target.closest('.item');
       const type = item.getAttribute('type');
-      const category = type.match(/hotentry|frequency/) ? 'Popular Entry' : 'Related Entry';
+      const category = type.match(/hotentry|frequency/) ? 'Popular Entry' : type.match(/prev-article|next-article/) ? 'Prev/Next Article' : 'Related Entry';
       const action = `${type} click`;
       const label = item.getAttribute('title');
       if (typeof ga !== 'undefined') {

@@ -305,4 +305,5 @@ ja:
     related:
       referrers: この記事を参照している記事
       similar: この記事に似ている記事
+      prevnext: 前後の記事
     bookmark_users: "%{count} users"
