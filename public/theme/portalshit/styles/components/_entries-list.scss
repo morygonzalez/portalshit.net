@@ -33,6 +33,35 @@
     .item[type="prev-article"] {
       grid-column: 2;
     }
+
+    .item.empty {
+      margin: 0 1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .6em;
+      padding: 1.5em;
+      border: 1px solid rgba($meta-text-color, .18);
+      border-radius: $radius;
+      background-color: rgba($meta-text-color, .05);
+      color: $meta-text-color;
+      text-align: center;
+
+      &::before {
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: '\f3c5';
+        font-size: 1.5em;
+        opacity: .55;
+      }
+
+      p {
+        margin: 0;
+        font-size: .88em;
+        line-height: 1.6;
+      }
+    }
   }
 
   .bookmark_count {

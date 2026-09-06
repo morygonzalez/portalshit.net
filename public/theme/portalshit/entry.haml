@@ -51,8 +51,14 @@
       .items
         - if @entry.next
           = partial :_entry_list_item, locals: { post: @entry.next, type: 'next-article' }
+        - else
+          .item.empty{ type: 'next-article' }
+            %p= t('theme.related.latest')
         - if @entry.prev
           = partial :_entry_list_item, locals: { post: @entry.prev, type: 'prev-article' }
+        - else
+          .item.empty{ type: 'prev-article' }
+            %p= t('theme.related.oldest')
 
   = partial :related
 

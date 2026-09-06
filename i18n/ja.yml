@@ -306,4 +306,6 @@ ja:
       referrers: この記事を参照している記事
       similar: この記事に似ている記事
       prevnext: 前後の記事
+      latest: この記事が最新の記事です
+      oldest: この記事が最初の記事です
     bookmark_users: "%{count} users"

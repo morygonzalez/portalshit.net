@@ -306,4 +306,6 @@ en:
       referrers: Articles referencing this post
       similar: Similar articles
       prevnext: Previous & Next Articles
+      latest: This is the latest article
+      oldest: This is the earliest article
     bookmark_users: "%{count} users"
