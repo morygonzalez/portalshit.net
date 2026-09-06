@@ -35,6 +35,8 @@
     }
 
     .item.empty {
+      box-sizing: border-box;
+      width: auto;
       margin: 0 1em;
       display: flex;
       flex-direction: column;
