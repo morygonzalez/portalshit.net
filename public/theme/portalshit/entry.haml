@@ -44,16 +44,16 @@
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
 
-    - if @entry.type == 'Post' && (@entry.next || @entry.prev)
-      %section.entries-list.prevnext-articles
-        %h3= t('theme.related.prevnext')
-        .items
-          - if @entry.next
-            = partial :_entry_list_item, locals: { post: @entry.next, type: 'next-article' }
-          - if @entry.prev
-            = partial :_entry_list_item, locals: { post: @entry.prev, type: 'prev-article' }
-
 %aside
+  - if @entry.type == 'Post' && (@entry.next || @entry.prev)
+    %section.entries-list.prevnext-articles
+      %h3= t('theme.related.prevnext')
+      .items
+        - if @entry.next
+          = partial :_entry_list_item, locals: { post: @entry.next, type: 'next-article' }
+        - if @entry.prev
+          = partial :_entry_list_item, locals: { post: @entry.prev, type: 'prev-article' }
+
   = partial :related
 
   %section.comments

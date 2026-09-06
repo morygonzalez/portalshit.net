@@ -6,6 +6,10 @@
 #content .entries-list {
   @include entries-list;
 
+  // Separate consecutive list sections (popular/hotentry on the index,
+  // prevnext/referrers/similar in the article aside).
+  margin-bottom: 2.5em;
+
   h4 {
     margin-top: 0;
   }
@@ -16,6 +20,18 @@
 
     .item .title .created_at {
       margin-top: 0;
+    }
+  }
+
+  // Keep the newer post on the left and the older post on the right even when
+  // only one of them exists (latest / oldest post), matching the header nav.
+  &.prevnext-articles .items {
+    .item[type="next-article"] {
+      grid-column: 1;
+    }
+
+    .item[type="prev-article"] {
+      grid-column: 2;
     }
   }
 
