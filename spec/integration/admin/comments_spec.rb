@@ -146,14 +146,14 @@ describe 'Private comment administration' do
 
   it 'explains privacy in the edit form without a privacy toggle' do
     get "/admin/comments/#{private_comment.id}/edit"
-    expect(last_response.body).to include('Secret admin content', I18n.t('private_comment_admin_explanation'))
+    expect(last_response.body).to include('Secret admin content', I18n.t('comment.admin.private.explanation'))
     expect(last_response.body).not_to include('name="comment[private]"')
   end
 
   it 'rejects a forged request to clear privacy' do
     put "/admin/comments/#{private_comment.id}", comment: { private: '0' }
     expect(private_comment.reload.private?).to be true
-    expect(last_response.body).to include(I18n.t('private_comment_cannot_be_public'))
+    expect(last_response.body).to include(I18n.t('comment.errors.cannot_be_public'))
   end
 
   it 'allows spam and moderation changes without notifying the commenter' do

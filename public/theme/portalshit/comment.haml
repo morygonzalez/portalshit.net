@@ -32,8 +32,8 @@
     %p
       %label{for: 'comment_private'}
         %input{type: 'checkbox', name: 'comment[private]', id: 'comment_private', value: '1', checked: @comment&.private?, 'aria-describedby' => 'comment_private_note'}
-        = t('private_comment_label')
-      %small#comment_private_note= t('private_comment_explanation')
+        = t('comment.private.label')
+      %small#comment_private_note= t('comment.private.explanation')
     - if ENV['RECAPTCHA_PUBLIC_KEY'] && ENV['RECAPTCHA_PRIVATE_KEY']
       %p
         != recaptcha_javascript

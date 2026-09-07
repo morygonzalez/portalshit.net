@@ -58,24 +58,24 @@ describe 'Private comment submission and public display' do
     it 'shows a one-time private receipt tied to the submitted entry' do
       post entry.link, payload
       follow_redirect!
-      expect(last_response.body).to include(I18n.t('private_comment_thanks'))
+      expect(last_response.body).to include(I18n.t('comment.private.thanks'))
       expect(last_response.headers['cache-control']).to include('no-store')
       get entry.link
-      expect(last_response.body).not_to include(I18n.t('private_comment_thanks'))
+      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'))
     end
 
     it 'does not show the receipt on a different entry' do
       other_entry = create(:post)
       post entry.link, payload
       get other_entry.link
-      expect(last_response.body).not_to include(I18n.t('private_comment_thanks'))
+      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'))
       get entry.link
-      expect(last_response.body).to include(I18n.t('private_comment_thanks'))
+      expect(last_response.body).to include(I18n.t('comment.private.thanks'))
     end
 
     it 'does not trust receipt query parameters' do
       get "#{entry.link}?comment_submitted=1&private=1"
-      expect(last_response.body).not_to include(I18n.t('private_comment_thanks'), I18n.t('theme.comment.thanks'))
+      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'), I18n.t('theme.comment.thanks'))
     end
 
     it 'shows the ordinary receipt for an ordinary submission' do
@@ -83,7 +83,7 @@ describe 'Private comment submission and public display' do
       post entry.link, payload
       follow_redirect!
       expect(last_response.body).to include(I18n.t('theme.comment.thanks'))
-      expect(last_response.body).not_to include(I18n.t('private_comment_thanks'))
+      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'))
     end
   end
 
@@ -123,7 +123,7 @@ describe 'Private comment form' do
     expect(checkbox['type']).to eq('checkbox')
     expect(checkbox['value']).to eq('1')
     expect(checkbox['checked']).to be_nil
-    expect(document.at_css('#comment_private_note').text).to eq(I18n.t('private_comment_explanation'))
+    expect(document.at_css('#comment_private_note').text).to eq(I18n.t('comment.private.explanation'))
   end
 
   it 'keeps the checkbox checked on validation failure' do

@@ -180,7 +180,7 @@ module Lokka
         end
         session[:comment_submission] = {
           'entry_id' => @entry.id,
-          'message' => @comment.private? ? 'private_comment_thanks' : 'theme.comment.thanks'
+          'message' => @comment.private? ? 'comment.private.thanks' : 'theme.comment.thanks'
         }
         redirect to("#{@entry.link}#comments-section")
       else

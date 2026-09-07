@@ -27,7 +27,7 @@ class Comment < ActiveRecord::Base
 
   def keep_private_comments_private
     if private_in_database && !private?
-      errors.add(:base, I18n.t('private_comment_cannot_be_public'))
+      errors.add(:base, I18n.t('comment.errors.cannot_be_public'))
     end
   end
 

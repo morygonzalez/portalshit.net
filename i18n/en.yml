@@ -195,6 +195,17 @@ en:
     homepage: Homepage
     created_at: Created at
     updated_at: Updated at
+    private:
+      label: Message to the blog author (not published on the site)
+      explanation: Only blog administrators can read messages to the author. They will never be published on the site.
+      thanks: Your message has been sent to the author. It will not be published on the site.
+    errors:
+      cannot_be_public: An author-only comment cannot be made public.
+    admin:
+      private:
+        badge: Author only
+        filter: Author-only comments
+        explanation: This comment will not be published even if marked as approved. It cannot be converted to a regular public comment.
   snippet:
     id: ID
     name: Name
@@ -301,7 +312,7 @@ en:
     edited: (edited)
     comment:
       thanks: Thank you for your comment. It will appear on the site after being approved by an administrator, and you'll be notified by email once it is.
-      note: "Regular comments appear on the site after administrator approval. Author-only comments are never published."
+      note: "Regular comments appear on the site after administrator approval. Messages to the author are never published."
     related:
       referrers: Articles referencing this post
       similar: Similar articles
@@ -309,11 +320,3 @@ en:
       latest: This is the latest article
       oldest: This is the earliest article
     bookmark_users: "%{count} users"
-
-  private_comment: Author only
-  private_comments: Author-only comments
-  private_comment_label: Send this comment only to the blog author (never published)
-  private_comment_explanation: Only blog administrators can read author-only comments. They will not be published, even after review.
-  private_comment_admin_explanation: This comment will not be published even if marked as approved. It cannot be converted to a regular public comment.
-  private_comment_thanks: Your author-only comment has been sent. It will not be published on the site.
-  private_comment_cannot_be_public: An author-only comment cannot be made public.
