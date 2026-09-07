@@ -32,23 +32,41 @@
   <div id="referer-ranking-all">
     <h3><a href="/log-aggregation/referer-ranking-all.txt">Referer Ranking</a></h3>
   </div>
-  <div id="client-error-ip-ranking-today">
-    <h3><a href="/log-aggregation/client-error-ip-ranking-today.txt">4xx IP Ranking Today</a></h3>
+  <div id="client-error-404-ip-ranking-today">
+    <h3><a href="/log-aggregation/client-error-404-ip-ranking-today.txt">404 IP Ranking Today</a></h3>
   </div>
-  <div id="client-error-ip-ranking-yesterday">
-    <h3><a href="/log-aggregation/client-error-ip-ranking-yesterday.txt">4xx IP Ranking Yesterday</a></h3>
+  <div id="client-error-404-ip-ranking-yesterday">
+    <h3><a href="/log-aggregation/client-error-404-ip-ranking-yesterday.txt">404 IP Ranking Yesterday</a></h3>
   </div>
-  <div id="client-error-ip-ranking-all">
-    <h3><a href="/log-aggregation/client-error-ip-ranking-all.txt">4xx IP Ranking</a></h3>
+  <div id="client-error-404-ip-ranking-all">
+    <h3><a href="/log-aggregation/client-error-404-ip-ranking-all.txt">404 IP Ranking</a></h3>
   </div>
-  <div id="client-error-path-ranking-today">
-    <h3><a href="/log-aggregation/client-error-path-ranking-today.txt">4xx Path Ranking Today</a></h3>
+  <div id="client-error-404-path-ranking-today">
+    <h3><a href="/log-aggregation/client-error-404-path-ranking-today.txt">404 Path Ranking Today</a></h3>
   </div>
-  <div id="client-error-path-ranking-yesterday">
-    <h3><a href="/log-aggregation/client-error-path-ranking-yesterday.txt">4xx Path Ranking Yesterday</a></h3>
+  <div id="client-error-404-path-ranking-yesterday">
+    <h3><a href="/log-aggregation/client-error-404-path-ranking-yesterday.txt">404 Path Ranking Yesterday</a></h3>
   </div>
-  <div id="client-error-path-ranking-all">
-    <h3><a href="/log-aggregation/client-error-path-ranking-all.txt">4xx Path Ranking</a></h3>
+  <div id="client-error-404-path-ranking-all">
+    <h3><a href="/log-aggregation/client-error-404-path-ranking-all.txt">404 Path Ranking</a></h3>
+  </div>
+  <div id="client-error-other-ip-ranking-today">
+    <h3><a href="/log-aggregation/client-error-other-ip-ranking-today.txt">Other 4xx IP Ranking Today</a></h3>
+  </div>
+  <div id="client-error-other-ip-ranking-yesterday">
+    <h3><a href="/log-aggregation/client-error-other-ip-ranking-yesterday.txt">Other 4xx IP Ranking Yesterday</a></h3>
+  </div>
+  <div id="client-error-other-ip-ranking-all">
+    <h3><a href="/log-aggregation/client-error-other-ip-ranking-all.txt">Other 4xx IP Ranking</a></h3>
+  </div>
+  <div id="client-error-other-path-ranking-today">
+    <h3><a href="/log-aggregation/client-error-other-path-ranking-today.txt">Other 4xx Path Ranking Today</a></h3>
+  </div>
+  <div id="client-error-other-path-ranking-yesterday">
+    <h3><a href="/log-aggregation/client-error-other-path-ranking-yesterday.txt">Other 4xx Path Ranking Yesterday</a></h3>
+  </div>
+  <div id="client-error-other-path-ranking-all">
+    <h3><a href="/log-aggregation/client-error-other-path-ranking-all.txt">Other 4xx Path Ranking</a></h3>
   </div>
   <div id="query-term-ranking-all">
     <h3><a href="/log-aggregation/query-term-ranking-all.txt">Query Term Ranking All</a></h3>
@@ -176,12 +194,18 @@
           case 'referer-ranking-yesterday':
             href = match[1];
             return `${count} <a href="${href}" rel="noreferrer">${href}</a>`;
-          case 'client-error-ip-ranking-all':
-          case 'client-error-ip-ranking-today':
-          case 'client-error-ip-ranking-yesterday':
-          case 'client-error-path-ranking-all':
-          case 'client-error-path-ranking-today':
-          case 'client-error-path-ranking-yesterday':
+          case 'client-error-404-ip-ranking-all':
+          case 'client-error-404-ip-ranking-today':
+          case 'client-error-404-ip-ranking-yesterday':
+          case 'client-error-404-path-ranking-all':
+          case 'client-error-404-path-ranking-today':
+          case 'client-error-404-path-ranking-yesterday':
+          case 'client-error-other-ip-ranking-all':
+          case 'client-error-other-ip-ranking-today':
+          case 'client-error-other-ip-ranking-yesterday':
+          case 'client-error-other-path-ranking-all':
+          case 'client-error-other-path-ranking-today':
+          case 'client-error-other-path-ranking-yesterday':
             path = match.slice(1).join(' ');
             return `${count} ${escapeHtml(path)}`;
           default:
@@ -194,7 +218,14 @@
   }
 
   let promises = [];
-  ['access-ranking', 'referer-ranking', 'client-error-ip-ranking', 'client-error-path-ranking'].forEach(item => {
+  [
+    'access-ranking',
+    'referer-ranking',
+    'client-error-404-ip-ranking',
+    'client-error-404-path-ranking',
+    'client-error-other-ip-ranking',
+    'client-error-other-path-ranking'
+  ].forEach(item => {
     promises.push(
       new Promise((resolve, reject) => generateElement(`${item}-all`)),
       new Promise((resolve, reject) => generateElement(`${item}-today`)),

@@ -2,7 +2,7 @@
 #
 # ## 症状
 #
-# nginx に limit_req を入れたのに /log-aggregation/client-error-ip-ranking-today.txt
+# nginx に limit_req を入れたのに /log-aggregation/client-error-other-ip-ranking-today.txt
 # の件数が減らず、まだ大量にアクセスされているように見える。
 #
 # ## まず「本当に効いていないのか」を確かめる
@@ -11,16 +11,17 @@
 # 4xx ランキングは「アプリに届いた回数」ではなく「nginx が 4xx を返した回数」
 # なので、スロットリングが効くほどランキングの件数はむしろ増える。
 #
-# bin/client_error_ranking はステータスの内訳を出すので、
+# bin/client_error_ranking の「Other 4xx」ランキングはステータスの内訳を出すので、
 #
-#   12345 203.0.113.9 429:12300 404:45
+#   12345 203.0.113.9 429:12300 444:45
 #
 # のように 429 が大半なら、リクエストは nginx で止まっていてアプリ（Puma）には
 # 届いていない。この場合サイトが落ちる心配はなく、あとは「帯域と nginx の
 # ワーカーを食われるのが惜しいか」という判断になる。
 #
-# 逆に 404 が大半なら limit_req のゾーンや location がそのリクエストに
-# 掛かっていない。まず location のマッチを疑うこと。
+# 404 は別のランキングに分けて出力する。Other 4xx ではなく 404 の件数だけが
+# 多い場合は、limit_req のゾーンや location がそのリクエストに掛かっていない
+# 可能性がある。まず location のマッチを疑うこと。
 #
 # なお bin/status_code は upstream_response_time が "-" の行を捨てるため、
 # nginx が自前で返した 429 / 403 / 444 は「Nginx Status Codes」の表には

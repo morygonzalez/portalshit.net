@@ -21,23 +21,37 @@ BEGIN { FS = "\t" }
     next
   }
 
-  if (ip != "") {
-    ip_total[ip]++
-    ip_status[ip][status]++
-  }
-  if (path != "") {
-    path_total[path]++
-    path_status[path][status]++
+  if (status == "404") {
+    if (ip != "") not_found_ip_total[ip]++
+    if (path != "") not_found_path_total[path]++
+  } else {
+    if (ip != "") {
+      other_ip_total[ip]++
+      other_ip_status[ip][status]++
+    }
+    if (path != "") {
+      other_path_total[path]++
+      other_path_status[path][status]++
+    }
   }
 }
 
 END {
-  dump(ip_total, ip_status, ip_file)
-  dump(path_total, path_status, path_file)
+  dump_simple(not_found_ip_total, not_found_ip_file)
+  dump_simple(not_found_path_total, not_found_path_file)
+  dump_with_status(other_ip_total, other_ip_status, other_ip_file)
+  dump_with_status(other_path_total, other_path_status, other_path_file)
 }
 
-# 「合計 キー ステータス内訳」を出力する。並べ替えは呼び出し側の sort に任せる。
-function dump(total, by_status, out,   key, n, sorted, breakdown, j) {
+# 並べ替えは呼び出し側の sort に任せる。
+function dump_simple(total, out,   key) {
+  for (key in total) {
+    printf "%d %s\n", total[key], key > out
+  }
+  close(out)
+}
+
+function dump_with_status(total, by_status, out,   key, n, sorted, breakdown, j) {
   for (key in total) {
     breakdown = ""
     n = asorti(by_status[key], sorted)
