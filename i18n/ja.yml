@@ -301,7 +301,7 @@ ja:
     edited: (編集済み)
     comment:
       thanks: コメントありがとうございました。管理者の確認後にサイトに反映されます。反映されたらメールでお知らせします。
-      note: ※コメントは管理者の確認後に反映されます
+      note: ※通常のコメントは、管理者の承認後にサイトに表示されます。著者限定コメントは公開されません。
     related:
       referrers: この記事を参照している記事
       similar: この記事に似ている記事
@@ -311,8 +311,9 @@ ja:
     bookmark_users: "%{count} users"
 
   private_comment: 著者限定
-  private_comments: 著者限定コメントのみ
-  private_comment_label: このコメントはブログ著者だけに送る（公開されません）
-  private_comment_explanation: 承認済みに変更されてもサイトには公開されません。管理者が閲覧でき、通常のコメントと同様にバックアップに含まれます。
-  private_comment_thanks: 著者限定コメントを送信しました。このコメントはサイトに公開されません
+  private_comments: 著者限定コメントを表示
+  private_comment_label: ブログの著者にだけ送る（サイトには公開されません）
+  private_comment_explanation: 著者限定コメントは、ブログの管理者だけが閲覧できます。確認後もサイトには公開されません。
+  private_comment_admin_explanation: 「承認済み」に変更しても、このコメントはサイトに公開されません。通常の公開コメントに変更することはできません。
+  private_comment_thanks: 著者限定コメントを送信しました。このコメントはサイトには公開されません。
   private_comment_cannot_be_public: 著者限定コメントを公開コメントに変更することはできません。

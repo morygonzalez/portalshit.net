@@ -146,7 +146,7 @@ describe 'Private comment administration' do
 
   it 'explains privacy in the edit form without a privacy toggle' do
     get "/admin/comments/#{private_comment.id}/edit"
-    expect(last_response.body).to include('Secret admin content', I18n.t('private_comment_explanation'))
+    expect(last_response.body).to include('Secret admin content', I18n.t('private_comment_admin_explanation'))
     expect(last_response.body).not_to include('name="comment[private]"')
   end
 

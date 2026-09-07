@@ -8,7 +8,7 @@
   - if @comment.private?
     %p.private-comment-notice
       %strong= t('private_comment')
-      = t('private_comment_explanation')
+      = t('private_comment_admin_explanation')
   .field
     = f.label :entry, caption: t('comment.entry')
     %br/

@@ -301,7 +301,7 @@ en:
     edited: (edited)
     comment:
       thanks: Thank you for your comment. It will appear on the site after being approved by an administrator, and you'll be notified by email once it is.
-      note: "※ Comments are subject to administrator approval before appearing on the site."
+      note: "Regular comments appear on the site after administrator approval. Author-only comments are never published."
     related:
       referrers: Articles referencing this post
       similar: Similar articles
@@ -313,6 +313,7 @@ en:
   private_comment: Author only
   private_comments: Author-only comments
   private_comment_label: Send this comment only to the blog author (never published)
-  private_comment_explanation: This comment will never be published, even if approved. Administrators can read it, and it is included in backups like other comments.
+  private_comment_explanation: Only blog administrators can read author-only comments. They will not be published, even after review.
+  private_comment_admin_explanation: This comment will not be published even if marked as approved. It cannot be converted to a regular public comment.
   private_comment_thanks: Your author-only comment has been sent. It will not be published on the site.
   private_comment_cannot_be_public: An author-only comment cannot be made public.
