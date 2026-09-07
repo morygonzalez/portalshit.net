@@ -309,3 +309,10 @@ en:
       latest: This is the latest article
       oldest: This is the earliest article
     bookmark_users: "%{count} users"
+
+  private_comment: Author only
+  private_comments: Author-only comments
+  private_comment_label: Send this comment only to the blog author (never published)
+  private_comment_explanation: This comment will never be published, even if approved. Administrators can read it, and it is included in backups like other comments.
+  private_comment_thanks: Your author-only comment has been sent. It will not be published on the site.
+  private_comment_cannot_be_public: An author-only comment cannot be made public.

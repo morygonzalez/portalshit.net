@@ -8,7 +8,7 @@ module Lokka
       @theme_types << :entries
 
       @posts = Post.published.
-                 includes(:category, :tags, :user, :approved_comments).
+                 includes(:category, :tags, :user, :public_comments).
                  page(params[:page] || 1).
                  per(@site.per_page).
                  order(@site.default_order)
@@ -40,7 +40,7 @@ module Lokka
 
       @query = params[:query]
       @posts = Post.published.
-                 includes(:category, :tags, :user, :approved_comments).
+                 includes(:category, :tags, :user, :public_comments).
                  search(@query).
                  page(params[:page || 1]).
                  per(@site.per_page).
@@ -171,7 +171,18 @@ module Lokka
                             logged_in? ? Comment::APPROVED : Comment::MODERATED
                           end
       if @comment.save
-        redirect to("#{@entry.link}?comment_submitted=1#comments-section")
+        if @comment.private?
+          begin
+            Lokka::CommentNotifier.new(@comment).notify_author
+          rescue => e
+            logger.error "Failed to send private comment notification: #{e.class}"
+          end
+        end
+        session[:comment_submission] = {
+          'entry_id' => @entry.id,
+          'message' => @comment.private? ? 'private_comment_thanks' : 'theme.comment.thanks'
+        }
+        redirect to("#{@entry.link}#comments-section")
       else
         setup_and_render_entry
       end

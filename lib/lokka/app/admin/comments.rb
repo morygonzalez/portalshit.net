@@ -5,7 +5,8 @@ module Lokka
     namespace '/admin' do
       namespace '/comments' do
         get do
-          @comments = Comment.order('created_at DESC').
+          comments = params[:private] == '1' ? Comment.private_comments : Comment.all
+          @comments = comments.order('created_at DESC').
                         page(params[:page]).
                         per(settings.admin_per_page)
           haml :'admin/comments/index', layout: :'admin/layout'
@@ -35,7 +36,7 @@ module Lokka
           (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
           was_not_approved = @comment.status != Comment::APPROVED
           if @comment.update(params[:comment])
-            if was_not_approved && @comment.status == Comment::APPROVED
+            if was_not_approved && @comment.status == Comment::APPROVED && !@comment.private?
               @comment.entry # preload association
               comment = @comment
               Thread.new do

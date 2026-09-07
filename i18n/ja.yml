@@ -309,3 +309,10 @@ ja:
       latest: この記事が最新の記事です
       oldest: この記事が最初の記事です
     bookmark_users: "%{count} users"
+
+  private_comment: 著者限定
+  private_comments: 著者限定コメントのみ
+  private_comment_label: このコメントはブログ著者だけに送る（公開されません）
+  private_comment_explanation: 承認済みに変更されてもサイトには公開されません。管理者が閲覧でき、通常のコメントと同様にバックアップに含まれます。
+  private_comment_thanks: 著者限定コメントを送信しました。このコメントはサイトに公開されません
+  private_comment_cannot_be_public: 著者限定コメントを公開コメントに変更することはできません。

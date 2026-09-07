@@ -4,7 +4,8 @@ require 'net/http'
 
 class Entry < ActiveRecord::Base
   has_many :comments
-  has_many :approved_comments, -> { approved }, class_name: 'Comment'
+  has_many :public_comments, -> { publicly_visible }, class_name: 'Comment'
+  has_many :approved_comments, -> { publicly_visible }, class_name: 'Comment'
   has_many :taggings, as: :taggable
   has_many :tags, through: :taggings
   has_many :similarities

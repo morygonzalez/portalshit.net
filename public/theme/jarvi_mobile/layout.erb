@@ -61,7 +61,7 @@
 		        </ul>
           </dd>
           <% end %>
-          <% if Comment.count > 0 %>
+          <% if Comment.publicly_visible.count > 0 %>
     	    <dt><%= t('recent_comments') %></dt>
           <dd>
     		    <ul>

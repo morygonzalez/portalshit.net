@@ -1570,3 +1570,20 @@ textarea#category_description
     }
 }
 
+
+/* Author-only comments remain private regardless of moderation status. */
+.private-comment-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-right: 6px;
+  background: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ccad52;
+  border-radius: 3px;
+}
+.private-comment-notice {
+  padding: 12px;
+  background: #fff3cd;
+  color: #664d03;
+  border-left: 4px solid #ccad52;
+}

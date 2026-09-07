@@ -5,6 +5,10 @@
       %ul
         - @comment.errors.full_messages.each do |error|
           %li= error
+  - if @comment.private?
+    %p.private-comment-notice
+      %strong= t('private_comment')
+      = t('private_comment_explanation')
   .field
     = f.label :entry, caption: t('comment.entry')
     %br/

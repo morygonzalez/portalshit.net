@@ -30,12 +30,12 @@
 </div>
 
 <div id="comment_wrapper">
-  <% if @entry.comments.size > 0 %>
+  <% if @entry.public_comments.size > 0 %>
   <h3>
     <%= t('comments') %>
   </h3>
   <ul id="comments">
-    <% @entry.comments.reverse.each do |comment| %>
+    <% @entry.public_comments.reverse.each do |comment| %>
       <li id="comment-<%= comment.id %>" class="comment clearfix">
         <p>
           <%= hbr comment.body %>

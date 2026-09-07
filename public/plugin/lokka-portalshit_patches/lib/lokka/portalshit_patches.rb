@@ -114,6 +114,7 @@ class Comment
   private
 
   def send_notification_to_entry_author
+    return if private?
     return if Lokka.test?
     return if email == entry.user.email
     return if status == SPAM

@@ -39,7 +39,7 @@
 
   %footer.footer
     = @entry.tags_to_html
-    .comment== #{link_to "#{t('comments')} (#{@entry.comments.approved.size})", "#{@entry.link}#comment_form"}
+    .comment== #{link_to "#{t('comments')} (#{@entry.public_comments.size})", "#{@entry.link}#comment_form"}
     .created_at== #{l @entry.created_at, format: :long}
     - if logged_in?
       .edit= link_to t('edit'), @entry.edit_link
@@ -64,10 +64,10 @@
 
   %section.comments
     %h3#comments-section= t('comments')
-    - if params[:comment_submitted]
-      .flash-notice= t('theme.comment.thanks')
+    - if @comment_submission_message
+      .flash-notice= t(@comment_submission_message)
     %ul.comment-list
-      - @entry.approved_comments.reverse.each do |comment|
+      - @entry.public_comments.reverse.each do |comment|
         %li.comment{id: "comment-#{comment.id}"}
           %ul.meta
             %li.gravatar= image_tag gravatar_image_url comment.email
