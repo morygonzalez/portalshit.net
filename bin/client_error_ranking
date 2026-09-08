@@ -2,14 +2,12 @@
 
 source "$(dirname "$0")/lib/common.sh"
 
-# 400 系レスポンスを 404 とそれ以外に分け、送信元 IP とリクエスト URI ごとに
-# 集計する。404 は「件数 キー」、それ以外は「件数 キー ステータス内訳」の形式で
-# 出力する。
+# 400 系レスポンスを送信元 IP ごとにまとめて集計する。リクエスト URI は 404 と
+# それ以外に分けて集計し、いずれも「件数 キー」の形式で出力する。
 process_client_error_ranking() {
   local period=${1:-"all"}
-  local not_found_ip_output="${LOG_AGGREGATION_DIR}/client-error-404-ip-ranking-${period}.txt"
+  local ip_output="${LOG_AGGREGATION_DIR}/client-error-ip-ranking-${period}.txt"
   local not_found_path_output="${LOG_AGGREGATION_DIR}/client-error-404-path-ranking-${period}.txt"
-  local other_ip_output="${LOG_AGGREGATION_DIR}/client-error-other-ip-ranking-${period}.txt"
   local other_path_output="${LOG_AGGREGATION_DIR}/client-error-other-path-ranking-${period}.txt"
   local work_dir
 
@@ -21,19 +19,16 @@ process_client_error_ranking() {
     | xargs -0 zcat -f \
     | filter_by_date "${period}" \
     | /usr/bin/gawk -f "${APP_DIR}/bin/lib/client_error_ranking.awk" \
-        -v not_found_ip_file="${work_dir}/404-ips" \
+        -v ip_file="${work_dir}/ips" \
         -v not_found_path_file="${work_dir}/404-paths" \
-        -v other_ip_file="${work_dir}/other-ips" \
         -v other_path_file="${work_dir}/other-paths"
 
-  rank_values "${work_dir}/404-ips" | tee "${not_found_ip_output}"
+  rank_values "${work_dir}/ips" | tee "${ip_output}"
   rank_values "${work_dir}/404-paths" | tee "${not_found_path_output}"
-  rank_values "${work_dir}/other-ips" | tee "${other_ip_output}"
   rank_values "${work_dir}/other-paths" | tee "${other_path_output}"
 
-  echo "404 IP ranking saved to: ${not_found_ip_output}"
+  echo "4xx IP ranking saved to: ${ip_output}"
   echo "404 path ranking saved to: ${not_found_path_output}"
-  echo "Other 4xx IP ranking saved to: ${other_ip_output}"
   echo "Other 4xx path ranking saved to: ${other_path_output}"
 
   rm -rf "${work_dir}"

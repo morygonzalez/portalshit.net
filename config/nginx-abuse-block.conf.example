@@ -2,7 +2,7 @@
 #
 # ## 症状
 #
-# nginx に limit_req を入れたのに /log-aggregation/client-error-other-ip-ranking-today.txt
+# nginx に limit_req を入れたのに /log-aggregation/client-error-ip-ranking-today.txt
 # の件数が減らず、まだ大量にアクセスされているように見える。
 #
 # ## まず「本当に効いていないのか」を確かめる
@@ -11,21 +11,13 @@
 # 4xx ランキングは「アプリに届いた回数」ではなく「nginx が 4xx を返した回数」
 # なので、スロットリングが効くほどランキングの件数はむしろ増える。
 #
-# bin/client_error_ranking の「Other 4xx」ランキングはステータスの内訳を出すので、
+# IP ランキングは 4xx 全体をまとめて表示する。ステータスごとの状況は「Nginx
+# Status Codes」で確認でき、nginx が自前で返した 429 / 403 / 444 も含まれる。
+# 429 が増えていれば、limit_req がリクエストを nginx で止めていると判断できる。
 #
-#   12345 203.0.113.9 429:12300 444:45
-#
-# のように 429 が大半なら、リクエストは nginx で止まっていてアプリ（Puma）には
-# 届いていない。この場合サイトが落ちる心配はなく、あとは「帯域と nginx の
-# ワーカーを食われるのが惜しいか」という判断になる。
-#
-# 404 は別のランキングに分けて出力する。Other 4xx ではなく 404 の件数だけが
-# 多い場合は、limit_req のゾーンや location がそのリクエストに掛かっていない
-# 可能性がある。まず location のマッチを疑うこと。
-#
-# なお bin/status_code は upstream_response_time が "-" の行を捨てるため、
-# nginx が自前で返した 429 / 403 / 444 は「Nginx Status Codes」の表には
-# 出てこない。あの表に 429 が無いことは「制限が効いていない」根拠にならない。
+# パスランキングは 404 とそれ以外に分かれる。404 の件数だけが多い場合は、
+# limit_req のゾーンや location がそのリクエストに掛かっていない可能性がある。
+# まず location のマッチを疑うこと。
 #
 # ## limit_req で減らせないもの
 #
@@ -60,8 +52,8 @@ limit_req_status 429;
 # 弾いた分を error.log に出す。多すぎるなら warn を notice に下げる。
 limit_req_log_level warn;
 
-# 常習犯の IP / レンジ。bin/client_error_ranking の内訳を見て、429 を出し続けて
-# いる送信元だけを足す。
+# 常習犯の IP / レンジ。4xx IP ランキングと Nginx Status Codes を見て、制限後も
+# アクセスを続けている送信元だけを足す。
 #
 #   /etc/nginx/blocked_ips.conf の中身の例:
 #     203.0.113.9     1;
