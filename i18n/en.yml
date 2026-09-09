@@ -92,6 +92,12 @@ en:
   comment_was_successfully_created: Comment was successfully created.
   comment_was_successfully_updated: Comment was successfully updated.
   comment_was_successfully_deleted: Comment was successfully deleted.
+  admin:
+    comment:
+      private:
+        badge: Message
+        filter: Show messages to the author
+        explanation: This comment will not be published on the site even if it is marked as approved. It cannot be converted to a regular public comment.
   snippet_was_successfully_created: Snippet was successfully created.
   snippet_was_successfully_updated: Snippet was successfully updated.
   snippet_was_successfully_deleted: Snippet was successfully deleted.
@@ -195,6 +201,8 @@ en:
     homepage: Homepage
     created_at: Created at
     updated_at: Updated at
+    errors:
+      cannot_be_public: An author-only comment cannot be made public.
   snippet:
     id: ID
     name: Name
@@ -301,7 +309,18 @@ en:
     edited: (edited)
     comment:
       thanks: Thank you for your comment. It will appear on the site after being approved by an administrator, and you'll be notified by email once it is.
-      note: "※ Comments are subject to administrator approval before appearing on the site."
+      note: "Comments are subject to administrator approval before appearing on the site."
+      mode:
+        label: Comment type
+        public: Public comment
+        private: Message to the author
+      private:
+        label: Message to the author
+        explanation: Messages to the author can only be read by blog administrators. They will never be published on the site.
+        thanks: Your message has been sent to the author. This message will not be published on the site.
+      submit:
+        public: Comment
+        private: Send
     related:
       referrers: Articles referencing this post
       similar: Similar articles

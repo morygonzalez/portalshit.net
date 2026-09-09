@@ -15,11 +15,21 @@ class Comment < ActiveRecord::Base
 
   default_scope -> { order('created_at DESC') }
 
+  validate :keep_private_comments_private
+
+  scope :publicly_visible, -> { where(status: APPROVED, private: false) }
+  scope :private_comments, -> { where(private: true) }
   scope :moderated, -> { where(status: MODERATED) }
   scope :approved,  -> { where(status: APPROVED) }
   scope :spam,      -> { where(status: SPAM) }
   scope :recent,
-        ->(count = 5) { where(status: APPROVED).limit(count) }
+        ->(count = 5) { publicly_visible.limit(count) }
+
+  def keep_private_comments_private
+    if private_in_database && !private?
+      errors.add(:base, I18n.t('comment.errors.cannot_be_public'))
+    end
+  end
 
   def link
     (entry ? "#{entry.link}#comment-#{id}" : '#')

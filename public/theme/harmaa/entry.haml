@@ -19,9 +19,9 @@
 - unless page?
   %section.comments
     %h1.comment Comments
-    - unless @entry.comments.empty?
+    - unless @entry.public_comments.empty?
       %ul.comments
-        - @entry.comments.reverse.each do |comment|
+        - @entry.public_comments.reverse.each do |comment|
           %li.comment{ id: "comment-#{comment.id}" }
             .commenter
               %h2.name

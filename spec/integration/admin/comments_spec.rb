@@ -131,3 +131,52 @@ describe '/admin/comments' do
     end
   end
 end
+
+describe 'Private comment administration' do
+  include_context 'admin login'
+  let!(:private_comment) { create(:comment, entry: create(:post), private: true, body: 'Secret admin content') }
+
+  it 'lists private content with a badge and filters out ordinary comments' do
+    create(:comment, entry: private_comment.entry, body: 'Ordinary admin content')
+    get '/admin/comments?private=1'
+    expect(last_response).to be_ok
+    expect(last_response.body).to include('Secret admin content', 'private-comment-badge')
+    expect(last_response.body).not_to include('Ordinary admin content')
+  end
+
+  it 'explains privacy in the edit form without a privacy toggle' do
+    get "/admin/comments/#{private_comment.id}/edit"
+    expect(last_response.body).to include('Secret admin content', I18n.t('admin.comment.private.explanation'))
+    expect(last_response.body).not_to include('name="comment[private]"')
+  end
+
+  it 'rejects a forged request to clear privacy' do
+    put "/admin/comments/#{private_comment.id}", comment: { private: '0' }
+    expect(private_comment.reload.private?).to be true
+    expect(last_response.body).to include(I18n.t('comment.errors.cannot_be_public'))
+  end
+
+  it 'allows spam and moderation changes without notifying the commenter' do
+    expect(Lokka::CommentNotifier).not_to receive(:new)
+    [Comment::SPAM, Comment::MODERATED, Comment::APPROVED].each do |status|
+      put "/admin/comments/#{private_comment.id}", comment: { status: status }
+      expect(last_response).to be_redirect
+      expect(private_comment.reload).to have_attributes(private: true, status: status)
+    end
+  end
+
+  it 'can delete private comments' do
+    delete "/admin/comments/#{private_comment.id}"
+    expect(Comment.exists?(private_comment.id)).to be false
+  end
+
+  it 'does not expose admin content after logout' do
+    get '/admin/logout'
+    get "/admin/comments/#{private_comment.id}/edit"
+    expect(last_response).to be_redirect
+    expect(last_response.body).not_to include('Secret admin content')
+    get '/admin/comments?private=1'
+    expect(last_response).to be_redirect
+    expect(last_response.body).not_to include('Secret admin content')
+  end
+end

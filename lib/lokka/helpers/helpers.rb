@@ -133,6 +133,11 @@ module Lokka
     end
 
     def setup_and_render_entry
+      submission = session[:comment_submission]
+      if request.get? && submission && submission['entry_id'] == @entry.id
+        @comment_submission_message = session.delete(:comment_submission)['message']
+        headers 'Cache-Control' => 'private, no-store'
+      end
       @theme_types << :entry
 
       type = @entry.class.name.downcase.to_sym

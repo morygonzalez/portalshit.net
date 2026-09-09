@@ -8,10 +8,34 @@ module Lokka
 
     def notify_commenter
       return if Lokka.test?
-      return if @comment.email.blank?
+      return if @comment.private? || @comment.email.blank?
 
       client = Aws::SESV2::Client.new(credentials: credentials, region: region)
       client.send_email(email_params)
+    end
+
+    def notify_author
+      return if Lokka.test? || !@comment.private? || !@comment.persisted?
+      return if entry&.user&.email.blank?
+
+      client = Aws::SESV2::Client.new(credentials: credentials, region: region)
+      subject = "メッセージが届きました - #{entry.title}"
+      subject = "[#{Lokka.env}] #{subject}" unless Lokka.production?
+      body = <<~TEXT
+        著者へのメッセージが届きました。このメッセージはサイトに公開されません。
+
+        記事: #{entry.title}
+        投稿者: #{@comment.name}
+
+        #{@comment.body}
+
+        管理画面: https://portalshit.net/admin/comments/#{@comment.id}/edit
+      TEXT
+      client.send_email(
+        from_email_address: from,
+        destination: { to_addresses: [entry.user.email] },
+        content: { simple: { subject: { data: subject }, body: { text: { data: body } } } }
+      )
     end
 
     private

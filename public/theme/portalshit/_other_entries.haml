@@ -30,4 +30,4 @@
       = post.summary_or_description
   .footer
     = post.tags_to_html
-    .comment== #{link_to "#{t('comments')} (#{post.approved_comments.size})", "#{post.link}#comment_form"}
+    .comment== #{link_to "#{t('comments')} (#{post.public_comments.size})", "#{post.link}#comment_form"}

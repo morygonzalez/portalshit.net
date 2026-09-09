@@ -16,10 +16,10 @@
 </div>
 
 <div class="comments">
-  <% if @entry.comments.size > 0 %>
+  <% if @entry.public_comments.size > 0 %>
   <h3><%= t('comments') %></h3>
   <ul class="clearfix">
-    <% @entry.comments.reverse.each do |comment| %>
+    <% @entry.public_comments.reverse.each do |comment| %>
       <li id="comment-<%= comment.id %>" class="comment">
         <div class="bubble">
           <div class="body">
@@ -28,7 +28,7 @@
         </div>
         <div class="commenter">
           <span class="name"><%= link_to comment.name, comment.homepage, unless: comment.homepage.blank? %></span>
-          <span class="date"><%= l comment.created_at.strftime("%Y/%m/%d %H:%m:%d") %></span>
+          <span class="date"><%= l comment.created_at, format: :long %></span>
         </div>
       </li>
     <% end %>

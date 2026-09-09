@@ -79,6 +79,79 @@
     border-radius: 3px;
   }
 
+  .comment-visibility {
+    margin: 1em 0;
+    padding: .75em 1em 1em;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 4px;
+
+    legend {
+      padding: 0 .35em;
+      font-size: 90%;
+    }
+  }
+
+  .comment-visibility-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35em;
+  }
+
+  .comment-visibility-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .comment-visibility-tabs label {
+    padding: .45em .8em;
+    border: 1px solid rgba(255, 255, 255, .4);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .comment-visibility-input:checked + label {
+    background: rgba(255, 255, 255, .18);
+    border-color: #fff;
+    font-weight: bold;
+  }
+
+  .comment-visibility-input:focus-visible + label {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .comment-visibility-note {
+    display: none;
+    flex-basis: 100%;
+    margin-top: .5em;
+    line-height: 1.6;
+  }
+
+  .comment-visibility-public,
+  .comment-visibility-private {
+    display: none;
+  }
+
+  .comment-visibility:has(#comment_public:checked) .comment-visibility-public,
+  .comment-visibility:has(#comment_private:checked) .comment-visibility-private {
+    display: block;
+  }
+
+  .comment-submit {
+    display: none;
+  }
+
+  .comment-visibility:has(#comment_public:checked) ~ .comment-submit-public,
+  .comment-visibility:has(#comment_private:checked) ~ .comment-submit-private {
+    display: inline-block;
+  }
+
   #comment_name {
     width: 300px;
   }
