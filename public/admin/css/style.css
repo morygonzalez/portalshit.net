@@ -1581,6 +1581,15 @@ textarea#category_description
   border: 1px solid #ccad52;
   border-radius: 3px;
 }
+.public-comment-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-right: 6px;
+  background: #e7f1ff;
+  color: #174a7e;
+  border: 1px solid #8db7e3;
+  border-radius: 3px;
+}
 .private-comment-notice {
   padding: 12px;
   background: #fff3cd;

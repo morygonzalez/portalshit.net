@@ -16,19 +16,19 @@
   .field
     = f.label :name, caption: t('comment.name')
     %br/
-    = f.text_field :name
+    = f.text_field :name, disabled: @comment.private?
   .field
     = f.label :body, caption: t('comment.body')
     %br/
-    ~ f.text_area :body, rows: 10, cols: 50
+    ~ f.text_area :body, rows: 10, cols: 50, disabled: @comment.private?
   .field
     = f.label :homepage, caption: t('comment.homepage')
     %br/
-    = f.text_field :homepage
+    = f.text_field :homepage, disabled: @comment.private?
   .field
     = f.label :created_at, caption: t('comment.created_at')
     %br/
-    = f.text_field :created_at
+    = f.text_field :created_at, disabled: @comment.private?
   .field
     = f.label :status, caption: t('comment_status')
     %br/

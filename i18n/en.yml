@@ -96,8 +96,11 @@ en:
     comment:
       private:
         badge: Message
-        filter: Show messages to the author
+        filter: Messages
         explanation: This comment will not be published on the site even if it is marked as approved. It cannot be converted to a regular public comment.
+      public:
+        badge: Comment
+        filter: Comments
   snippet_was_successfully_created: Snippet was successfully created.
   snippet_was_successfully_updated: Snippet was successfully updated.
   snippet_was_successfully_deleted: Snippet was successfully deleted.

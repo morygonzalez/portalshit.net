@@ -5,7 +5,14 @@ module Lokka
     namespace '/admin' do
       namespace '/comments' do
         get do
-          comments = params[:private] == '1' ? Comment.private_comments : Comment.all
+          comments = case params[:type]
+                     when 'private'
+                       Comment.private_comments
+                     when 'public'
+                       Comment.where(private: false)
+                     else
+                       params[:private] == '1' ? Comment.private_comments : Comment.all
+                     end
           @comments = comments.order('created_at DESC').
                         page(params[:page]).
                         per(settings.admin_per_page)

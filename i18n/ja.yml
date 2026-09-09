@@ -96,8 +96,11 @@ ja:
     comment:
       private:
         badge: メッセージ
-        filter: 著者へのメッセージを表示
+        filter: メッセージ
         explanation: 「承認済み」に変更しても、このコメントはサイトに公開されません。通常の公開コメントに変更することはできません。
+      public:
+        badge: コメント
+        filter: コメント
   snippet_was_successfully_created: スニペットを作成しました。
   snippet_was_successfully_updated: スニペットを更新しました。
   snippet_was_successfully_deleted: スニペットを削除しました。

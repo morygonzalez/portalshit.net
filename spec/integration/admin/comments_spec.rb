@@ -142,12 +142,31 @@ describe 'Private comment administration' do
     expect(last_response).to be_ok
     expect(last_response.body).to include('Secret admin content', 'private-comment-badge')
     expect(last_response.body).not_to include('Ordinary admin content')
+    expect(last_response.body).to include('<ul class="conditions">')
+  end
+
+  it 'filters public comments separately from private messages' do
+    public_comment = create(:comment, entry: private_comment.entry, body: 'Public filtered content')
+    get '/admin/comments?type=public'
+    expect(last_response.body).to include(I18n.t('admin.comment.public.filter'), 'Public filtered content')
+    expect(last_response.body).not_to include('Secret admin content')
+
+    get '/admin/comments?type=private'
+    expect(last_response.body).to include(I18n.t('admin.comment.private.filter'), 'Secret admin content')
+    expect(last_response.body).not_to include('Public filtered content')
+  end
+
+  it 'labels ordinary comments as comments' do
+    ordinary = create(:comment, entry: private_comment.entry, body: 'Ordinary labeled content')
+    get '/admin/comments'
+    expect(last_response.body).to include(I18n.t('admin.comment.public.badge'), 'public-comment-badge', 'Ordinary labeled content')
   end
 
   it 'explains privacy in the edit form without a privacy toggle' do
     get "/admin/comments/#{private_comment.id}/edit"
     expect(last_response.body).to include('Secret admin content', I18n.t('admin.comment.private.explanation'))
     expect(last_response.body).not_to include('name="comment[private]"')
+    expect(last_response.body).to include('name="comment[name]"', 'disabled="disabled"')
   end
 
   it 'rejects a forged request to clear privacy' do

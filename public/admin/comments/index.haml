@@ -1,7 +1,8 @@
 %h2= t('listing_comments')
-%p
-  = link_to t('listing_comments'), url('/admin/comments')
-  = link_to t('admin.comment.private.filter'), url('/admin/comments?private=1')
+%ul.conditions
+  %li= link_to t('all'), url('/admin/comments')
+  %li= link_to t('admin.comment.public.filter'), url('/admin/comments?type=public')
+  %li= link_to t('admin.comment.private.filter'), url('/admin/comments?type=private')
 
 .bulk_deletion
   = form_tag url('/admin/comments/selected'), id: 'comment_select', class: 'selected', method: :delete do
@@ -39,6 +40,8 @@
         %td.body
           - if comment.private?
             %strong.private-comment-badge= t('admin.comment.private.badge')
+          - else
+            %strong.public-comment-badge= t('admin.comment.public.badge')
           = link_to truncate(strip_tags(h(comment.body))), url(comment.private? ? "/admin/comments/#{comment.id}/edit" : comment.link)
         %td= h(comment.name)
         %td= l(comment.created_at, format: :long)
