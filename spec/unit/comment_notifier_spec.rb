@@ -21,6 +21,27 @@ describe Lokka::CommentNotifier do
   context 'outside the test environment' do
     before { allow(Lokka).to receive(:test?).and_return(false) }
 
+    it 'sends a private message receipt to the sender without an admin link' do
+      expect(client).to receive(:send_email) do |params|
+        expect(params[:destination][:to_addresses]).to eq([comment.email])
+        mail = params[:content][:simple]
+        expect(mail[:subject][:data]).to include('メッセージ送信の控え', comment.entry.title)
+        expect(mail[:body][:text][:data]).to include('公開されません', comment.body)
+        expect(mail[:body][:text][:data]).not_to include('/admin/comments/')
+      end
+      notifier.notify_sender_receipt
+    end
+
+    it 'sends a public comment receipt to the sender' do
+      ordinary = create(:comment, entry: create(:post))
+      expect(client).to receive(:send_email) do |params|
+        expect(params[:destination][:to_addresses]).to eq([ordinary.email])
+        expect(params[:content][:simple][:subject][:data]).to include('コメント送信の控え')
+        expect(params[:content][:simple][:body][:text][:data]).to include('管理者の確認後')
+      end
+      described_class.new(ordinary).notify_sender_receipt
+    end
+
     it 'sends private content only to the entry author with an admin link' do
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([comment.entry.user.email])

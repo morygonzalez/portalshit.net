@@ -15,6 +15,7 @@ describe 'Private comment submission and public display' do
     expect_any_instance_of(Lokka::CommentNotifier).to receive(:notify_author) do |_notifier|
       expect(Comment.private_comments.count).to eq(1)
     end
+    expect_any_instance_of(Lokka::CommentNotifier).to receive(:notify_sender_receipt)
     post entry.link, payload
     expect(last_response).to be_redirect
     expect(Comment.last.private?).to be true
@@ -23,6 +24,7 @@ describe 'Private comment submission and public display' do
   it 'does not notify the author for ordinary submissions' do
     payload[:comment].delete(:private)
     expect_any_instance_of(Lokka::CommentNotifier).not_to receive(:notify_author)
+    expect_any_instance_of(Lokka::CommentNotifier).to receive(:notify_sender_receipt)
     post entry.link, payload
     expect(last_response).to be_redirect
     expect(Comment.last.private?).to be false

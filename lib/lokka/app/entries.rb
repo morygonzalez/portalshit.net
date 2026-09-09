@@ -171,9 +171,15 @@ module Lokka
                             logged_in? ? Comment::APPROVED : Comment::MODERATED
                           end
       if @comment.save
+        notifier = Lokka::CommentNotifier.new(@comment)
+        begin
+          notifier.notify_sender_receipt
+        rescue => e
+          logger.error "Failed to send comment receipt: #{e.class}"
+        end
         if @comment.private?
           begin
-            Lokka::CommentNotifier.new(@comment).notify_author
+            notifier.notify_author
           rescue => e
             logger.error "Failed to send private comment notification: #{e.class}"
           end

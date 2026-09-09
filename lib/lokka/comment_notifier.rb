@@ -14,6 +14,49 @@ module Lokka
       client.send_email(email_params)
     end
 
+    def notify_sender_receipt
+      return if Lokka.test? || !@comment.persisted? || @comment.email.blank?
+      return if @comment.status == Comment::SPAM
+
+      subject = if @comment.private?
+                  "メッセージ送信の控え - #{entry.title}"
+                else
+                  "コメント送信の控え - #{entry.title}"
+                end
+      subject = "[#{Lokka.env}] #{subject}" unless Lokka.production?
+      body = if @comment.private?
+               <<~TEXT
+                 著者へのメッセージを送信しました。このメッセージはサイトに公開されません。
+               TEXT
+             else
+               <<~TEXT
+                 コメントを送信しました。管理者の確認後にサイトへ表示されます。
+               TEXT
+             end
+      body += <<~TEXT
+
+        記事: #{entry.title}
+        URL: #{entry_url}
+
+        #{@comment.body}
+      TEXT
+
+      client = Aws::SESV2::Client.new(credentials: credentials, region: region)
+      client.send_email(
+        from_email_address: from,
+        destination: { to_addresses: [@comment.email] },
+        content: {
+          simple: {
+            subject: { data: subject },
+            body: {
+              text: { data: body },
+              html: { data: Markup.use_engine('redcarpet', body) }
+            }
+          }
+        }
+      )
+    end
+
     def notify_author
       return if Lokka.test? || !@comment.private? || !@comment.persisted?
       return if entry&.user&.email.blank?
