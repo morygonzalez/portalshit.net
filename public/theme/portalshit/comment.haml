@@ -29,14 +29,18 @@
       %label{for: 'comment_body'}= t('comment.body')
       %br
       %textarea{name: 'comment[body]', id: 'comment_body'}
-    %p
-      %label{for: 'comment_private'}
-        %input{type: 'checkbox', name: 'comment[private]', id: 'comment_private', value: '1', checked: @comment&.private?, 'aria-describedby' => 'comment_private_note'}
-        = t('comment.private.label')
-      %small#comment_private_note= t('comment.private.explanation')
     - if ENV['RECAPTCHA_PUBLIC_KEY'] && ENV['RECAPTCHA_PRIVATE_KEY']
       %p
         != recaptcha_javascript
         != recaptcha_widget
-    %input.button{type: 'submit', value: t('post_comment')}
-    %p.comment-note= t('theme.comment.note')
+    %fieldset.comment-visibility
+      %legend= t('theme.comment.mode.label')
+      .comment-visibility-tabs{role: 'tablist'}
+        %input.comment-visibility-input{type: 'radio', name: 'comment[private]', id: 'comment_public', value: '0', checked: !(@comment&.private?), 'aria-label' => t('theme.comment.mode.public')}
+        %label{for: 'comment_public', role: 'tab'}= t('theme.comment.mode.public')
+        %input.comment-visibility-input{type: 'radio', name: 'comment[private]', id: 'comment_private', value: '1', checked: @comment&.private?, 'aria-describedby' => 'comment_private_note', 'aria-label' => t('theme.comment.mode.private')}
+        %label{for: 'comment_private', role: 'tab'}= t('theme.comment.mode.private')
+      %small.comment-visibility-note.comment-visibility-public= t('theme.comment.note')
+      %small#comment_private_note.comment-visibility-note.comment-visibility-private= t('theme.comment.private.explanation')
+    %input.button.comment-submit.comment-submit-public{type: 'submit', value: t('theme.comment.submit.public')}
+    %input.button.comment-submit.comment-submit-private{type: 'submit', value: t('theme.comment.submit.private')}

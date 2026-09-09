@@ -7,8 +7,8 @@
           %li= error
   - if @comment.private?
     %p.private-comment-notice
-      %strong= t('comment.admin.private.badge')
-      = t('comment.admin.private.explanation')
+      %strong= t('admin.comment.private.badge')
+      = t('admin.comment.private.explanation')
   .field
     = f.label :entry, caption: t('comment.entry')
     %br/

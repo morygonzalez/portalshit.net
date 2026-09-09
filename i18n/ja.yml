@@ -92,6 +92,12 @@ ja:
   comment_was_successfully_created: コメントを作成しました。
   comment_was_successfully_updated: コメントを更新しました。
   comment_was_successfully_deleted: コメントを削除しました。
+  admin:
+    comment:
+      private:
+        badge: メッセージ
+        filter: 著者へのメッセージを表示
+        explanation: 「承認済み」に変更しても、このコメントはサイトに公開されません。通常の公開コメントに変更することはできません。
   snippet_was_successfully_created: スニペットを作成しました。
   snippet_was_successfully_updated: スニペットを更新しました。
   snippet_was_successfully_deleted: スニペットを削除しました。
@@ -195,17 +201,8 @@ ja:
     entry: エントリー
     created_at: 作成日時
     updated_at: 更新日時
-    private:
-      label: ブログの著者へのメッセージ（サイトには公開されません）
-      explanation: 著者へのメッセージは、ブログの管理者だけが閲覧できます。サイトに公開されることはありません。
-      thanks: 著者にメッセージを送信しました。このメッセージはサイトには公開されません。
     errors:
       cannot_be_public: 著者限定コメントを公開コメントに変更することはできません。
-    admin:
-      private:
-        badge: 著者限定
-        filter: 著者限定コメントを表示
-        explanation: 「承認済み」に変更しても、このコメントはサイトに公開されません。通常の公開コメントに変更することはできません。
   snippet:
     id: ID
     name: 名前
@@ -312,7 +309,18 @@ ja:
     edited: (編集済み)
     comment:
       thanks: コメントありがとうございました。管理者の確認後にサイトに反映されます。反映されたらメールでお知らせします。
-      note: ※通常のコメントは、管理者の承認後にサイトに表示されます。著者へのメッセージは公開されません。
+      note: ※コメントは管理者の確認後に反映されます。
+      mode:
+        label: コメントの種類
+        public: 公開コメント
+        private: 著者へのメッセージ
+      private:
+        label: 著者へのメッセージ
+        explanation: ※著者へのメッセージは、ブログの管理者だけが閲覧できます。サイトに公開されることはありません。
+        thanks: 著者にメッセージを送信しました。このメッセージはサイトには公開されません。
+      submit:
+        public: コメントする
+        private: 送信する
     related:
       referrers: この記事を参照している記事
       similar: この記事に似ている記事

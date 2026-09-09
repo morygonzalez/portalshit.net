@@ -19,10 +19,10 @@ module Lokka
       return if entry&.user&.email.blank?
 
       client = Aws::SESV2::Client.new(credentials: credentials, region: region)
-      subject = "著者限定コメントが届きました - #{entry.title}"
+      subject = "メッセージが届きました - #{entry.title}"
       subject = "[#{Lokka.env}] #{subject}" unless Lokka.production?
       body = <<~TEXT
-        著者限定コメントが届きました。このコメントはサイトに公開されません。
+        著者へのメッセージが届きました。このメッセージはサイトに公開されません。
 
         記事: #{entry.title}
         投稿者: #{@comment.name}

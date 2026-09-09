@@ -25,7 +25,7 @@ describe Lokka::CommentNotifier do
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([comment.entry.user.email])
         mail = params[:content][:simple]
-        expect(mail[:subject][:data]).to include('著者限定', comment.entry.title)
+        expect(mail[:subject][:data]).to include('メッセージが届きました', comment.entry.title)
         expect(mail[:body][:text][:data]).to include(comment.name, comment.body, "/admin/comments/#{comment.id}/edit")
         expect(mail[:body]).not_to have_key(:html)
       end

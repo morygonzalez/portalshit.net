@@ -58,24 +58,24 @@ describe 'Private comment submission and public display' do
     it 'shows a one-time private receipt tied to the submitted entry' do
       post entry.link, payload
       follow_redirect!
-      expect(last_response.body).to include(I18n.t('comment.private.thanks'))
+      expect(last_response.body).to include(I18n.t('theme.comment.private.thanks'))
       expect(last_response.headers['cache-control']).to include('no-store')
       get entry.link
-      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'))
+      expect(last_response.body).not_to include(I18n.t('theme.comment.private.thanks'))
     end
 
     it 'does not show the receipt on a different entry' do
       other_entry = create(:post)
       post entry.link, payload
       get other_entry.link
-      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'))
+      expect(last_response.body).not_to include(I18n.t('theme.comment.private.thanks'))
       get entry.link
-      expect(last_response.body).to include(I18n.t('comment.private.thanks'))
+      expect(last_response.body).to include(I18n.t('theme.comment.private.thanks'))
     end
 
     it 'does not trust receipt query parameters' do
       get "#{entry.link}?comment_submitted=1&private=1"
-      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'), I18n.t('theme.comment.thanks'))
+      expect(last_response.body).not_to include(I18n.t('theme.comment.private.thanks'), I18n.t('theme.comment.thanks'))
     end
 
     it 'shows the ordinary receipt for an ordinary submission' do
@@ -83,7 +83,7 @@ describe 'Private comment submission and public display' do
       post entry.link, payload
       follow_redirect!
       expect(last_response.body).to include(I18n.t('theme.comment.thanks'))
-      expect(last_response.body).not_to include(I18n.t('comment.private.thanks'))
+      expect(last_response.body).not_to include(I18n.t('theme.comment.private.thanks'))
     end
   end
 
@@ -116,20 +116,27 @@ describe 'Private comment form' do
     end
   end
 
-  it 'renders an unchecked standard checkbox and a clear privacy explanation' do
+  it 'renders public and private comment tabs with a clear explanation' do
     get entry.link
     document = Nokogiri::HTML(last_response.body)
-    checkbox = document.at_css('input[name="comment[private]"]')
-    expect(checkbox['type']).to eq('checkbox')
-    expect(checkbox['value']).to eq('1')
-    expect(checkbox['checked']).to be_nil
-    expect(document.at_css('#comment_private_note').text).to eq(I18n.t('comment.private.explanation'))
+    tabs = document.css('input[name="comment[private]"]')
+    expect(tabs.map { |tab| tab['type'] }).to eq(%w[radio radio])
+    expect(tabs.map { |tab| tab['value'] }).to eq(%w[0 1])
+    expect(tabs.first['checked']).not_to be_nil
+    expect(tabs.last['checked']).to be_nil
+    expect(document.at_css('label[for="comment_public"]').text).to eq(I18n.t('theme.comment.mode.public'))
+    expect(document.at_css('label[for="comment_private"]').text).to eq(I18n.t('theme.comment.mode.private'))
+    expect(document.at_css('.comment-visibility-public').text).to eq(I18n.t('theme.comment.note'))
+    expect(document.at_css('.comment-visibility-private').text).to eq(I18n.t('theme.comment.private.explanation'))
+    expect(document.at_css('.comment-submit-public')['value']).to eq(I18n.t('theme.comment.submit.public'))
+    expect(document.at_css('.comment-submit-private')['value']).to eq(I18n.t('theme.comment.submit.private'))
   end
 
-  it 'keeps the checkbox checked on validation failure' do
+  it 'keeps the private tab selected on validation failure' do
     post entry.link, check: 'check', comment: { private: '1', name: 'Reader', body: 'Private text', email: '' }
     document = Nokogiri::HTML(last_response.body)
-    expect(document.at_css('input[name="comment[private]"]')['checked']).not_to be_nil
+    expect(document.at_css('#comment_private')['checked']).not_to be_nil
+    expect(document.at_css('#comment_public')['checked']).to be_nil
     expect(Comment.count).to eq(0)
   end
 end
