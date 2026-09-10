@@ -44,6 +44,7 @@ module Lokka
       client = Aws::SESV2::Client.new(credentials: credentials, region: region)
       client.send_email(
         from_email_address: from,
+        reply_to_addresses: reply_to_addresses,
         destination: { to_addresses: [@comment.email] },
         content: {
           simple: {
@@ -76,6 +77,7 @@ module Lokka
       TEXT
       client.send_email(
         from_email_address: from,
+        reply_to_addresses: reply_to_addresses,
         destination: { to_addresses: [entry.user.email] },
         content: { simple: { subject: { data: subject }, body: { text: { data: body } } } }
       )
@@ -101,6 +103,7 @@ module Lokka
       client = Aws::SESV2::Client.new(credentials: credentials, region: region)
       client.send_email(
         from_email_address: from,
+        reply_to_addresses: reply_to_addresses,
         destination: { to_addresses: [parent.email] },
         content: { simple: { subject: { data: subject }, body: { text: { data: body } } } }
       )
@@ -118,6 +121,10 @@ module Lokka
 
     def from
       ENV.fetch('SES_FROM_ADDRESS', 'portal shit! <info@portalshit.net>')
+    end
+
+    def reply_to_addresses
+      [ENV.fetch('SES_REPLY_TO_ADDRESS', 'morygonzalez@gmail.com')]
     end
 
     def entry
@@ -150,6 +157,7 @@ module Lokka
     def email_params
       {
         from_email_address: from,
+        reply_to_addresses: reply_to_addresses,
         destination: { to_addresses: [@comment.email] },
         content: {
           simple: {

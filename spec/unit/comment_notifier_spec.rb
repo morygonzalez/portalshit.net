@@ -24,6 +24,7 @@ describe Lokka::CommentNotifier do
     it 'sends a private message receipt to the sender without an admin link' do
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([comment.email])
+        expect(params[:reply_to_addresses]).to eq(['morygonzalez@gmail.com'])
         mail = params[:content][:simple]
         expect(mail[:subject][:data]).to include('メッセージ送信の控え', comment.entry.title)
         expect(mail[:body][:text][:data]).to include('公開されません', comment.body)
@@ -45,6 +46,7 @@ describe Lokka::CommentNotifier do
     it 'sends private content only to the entry author with an admin link' do
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([comment.entry.user.email])
+        expect(params[:reply_to_addresses]).to eq(['morygonzalez@gmail.com'])
         mail = params[:content][:simple]
         expect(mail[:subject][:data]).to include('メッセージが届きました', comment.entry.title)
         expect(mail[:body][:text][:data]).to include(comment.name, comment.body, "/admin/comments/#{comment.id}")
@@ -61,7 +63,10 @@ describe Lokka::CommentNotifier do
     it 'keeps ordinary approval mail and skips private author notifications for ordinary comments' do
       # Avoid existing production callbacks while building the ordinary notification fixture.
       ordinary = build(:comment, entry: create(:post))
-      expect(client).to receive(:send_email).with(hash_including(destination: { to_addresses: [ordinary.email] }))
+      expect(client).to receive(:send_email) do |params|
+        expect(params[:destination][:to_addresses]).to eq([ordinary.email])
+        expect(params[:reply_to_addresses]).to eq(['morygonzalez@gmail.com'])
+      end
       described_class.new(ordinary).notify_commenter
       described_class.new(ordinary).notify_author
     end
@@ -76,6 +81,7 @@ describe Lokka::CommentNotifier do
       reply = create(:comment, entry: parent.entry, parent: parent, body: 'Public reply')
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([parent.email])
+        expect(params[:reply_to_addresses]).to eq(['morygonzalez@gmail.com'])
         mail = params[:content][:simple]
         expect(mail[:subject][:data]).to include('コメントへの返信', parent.entry.title)
         expect(mail[:body][:text][:data]).to include('Public reply', "URL: https://portalshit.net#{parent.entry.link}")
@@ -87,6 +93,7 @@ describe Lokka::CommentNotifier do
       reply = create(:comment, entry: comment.entry, parent: comment, private: true, status: Comment::MODERATED, body: 'Private reply')
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([comment.email])
+        expect(params[:reply_to_addresses]).to eq(['morygonzalez@gmail.com'])
         mail = params[:content][:simple]
         expect(mail[:subject][:data]).to include('メッセージへの返信', comment.entry.title)
         expect(mail[:body][:text][:data]).to include('Private reply')
