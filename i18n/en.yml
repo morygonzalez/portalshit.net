@@ -104,7 +104,7 @@ en:
       private:
         badge: Message
         filter: Messages
-        explanation: This comment will not be published on the site even if it is marked as approved. It cannot be converted to a regular public comment.
+        explanation: 'Note: This comment will not be published on the site even if it is marked as approved.'
       public:
         badge: Comment
         filter: Comments

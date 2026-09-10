@@ -34,11 +34,14 @@ describe Comment do
     expect(comment.reload.private?).to be true
   end
 
-  it 'does not allow a private comment to be approved' do
+  it 'allows approving a private comment without making it publicly visible' do
     comment = create(:comment, entry: entry, private: true, status: Comment::MODERATED)
-    expect(comment.update(status: Comment::APPROVED)).to be false
-    expect(comment.errors.full_messages).to include(I18n.t('admin.comment.private.explanation'))
-    expect(comment.reload.status).to eq(Comment::MODERATED)
+    expect(comment.update(status: Comment::APPROVED)).to be true
+    expect(comment.reload).to have_attributes(private: true, status: Comment::APPROVED)
+    expect(Comment.publicly_visible).not_to include(comment)
+    expect(Comment.recent).not_to include(comment)
+    expect(entry.public_comments).not_to include(comment)
+    expect(entry.approved_comments).not_to include(comment)
   end
 
   it 'keeps replies on the same entry with the same visibility as their parent' do

@@ -104,7 +104,7 @@ ja:
       private:
         badge: メッセージ
         filter: メッセージ
-        explanation: 「承認済み」に変更しても、このコメントはサイトに公開されません。通常の公開コメントに変更することはできません。
+        explanation: ※「承認済み」に変更しても、このコメントはサイトに公開されません。
       public:
         badge: コメント
         filter: コメント

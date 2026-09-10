@@ -212,12 +212,22 @@ describe 'Private comment administration' do
     expect(last_response.body).not_to include('private-comment-notice')
   end
 
-  it 'does not show the approval warning until a private message is approved' do
+  it 'shows the privacy note directly below the status select for a private message' do
     get "/admin/comments/#{private_comment.id}/edit"
     expect(last_response.body).to include('Secret admin content')
-    expect(last_response.body).not_to include(I18n.t('admin.comment.private.explanation'))
+    document = Nokogiri::HTML(last_response.body)
+    note = document.at_css('select#comment_status + .comment-status-note')
+    expect(note.text).to eq(I18n.t('admin.comment.private.explanation'))
+    expect(document.at_css('#error')).to be_nil
     expect(last_response.body).not_to include('name="comment[private]"')
     expect(last_response.body).to include('name="comment[name]"', 'disabled="disabled"')
+  end
+
+  it 'does not show the privacy note for a public comment' do
+    public_comment = create(:comment, entry: private_comment.entry)
+    get "/admin/comments/#{public_comment.id}/edit"
+    expect(last_response).to be_ok
+    expect(last_response.body).not_to include('comment-status-note')
   end
 
   it 'rejects a forged request to clear privacy' do
@@ -235,11 +245,12 @@ describe 'Private comment administration' do
     end
   end
 
-  it 'rejects approving a private message and displays the privacy warning' do
+  it 'approves a private message without publishing it or notifying the commenter' do
+    expect(Lokka::CommentNotifier).not_to receive(:new)
     put "/admin/comments/#{private_comment.id}", comment: { status: Comment::APPROVED }
-    expect(last_response).to be_ok
-    expect(last_response.body).to include(I18n.t('admin.comment.private.explanation'))
-    expect(private_comment.reload.status).to eq(Comment::MODERATED)
+    expect(last_response).to be_redirect
+    expect(private_comment.reload).to have_attributes(private: true, status: Comment::APPROVED)
+    expect(Comment.publicly_visible).not_to include(private_comment)
   end
 
   it 'creates a private reply for a private message' do

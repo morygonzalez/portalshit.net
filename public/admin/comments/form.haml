@@ -30,4 +30,6 @@
     %br/
     - opts = [[t('comment_approved'), Comment::APPROVED], [t('comment_moderated'), Comment::MODERATED], [t('comment_spam'), Comment::SPAM]]
     = f.select :status, options: opts
+    - if @comment.private?
+      .comment-status-note= t('admin.comment.private.explanation')
   %p= f.submit label
