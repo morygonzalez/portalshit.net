@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_08_000000) do
+ActiveRecord::Schema.define(version: 2026_09_10_000000) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -76,6 +76,8 @@ ActiveRecord::Schema.define(version: 2026_09_08_000000) do
     t.datetime "updated_at"
     t.string "email", limit: 40, collation: "utf8mb3_general_ci"
     t.boolean "private", default: false, null: false
+    t.integer "parent_id"
+    t.index ["parent_id"], name: "index_comments_on_parent_id"
     t.index ["status", "entry_id"], name: "index_comments_status_entry_id"
     t.index ["status"], name: "index_comments_status"
   end

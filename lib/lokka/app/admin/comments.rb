@@ -41,7 +41,32 @@ module Lokka
 
         get '/:id' do |id|
           (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
+          @reply = @comment.replies.build
           haml :'admin/comments/show', layout: :'admin/layout'
+        end
+
+        post '/:id/replies' do |id|
+          (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
+          @reply = @comment.replies.build(
+            entry: @comment.entry,
+            name: current_user.name,
+            email: current_user.email,
+            body: params['reply'].is_a?(Hash) ? params['reply']['body'] : nil,
+            private: @comment.private?,
+            status: @comment.private? ? Comment::MODERATED : Comment::APPROVED
+          )
+
+          if @reply.save
+            begin
+              Lokka::CommentNotifier.new(@reply).notify_reply(@comment)
+            rescue => e
+              logger.error "Failed to send comment reply notification: #{e.class}"
+            end
+            flash[:notice] = t('comment_reply_was_successfully_created')
+            redirect to("/admin/comments/#{@comment.id}")
+          else
+            haml :'admin/comments/show', layout: :'admin/layout'
+          end
         end
 
         put '/:id' do |id|

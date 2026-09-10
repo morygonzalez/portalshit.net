@@ -40,4 +40,20 @@ describe Comment do
     expect(comment.errors.full_messages).to include(I18n.t('admin.comment.private.explanation'))
     expect(comment.reload.status).to eq(Comment::MODERATED)
   end
+
+  it 'keeps replies on the same entry with the same visibility as their parent' do
+    parent = create(:comment, entry: entry)
+    reply = create(:comment, entry: entry, parent: parent)
+    expect(parent.replies).to include(reply)
+    expect(reply.reply?).to be true
+
+    other_entry = create(:post)
+    invalid_reply = build(:comment, entry: other_entry, parent: parent)
+    expect(invalid_reply).not_to be_valid
+    expect(invalid_reply.errors[:parent]).to include(I18n.t('comment.errors.reply_must_belong_to_same_entry'))
+
+    private_reply = build(:comment, entry: entry, parent: parent, private: true)
+    expect(private_reply).not_to be_valid
+    expect(private_reply.errors[:parent]).to include(I18n.t('comment.errors.reply_must_match_privacy'))
+  end
 end

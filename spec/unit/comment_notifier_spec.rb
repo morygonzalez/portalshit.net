@@ -70,5 +70,29 @@ describe Lokka::CommentNotifier do
       expect(client).not_to receive(:send_email)
       comment.send(:send_notification_to_entry_author)
     end
+
+    it 'sends a public reply notification with the entry URL' do
+      parent = create(:comment, entry: create(:post))
+      reply = create(:comment, entry: parent.entry, parent: parent, body: 'Public reply')
+      expect(client).to receive(:send_email) do |params|
+        expect(params[:destination][:to_addresses]).to eq([parent.email])
+        mail = params[:content][:simple]
+        expect(mail[:subject][:data]).to include('コメントへの返信', parent.entry.title)
+        expect(mail[:body][:text][:data]).to include('Public reply', "URL: https://portalshit.net#{parent.entry.link}")
+      end
+      described_class.new(reply).notify_reply(parent)
+    end
+
+    it 'sends a private reply notification without the entry URL' do
+      reply = create(:comment, entry: comment.entry, parent: comment, private: true, status: Comment::MODERATED, body: 'Private reply')
+      expect(client).to receive(:send_email) do |params|
+        expect(params[:destination][:to_addresses]).to eq([comment.email])
+        mail = params[:content][:simple]
+        expect(mail[:subject][:data]).to include('メッセージへの返信', comment.entry.title)
+        expect(mail[:body][:text][:data]).to include('Private reply')
+        expect(mail[:body][:text][:data]).not_to include('URL:')
+      end
+      described_class.new(reply).notify_reply(comment)
+    end
   end
 end

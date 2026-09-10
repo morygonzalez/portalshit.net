@@ -93,8 +93,14 @@ en:
   comment_was_successfully_created: Comment was successfully created.
   comment_was_successfully_updated: Comment was successfully updated.
   comment_was_successfully_deleted: Comment was successfully deleted.
+  comment_reply_was_successfully_created: Reply was sent.
   admin:
     comment:
+      reply:
+        title: Reply
+        history: Reply history
+        body: Reply body
+        send: Send reply
       private:
         badge: Message
         filter: Messages
@@ -207,6 +213,8 @@ en:
     updated_at: Updated at
     errors:
       cannot_be_public: An author-only comment cannot be made public.
+      reply_must_belong_to_same_entry: A reply must belong to a comment on the same entry.
+      reply_must_match_privacy: A reply must use the same visibility as its parent.
   snippet:
     id: ID
     name: Name

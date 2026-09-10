@@ -81,6 +81,31 @@ module Lokka
       )
     end
 
+    def notify_reply(parent)
+      return if Lokka.test? || !@comment.persisted? || parent.email.blank?
+
+      private_reply = parent.private?
+      subject = private_reply ? "メッセージへの返信 - #{entry.title}" : "コメントへの返信 - #{entry.title}"
+      subject = "[#{Lokka.env}] #{subject}" unless Lokka.production?
+      body = <<~TEXT
+        #{parent.name} 様
+
+        #{private_reply ? '著者からメッセージへの返信がありました。' : 'いただいたコメントに返信がありました。'}
+
+        記事: #{entry.title}
+        #{"URL: #{entry_url}" unless private_reply}
+
+        #{@comment.body}
+      TEXT
+
+      client = Aws::SESV2::Client.new(credentials: credentials, region: region)
+      client.send_email(
+        from_email_address: from,
+        destination: { to_addresses: [parent.email] },
+        content: { simple: { subject: { data: subject }, body: { text: { data: body } } } }
+      )
+    end
+
     private
 
     def credentials

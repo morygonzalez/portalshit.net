@@ -39,3 +39,29 @@
 
   .comment-actions
     = link_to t('edit'), url("/admin/comments/#{@comment.id}/edit"), class: :button
+
+- replies = @comment.replies.reorder(created_at: :asc)
+- unless replies.empty?
+  %section.comment-reply-history
+    %h3= t('admin.comment.reply.history')
+    - replies.each do |reply|
+      .comment-reply
+        .comment-reply-meta
+          %strong= h(reply.name)
+          %span= l(reply.created_at, format: :long)
+        .comment-reply-body= h(reply.body)
+
+%section.comment-reply-form
+  %h3= t('admin.comment.reply.title')
+  - if @reply && !@reply.errors.empty?
+    #error
+      .title= t('error')
+      %ul
+        - @reply.errors.full_messages.each do |error|
+          %li= error
+  = form_tag url("/admin/comments/#{@comment.id}/replies"), method: :post do
+    .field
+      %label{ for: 'reply_body' }= t('admin.comment.reply.body')
+      %br/
+      %textarea{ id: 'reply_body', name: 'reply[body]', rows: 8, cols: 50 }= @reply&.body
+    %p= submit_tag t('admin.comment.reply.send')

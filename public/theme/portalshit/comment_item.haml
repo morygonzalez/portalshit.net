@@ -1,0 +1,11 @@
+%li.comment{ id: "comment-#{comment.id}" }
+  %ul.meta
+    %li.gravatar= image_tag gravatar_image_url comment.email
+    %li.name= link_to comment.name, comment.homepage, unless: comment.homepage.blank?
+  .body~ Markup.use_engine('redcarpet', strip_tags(comment.body)).html_safe
+  .created_at= l comment.created_at, format: :long
+  - replies = comment.replies.publicly_visible.reorder(created_at: :asc)
+  - unless replies.empty?
+    %ul.comment-replies
+      - replies.each do |reply|
+        = haml :'theme/portalshit/comment_item', layout: false, locals: { comment: reply }

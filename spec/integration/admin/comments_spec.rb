@@ -56,7 +56,7 @@ describe '/admin/comments' do
       get "/admin/comments/#{@comment.id}"
       expect(last_response).to be_ok
       expect(last_response.body).to include('Test Comment', 'comment-view', @post.link, "/admin/comments/#{@comment.id}/edit")
-      expect(last_response.body).not_to include('<form')
+      expect(last_response.body).to include('comment-reply-form', 'name="reply[body]"')
     end
   end
 
@@ -66,6 +66,29 @@ describe '/admin/comments' do
       last_response.should be_redirect
       expect(last_response.headers['Location']).to end_with("/admin/comments/#{@comment.id}")
       Comment.find(@comment.id).body.should == 'updated'
+    end
+  end
+
+  context 'POST /admin/comments/:id/replies' do
+    it 'creates an approved public reply and returns to the comment detail' do
+      post "/admin/comments/#{@comment.id}/replies", reply: { body: 'Admin public reply' }
+      expect(last_response).to be_redirect
+      reply = @comment.replies.last
+      expect(reply).to have_attributes(entry: @post, private: false, status: Comment::APPROVED, body: 'Admin public reply')
+      expect(reply.name).to eq('test')
+      expect(last_response.headers['Location']).to end_with("/admin/comments/#{@comment.id}")
+    end
+
+    it 'renders the reply form error without creating an empty reply' do
+      expect { post "/admin/comments/#{@comment.id}/replies", reply: { body: '' } }.not_to change(Comment, :count)
+      expect(last_response).to be_ok
+      expect(last_response.body).to include(I18n.t('admin.comment.reply.title'), "name=\"reply[body]\"")
+    end
+
+    it 'keeps a reply when its notification cannot be sent' do
+      allow_any_instance_of(Lokka::CommentNotifier).to receive(:notify_reply).and_raise(StandardError, 'mail failure')
+      expect { post "/admin/comments/#{@comment.id}/replies", reply: { body: 'Saved despite mail failure' } }.to change(Comment, :count).by(1)
+      expect(last_response).to be_redirect
     end
   end
 
@@ -185,7 +208,7 @@ describe 'Private comment administration' do
     get "/admin/comments/#{private_comment.id}"
     expect(last_response.body).to include('Secret admin content', I18n.t('admin.comment.private.badge'))
     expect(last_response.body).to include("/admin/comments/#{private_comment.id}/edit")
-    expect(last_response.body).not_to include('<form')
+    expect(last_response.body).to include('comment-reply-form', 'name="reply[body]"')
     expect(last_response.body).not_to include('private-comment-notice')
   end
 
@@ -217,6 +240,13 @@ describe 'Private comment administration' do
     expect(last_response).to be_ok
     expect(last_response.body).to include(I18n.t('admin.comment.private.explanation'))
     expect(private_comment.reload.status).to eq(Comment::MODERATED)
+  end
+
+  it 'creates a private reply for a private message' do
+    post "/admin/comments/#{private_comment.id}/replies", reply: { body: 'Admin private reply' }
+    expect(last_response).to be_redirect
+    reply = private_comment.replies.last
+    expect(reply).to have_attributes(private: true, status: Comment::MODERATED, body: 'Admin private reply')
   end
 
   it 'can delete private comments' do

@@ -1044,6 +1044,47 @@ textarea.editor {
     margin: 0;
 }
 
+.comment-reply-history,
+.comment-reply-form {
+    max-width: 760px;
+    margin-top: 24px;
+}
+
+.comment-reply-history > h3,
+.comment-reply-form > h3 {
+    margin-bottom: 10px;
+    color: #41527e;
+    font-size: 14px;
+}
+
+.comment-reply {
+    padding: 12px 14px;
+    border-top: 1px solid #d5d9e1;
+}
+
+.comment-reply:last-child {
+    border-bottom: 1px solid #d5d9e1;
+}
+
+.comment-reply-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #667085;
+    font-size: 11px;
+}
+
+.comment-reply-body {
+    margin-top: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.comment-reply-form textarea {
+    width: min(100%, 550px);
+    min-height: 120px;
+}
+
 @media screen and (max-width: 640px) {
     .comment-meta {
         display: block;
@@ -1051,6 +1092,15 @@ textarea.editor {
 
     .comment-meta-item + .comment-meta-item {
         margin-top: 12px;
+    }
+
+    .comment-reply-meta {
+        display: block;
+    }
+
+    .comment-reply-meta span {
+        display: block;
+        margin-top: 3px;
     }
 }
 

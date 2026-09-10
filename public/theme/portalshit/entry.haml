@@ -67,11 +67,6 @@
     - if @comment_submission_message
       .flash-notice= t(@comment_submission_message)
     %ul.comment-list
-      - @entry.public_comments.reverse.each do |comment|
-        %li.comment{id: "comment-#{comment.id}"}
-          %ul.meta
-            %li.gravatar= image_tag gravatar_image_url comment.email
-            %li.name= link_to comment.name, comment.homepage, unless: comment.homepage.blank?
-          .body~ Markup.use_engine('redcarpet', strip_tags(comment.body)).html_safe
-          .created_at= l comment.created_at, format: :long
+      - @entry.public_comments.root_comments.reverse.each do |comment|
+        = haml :'theme/portalshit/comment_item', layout: false, locals: { comment: comment }
     = partial :comment, locals: { disabled: comment_disallowed_slugs&.include?(@entry.slug) }

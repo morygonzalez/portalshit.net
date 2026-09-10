@@ -93,8 +93,14 @@ ja:
   comment_was_successfully_created: コメントを作成しました。
   comment_was_successfully_updated: コメントを更新しました。
   comment_was_successfully_deleted: コメントを削除しました。
+  comment_reply_was_successfully_created: 返信を送信しました。
   admin:
     comment:
+      reply:
+        title: 返信
+        history: 返信履歴
+        body: 返信内容
+        send: 返信を送信
       private:
         badge: メッセージ
         filter: メッセージ
@@ -207,6 +213,8 @@ ja:
     updated_at: 更新日時
     errors:
       cannot_be_public: 著者限定コメントを公開コメントに変更することはできません。
+      reply_must_belong_to_same_entry: 返信は同じ記事のコメントにのみ紐付けられます。
+      reply_must_match_privacy: 返信元と同じ公開設定にしてください。
   snippet:
     id: ID
     name: 名前
