@@ -20,6 +20,7 @@ describe '/admin/comments' do
     it 'should show index' do
       get '/admin/comments'
       last_response.should be_ok
+      expect(last_response.body).to include("/admin/comments/#{@comment.id}")
     end
   end
 
@@ -37,6 +38,7 @@ describe '/admin/comments' do
       sample = attributes_for(:comment, entry_id: @post.id)
       post '/admin/comments', { comment: sample }
       last_response.should be_redirect
+      expect(last_response.headers['Location']).to end_with("/admin/comments/#{Comment.last.id}")
       expect(Post.find(@post.id).comments.count).to eq(1)
     end
   end
@@ -49,10 +51,20 @@ describe '/admin/comments' do
     end
   end
 
+  context 'GET /admin/comments/:id' do
+    it 'shows the comment details and links to its edit form' do
+      get "/admin/comments/#{@comment.id}"
+      expect(last_response).to be_ok
+      expect(last_response.body).to include('Test Comment', 'comment-view', @post.link, "/admin/comments/#{@comment.id}/edit")
+      expect(last_response.body).not_to include('<form')
+    end
+  end
+
   context 'PUT /admin/comments/:id' do
     it 'should update the comment"s body ' do
       put "/admin/comments/#{@comment.id}", comment: { body: 'updated' }
       last_response.should be_redirect
+      expect(last_response.headers['Location']).to end_with("/admin/comments/#{@comment.id}")
       Comment.find(@comment.id).body.should == 'updated'
     end
   end
@@ -107,6 +119,11 @@ describe '/admin/comments' do
       it_behaves_like 'a not found page'
     end
 
+    context 'GET show' do
+      before { get '/admin/comments/9999' }
+      it_behaves_like 'a not found page'
+    end
+
     context 'PUT' do
       before { put '/admin/comments/9999' }
       it_behaves_like 'a not found page'
@@ -134,7 +151,9 @@ end
 
 describe 'Private comment administration' do
   include_context 'admin login'
-  let!(:private_comment) { create(:comment, entry: create(:post), private: true, body: 'Secret admin content') }
+  let!(:private_comment) do
+    create(:comment, entry: create(:post), private: true, status: Comment::MODERATED, body: 'Secret admin content')
+  end
 
   it 'lists private content with a badge and filters out ordinary comments' do
     create(:comment, entry: private_comment.entry, body: 'Ordinary admin content')
@@ -162,9 +181,18 @@ describe 'Private comment administration' do
     expect(last_response.body).to include(I18n.t('admin.comment.public.badge'), 'public-comment-badge', 'Ordinary labeled content')
   end
 
-  it 'explains privacy in the edit form without a privacy toggle' do
+  it 'shows private messages in the detail view and links to their edit form' do
+    get "/admin/comments/#{private_comment.id}"
+    expect(last_response.body).to include('Secret admin content', I18n.t('admin.comment.private.badge'))
+    expect(last_response.body).to include("/admin/comments/#{private_comment.id}/edit")
+    expect(last_response.body).not_to include('<form')
+    expect(last_response.body).not_to include('private-comment-notice')
+  end
+
+  it 'does not show the approval warning until a private message is approved' do
     get "/admin/comments/#{private_comment.id}/edit"
-    expect(last_response.body).to include('Secret admin content', I18n.t('admin.comment.private.explanation'))
+    expect(last_response.body).to include('Secret admin content')
+    expect(last_response.body).not_to include(I18n.t('admin.comment.private.explanation'))
     expect(last_response.body).not_to include('name="comment[private]"')
     expect(last_response.body).to include('name="comment[name]"', 'disabled="disabled"')
   end
@@ -177,11 +205,18 @@ describe 'Private comment administration' do
 
   it 'allows spam and moderation changes without notifying the commenter' do
     expect(Lokka::CommentNotifier).not_to receive(:new)
-    [Comment::SPAM, Comment::MODERATED, Comment::APPROVED].each do |status|
+    [Comment::SPAM, Comment::MODERATED].each do |status|
       put "/admin/comments/#{private_comment.id}", comment: { status: status }
       expect(last_response).to be_redirect
       expect(private_comment.reload).to have_attributes(private: true, status: status)
     end
+  end
+
+  it 'rejects approving a private message and displays the privacy warning' do
+    put "/admin/comments/#{private_comment.id}", comment: { status: Comment::APPROVED }
+    expect(last_response).to be_ok
+    expect(last_response.body).to include(I18n.t('admin.comment.private.explanation'))
+    expect(private_comment.reload.status).to eq(Comment::MODERATED)
   end
 
   it 'can delete private comments' do

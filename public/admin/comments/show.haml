@@ -1,0 +1,41 @@
+%h2= t('show_comment')
+
+.comment-view
+  .comment-view-header
+    .comment-view-labels
+      - if @comment.private?
+        %span.private-comment-badge= t('admin.comment.private.badge')
+      - else
+        %span.public-comment-badge= t('admin.comment.public.badge')
+      - case @comment.status
+      - when Comment::APPROVED
+        %span.comment-status.approved= t('comment_approved')
+      - when Comment::MODERATED
+        %span.comment-status.moderated= t('comment_moderated')
+      - when Comment::SPAM
+        %span.comment-status.spam= t('comment_spam')
+    %h3.comment-entry-title
+      - if @comment.entry
+        = link_to h(@comment.entry.title), url(@comment.entry.link)
+      - else
+        = h(@comment.entry&.title)
+
+  .comment-meta
+    .comment-meta-item
+      %span.comment-meta-label= t('comment.name')
+      %span.comment-meta-value= h(@comment.name)
+    .comment-meta-item
+      %span.comment-meta-label= t('comment.created_at')
+      %span.comment-meta-value= l(@comment.created_at, format: :long)
+
+  .comment-message
+    %h3= t('comment.body')
+    .comment-body= h(@comment.body)
+
+  - if @comment.homepage.present?
+    .comment-supplementary
+      %span.comment-meta-label= t('comment.homepage')
+      %span.comment-meta-value= h(@comment.homepage)
+
+  .comment-actions
+    = link_to t('edit'), url("/admin/comments/#{@comment.id}/edit"), class: :button

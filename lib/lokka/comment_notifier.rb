@@ -72,7 +72,7 @@ module Lokka
 
         #{@comment.body}
 
-        管理画面: https://portalshit.net/admin/comments/#{@comment.id}/edit
+        管理画面: https://portalshit.net/admin/comments/#{@comment.id}
       TEXT
       client.send_email(
         from_email_address: from,

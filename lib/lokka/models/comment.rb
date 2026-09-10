@@ -16,6 +16,7 @@ class Comment < ActiveRecord::Base
   default_scope -> { order('created_at DESC') }
 
   validate :keep_private_comments_private
+  validate :do_not_approve_private_comments
 
   scope :publicly_visible, -> { where(status: APPROVED, private: false) }
   scope :private_comments, -> { where(private: true) }
@@ -28,6 +29,12 @@ class Comment < ActiveRecord::Base
   def keep_private_comments_private
     if private_in_database && !private?
       errors.add(:base, I18n.t('comment.errors.cannot_be_public'))
+    end
+  end
+
+  def do_not_approve_private_comments
+    if persisted? && private? && status_changed? && status == APPROVED
+      errors.add(:base, I18n.t('admin.comment.private.explanation'))
     end
   end
 

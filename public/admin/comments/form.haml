@@ -5,10 +5,6 @@
       %ul
         - @comment.errors.full_messages.each do |error|
           %li= error
-  - if @comment.private?
-    %p.private-comment-notice
-      %strong= t('admin.comment.private.badge')
-      = t('admin.comment.private.explanation')
   .field
     = f.label :entry, caption: t('comment.entry')
     %br/

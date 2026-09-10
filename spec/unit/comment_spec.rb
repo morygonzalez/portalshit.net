@@ -33,4 +33,11 @@ describe Comment do
     expect(comment.update(private: false)).to be false
     expect(comment.reload.private?).to be true
   end
+
+  it 'does not allow a private comment to be approved' do
+    comment = create(:comment, entry: entry, private: true, status: Comment::MODERATED)
+    expect(comment.update(status: Comment::APPROVED)).to be false
+    expect(comment.errors.full_messages).to include(I18n.t('admin.comment.private.explanation'))
+    expect(comment.reload.status).to eq(Comment::MODERATED)
+  end
 end

@@ -28,7 +28,7 @@ module Lokka
           @comment = Comment.new(params[:comment])
           if @comment.save
             flash[:notice] = t('comment_was_successfully_created')
-            redirect to("/admin/comments/#{@comment.id}/edit")
+            redirect to("/admin/comments/#{@comment.id}")
           else
             haml :'admin/comments/new', layout: :'admin/layout'
           end
@@ -37,6 +37,11 @@ module Lokka
         get '/:id/edit' do |id|
           (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
           haml :'admin/comments/edit', layout: :'admin/layout'
+        end
+
+        get '/:id' do |id|
+          (@comment = Comment.where(id: id).first) || raise(Sinatra::NotFound)
+          haml :'admin/comments/show', layout: :'admin/layout'
         end
 
         put '/:id' do |id|
@@ -55,7 +60,7 @@ module Lokka
               end
             end
             flash[:notice] = t('comment_was_successfully_updated')
-            redirect to("/admin/comments/#{@comment.id}/edit")
+            redirect to("/admin/comments/#{@comment.id}")
           else
             haml :'admin/comments/edit', layout: :'admin/layout'
           end
