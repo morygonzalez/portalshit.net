@@ -260,14 +260,14 @@
     grid-template-columns: repeat(2, 1fr);
 
     .item {
-      margin: auto 1em;
+      margin: auto 1em 2em;
       min-width: 0;
       overflow: hidden;
 
       .title {
         display: flex;
         justify-content: space-between;
-        margin: .8em 0;
+        margin: .8em 0 .3em;
 
         .link {
           text-overflow: ellipsis;

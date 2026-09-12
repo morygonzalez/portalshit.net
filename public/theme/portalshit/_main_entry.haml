@@ -24,8 +24,9 @@
         = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}"), post.link
       - else
         = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
-    .body{ itemprop: 'articleBody' }
-      = post.summary_or_description
+    .summary
+      .body{ itemprop: 'articleBody' }
+        = post.summary_or_description
       .footer
         = post.tags_to_html
         .comment== #{link_to "#{t('comments')} (#{post.public_comments.size})", "#{post.link}#comment_form"}
