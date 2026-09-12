@@ -3,6 +3,7 @@
   %li= link_to t('all'), url('/admin/comments')
   %li= link_to t('admin.comment.public.filter'), url('/admin/comments?type=public')
   %li= link_to t('admin.comment.private.filter'), url('/admin/comments?type=private')
+  %li= link_to t('admin.comment.reply.unreplied'), url('/admin/comments?reply_status=unreplied')
 
 .bulk_deletion
   = form_tag url('/admin/comments/selected'), id: 'comment_select', class: 'selected', method: :delete do
@@ -22,6 +23,7 @@
       %th.status= t('comment_status')
       %th= t('comment.body')
       %th= t('comment.name')
+      %th.reply-status= t('admin.comment.reply.status')
       %th= t('comment.created_at')
       %th{ colspan: 2 }
     - @comments.each_with_index do |comment, i|
@@ -44,6 +46,7 @@
             %strong.public-comment-badge= t('admin.comment.public.badge')
           = link_to truncate(strip_tags(h(comment.body))), url("/admin/comments/#{comment.id}")
         %td= h(comment.name)
+        %td.reply-status= comment.replies.any? ? t('admin.comment.reply.replied') : t('admin.comment.reply.unreplied')
         %td= l(comment.created_at, format: :long)
         %td= link_to t('edit'), url("/admin/comments/#{comment.id}/edit"), class: :button
         %td= link_to t('delete'), url("/admin/comments/#{comment.id}"), class: :button, confirm: t('are_you_sure'), method: :delete

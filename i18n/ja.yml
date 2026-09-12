@@ -101,6 +101,9 @@ ja:
         history: 返信履歴
         body: 返信内容
         send: 返信を送信
+        status: 返信
+        replied: 返信済み
+        unreplied: 未返信
       private:
         badge: メッセージ
         filter: メッセージ

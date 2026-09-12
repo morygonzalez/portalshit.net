@@ -22,6 +22,26 @@ describe '/admin/comments' do
       last_response.should be_ok
       expect(last_response.body).to include("/admin/comments/#{@comment.id}")
     end
+
+    it 'lists only parent comments and shows their reply status' do
+      reply = create(:comment, entry: @post, parent: @comment, body: 'Admin reply')
+      unreplied = create(:comment, entry: @post, body: 'Unreplied comment')
+
+      get '/admin/comments'
+
+      expect(last_response.body).to include('Test Comment', 'Unreplied comment')
+      expect(last_response.body).not_to include(reply.body)
+      expect(last_response.body).to include(I18n.t('admin.comment.reply.replied'), I18n.t('admin.comment.reply.unreplied'))
+    end
+
+    it 'filters parent comments without replies' do
+      create(:comment, entry: @post, parent: @comment, body: 'Admin reply')
+      unreplied = create(:comment, entry: @post, body: 'Unreplied comment')
+
+      get '/admin/comments?reply_status=unreplied'
+      expect(last_response.body).to include(unreplied.body)
+      expect(last_response.body).not_to include('Test Comment')
+    end
   end
 
   context 'GET /admin/comments/new' do

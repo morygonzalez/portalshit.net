@@ -13,7 +13,15 @@ module Lokka
                      else
                        params[:private] == '1' ? Comment.private_comments : Comment.all
                      end
+          comments = comments.root_comments
+          comments = case params[:reply_status]
+                     when 'unreplied'
+                       comments.without_replies
+                     else
+                       comments
+                     end
           @comments = comments.order('created_at DESC').
+                        includes(:replies).
                         page(params[:page]).
                         per(settings.admin_per_page)
           haml :'admin/comments/index', layout: :'admin/layout'

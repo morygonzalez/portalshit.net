@@ -23,6 +23,7 @@ class Comment < ActiveRecord::Base
   scope :publicly_visible, -> { where(status: APPROVED, private: false) }
   scope :private_comments, -> { where(private: true) }
   scope :root_comments, -> { where(parent_id: nil) }
+  scope :without_replies, -> { where.not(id: unscoped.where.not(parent_id: nil).select(:parent_id)) }
   scope :moderated, -> { where(status: MODERATED) }
   scope :approved,  -> { where(status: APPROVED) }
   scope :spam,      -> { where(status: SPAM) }

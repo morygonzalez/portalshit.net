@@ -101,6 +101,9 @@ en:
         history: Reply history
         body: Reply body
         send: Send reply
+        status: Reply status
+        replied: Replied
+        unreplied: Unreplied
       private:
         badge: Message
         filter: Messages
