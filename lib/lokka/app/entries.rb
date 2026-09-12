@@ -14,6 +14,13 @@ module Lokka
                  order(@site.default_order)
       @posts = apply_continue_reading(@posts)
 
+      random_order = Post.connection.adapter_name =~ /Mysql/i ? 'RAND()' : 'RANDOM()'
+      @on_this_day_post = Post.published.
+                            created_around_today.
+                            includes(:category, :tags, :user, :public_comments).
+                            reorder(Arel.sql(random_order)).
+                            first
+
       @title = @site.title
 
       @bread_crumbs = [{ name: t('home'), link: '/' }]

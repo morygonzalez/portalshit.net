@@ -36,6 +36,29 @@ class Entry < ActiveRecord::Base
   scope :pages,       -> { where(type: 'Page') }
   scope :recent,
         ->(count = 5) { limit(count) }
+  scope :created_around_today,
+        ->(date = Time.current.to_date) {
+          from = date - 3.days
+          to = date + 3.days
+          month_day = if connection.adapter_name =~ /Mysql/i
+                        "DATE_FORMAT(entries.created_at, '%m%d')"
+                      else
+                        "strftime('%m%d', entries.created_at)"
+                      end
+          year = if connection.adapter_name =~ /Mysql/i
+                   'YEAR(entries.created_at)'
+                 else
+                   "CAST(strftime('%Y', entries.created_at) AS INTEGER)"
+                 end
+
+          relation = if from.year == to.year
+                       where("#{month_day} BETWEEN ? AND ?", from.strftime('%m%d'), to.strftime('%m%d'))
+                     else
+                       where("#{month_day} >= ? OR #{month_day} <= ?", from.strftime('%m%d'), to.strftime('%m%d'))
+                     end
+
+          relation.where("#{year} < ?", date.year)
+        }
   scope :between_a_year,
         ->(time) {
           where(created_at: time.beginning_of_year..time.end_of_year)

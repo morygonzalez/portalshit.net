@@ -59,6 +59,15 @@
     }
   }
 
+  #on_this_day {
+    h2 .years-ago {
+      color: $meta-text-color;
+      font-size: .65em;
+      font-weight: normal;
+      margin-left: .5em;
+    }
+  }
+
   #recent_entries, .category, .popular {
     header {
       .description {

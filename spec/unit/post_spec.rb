@@ -3,6 +3,38 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Post do
+  describe '.created_around_today' do
+    let(:date) { Date.new(2026, 9, 12) }
+
+    it 'finds posts created within three days of the same month and day in any year' do
+      matching_posts = [
+        create(:post, created_at: Time.utc(2011, 9, 9)),
+        create(:post, created_at: Time.utc(2018, 9, 12)),
+        create(:post, created_at: Time.utc(2024, 9, 15))
+      ]
+      outside_posts = [
+        create(:post, created_at: Time.utc(2014, 9, 8)),
+        create(:post, created_at: Time.utc(2020, 9, 16)),
+        create(:post, created_at: Time.utc(2026, 9, 12))
+      ]
+
+      expect(Post.created_around_today(date)).to include(*matching_posts)
+      expect(Post.created_around_today(date)).not_to include(*outside_posts)
+    end
+
+    it 'finds posts across the year boundary' do
+      matching_posts = [
+        create(:post, created_at: Time.utc(2011, 12, 29)),
+        create(:post, created_at: Time.utc(2018, 1, 1)),
+        create(:post, created_at: Time.utc(2024, 1, 4))
+      ]
+      outside_post = create(:post, created_at: Time.utc(2020, 12, 28))
+
+      expect(Post.created_around_today(Date.new(2026, 1, 1))).to include(*matching_posts)
+      expect(Post.created_around_today(Date.new(2026, 1, 1))).not_to include(outside_post)
+    end
+  end
+
   context 'with slug' do
     subject { create :post_with_slug }
 
