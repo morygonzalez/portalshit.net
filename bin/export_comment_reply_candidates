@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Exports possible legacy replies by the site owner for manual review. This
+# script only reads comments; it never writes parent_id values.
+#
+# Usage:
+#   RACK_ENV=production bundle exec ruby bin/export_comment_reply_candidates \
+#     > tmp/comment_reply_candidates.csv
+
+require 'csv'
+require_relative '../init'
+
+Lokka::Database.connect
+
+AUTHOR_NAMES = ['morygonzalez', '森井ゴンザレス'].freeze
+CONTEXT_SIZE = 3
+
+def csv_value(value)
+  text = value.to_s
+
+  # Prevent spreadsheet applications from interpreting comment text as a formula.
+  text.match?(/\A[=+\-@]/) ? "'#{text}" : text
+end
+
+def earlier_root_comments(comment)
+  Comment.unscoped
+         .where(entry_id: comment.entry_id, private: comment.private?, parent_id: nil)
+         .where.not(name: AUTHOR_NAMES)
+         .where('(created_at < :created_at) OR (created_at = :created_at AND id < :id)',
+                created_at: comment.created_at,
+                id: comment.id)
+         .order(created_at: :desc, id: :desc)
+         .limit(CONTEXT_SIZE)
+end
+
+CSV($stdout, force_quotes: true) do |csv|
+  csv << %w[
+    reply_comment_id
+    reply_created_at
+    entry_id
+    entry_title
+    visibility
+    reply_name
+    reply_body
+    suggested_parent_comment_id
+    suggested_parent_created_at
+    suggested_parent_name
+    suggested_parent_body
+    earlier_root_comment_ids
+    review_note
+  ]
+
+  Comment.unscoped
+         .where(parent_id: nil)
+         .where('TRIM(name) IN (?)', AUTHOR_NAMES)
+         .includes(:entry)
+         .find_each do |reply|
+    context = earlier_root_comments(reply).to_a
+    suggested_parent = context.first
+
+    csv << [
+      reply.id,
+      reply.created_at,
+      reply.entry_id,
+      csv_value(reply.entry&.title),
+      reply.private? ? 'message' : 'comment',
+      csv_value(reply.name),
+      csv_value(reply.body),
+      suggested_parent&.id,
+      suggested_parent&.created_at,
+      csv_value(suggested_parent&.name),
+      csv_value(suggested_parent&.body),
+      context.map(&:id).join(', '),
+      'Verify the suggested parent; remove rows that reply to multiple comments or are not replies.'
+    ]
+  end
+end
