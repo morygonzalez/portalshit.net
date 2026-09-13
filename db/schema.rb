@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_13_000000) do
+ActiveRecord::Schema.define(version: 2026_09_13_000001) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -94,10 +94,8 @@ ActiveRecord::Schema.define(version: 2026_09_13_000000) do
     t.text "frozen_tag_list", collation: "utf8mb3_general_ci"
     t.string "markup", collation: "utf8mb3_general_ci"
     t.text "summary"
-    t.datetime "publish_at"
     t.boolean "draft", default: false, null: false
     t.index ["created_at"], name: "index_entry_created_at"
-    t.index ["publish_at"], name: "index_entries_on_publish_at"
     t.index ["slug"], name: "index_entry_slug"
     t.index ["title", "body"], name: "index_entry_fulltext", type: :fulltext
     t.index ["type"], name: "index_entry_type"
