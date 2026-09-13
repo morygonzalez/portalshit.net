@@ -2,11 +2,15 @@
 
 module Lokka
   module Before
+    VALID_PARAM_KEY = /\A[a-zA-Z_][a-zA-Z0-9_]*\z/
+
     def self.registered(app)
       app.before do
         # Remove params with keys that are invalid as Ruby instance variable names.
         # Bots sometimes send URLs with "&amp;" instead of "&", creating keys like "amp;query".
-        params.reject! { |key, _| key !~ /\A[a-zA-Z_][a-zA-Z0-9_]*\z/ }
+        params.reject! do |key, _|
+          !key.is_a?(String) || !key.valid_encoding? || !key.ascii_only? || !VALID_PARAM_KEY.match?(key)
+        end
 
         # Force UTF-8 encoding on all string params to prevent
         # Encoding::UndefinedConversionError and incompatible character encodings errors.

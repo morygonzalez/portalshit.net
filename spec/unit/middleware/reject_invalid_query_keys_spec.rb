@@ -11,6 +11,13 @@ describe Lokka::Middleware::RejectInvalidQueryKeys do
     middleware.call(env)
   end
 
+  def post(body, content_type: 'application/x-www-form-urlencoded')
+    env = Rack::MockRequest.env_for(
+      '/', method: 'POST', input: body, 'CONTENT_TYPE' => content_type
+    )
+    middleware.call(env)
+  end
+
   context 'with a valid query string' do
     it 'passes through plain keys' do
       status, _headers, body = call('page=2')
@@ -101,6 +108,34 @@ describe Lokka::Middleware::RejectInvalidQueryKeys do
       called = false
       app = described_class.new(->(_env) { called = true; [200, {}, []] })
       app.call(Rack::MockRequest.env_for('/?%20AND%201=1'))
+      expect(called).to eq false
+    end
+  end
+
+  context 'with form parameters' do
+    it 'passes through valid form keys, including nested form values' do
+      status, = post('comment%5Bbody%5D=hello&author=codex')
+      expect(status).to eq 200
+    end
+
+    it 'rejects an invalid UTF-8 form key used by the PHP-CGI probe' do
+      status, _headers, body = post('%ADd+allow_url_include%3D1=1')
+      expect(status).to eq 400
+      expect(body).to eq ['Bad Request']
+    end
+
+    it 'rejects a PHP payload used as a form key' do
+      status, = post('%3C%3Fphp+echo%281%29%3B+%3F%3E=')
+      expect(status).to eq 400
+    end
+
+    it 'does not call the inner app for an invalid form key' do
+      called = false
+      app = described_class.new(->(_env) { called = true; [200, {}, []] })
+      app.call(Rack::MockRequest.env_for(
+        '/', method: 'POST', input: '%ADd+allow_url_include%3D1=1',
+             'CONTENT_TYPE' => 'application/x-www-form-urlencoded'
+      ))
       expect(called).to eq false
     end
   end
