@@ -149,7 +149,7 @@ ja:
     user: 作成者
     category: カテゴリー
     tags: タグ
-    publish_at: 公開日時
+    draft: 下書き
     created_at: 作成日時
     updated_at: 更新日時
   page:
@@ -160,7 +160,7 @@ ja:
     user: 作成者
     category: カテゴリー
     tags: タグ
-    publish_at: 公開日時
+    draft: 下書き
     created_at: 作成日時
     updated_at: 更新日時
   post:
@@ -171,7 +171,7 @@ ja:
     user: 作成者
     category: カテゴリー
     tags: タグ
-    publish_at: 公開日時
+    draft: 下書き
     created_at: 作成日時
     updated_at: 更新日時
   category:
@@ -273,10 +273,6 @@ ja:
   post_status: ステータス
   post_draft: 下書き
   post_published: 公開済み
-  post_scheduled: 予約投稿
-  scheduled: 予約投稿
-  listing_scheduled_posts: 投稿予約投稿一覧
-  listing_scheduled_pages: ページ予約投稿一覧
   post_comment: コメントする
   comment_status: ステータス
   comment_moderated: 承認待ち

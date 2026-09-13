@@ -53,7 +53,7 @@ RSpec.describe Lokka::OGP::LocalEntry do
     end
 
     it 'returns nil for an unpublished entry' do
-      draft = create(:post_with_slug, slug: 'draft-entry', publish_at: nil)
+      draft = create(:post_with_slug, slug: 'draft-entry', draft: true)
       expect(described_class.find_entry("https://portalshit.net/#{draft.slug}")).to be_nil
     end
 

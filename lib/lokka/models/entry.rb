@@ -29,9 +29,8 @@ class Entry < ActiveRecord::Base
   after_commit :purge_atom_cache
 
   default_scope { order('entries.created_at DESC') }
-  scope :published,   -> { where("publish_at IS NOT NULL AND publish_at <= ?", Time.current) }
-  scope :unpublished, -> { where(publish_at: nil) }
-  scope :scheduled,   -> { where("publish_at IS NOT NULL AND publish_at > ?", Time.current) }
+  scope :published,   -> { where(draft: false) }
+  scope :unpublished, -> { where(draft: true) }
   scope :posts,       -> { where(type: 'Post') }
   scope :pages,       -> { where(type: 'Page') }
   scope :recent,
@@ -122,15 +121,11 @@ class Entry < ActiveRecord::Base
   end
 
   def draft?
-    publish_at.nil?
-  end
-
-  def scheduled?
-    publish_at.present? && publish_at > Time.current
+    draft
   end
 
   def published?
-    publish_at.present? && publish_at <= Time.current
+    !draft?
   end
 
   def fuzzy_slug

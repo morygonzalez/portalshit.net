@@ -12,7 +12,7 @@ describe Lokka::Helpers do
 
   describe 'months' do
     subject { months }
-    before  { create(:post, publish_at: nil) }
+    before  { create(:post, draft: true) }
 
     it { subject.count.should eq(0) }
   end

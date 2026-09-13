@@ -29,7 +29,7 @@ FactoryBot.define do
     type { 'Post' }
     created_at { create_time }
     updated_at { update_time }
-    publish_at { create_time }
+    draft { false }
 
     trait :kramdown do
       title { 'Markdown' }
@@ -51,7 +51,7 @@ FactoryBot.define do
     type { 'Post' }
     created_at { create_time }
     updated_at { update_time }
-    publish_at { create_time }
+    draft { false }
   end
 
   factory :post_with_slug, parent: :post do
@@ -102,7 +102,7 @@ FactoryBot.define do
 
   factory :draft_post, parent: :post do
     title { 'Draft Post' }
-    publish_at { nil }
+    draft { true }
     slug { 'test-draft-post' }
   end
 
@@ -134,13 +134,13 @@ FactoryBot.define do
     type { 'Page' }
     created_at { create_time }
     updated_at { update_time }
-    publish_at { create_time }
+    draft { false }
   end
 
   factory :draft_page, parent: :page do
     title { 'Draft Page' }
     body { 'draft Page' }
-    publish_at { nil }
+    draft { true }
   end
 
   factory :category do

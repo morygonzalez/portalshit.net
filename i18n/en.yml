@@ -149,7 +149,7 @@ en:
     user: Author
     category: Category
     tags: Tags
-    publish_at: Publish at
+    draft: Draft
     created_at: Created at
     updated_at: Updated at
   page:
@@ -160,7 +160,7 @@ en:
     user: Author
     category: Category
     tags: Tags
-    publish_at: Publish at
+    draft: Draft
     created_at: Created at
     updated_at: Updated at
   post:
@@ -171,7 +171,7 @@ en:
     user: Author
     category: Category
     tags: Tags
-    publish_at: Publish at
+    draft: Draft
     created_at: Created at
     updated_at: Updated at
   category:
@@ -273,10 +273,6 @@ en:
   post_status: Status
   post_draft: Draft
   post_published: Published
-  post_scheduled: Scheduled
-  scheduled: Scheduled
-  listing_scheduled_posts: Scheduled Posts
-  listing_scheduled_pages: Scheduled Pages
   post_comment: Comment
   comment_status: Status
   comment_moderated: moderated
