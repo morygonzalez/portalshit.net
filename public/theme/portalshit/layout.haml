@@ -64,8 +64,26 @@
           - unless index? || response.status == 404
             %nav#bread_crumb= bread_crumb
           #header-bg-description
-            %span.header-bg-light-description= header_bg[:'data-bg-light-description']
-            %span.header-bg-dark-description= header_bg[:'data-bg-dark-description']
+            %span.header-bg-light-description
+              - light_coord = header_bg[:'data-bg-light-coord']
+              - if light_coord.present?
+                %details.header-bg-map-menu
+                  %summary= header_bg[:'data-bg-light-description']
+                  .header-bg-map-menu-links
+                    = link_to 'Appleマップで開く', header_bg[:'data-bg-light-apple-map-url'], target: '_blank', rel: 'noopener'
+                    = link_to 'Googleマップで開く', %(https://www.google.com/maps/search/?api=1&query=#{light_coord}), target: '_blank', rel: 'noopener'
+              - else
+                = header_bg[:'data-bg-light-description']
+            %span.header-bg-dark-description
+              - dark_coord = header_bg[:'data-bg-dark-coord']
+              - if dark_coord.present?
+                %details.header-bg-map-menu
+                  %summary= header_bg[:'data-bg-dark-description']
+                  .header-bg-map-menu-links
+                    = link_to 'Appleマップで開く', header_bg[:'data-bg-dark-apple-map-url'], target: '_blank', rel: 'noopener'
+                    = link_to 'Googleマップで開く', %(https://www.google.com/maps/search/?api=1&query=#{dark_coord}), target: '_blank', rel: 'noopener'
+              - else
+                = header_bg[:'data-bg-dark-description']
 
     %main#content.hfeed
       = yield

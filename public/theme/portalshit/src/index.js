@@ -143,6 +143,7 @@ const execModalSearch = function(event) {
   if (!keyword) {
     try {
       const url = new URL(a.getAttribute('href'), window.location.origin);
+      if (url.origin !== window.location.origin) return;
       const isSearchPath = /\/search\/?$/.test(url.pathname);
       if (isSearchPath && url.searchParams.has('query') && !url.searchParams.has('page')) {
         keyword = url.searchParams.get('query') || '';
@@ -155,6 +156,7 @@ const execModalSearch = function(event) {
   if (!keyword) {
     try {
       const url = new URL(a.getAttribute('href'), window.location.origin);
+      if (url.origin !== window.location.origin) return;
       const tagMatch = url.pathname.match(/^\/tags\/(.+)/);
       if (tagMatch) {
         keyword = decodeURIComponent(tagMatch[1]).trim();

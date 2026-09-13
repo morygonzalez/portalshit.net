@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Lokka
   class App
     configure do
@@ -8,8 +10,12 @@ module Lokka
         {
           'data-bg-dark-image': "dark-#{dark_image['name']}",
           'data-bg-dark-description': dark_image['description'],
+          'data-bg-dark-coord': dark_image['coord'],
+          'data-bg-dark-apple-map-url': "https://maps.apple.com/?ll=#{dark_image['coord']}&q=#{CGI.escape(dark_image['description'])}",
           'data-bg-light-image': "light-#{light_image['name']}",
-          'data-bg-light-description': light_image['description']
+          'data-bg-light-description': light_image['description'],
+          'data-bg-light-coord': light_image['coord'],
+          'data-bg-light-apple-map-url': "https://maps.apple.com/?ll=#{light_image['coord']}&q=#{CGI.escape(light_image['description'])}"
         }
       }
 
