@@ -11,6 +11,9 @@ module Lokka
     # probes, so we drop them at the edge with 400.
     class RejectInvalidQueryKeys
       VALID_KEY = /\A[A-Za-z_][A-Za-z0-9_]*\z/
+      # Google reCAPTCHA posts this documented field with hyphens. It is not
+      # used as a view instance-variable name, so permit only this exact key.
+      ALLOWED_FORM_KEYS = ['g-recaptcha-response'].freeze
       STATIC_EXT = /\.(?:css|js|map|png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|otf|eot)\z/i
 
       def initialize(app)
@@ -42,7 +45,8 @@ module Lokka
       end
 
       def invalid_form?(request)
-        invalid_keys?(request.POST)
+        params = request.POST
+        !params.is_a?(Hash) || params.keys.any? { |key| !valid_form_key?(key) }
       end
 
       def invalid_keys?(params)
@@ -51,6 +55,10 @@ module Lokka
 
       def valid_key?(key)
         key.is_a?(String) && key.valid_encoding? && key.ascii_only? && VALID_KEY.match?(key)
+      end
+
+      def valid_form_key?(key)
+        valid_key?(key) || ALLOWED_FORM_KEYS.include?(key)
       end
 
       def bad_request

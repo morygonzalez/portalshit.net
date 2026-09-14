@@ -118,6 +118,11 @@ describe Lokka::Middleware::RejectInvalidQueryKeys do
       expect(status).to eq 200
     end
 
+    it 'passes through the reCAPTCHA response submitted by comment forms' do
+      status, = post('comment%5Bbody%5D=hello&g-recaptcha-response=token')
+      expect(status).to eq 200
+    end
+
     it 'rejects an invalid UTF-8 form key used by the PHP-CGI probe' do
       status, _headers, body = post('%ADd+allow_url_include%3D1=1')
       expect(status).to eq 400
