@@ -23,7 +23,7 @@ html.light-mode {
   body {
     color: $dark-font-color;
     text-shadow: -1px -1px -1px #1d1a1a;
-    background: black url(images/background.jpg) no-repeat fixed;
+    background: black url(images/background.jpg) center top / auto 100vh no-repeat fixed;
   }
 
   a {
