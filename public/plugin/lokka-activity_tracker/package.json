@@ -4,7 +4,7 @@
   "description": "Activity tracker plugin for Lokka with FIT/GPX support",
   "main": "assets/javascripts/script.js",
   "dependencies": {
-    "@babel/preset-react": "^7.17.12",
+    "@babel/preset-react": "^8.0.0",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
