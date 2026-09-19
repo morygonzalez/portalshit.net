@@ -39,7 +39,10 @@ module Lokka
 
         {
           image_directory: @image_directory,
-          entry_count: references.values.flat_map { |item| item[:entry_ids].to_a }.uniq.count,
+          entry_count: @entries.count,
+          markup_cleanup_entry_count: @entries.count do |entry|
+            strip_flickr_embed_markup(entry.raw_body.to_s) != entry.raw_body.to_s
+          end,
           source_url_count: references.values.sum { |item| item[:source_urls].count },
           photo_count: photos.count,
           resolved_count: photos.count { |photo| photo[:status] == 'resolved' },
@@ -78,6 +81,7 @@ module Lokka
             body = removal_photos.reduce(body) do |result, photo|
               remove_flickr_embed(result, photo[:source_urls])
             end
+            body = strip_flickr_embed_markup(body)
             rewritten = replacements.reduce(body) do |result, (source_url, target_url)|
               result.gsub(source_url, target_url)
             end
@@ -186,12 +190,17 @@ module Lokka
           html.sub(linked_image, '').sub(standalone_image, '')
         end
 
-        return result if result.match?(/data-flickr-embed/i)
+        result
+      end
 
-        result.gsub(
-          %r{<script\b[^>]*\bsrc=(?:"|')?//embedr\.flickr\.com/assets/client-code\.js(?:"|')?[^>]*>\s*</script>\s*}im,
-          ''
-        )
+      def strip_flickr_embed_markup(body)
+        body.
+          gsub(/\s+data-flickr-embed=(?:"[^"]*"|'[^']*')/i, '').
+          gsub(/\s+data-footer=(?:"[^"]*"|'[^']*')/i, '').
+          gsub(
+            %r{<script\b[^>]*\bsrc=(?:"|')?(?:https?:)?//embedr\.flickr\.com/assets/client-code\.js(?:"|')?[^>]*>\s*</script>\s*}im,
+            ''
+          )
       end
 
       def upload(photo, uploader, strip_gps:)

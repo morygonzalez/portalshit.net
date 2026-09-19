@@ -140,14 +140,14 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
     expect(removable_entry.raw_body).not_to include('staticflickr', 'flickr.com', '<script')
   end
 
-  it 'keeps the Flickr embed script while another embedded image remains' do
+  it 'removes Flickr embed markup while preserving another migrated image and its link' do
     other_url = 'https://live.staticflickr.com/4844/45408683155_5c0a8b4dc5_b.jpg'
     removable_entry = FakeEntry.new(
       13,
       'Two Flickr photos',
       <<~HTML
         <a data-flickr-embed="true"><img src="https://farm5.staticflickr.com/4280/35230487880_fbdd681593_b.jpg"></a>
-        <a data-flickr-embed="true"><img src="#{other_url}"></a>
+        <a data-flickr-embed="true" data-footer="true" href="https://www.flickr.com/photos/morygonzalez/45408683155/"><img src="#{other_url}"></a>
         <script async src="//embedr.flickr.com/assets/client-code.js"></script>
       HTML
     )
@@ -163,8 +163,42 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
     expect(uploader).to receive(:upload).once
     migrator.apply!(plan, uploader: uploader, strip_gps: false)
 
-    expect(removable_entry.raw_body).to include('<script', 'https://resources.portalshit.net/')
-    expect(removable_entry.raw_body).not_to include('35230487880')
+    expect(plan[:markup_cleanup_entry_count]).to eq(1)
+    expect(removable_entry.raw_body).to include(
+      'href="https://www.flickr.com/photos/morygonzalez/45408683155/"',
+      'https://resources.portalshit.net/'
+    )
+    expect(removable_entry.raw_body).not_to include(
+      '35230487880', 'data-flickr-embed', 'data-footer', '<script'
+    )
+  end
+
+  it 'can clean up stale Flickr embed markup after image URLs have already migrated' do
+    migrated_entry = FakeEntry.new(
+      14,
+      'Already migrated',
+      <<~HTML
+        <a data-flickr-embed="true" href="https://www.flickr.com/photos/morygonzalez/45408683155/"><img src="https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg"></a>
+        <script async src="https://embedr.flickr.com/assets/client-code.js"></script>
+      HTML
+    )
+    migrator = described_class.new(entries: [migrated_entry], image_directory: @directory)
+    plan = migrator.build_plan
+
+    result = migrator.apply!(
+      plan,
+      uploader: instance_double(Lokka::PhotoGallery::S3Uploader),
+      strip_gps: false
+    )
+
+    expect(plan[:photo_count]).to eq(0)
+    expect(plan[:markup_cleanup_entry_count]).to eq(1)
+    expect(result).to eq(uploaded_photos: 0, removed_photos: 0, updated_entries: 1)
+    expect(migrated_entry.raw_body).to include(
+      'href="https://www.flickr.com/photos/morygonzalez/45408683155/"',
+      'https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg'
+    )
+    expect(migrated_entry.raw_body).not_to include('data-flickr-embed', '<script')
   end
 
   it 'refuses to apply a plan with unresolved photos' do

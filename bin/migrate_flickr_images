@@ -65,9 +65,11 @@ end
 Lokka::Database.connect
 
 entries = Entry.unscoped.where(
-  'body LIKE :staticflickr OR body LIKE :static_flickr',
+  'body LIKE :staticflickr OR body LIKE :static_flickr OR body LIKE :flickr_embed OR body LIKE :flickr_script',
   staticflickr: '%staticflickr.com%',
-  static_flickr: '%static.flickr.com%'
+  static_flickr: '%static.flickr.com%',
+  flickr_embed: '%data-flickr-embed%',
+  flickr_script: '%embedr.flickr.com/assets/client-code.js%'
 ).to_a
 
 migrator = Lokka::PhotoGallery::FlickrImageMigrator.new(
@@ -85,6 +87,7 @@ FileUtils.mkdir_p(File.dirname(manifest_path))
 File.write(manifest_path, JSON.pretty_generate(plan))
 
 puts "対象記事: #{plan[:entry_count]}"
+puts "埋め込み記法を除去: #{plan[:markup_cleanup_entry_count]}"
 puts "Flickr URL: #{plan[:source_url_count]}"
 puts "photo ID: #{plan[:photo_count]}"
 puts "対応済み: #{plan[:resolved_count]}"
