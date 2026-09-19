@@ -1,0 +1,124 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Flickr Data などで取得済みの画像を S3 へ移し、記事内の staticflickr URL を
+# resources.portalshit.net へ置き換える。既定は読み取り専用のドライラン。
+#
+# 例:
+#   RACK_ENV=production bundle exec ruby bin/migrate_flickr_images \
+#     --images /path/to/flickr-data
+#
+# 確認後に反映:
+#   RACK_ENV=production bundle exec ruby bin/migrate_flickr_images \
+#     --images /path/to/flickr-data --apply
+
+require 'csv'
+require 'json'
+require 'optparse'
+require 'time'
+require_relative '../init'
+require_relative '../public/plugin/lokka-photo_gallery/lib/lokka/photo_gallery/flickr_image_migrator'
+require_relative '../public/plugin/lokka-photo_gallery/lib/lokka/photo_gallery/s3_uploader'
+
+options = {
+  apply: false,
+  keep_gps: false,
+  removal_photo_ids: [],
+  manifest: File.join('tmp', 'flickr-image-migration.json')
+}
+
+parser = OptionParser.new do |opts|
+  opts.banner = 'Usage: bin/migrate_flickr_images --images DIRECTORY [options]'
+  opts.on('--images DIRECTORY', '取得済み Flickr 画像のディレクトリ（再帰検索）') do |value|
+    options[:images] = value
+  end
+  opts.on('--map CSV', '自動対応できない画像用の photo_id,path CSV') { |value| options[:map] = value }
+  opts.on('--remove-photo-id PHOTO_ID', 'ローカル保存せず記事から削除する photo ID（複数指定可）') do |value|
+    options[:removal_photo_ids] << value
+  end
+  opts.on('--manifest FILE', '移行計画の出力先') { |value| options[:manifest] = value }
+  opts.on('--apply', 'S3アップロードとDB更新を実行') { options[:apply] = true }
+  opts.on('--keep-gps', '画像のGPS EXIFを残す（既定では削除）') { options[:keep_gps] = true }
+  opts.on('-h', '--help', 'ヘルプを表示') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+abort parser.to_s unless options[:images]
+abort "画像ディレクトリが見つかりません: #{options[:images]}" unless Dir.exist?(options[:images])
+
+def read_explicit_mapping(csv_path)
+  return {} unless csv_path
+
+  base_directory = File.dirname(File.expand_path(csv_path))
+  CSV.read(csv_path, headers: true).each_with_object({}) do |row, mapping|
+    photo_id = row['photo_id'].to_s.strip
+    path = row['path'].to_s.strip
+    abort '対応表CSVには photo_id,path ヘッダーが必要です' if photo_id.empty? || path.empty?
+
+    mapping[photo_id] = File.expand_path(path, base_directory)
+  end
+end
+
+Lokka::Database.connect
+
+entries = Entry.unscoped.where(
+  'body LIKE :staticflickr OR body LIKE :static_flickr',
+  staticflickr: '%staticflickr.com%',
+  static_flickr: '%static.flickr.com%'
+).to_a
+
+migrator = Lokka::PhotoGallery::FlickrImageMigrator.new(
+  entries: entries,
+  image_directory: options[:images],
+  explicit_mapping: read_explicit_mapping(options[:map]),
+  removal_photo_ids: options[:removal_photo_ids]
+)
+plan = migrator.build_plan
+plan[:generated_at] = Time.now.iso8601
+plan[:mode] = options[:apply] ? 'apply' : 'dry-run'
+
+manifest_path = File.expand_path(options[:manifest])
+FileUtils.mkdir_p(File.dirname(manifest_path))
+File.write(manifest_path, JSON.pretty_generate(plan))
+
+puts "対象記事: #{plan[:entry_count]}"
+puts "Flickr URL: #{plan[:source_url_count]}"
+puts "photo ID: #{plan[:photo_count]}"
+puts "対応済み: #{plan[:resolved_count]}"
+puts "削除指定: #{plan[:removal_count]}"
+puts "不足: #{plan[:missing_count]}"
+puts "重複候補: #{plan[:ambiguous_count]}"
+puts "移行計画: #{manifest_path}"
+
+unless plan[:missing_count].zero? && plan[:ambiguous_count].zero?
+  warn '未解決の画像があります。manifestを確認し、ファイル名または --map CSV で対応付けてください。'
+  exit 2
+end
+
+unless options[:apply]
+  puts 'ドライランのため変更していません。確認後、同じ引数に --apply を加えて実行してください。'
+  exit
+end
+
+timestamp = Time.now.strftime('%Y%m%d%H%M%S')
+backup_path = File.expand_path(File.join('tmp', "flickr-entry-backup-#{timestamp}.json"))
+backup = entries.map do |entry|
+  { id: entry.id, title: entry.title, body: entry.raw_body }
+end
+FileUtils.mkdir_p(File.dirname(backup_path))
+File.write(backup_path, JSON.pretty_generate(backup))
+puts "記事本文バックアップ: #{backup_path}"
+
+result = migrator.apply!(
+  plan,
+  uploader: Lokka::PhotoGallery::S3Uploader.new,
+  strip_gps: !options[:keep_gps]
+)
+
+puts "S3処理画像: #{result[:uploaded_photos]}"
+puts "削除画像: #{result[:removed_photos]}"
+puts "更新記事: #{result[:updated_entries]}"
+puts '完了しました。ページ、フィード、OGP画像を確認してください。'

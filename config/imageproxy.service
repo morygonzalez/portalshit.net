@@ -16,7 +16,10 @@ ExecStartPre=-/usr/bin/docker rm -f imageproxy
 # コンテナ側の -addr は 0.0.0.0:8080 のままにすること。これはコンテナの
 # ネットワーク名前空間内のアドレスで、Docker のポートフォワードが届くために
 # 必要。ここを 127.0.0.1 にするとコンテナ外から到達できなくなる。
-ExecStart=/usr/bin/docker run --name imageproxy -p 127.0.0.1:8080:8080 ghcr.io/willnorris/imageproxy -addr 0.0.0.0:8080
+# イメージは v0.13.0 の digest に固定し、デプロイのたびに挙動が変わるのを防ぐ。
+# 永続キャッシュは容量上限を設定できる nginx 側で行う。公開プロキシに無制限の
+# ディスクキャッシュを持たせると、第三者にディスクを埋められるため使用しない。
+ExecStart=/usr/bin/docker run --name imageproxy -p 127.0.0.1:8080:8080 ghcr.io/willnorris/imageproxy@sha256:c56d6e231b068080e64a1247ab8570dbc50336838ea7277eecd86e44df9bc305 -addr 0.0.0.0:8080 -userAgent portalshit.net-imageproxy/1.0
 ExecStop=/usr/bin/docker stop imageproxy
 
 SyslogIdentifier=imageproxy

@@ -61,6 +61,9 @@
 # 400 を返すだけになるが、リクエスト元（referer / UA）は確認しておくとよい。
 
 # --- server {} コンテキスト -------------------------------------------------
+#
+# http {} 側の proxy_cache_path も inactive=365d 程度にする。inactive が短いと、
+# cache_valid が 365d でも長期間アクセスされなかった画像は先に削除される。
 
 location ^~ /imageproxy/ {
         # if / rewrite は使わない。proxy_pass に URI 部（末尾の "/"）を書けば
@@ -80,12 +83,19 @@ location ^~ /imageproxy/ {
         proxy_set_header X-Forwarded-Proto $scheme;
 
         proxy_cache portalshit_cache;
-        proxy_cache_valid 200 30d;
+        # staticflickr の URL は内容が変わらない。成功した画像は長く保持し、
+        # 同一 URL への同時アクセスは 1 リクエストだけ upstream に流す。
+        proxy_cache_valid 200 365d;
+        proxy_cache_lock on;
+        proxy_cache_lock_timeout 20s;
+        proxy_cache_lock_age 20s;
+        proxy_cache_background_update on;
         # 壊れた URL を投げ続けるクローラで upstream を叩かないよう、エラーも
         # 短時間だけキャッシュしておく（設定を直した直後は
         # proxy_cache_bypass や cache 削除で流すこと）。
-        proxy_cache_valid 400 404 1m;
-        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        # imageproxy は Flickr の 429 HTML を画像ではないとして 403 に変換する。
+        proxy_cache_valid 400 403 404 30s;
+        proxy_cache_use_stale error timeout updating http_403 http_429 http_500 http_502 http_503 http_504;
         add_header X-Cache-Status $upstream_cache_status;
         proxy_read_timeout 15s;
 }
