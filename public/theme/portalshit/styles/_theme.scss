@@ -20,10 +20,24 @@ html.light-mode {
 }
 
 @include dark-mode-root {
+  // Mobile Safari does not keep `background-attachment: fixed` fixed while
+  // scrolling. Put the image in a fixed layer instead, so it is independent
+  // of the document's scroll position on every browser.
+  background-color: #000;
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url(images/background.jpg) center top / auto 100vh no-repeat;
+  }
+
   body {
     color: $dark-font-color;
     text-shadow: -1px -1px -1px #1d1a1a;
-    background: black url(images/background.jpg) center top / auto 100vh no-repeat fixed;
+    background: transparent;
   }
 
   a {
