@@ -179,7 +179,7 @@ const init = node => {
   observeSearchMenu();
   observeLinkClick(node);
   observeCloseModal();
-  mediumZoom('#content article .body img:not(.photo-gallery img)', {
+  mediumZoom('#content article .body img:not(.photo-gallery img, .ogp-image img)', {
     margin: 24,
     background: 'rgba(0, 0, 0, 0.8)',
   });
