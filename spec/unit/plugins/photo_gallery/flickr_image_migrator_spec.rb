@@ -55,7 +55,10 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
       resolved_count: 1
     )
     expect(photo[:local_path]).to eq(path)
-    expect(photo[:target_url]).to match(%r{\Ahttps://resources\.portalshit\.net/[0-9a-f]{32}\.jpg\z})
+    expect(photo[:resource_url]).to match(%r{\Ahttps://resources\.portalshit\.net/[0-9a-f]{32}\.jpg\z})
+    expect(photo[:target_url]).to eq(
+      "https://portalshit.net/imageproxy/1680x1000,fit/#{photo[:resource_url]}"
+    )
   end
 
   it 'reports missing and ambiguous local images without guessing' do
@@ -241,6 +244,37 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
 
     expect(migrated_entry.raw_body).to include(
       "<img src=\"https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg\">\n\n\n## Heading"
+    )
+  end
+
+  it 'wraps direct URLs from an existing manifest without nesting proxy URLs' do
+    resource_url = 'https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg'
+    display_url = "https://portalshit.net/imageproxy/1680x1000,fit/#{resource_url}"
+    migrated_entry = FakeEntry.new(
+      17,
+      'Direct and already proxied images',
+      <<~HTML
+        <img src="#{resource_url}">
+        <img src="#{display_url}">
+      HTML
+    )
+    migrator = described_class.new(
+      entries: [migrated_entry],
+      image_directory: @directory,
+      existing_resource_urls: [resource_url]
+    )
+    plan = migrator.build_plan
+
+    migrator.apply!(
+      plan,
+      uploader: instance_double(Lokka::PhotoGallery::S3Uploader),
+      strip_gps: false
+    )
+
+    expect(plan[:existing_resource_image_count]).to eq(1)
+    expect(migrated_entry.raw_body.scan(display_url).count).to eq(2)
+    expect(migrated_entry.raw_body).not_to include(
+      "#{display_url.sub(resource_url, '')}#{display_url}"
     )
   end
 

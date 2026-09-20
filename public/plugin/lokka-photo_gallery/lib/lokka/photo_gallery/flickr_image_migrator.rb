@@ -18,30 +18,43 @@ module Lokka
         /[^\s"'<>)]+
       }ix
       IMAGE_EXTENSIONS = %w[.jpg .jpeg .png .gif .webp .tif .tiff].freeze
+      DISPLAY_SIZE = '1680x1000,fit'.freeze
+      RESOURCE_IMAGE_URL_PATTERN = %r{
+        https://(?:
+          resources\.portalshit\.net/|
+          portalshit\.net/imageproxy/[^/"']+/https://resources\.portalshit\.net/
+        )
+        [^"']+
+      }ix
       FLICKR_LINKED_RESOURCE_IMAGE_REGEXP = %r{
         <a\b
         (?=[^>]*\bhref=(?:"https?://(?:www\.)?flickr\.com/photos/[^"]*"|'https?://(?:www\.)?flickr\.com/photos/[^']*'))
         [^>]*>\s*
         (?<image>
           <img\b
-          (?=[^>]*\bsrc=(?:"https://resources\.portalshit\.net/[^"]*"|'https://resources\.portalshit\.net/[^']*'))
+          (?=[^>]*\bsrc=(?:"#{RESOURCE_IMAGE_URL_PATTERN.source}"|'#{RESOURCE_IMAGE_URL_PATTERN.source}'))
           [^>]*>
         )\s*
         </a>
       }imx
       RESOURCE_IMAGE_BEFORE_HEADING_REGEXP = %r{
         (<img\b
-        (?=[^>]*\bsrc=(?:"https://resources\.portalshit\.net/[^"]*"|'https://resources\.portalshit\.net/[^']*'))
+        (?=[^>]*\bsrc=(?:"#{RESOURCE_IMAGE_URL_PATTERN.source}"|'#{RESOURCE_IMAGE_URL_PATTERN.source}'))
         [^>]*>)[\t ]*(?=[#]{1,6}[\t ]+)
       }imx
 
       class UnresolvedImagesError < StandardError; end
 
-      def initialize(entries:, image_directory:, explicit_mapping: {}, removal_photo_ids: [])
+      def initialize(entries:, image_directory:, explicit_mapping: {}, removal_photo_ids: [],
+                     existing_resource_urls: [])
         @entries = entries
         @image_directory = File.expand_path(image_directory)
         @explicit_mapping = explicit_mapping.transform_keys(&:to_s)
         @removal_photo_ids = removal_photo_ids.map(&:to_s).to_set
+        @existing_resource_urls = existing_resource_urls.
+                                  map(&:to_s).
+                                  select { |url| url.start_with?("#{RESOURCE_BASE_URL}/") }.
+                                  uniq
       end
 
       def build_plan
@@ -66,6 +79,9 @@ module Lokka
             unwrap_flickr_image_links(entry.raw_body.to_s).
               scan(RESOURCE_IMAGE_BEFORE_HEADING_REGEXP).
               count
+          end,
+          existing_resource_image_count: @entries.sum do |entry|
+            direct_resource_image_count(entry.raw_body.to_s)
           end,
           source_url_count: references.values.sum { |item| item[:source_urls].count },
           photo_count: photos.count,
@@ -108,6 +124,7 @@ module Lokka
             rewritten = replacements.reduce(body) do |result, (source_url, target_url)|
               result.gsub(source_url, target_url)
             end
+            rewritten = replace_direct_resource_images(rewritten)
             rewritten = strip_flickr_embed_markup(rewritten)
             next if rewritten == original_body
 
@@ -182,6 +199,7 @@ module Lokka
 
         path = paths.first if status == 'resolved'
         target_key = content_key(path) if path
+        resource_url = target_key && "#{RESOURCE_BASE_URL}/#{target_key}"
 
         {
           photo_id: photo_id,
@@ -189,7 +207,8 @@ module Lokka
           local_path: path,
           candidates: paths,
           target_key: target_key,
-          target_url: target_key && "#{RESOURCE_BASE_URL}/#{target_key}",
+          resource_url: resource_url,
+          target_url: resource_url && display_url(resource_url),
           source_urls: reference[:source_urls].to_a.sort,
           entry_ids: reference[:entry_ids].to_a.sort
         }
@@ -235,6 +254,27 @@ module Lokka
 
       def unwrap_flickr_image_links(body)
         body.gsub(FLICKR_LINKED_RESOURCE_IMAGE_REGEXP) { Regexp.last_match[:image] }
+      end
+
+      def direct_resource_image_count(body)
+        @existing_resource_urls.sum { |url| body.scan(direct_resource_src_regexp(url)).count }
+      end
+
+      def replace_direct_resource_images(body)
+        @existing_resource_urls.reduce(body) do |result, resource_url|
+          result.gsub(direct_resource_src_regexp(resource_url)) do
+            match = Regexp.last_match
+            "#{match[1]}#{match[2]}#{display_url(resource_url)}#{match[2]}"
+          end
+        end
+      end
+
+      def direct_resource_src_regexp(resource_url)
+        /(\bsrc\s*=\s*)(["'])#{Regexp.escape(resource_url)}\2/i
+      end
+
+      def display_url(resource_url)
+        "#{IMAGEPROXY_BASE_URL}/#{DISPLAY_SIZE}/#{resource_url}"
       end
 
       def upload(photo, uploader, strip_gps:)

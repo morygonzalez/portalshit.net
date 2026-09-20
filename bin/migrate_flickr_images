@@ -11,6 +11,10 @@
 # 確認後に反映:
 #   RACK_ENV=production bundle exec ruby bin/migrate_flickr_images \
 #     --images /path/to/flickr-data --apply
+#
+# 過去の実行で直接参照になった画像URLを表示用 imageproxy URL へ直す:
+#   RACK_ENV=production bundle exec ruby bin/migrate_flickr_images \
+#     --images /path/to/empty-directory --existing-manifest /path/to/previous-manifest.json
 
 require 'csv'
 require 'json'
@@ -33,6 +37,9 @@ parser = OptionParser.new do |opts|
     options[:images] = value
   end
   opts.on('--map CSV', '自動対応できない画像用の photo_id,path CSV') { |value| options[:map] = value }
+  opts.on('--existing-manifest FILE', '既存の移行計画にある直接画像URLも表示用URLへ変換') do |value|
+    options[:existing_manifest] = value
+  end
   opts.on('--remove-photo-id PHOTO_ID', 'ローカル保存せず記事から削除する photo ID（複数指定可）') do |value|
     options[:removal_photo_ids] << value
   end
@@ -62,6 +69,21 @@ def read_explicit_mapping(csv_path)
   end
 end
 
+def read_existing_resource_urls(manifest_path)
+  return [] unless manifest_path
+  abort "移行計画が見つかりません: #{manifest_path}" unless File.file?(manifest_path)
+
+  plan = JSON.parse(File.read(manifest_path))
+  plan.fetch('photos').filter_map do |photo|
+    next unless photo['status'] == 'resolved'
+
+    resource_url = photo['resource_url'] || photo['target_url']
+    resource_url if resource_url.to_s.start_with?("#{Lokka::PhotoGallery::RESOURCE_BASE_URL}/")
+  end.uniq
+rescue JSON::ParserError, KeyError => e
+  abort "移行計画を読み込めません: #{e.message}"
+end
+
 Lokka::Database.connect
 
 entries = Entry.unscoped.where(
@@ -75,12 +97,20 @@ entries = Entry.unscoped.where(
   flickr_script: '%embedr.flickr.com/assets/client-code.js%',
   flickr_photo_link: '%flickr.com/photos/%'
 ).to_a
+existing_resource_urls = read_existing_resource_urls(options[:existing_manifest])
+unless existing_resource_urls.empty?
+  resource_entries = Entry.unscoped.where('body LIKE ?', '%resources.portalshit.net%').to_a.select do |entry|
+    existing_resource_urls.any? { |url| entry.raw_body.to_s.include?(url) }
+  end
+  entries = (entries + resource_entries).uniq(&:id)
+end
 
 migrator = Lokka::PhotoGallery::FlickrImageMigrator.new(
   entries: entries,
   image_directory: options[:images],
   explicit_mapping: read_explicit_mapping(options[:map]),
-  removal_photo_ids: options[:removal_photo_ids]
+  removal_photo_ids: options[:removal_photo_ids],
+  existing_resource_urls: existing_resource_urls
 )
 plan = migrator.build_plan
 plan[:generated_at] = Time.now.iso8601
@@ -94,6 +124,7 @@ puts "対象記事: #{plan[:entry_count]}"
 puts "埋め込み記法を除去: #{plan[:markup_cleanup_entry_count]}"
 puts "画像のFlickrリンクを解除: #{plan[:flickr_image_link_count]}"
 puts "見出し前の空行を復元: #{plan[:heading_spacing_repair_count]}"
+puts "既存の直接画像URLを変換: #{plan[:existing_resource_image_count]}"
 puts "Flickr URL: #{plan[:source_url_count]}"
 puts "photo ID: #{plan[:photo_count]}"
 puts "対応済み: #{plan[:resolved_count]}"
