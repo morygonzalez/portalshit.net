@@ -9,8 +9,8 @@ require_relative '../photo_gallery'
 module Lokka
   module PhotoGallery
     # Matches Flickr CDN URLs in entry bodies with already-downloaded images,
-    # uploads one copy per photo to the site's S3 bucket, and rewrites only the
-    # CDN URLs. Links to Flickr photo pages are deliberately left untouched.
+    # uploads one copy per photo to the site's S3 bucket, rewrites the CDN URLs,
+    # and unwraps Flickr photo-page links around migrated images.
     class FlickrImageMigrator
       URL_REGEXP = %r{
         https?://
@@ -18,6 +18,22 @@ module Lokka
         /[^\s"'<>)]+
       }ix
       IMAGE_EXTENSIONS = %w[.jpg .jpeg .png .gif .webp .tif .tiff].freeze
+      FLICKR_LINKED_RESOURCE_IMAGE_REGEXP = %r{
+        <a\b
+        (?=[^>]*\bhref=(?:"https?://(?:www\.)?flickr\.com/photos/[^"]*"|'https?://(?:www\.)?flickr\.com/photos/[^']*'))
+        [^>]*>\s*
+        (?<image>
+          <img\b
+          (?=[^>]*\bsrc=(?:"https://resources\.portalshit\.net/[^"]*"|'https://resources\.portalshit\.net/[^']*'))
+          [^>]*>
+        )\s*
+        </a>
+      }imx
+      RESOURCE_IMAGE_BEFORE_HEADING_REGEXP = %r{
+        (<img\b
+        (?=[^>]*\bsrc=(?:"https://resources\.portalshit\.net/[^"]*"|'https://resources\.portalshit\.net/[^']*'))
+        [^>]*>)[\t ]*(?=[#]{1,6}[\t ]+)
+      }imx
 
       class UnresolvedImagesError < StandardError; end
 
@@ -42,6 +58,14 @@ module Lokka
           entry_count: @entries.count,
           markup_cleanup_entry_count: @entries.count do |entry|
             strip_flickr_embed_markup(entry.raw_body.to_s) != entry.raw_body.to_s
+          end,
+          flickr_image_link_count: @entries.sum do |entry|
+            entry.raw_body.to_s.scan(FLICKR_LINKED_RESOURCE_IMAGE_REGEXP).count
+          end,
+          heading_spacing_repair_count: @entries.sum do |entry|
+            unwrap_flickr_image_links(entry.raw_body.to_s).
+              scan(RESOURCE_IMAGE_BEFORE_HEADING_REGEXP).
+              count
           end,
           source_url_count: references.values.sum { |item| item[:source_urls].count },
           photo_count: photos.count,
@@ -81,10 +105,10 @@ module Lokka
             body = removal_photos.reduce(body) do |result, photo|
               remove_flickr_embed(result, photo[:source_urls])
             end
-            body = strip_flickr_embed_markup(body)
             rewritten = replacements.reduce(body) do |result, (source_url, target_url)|
               result.gsub(source_url, target_url)
             end
+            rewritten = strip_flickr_embed_markup(rewritten)
             next if rewritten == original_body
 
             # 本文の意味や公開日時は変わらない移行なので、更新通知や
@@ -181,10 +205,10 @@ module Lokka
           linked_image = %r{
             <a\b[^>]*>\s*
             <img\b[^>]*\bsrc=(?:"#{escaped_url}"|'#{escaped_url}')[^>]*>\s*
-            </a>\s*
+            </a>
           }imx
           standalone_image = %r{
-            <img\b[^>]*\bsrc=(?:"#{escaped_url}"|'#{escaped_url}')[^>]*>\s*
+            <img\b[^>]*\bsrc=(?:"#{escaped_url}"|'#{escaped_url}')[^>]*>
           }imx
 
           html.sub(linked_image, '').sub(standalone_image, '')
@@ -194,13 +218,23 @@ module Lokka
       end
 
       def strip_flickr_embed_markup(body)
-        body.
+        cleaned = body.
           gsub(/\s+data-flickr-embed=(?:"[^"]*"|'[^']*')/i, '').
           gsub(/\s+data-footer=(?:"[^"]*"|'[^']*')/i, '').
           gsub(
-            %r{<script\b[^>]*\bsrc=(?:"|')?(?:https?:)?//embedr\.flickr\.com/assets/client-code\.js(?:"|')?[^>]*>\s*</script>\s*}im,
+            %r{<script\b[^>]*\bsrc=(?:"|')?(?:https?:)?//embedr\.flickr\.com/assets/client-code\.js(?:"|')?[^>]*>\s*</script>}im,
             ''
           )
+        cleaned = unwrap_flickr_image_links(cleaned)
+
+        line_break = cleaned.include?("\r\n") ? "\r\n" : "\n"
+        cleaned.gsub(RESOURCE_IMAGE_BEFORE_HEADING_REGEXP) do
+          "#{Regexp.last_match(1)}#{line_break}#{line_break}"
+        end
+      end
+
+      def unwrap_flickr_image_links(body)
+        body.gsub(FLICKR_LINKED_RESOURCE_IMAGE_REGEXP) { Regexp.last_match[:image] }
       end
 
       def upload(photo, uploader, strip_gps:)

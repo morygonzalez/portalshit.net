@@ -98,7 +98,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
     expect(photo[:local_path]).to eq(path)
   end
 
-  it 'uploads once, rewrites CDN URLs, and preserves the Flickr photo-page link' do
+  it 'uploads once, rewrites CDN URLs, and removes the Flickr photo-page link' do
     write_image('DSC_0233_45408683155_o.jpg')
     migrator = described_class.new(entries: [entry], image_directory: @directory)
     plan = migrator.build_plan
@@ -108,9 +108,8 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
     result = migrator.apply!(plan, uploader: uploader, strip_gps: false)
 
     expect(result).to eq(uploaded_photos: 1, removed_photos: 0, updated_entries: 1)
-    expect(entry.raw_body).to include('href="https://www.flickr.com/photos/morygonzalez/45408683155/"')
     expect(entry.raw_body.scan('https://resources.portalshit.net/').count).to eq(2)
-    expect(entry.raw_body).not_to include('staticflickr')
+    expect(entry.raw_body).not_to include('staticflickr', 'flickr.com/photos/')
   end
 
 
@@ -140,7 +139,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
     expect(removable_entry.raw_body).not_to include('staticflickr', 'flickr.com', '<script')
   end
 
-  it 'removes Flickr embed markup while preserving another migrated image and its link' do
+  it 'removes Flickr embed markup and link while preserving another migrated image' do
     other_url = 'https://live.staticflickr.com/4844/45408683155_5c0a8b4dc5_b.jpg'
     removable_entry = FakeEntry.new(
       13,
@@ -164,12 +163,9 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
     migrator.apply!(plan, uploader: uploader, strip_gps: false)
 
     expect(plan[:markup_cleanup_entry_count]).to eq(1)
-    expect(removable_entry.raw_body).to include(
-      'href="https://www.flickr.com/photos/morygonzalez/45408683155/"',
-      'https://resources.portalshit.net/'
-    )
+    expect(removable_entry.raw_body).to include('https://resources.portalshit.net/')
     expect(removable_entry.raw_body).not_to include(
-      '35230487880', 'data-flickr-embed', 'data-footer', '<script'
+      '35230487880', 'flickr.com/photos/', 'data-flickr-embed', 'data-footer', '<script'
     )
   end
 
@@ -193,12 +189,59 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
 
     expect(plan[:photo_count]).to eq(0)
     expect(plan[:markup_cleanup_entry_count]).to eq(1)
+    expect(plan[:flickr_image_link_count]).to eq(1)
     expect(result).to eq(uploaded_photos: 0, removed_photos: 0, updated_entries: 1)
     expect(migrated_entry.raw_body).to include(
-      'href="https://www.flickr.com/photos/morygonzalez/45408683155/"',
       'https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg'
     )
-    expect(migrated_entry.raw_body).not_to include('data-flickr-embed', '<script')
+    expect(migrated_entry.raw_body).not_to include(
+      'flickr.com/photos/', 'data-flickr-embed', '<script'
+    )
+  end
+
+  it 'restores a blank line between a migrated image and a Markdown heading' do
+    body = <<~HTML.gsub("\n", "\r\n")
+      <a href="https://www.flickr.com/photos/morygonzalez/45408683155/"><img src="https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg"></a>## Heading
+
+      Text
+    HTML
+    migrated_entry = FakeEntry.new(15, 'Broken heading', body)
+    migrator = described_class.new(entries: [migrated_entry], image_directory: @directory)
+
+    plan = migrator.build_plan
+    migrator.apply!(
+      plan,
+      uploader: instance_double(Lokka::PhotoGallery::S3Uploader),
+      strip_gps: false
+    )
+
+    expect(migrated_entry.raw_body).to include(
+      "<img src=\"https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg\">\r\n\r\n## Heading"
+    )
+    expect(plan[:flickr_image_link_count]).to eq(1)
+    expect(plan[:heading_spacing_repair_count]).to eq(1)
+    expect(migrated_entry.raw_body).not_to include('flickr.com/photos/')
+  end
+
+  it 'preserves blank lines after removing the Flickr embed script' do
+    body = <<~HTML
+      <img src="https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg">
+      <script async src="//embedr.flickr.com/assets/client-code.js"></script>
+
+      ## Heading
+    HTML
+    migrated_entry = FakeEntry.new(16, 'Heading after script', body)
+    migrator = described_class.new(entries: [migrated_entry], image_directory: @directory)
+
+    migrator.apply!(
+      migrator.build_plan,
+      uploader: instance_double(Lokka::PhotoGallery::S3Uploader),
+      strip_gps: false
+    )
+
+    expect(migrated_entry.raw_body).to include(
+      "<img src=\"https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg\">\n\n\n## Heading"
+    )
   end
 
   it 'refuses to apply a plan with unresolved photos' do
