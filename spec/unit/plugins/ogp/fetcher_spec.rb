@@ -11,12 +11,14 @@ RSpec.describe Lokka::OGP::Fetcher do
   let(:cache_dir) { Lokka::OGP::Element::CACHE_DIR }
   let(:cache_path) { File.join(cache_dir, fetcher.element.uname) }
   let(:lock_path) { "#{cache_path}.lock" }
+  let(:failed_refresh_path) { "#{cache_path}.failed" }
 
   before { FileUtils.mkdir_p(cache_dir) }
 
   after do
     File.delete(cache_path) if File.exist?(cache_path)
     File.delete(lock_path) if File.exist?(lock_path)
+    File.delete(failed_refresh_path) if File.exist?(failed_refresh_path)
   end
 
   # 未キャッシュの URL では取得可否の判定で名前解決が走るため、既定では
@@ -69,6 +71,35 @@ RSpec.describe Lokka::OGP::Fetcher do
 
       expect(fetcher.element).not_to receive(:create)
       expect(fetcher.fetch).to be false
+    end
+
+    it 'backs off after a failed stale-cache refresh' do
+      File.write(cache_path, '<div class="ogp">stale</div>')
+      File.utime(2.months.ago.to_time, 2.months.ago.to_time, cache_path)
+      FileUtils.touch(failed_refresh_path)
+
+      expect(fetcher.element).not_to receive(:create)
+      expect(fetcher.fetch).to be true
+    end
+
+    it 'marks a failed refresh and serves the stale cache' do
+      File.write(cache_path, '<div class="ogp">stale</div>')
+      File.utime(2.months.ago.to_time, 2.months.ago.to_time, cache_path)
+      allow(fetcher.element).to receive(:create).and_raise(Timeout::Error)
+
+      expect(fetcher.cached_html).to eq('<div class="ogp">stale</div>')
+      expect(File).to exist(failed_refresh_path)
+    end
+
+    it 'retries after the failed-refresh backoff expires' do
+      File.write(cache_path, '<div class="ogp">stale</div>')
+      File.utime(2.months.ago.to_time, 2.months.ago.to_time, cache_path)
+      FileUtils.touch(failed_refresh_path)
+      File.utime(2.hours.ago.to_time, 2.hours.ago.to_time, failed_refresh_path)
+
+      expect(fetcher.element).to receive(:create).and_return(true)
+      expect(fetcher.fetch).to be true
+      expect(File).not_to exist(failed_refresh_path)
     end
   end
 

@@ -53,6 +53,38 @@ RSpec.describe Lokka::OGP::Replacer do
       expect(result).to include('href="https://example.com/article"')
       expect(result).not_to include('class="ogp"')
     end
+
+    it 'fetches a duplicated URL only once within a body' do
+      body = <<~HTML
+        <p><a href="https://example.com/article">first</a></p>
+        <p><a href="https://example.com/article">second</a></p>
+      HTML
+      fake_fetcher = instance_double(Lokka::OGP::Fetcher, cached_html: '<div class="ogp">card</div>')
+
+      expect(Lokka::OGP::Fetcher).to receive(:new).
+        once.with('https://example.com/article').and_return(fake_fetcher)
+
+      result = described_class.new(body).replace
+
+      expect(result.scan('class="ogp"').size).to eq(2)
+    end
+
+    it 'reuses the fetched result across replacers in the same request' do
+      body = '<p><a href="https://example.com/article">external</a></p>'
+      fake_fetcher = instance_double(Lokka::OGP::Fetcher, cached_html: '<div class="ogp">card</div>')
+
+      RequestStore.begin!
+      begin
+        expect(Lokka::OGP::Fetcher).to receive(:new).
+          once.with('https://example.com/article').and_return(fake_fetcher)
+
+        expect(described_class.new(body).replace).to include('class="ogp"')
+        expect(described_class.new(body).replace).to include('class="ogp"')
+      ensure
+        RequestStore.end!
+        RequestStore.clear!
+      end
+    end
   end
 
   it 'does not replace paragraphs with more than a single link' do

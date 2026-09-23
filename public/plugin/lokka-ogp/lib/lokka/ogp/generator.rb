@@ -5,15 +5,20 @@ module Lokka
     module AddImagesToEntry
       refine Entry do
         def images
-          doc = Nokogiri::HTML.fragment(body)
-          doc.css('img:root, figure:root > img, p:root > video').map {|item|
-            case item.name
-            when "img"
-              item.attributes["src"].value
-            when "video"
-              item.attributes["poster"]&.value
-            end
-          }
+          @ogp_images ||= begin
+            # OGP メタタグ生成のための画像抽出が Entry#body を呼ぶと、本文中の
+            # 外部 OGP を取得する処理へ再入する。変換前の本文を使い、同じ
+            # リクエスト内で何度参照されても HTML の解析は一度だけにする。
+            doc = Nokogiri::HTML.fragment(long_body)
+            doc.css('img:root, figure:root > img, p:root > video').map {|item|
+              case item.name
+              when "img"
+                item.attributes["src"].value
+              when "video"
+                item.attributes["poster"]&.value
+              end
+            }
+          end
         end
       end
     end

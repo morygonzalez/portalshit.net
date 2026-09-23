@@ -53,7 +53,10 @@ class Entry
   alias body long_body_with_figure
 
   def long_description(limit = 120)
-    content = body.
+    # 一覧カードの概要生成で body を呼ぶと、lokka-ogp が本文中の外部 URL を
+    # 同期取得する。概要はプレーンテキストに落とすだけなので、OGP 変換前の
+    # long_body を使い、一覧の描画から外部 HTTP 通信を切り離す。
+    content = long_body.
       gsub(%r{<script\b[^>]*>.*?</script>}mi, ' ').
       gsub(%r{<style\b[^>]*>.*?</style>}mi, ' ').
       gsub(%r{<figcaption>.*?</figcaption>}m, '').
@@ -73,7 +76,9 @@ class Entry
 
   def images
     @images ||= begin
-      doc = Nokogiri::HTML.fragment(body)
+      # cover_image は記事一覧や前後記事でも呼ばれる。body は lokka-ogp により
+      # 外部 URL の取得を伴うため、画像 URL の抽出には変換前の本文を使う。
+      doc = Nokogiri::HTML.fragment(long_body)
       doc.css('img:root, figure:root > img, p:root > video, p:root img, .pswp-gallery__item > a > img').filter_map {|item|
         src = case item.name
               when "img"   then item.attributes["src"].value

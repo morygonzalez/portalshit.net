@@ -5,6 +5,8 @@ require 'timeout'
 module Lokka
   module OGP
     class Fetcher
+      FAILED_REFRESH_RETRY_INTERVAL = 1.hour
+
       attr_reader :url
 
       def initialize(url)
@@ -16,11 +18,18 @@ module Lokka
         # スレッドを食い潰して 504 になるため、カードは LocalEntry が DB から
         # 組み立てる。ここは呼び出し漏れに対する保険。
         return false if LocalEntry.self_host?(url)
-        return true if element.exist?
+        if element.exist?
+          clear_failed_refresh
+          return true
+        end
+        return File.exist?(cache_path) if retry_deferred?
 
         # 取得先が公開サイトかどうかを名前解決して確かめる。キャッシュに当たる
         # 場合は DNS を引かせたくないので、exist? の後に置いている。
-        return false unless UrlGuard.safe?(url)
+        unless UrlGuard.safe?(url)
+          mark_failed_refresh
+          return File.exist?(cache_path)
+        end
 
         # 同じ URL が同時に表示された場合、各リクエストが外部サイトへ OGP を
         # 取りに行くのを防ぐ。ロック取得後にキャッシュを再確認する。
@@ -31,13 +40,26 @@ module Lokka
           # あればそれで済ませ、なければ今回は諦める。
           return File.exist?(cache_path) unless lock.flock(File::LOCK_EX | File::LOCK_NB)
           return true if element.exist?
+          return File.exist?(cache_path) if retry_deferred?
 
           # 外部サイトへの複数回の逐次リクエストが積み重なって Puma のスレッドを
           # 長時間占有しないよう、取得処理全体に上限時間を設ける。
-          Timeout.timeout(8) { element.create }
+          refreshed = Timeout.timeout(8) { element.create }
+          if refreshed
+            clear_failed_refresh
+            true
+          else
+            mark_failed_refresh
+            File.exist?(cache_path)
+          end
         end
       rescue URI::InvalidURIError => e
+        mark_failed_refresh
         puts e.message
+        File.exist?(cache_path)
+      rescue StandardError
+        mark_failed_refresh
+        raise
       end
 
       # 外部への HTTP を一切発行せず、既にあるキャッシュだけを返す。第三者が
@@ -71,6 +93,30 @@ module Lokka
 
       def cache_path
         File.join(Element::CACHE_DIR, element.uname)
+      end
+
+      def failed_refresh_path
+        "#{cache_path}.failed"
+      end
+
+      def retry_deferred?
+        File.exist?(failed_refresh_path) &&
+          File.mtime(failed_refresh_path) > FAILED_REFRESH_RETRY_INTERVAL.ago
+      rescue SystemCallError
+        false
+      end
+
+      def mark_failed_refresh
+        FileUtils.mkdir_p(Element::CACHE_DIR)
+        FileUtils.touch(failed_refresh_path)
+      rescue SystemCallError
+        nil
+      end
+
+      def clear_failed_refresh
+        File.delete(failed_refresh_path) if File.exist?(failed_refresh_path)
+      rescue SystemCallError
+        nil
       end
     end
   end

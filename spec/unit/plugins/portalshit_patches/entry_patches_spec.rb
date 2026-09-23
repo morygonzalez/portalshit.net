@@ -39,6 +39,13 @@ RSpec.describe 'Entry portalshit_patches' do
   end
 
   describe '#long_description' do
+    it 'does not invoke the OGP-transformed body' do
+      entry.update(body: '<p>Hello world</p>')
+      expect(entry).not_to receive(:body)
+
+      expect(entry.long_description).to include('Hello world')
+    end
+
     it 'strips HTML tags' do
       entry.update(body: '<p>Hello <strong>world</strong></p>')
       entry.instance_variable_set(:@long_body_with_figure, nil)
@@ -86,6 +93,13 @@ RSpec.describe 'Entry portalshit_patches' do
   end
 
   describe '#images' do
+    it 'does not invoke the OGP-transformed body' do
+      entry.update(body: '<img src="a.jpg">')
+      expect(entry).not_to receive(:body)
+
+      expect(entry.images).to include('a.jpg')
+    end
+
     it 'extracts img src attributes' do
       entry.update(body: '<img src="a.jpg"><img src="b.png">')
       entry.instance_variable_set(:@long_body_with_figure, nil)
@@ -145,6 +159,30 @@ RSpec.describe 'Entry portalshit_patches' do
       entry.instance_variable_set(:@long_body_with_figure, nil)
       entry.instance_variable_set(:@images, nil)
       expect(entry.cover_image).to eq('https://resources.portalshit.net/photo.jpg')
+    end
+  end
+
+  describe 'OGP metadata image extraction' do
+    it 'does not invoke the OGP-transformed body' do
+      entry.update(
+        body: '<img src="first.jpg"><img src="second.jpg">',
+        summary: 'Summary'
+      )
+      request = instance_double('Rack::Request', port: 443, scheme: 'https', host: 'portalshit.net')
+      site = double('Site', title: 'Test Site', meta_description: 'Site description')
+      theme = double('Theme', path: '/theme/portalshit')
+
+      expect(entry).not_to receive(:body)
+
+      result = Lokka::OGP::TwitterCardHash.new(
+        entry: entry,
+        site: site,
+        request: request,
+        theme: theme
+      ).generate
+
+      expect(result['twitter:image0']).to eq('first.jpg')
+      expect(result['twitter:image1']).to eq('second.jpg')
     end
   end
 end
