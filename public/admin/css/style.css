@@ -1230,6 +1230,10 @@ textarea#category_description
     position: relative;
 }
 
+.editor-fullscreen-toggle {
+    display: none;
+}
+
 /* 添付セクション内に通常のフローで配置し、ボタンも進捗も編集領域に重ねない。 */
 .image-picker,
 .photo-gallery-picker {
@@ -1254,6 +1258,7 @@ textarea#category_description
     color: #fff;
     cursor: pointer;
     font-size: inherit;
+    font-weight: normal;
     line-height: 1.4;
     transition: filter .15s ease;
 }
@@ -1455,6 +1460,89 @@ textarea#category_description
 }
 
 @media screen and (max-width:640px) {
+    .editor-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: .5em;
+    }
+
+    .editor-controls ul.preview-edit {
+        flex: none;
+        height: auto;
+        margin: 0 !important;
+    }
+
+    .editor-fullscreen-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        border: 1px solid #999;
+        border-radius: 6px;
+        background: linear-gradient(#ccc, #bbb);
+        color: #222;
+        box-shadow: 1px 1px 2px #bbb;
+        cursor: pointer;
+    }
+
+    #entry .editor-fullscreen-toggle,
+    #entry .image-picker__button,
+    #entry .photo-gallery-picker__button {
+        box-sizing: border-box;
+        height: var(--entry-submit-height);
+        padding: 0 12px;
+        border-radius: 6px;
+        font-size: inherit;
+        line-height: normal;
+    }
+
+    #entry .image-picker__button,
+    #entry .photo-gallery-picker__button {
+        border: 1px solid transparent;
+    }
+
+    body.editor-fullscreen-active {
+        overflow: hidden;
+    }
+
+    .field.body.is-fullscreen {
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        margin: 0;
+        padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+        background: #fff;
+    }
+
+    .field.body.is-fullscreen #editor,
+    .field.body.is-fullscreen #preview {
+        flex: 1;
+        min-height: 0;
+        height: auto !important;
+    }
+
+    .field.body.is-fullscreen .editor-controls {
+        flex: none;
+    }
+
+    .field.body.is-fullscreen #editor textarea {
+        width: 100%;
+        min-width: 0;
+        resize: none;
+    }
+
+    .field.body.is-fullscreen #preview {
+        overflow: auto;
+    }
+
     img {
         max-width: 100%;
         height: auto;
@@ -1703,6 +1791,16 @@ textarea#category_description
     #main {
         background-color: #303033;
         color: #CBCBCC;
+
+        .field.body.is-fullscreen {
+            background-color: #303033;
+        }
+
+        .editor-fullscreen-toggle {
+            border-color: #727272;
+            background: #444444;
+            color: #CBCBCC;
+        }
 
         h2 {
             background: linear-gradient(#444444, #303033);

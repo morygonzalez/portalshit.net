@@ -8,8 +8,13 @@ class FormObserver {
     this.previousMarkup;
     this.setupEditor();
     this.initializeFields();
+    this.observeFullscreen();
+    this.matchActionButtonHeight();
     this.adjustTextareaHeight();
-    window.addEventListener('resize', () => this.adjustTextareaHeight());
+    window.addEventListener('resize', () => {
+      this.matchActionButtonHeight();
+      this.adjustTextareaHeight();
+    });
     this.observeSubmit();
     this.observePreview();
     this.observeFieldsChange();
@@ -75,7 +80,8 @@ class FormObserver {
       const editor = document.createElement('div');
       editor.setAttribute('id', 'editor');
       editor.appendChild(textarea);
-      previewTab.parentNode.insertBefore(editor, previewTab.nextSibling);
+      const controls = previewTab.parentNode;
+      controls.parentNode.insertBefore(editor, controls.nextSibling);
     }
   }
 
@@ -87,7 +93,47 @@ class FormObserver {
     });
   }
 
+  observeFullscreen() {
+    const button = document.querySelector('.editor-fullscreen-toggle');
+    button.addEventListener('click', () => {
+      const fullscreen = !document.querySelector('.field.body').classList.contains('is-fullscreen');
+      const editRadio = document.querySelector('#preview-edit');
+      if (fullscreen && !editRadio.checked) {
+        editRadio.click();
+      }
+      this.setFullscreen(fullscreen);
+      if (fullscreen) {
+        const input = document.querySelector('#editor textarea, #editor .ql-editor');
+        input.focus();
+      }
+    });
+  }
+
+  setFullscreen(fullscreen) {
+    document.querySelector('.field.body').classList.toggle('is-fullscreen', fullscreen);
+    document.body.classList.toggle('editor-fullscreen-active', fullscreen);
+    const button = document.querySelector('.editor-fullscreen-toggle');
+    button.textContent = fullscreen ? '戻る' : '全画面で編集';
+    button.setAttribute('aria-pressed', String(fullscreen));
+    if (!fullscreen) {
+      this.adjustTextareaHeight();
+    }
+  }
+
+  matchActionButtonHeight() {
+    const form = document.querySelector('#entry');
+    const submit = form.querySelector('input[type="submit"]');
+    form.style.setProperty('--entry-submit-height', `${submit.getBoundingClientRect().height}px`);
+  }
+
   adjustTextareaHeight() {
+    if (window.innerWidth > 640 && document.querySelector('.field.body').classList.contains('is-fullscreen')) {
+      this.setFullscreen(false);
+      return;
+    }
+    if (document.querySelector('.field.body').classList.contains('is-fullscreen')) {
+      return;
+    }
     const editor = document.querySelector('#editor');
     if (editor.dataset.mobile === "true") {
       return;
