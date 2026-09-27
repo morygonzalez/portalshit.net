@@ -1214,6 +1214,7 @@ textarea#category_description
 }
 
 #editor textarea {
+    box-sizing: border-box;
     height: 100%;
 }
 

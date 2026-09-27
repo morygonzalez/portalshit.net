@@ -9,6 +9,7 @@ class FormObserver {
     this.setupEditor();
     this.initializeFields();
     this.adjustTextareaHeight();
+    window.addEventListener('resize', () => this.adjustTextareaHeight());
     this.observeSubmit();
     this.observePreview();
     this.observeFieldsChange();
@@ -55,6 +56,7 @@ class FormObserver {
     this.quill.getModule('toolbar').addHandler('image', () => {
       this.selectLocalImage();
     });
+    this.adjustTextareaHeight();
   }
 
   setupTextarea() {
@@ -86,13 +88,19 @@ class FormObserver {
   }
 
   adjustTextareaHeight() {
-    const textarea = this.textarea;
-    const editor = textarea.parentNode;
+    const editor = document.querySelector('#editor');
     if (editor.dataset.mobile === "true") {
       return;
     }
-    const offset = parseInt(textarea.getBoundingClientRect().top * 1.1);
-    let newHeight = document.documentElement.clientHeight - offset;
+    const attachments = document.querySelector('#form-main > .field.attachments');
+    const attachmentStyle = window.getComputedStyle(attachments);
+    const bodyStyle = window.getComputedStyle(editor.closest('.field.body'));
+    const attachmentHeight = attachments.getBoundingClientRect().height
+      + parseFloat(attachmentStyle.marginTop)
+      + parseFloat(attachmentStyle.marginBottom)
+      + parseFloat(bodyStyle.marginBottom);
+    const editorTop = editor.getBoundingClientRect().top + window.scrollY;
+    const newHeight = Math.max(200, window.innerHeight - editorTop - attachmentHeight - 16);
     editor.style.height = `${newHeight}px`;
   }
 
