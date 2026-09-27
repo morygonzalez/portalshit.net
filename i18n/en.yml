@@ -40,6 +40,7 @@ en:
   save: Save
   preview: Preview
   delete: Delete
+  attachments: Attachments
   image_picker_label: Add images
   photo_gallery_picker_label: Create gallery
   gallery_review:

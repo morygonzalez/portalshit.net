@@ -1229,25 +1229,14 @@ textarea#category_description
     position: relative;
 }
 
-/* ステータスは絶対配置でバブルの外に出すので、コンテナはバブルぶんの
-   大きさだけを持つ。フローに入れるとメッセージの長さでバブルが左にずれる。 */
+/* 添付セクション内に通常のフローで配置し、ボタンも進捗も編集領域に重ねない。 */
 .image-picker,
 .photo-gallery-picker {
-    position: absolute;
-    right: 16px;
-    z-index: 5;
-    width: 48px;
-    height: 48px;
-    margin-bottom: 0;
-}
-
-.image-picker {
-    bottom: 16px;
-}
-
-/* 画像追加バブルの真上に積む (バブル 48px + 間隔 12px) */
-.photo-gallery-picker {
-    bottom: 76px;
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+    max-width: 100%;
+    margin: 8px 8px 0 0;
 }
 
 .image-picker__button,
@@ -1255,16 +1244,17 @@ textarea#category_description
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    padding: 0;
+    gap: 6px;
+    box-sizing: border-box;
+    padding: .75em;
     margin-bottom: 0;
     border: none;
-    border-radius: 50%;
+    border-radius: 6px;
     color: #fff;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
-    transition: transform .15s ease;
+    font-size: inherit;
+    line-height: 1.4;
+    transition: filter .15s ease;
 }
 
 .image-picker__button {
@@ -1277,13 +1267,14 @@ textarea#category_description
 
 .image-picker__button:hover,
 .photo-gallery-picker__button:hover {
-    transform: scale(1.05);
+    filter: brightness(1.1);
 }
 
 .image-picker__icon,
 .photo-gallery-picker__icon {
-    width: 22px;
-    height: 22px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
 }
 
 .image-picker__input[hidden],
@@ -1293,24 +1284,17 @@ textarea#category_description
 
 .image-picker__status,
 .photo-gallery-picker__status {
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-right: 8px;
+    margin-top: 4px;
     box-sizing: border-box;
-    /* right: 100% を基準にすると利用可能幅が 0 と計算され、単語境界のない
-       日本語が 1 文字ずつ折り返されてしまう。max-content で内容幅を確保し、
-       長すぎるときだけ max-width で折り返させる。 */
-    width: max-content;
-    max-width: 60vw;
+    max-width: 100%;
+    overflow-wrap: anywhere;
     font-size: 0.8em;
     line-height: 1.4;
-    text-align: right;
+    text-align: left;
     color: #fff;
     background: rgba(0, 0, 0, .7);
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: 6px;
 }
 
 .image-picker__status:empty,
@@ -1509,8 +1493,8 @@ textarea#category_description
     }
 
     /* 固定表示されるヘッダーとメニューの重なり順。z-index を指定しないと
-       本文側の位置指定要素（.field.body やバブル）に覆われてしまうため、
-       本文 (〜5) より上、通知 (1000) とギャラリー確認 (1100) より下に置く。 */
+       本文側の位置指定要素（.field.body）に覆われてしまうため、
+       本文より上、通知 (1000) とギャラリー確認 (1100) より下に置く。 */
     #header {
         h1 {
             display: none;

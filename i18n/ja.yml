@@ -40,6 +40,7 @@ ja:
   save: 保存
   preview: プレビュー
   delete: 削除
+  attachments: 添付ファイル
   image_picker_label: 画像を追加
   photo_gallery_picker_label: ギャラリーを作成
   gallery_review:
