@@ -24,7 +24,7 @@ const checkTableWidth = node => {
 const needToExpand = table => {
   return Array.from(table.rows).some(rows => {
     return rows.children.length > 6 || Array.from(rows.children).some(td => {
-      return td.innerText.length > 20;
+      return td.innerText.length > 40;
     });
   })
 }

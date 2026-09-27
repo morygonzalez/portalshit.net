@@ -170,7 +170,10 @@ table {
   border-collapse: collapse;
   margin: 1.5em 0 2em;
   width: 100%;
-  table-layout: fixed;
+
+  &.wide {
+    table-layout: fixed;
+  }
 
   tr {
     &:nth-child(odd) {
