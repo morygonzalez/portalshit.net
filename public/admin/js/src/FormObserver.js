@@ -16,6 +16,7 @@ class FormObserver {
       this.adjustTextareaHeight();
     });
     this.observeSubmit();
+    this.observeMarkdownPaste();
     this.observePreview();
     this.observeFieldsChange();
     this.observeSummaryGenerator();
@@ -178,6 +179,35 @@ class FormObserver {
     form.onsubmit = () => {
       this.setupTextarea();
     }
+  }
+
+  observeMarkdownPaste() {
+    this.textarea.addEventListener('paste', (event) => {
+      const markup = document.querySelector('select[id$=_markup]').value;
+      const title = document.querySelector('#post_title');
+      if (!title || (markup !== 'redcarpet' && markup !== 'kramdown')) {
+        return;
+      }
+
+      const clipboard = event.clipboardData;
+      if (!clipboard || Array.from(clipboard.types).includes('Files') || this.textarea.selectionStart !== 0) {
+        return;
+      }
+
+      const text = clipboard.getData('text/plain');
+      const heading = text.match(/^#[ \t]+([^\r\n]+)(?:\r\n|\n|\r|$)/);
+      if (!heading || !heading[1].trim()) {
+        return;
+      }
+
+      event.preventDefault();
+      title.value = heading[1].trim();
+      title.dispatchEvent(new Event('input', { bubbles: true }));
+
+      const body = text.slice(heading[0].length).replace(/^(?:[ \t]*(?:\r\n|\n|\r))+/, '');
+      this.textarea.setRangeText(body, this.textarea.selectionStart, this.textarea.selectionEnd, 'end');
+      this.textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    });
   }
 
   async getPreview({markup, raw_body}) {
