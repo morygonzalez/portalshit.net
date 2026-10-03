@@ -19,7 +19,7 @@ namespace :photo_gallery do
       abort "#{metadata_file} が存在しません。先に rake photo_gallery:import を実行してください。"
     end
 
-    images = JSON.parse(File.read(metadata_file), symbolize_names: true).sort_by { |item| item[:taken_at] }
+    images = Lokka::PhotoGallery.sort_by_filename(JSON.parse(File.read(metadata_file), symbolize_names: true))
     renderer = Lokka::PhotoGallery::Renderer.new(images)
     puts renderer.render
   end

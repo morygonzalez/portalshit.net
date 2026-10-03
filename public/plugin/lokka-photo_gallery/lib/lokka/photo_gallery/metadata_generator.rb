@@ -14,7 +14,9 @@ module Lokka
       def generate
         metadata = @store.read
 
-        images = Dir.entries(@folder).select { |file| PhotoProcessor.image_extension?(file) }
+        images = Dir.entries(@folder).
+          select { |file| PhotoProcessor.image_extension?(file) }.
+          sort_by { |filename| PhotoGallery.filename_sort_key(filename) }
 
         # Nominatim への間隔は Geocoder 側で保証しているため、ここでは待たない。
         image_hashes = images.map do |filename|
@@ -22,7 +24,7 @@ module Lokka
           s3_filename = Digest::MD5.file(filepath).to_s + File.extname(filename).downcase
           processed_data = metadata.find { |item| item[:s3_filename] == s3_filename }
 
-          processed_data.presence || @processor.process(filepath, filename: filename)
+          processed_data.present? ? processed_data.merge(filename: filename) : @processor.process(filepath, filename: filename)
         end
 
         @store.write(image_hashes)

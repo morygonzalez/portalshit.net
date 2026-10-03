@@ -45,7 +45,7 @@ ja:
   photo_gallery_picker_label: ギャラリーを作成
   gallery_review:
     heading: ギャラリーの確認
-    description: タイトルを入力し、カバーにする写真を選んでください。並び順は撮影日時順です。
+    description: タイトルを入力し、カバーにする写真を選んでください。カバーは先頭、他の写真は連番のファイル名順に表示します。
     insert: 本文に挿入
     cancel: キャンセル
   about: このサイトについて

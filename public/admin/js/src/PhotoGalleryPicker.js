@@ -59,7 +59,7 @@ class PhotoGalleryPicker {
     }
 
     this.setStatus('');
-    this.images.sort((a, b) => String(a.taken_at).localeCompare(String(b.taken_at)));
+    this.images.sort((a, b) => String(a.filename).localeCompare(String(b.filename), undefined, { numeric: true }));
     this.coverId = this.images[0].s3_filename;
     this.open();
   }

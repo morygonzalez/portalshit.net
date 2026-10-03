@@ -13,6 +13,18 @@ module Lokka
       location licence_text licence_url keywords
     ].freeze
 
+    def self.sort_by_filename(images)
+      images.sort_by.with_index do |item, index|
+        [filename_sort_key(item[:filename]), index]
+      end
+    end
+
+    def self.filename_sort_key(filename)
+      filename.to_s.scan(/[0-9]+|[^0-9]+/).map do |part|
+        part.match?(/\A[0-9]+\z/) ? [0, part.to_i] : [1, part.downcase]
+      end
+    end
+
     def self.registered(app)
       app.post '/admin/photo_gallery/photos' do
         content_type :json
@@ -53,9 +65,10 @@ module Lokka
       parsed = JSON.parse(raw.to_s, symbolize_names: true)
       return [] unless parsed.is_a?(Array)
 
-      parsed.
-        filter_map { |item| item.slice(*PhotoGallery::RENDERABLE_KEYS) if item.is_a?(Hash) }.
-        sort_by { |item| item[:taken_at].to_s }
+      images = parsed.filter_map do |item|
+        item.slice(*PhotoGallery::RENDERABLE_KEYS) if item.is_a?(Hash)
+      end
+      PhotoGallery.sort_by_filename(images)
     rescue JSON::ParserError
       []
     end
