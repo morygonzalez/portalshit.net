@@ -32,6 +32,30 @@
   <div id="referer-ranking-all">
     <h3><a href="/log-aggregation/referer-ranking-all.txt">Referer Ranking</a></h3>
   </div>
+</div>
+<div class="request-time">
+  <div id="nginx-request-time-today">
+    <h3><a href="/log-aggregation/nginx-request-time-today.txt">Nginx Request Time Today</a></h3>
+  </div>
+  <div id="nginx-request-time-yesterday">
+    <h3><a href="/log-aggregation/nginx-request-time-yesterday.txt">Nginx Request Time Yesterday</a></h3>
+  </div>
+  <div id="nginx-request-time-all">
+    <h3><a href="/log-aggregation/nginx-request-time-all.txt">Nginx Request Time</a></h3>
+  </div>
+</div>
+<div class="status-codes">
+  <div id="nginx-status-codes-today">
+    <h3><a href="/log-aggregation/nginx-status-codes-today.txt">Nginx Status Codes Today</a></h3>
+  </div>
+  <div id="nginx-status-codes-yesterday">
+    <h3><a href="/log-aggregation/nginx-status-codes-yesterday.txt">Nginx Status Codes Yesterday</a></h3>
+  </div>
+  <div id="nginx-status-codes-all">
+    <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
+  </div>
+</div>
+<div class="error-ranking">
   <div id="client-error-ip-ranking-today">
     <h3><a href="/log-aggregation/client-error-ip-ranking-today.txt">4xx IP Ranking Today</a></h3>
   </div>
@@ -59,22 +83,13 @@
   <div id="client-error-other-path-ranking-all">
     <h3><a href="/log-aggregation/client-error-other-path-ranking-all.txt">Other 4xx Path Ranking</a></h3>
   </div>
+</div>
+<div class="query-term-ranking">
   <div id="query-term-ranking-all">
     <h3><a href="/log-aggregation/query-term-ranking-all.txt">Query Term Ranking All</a></h3>
   </div>
   <div id="query-term-ranking-visitor">
     <h3><a href="/log-aggregation/query-term-ranking-visitor.txt">Query Term Ranking Visitor</a></h3>
-  </div>
-</div>
-<div class="chat-api">
-  <div id="chat-api-count-today">
-    <h3><a href="/log-aggregation/chat-api-count-today.txt">Chat API Count Today</a></h3>
-  </div>
-  <div id="chat-api-count-yesterday">
-    <h3><a href="/log-aggregation/chat-api-count-yesterday.txt">Chat API Count Yesterday</a></h3>
-  </div>
-  <div id="chat-api-count-all">
-    <h3><a href="/log-aggregation/chat-api-count-all.txt">Chat API Count</a></h3>
   </div>
 </div>
 <div class="hit-rate">
@@ -88,26 +103,15 @@
     <h3><a href="/log-aggregation/cache-hit-rate-all.txt">Cache Hit Rate</a></h3>
   </div>
 </div>
-<div class="request-time">
-  <div id="nginx-request-time-today">
-    <h3><a href="/log-aggregation/nginx-request-time-today.txt">Nginx Request Time Today</a></h3>
+<div class="chat-api">
+  <div id="chat-api-count-today">
+    <h3><a href="/log-aggregation/chat-api-count-today.txt">Chat API Count Today</a></h3>
   </div>
-  <div id="nginx-request-time-yesterday">
-    <h3><a href="/log-aggregation/nginx-request-time-yesterday.txt">Nginx Request Time Yesterday</a></h3>
+  <div id="chat-api-count-yesterday">
+    <h3><a href="/log-aggregation/chat-api-count-yesterday.txt">Chat API Count Yesterday</a></h3>
   </div>
-  <div id="nginx-request-time-all">
-    <h3><a href="/log-aggregation/nginx-request-time-all.txt">Nginx Request Time</a></h3>
-  </div>
-</div>
-<div class="status-codes">
-  <div id="nginx-status-codes-today">
-    <h3><a href="/log-aggregation/nginx-status-codes-today.txt">Nginx Status Codes Today</a></h3>
-  </div>
-  <div id="nginx-status-codes-yesterday">
-    <h3><a href="/log-aggregation/nginx-status-codes-yesterday.txt">Nginx Status Codes Yesterday</a></h3>
-  </div>
-  <div id="nginx-status-codes-all">
-    <h3><a href="/log-aggregation/nginx-status-codes-all.txt">Nginx Status Codes</a></h3>
+  <div id="chat-api-count-all">
+    <h3><a href="/log-aggregation/chat-api-count-all.txt">Chat API Count</a></h3>
   </div>
 </div>
 <div class="server-metrics">
@@ -327,11 +331,11 @@
 .server-metrics-table td:first-child {
   text-align: left;
 }
-.ranking, .hit-rate, .request-time, .status-codes, .chat-api, .server-metrics {
+.ranking, .hit-rate, .request-time, .status-codes, .chat-api, .server-metrics, .error-ranking, .query-term-ranking {
   display: flex;
   flex-wrap: wrap;
 }
-.ranking div, .hit-rate div, .request-time div, .status-codes div, .chat-api div, .server-metrics div {
+.ranking div, .hit-rate div, .request-time div, .status-codes div, .chat-api div, .server-metrics div, .error-ranking div, .query-term-ranking div {
   width: 32%;
   overflow-x: auto;
   padding: 3px;
