@@ -15,7 +15,7 @@ BEGIN { FS="\t" }
   days[day]
 }
 END{
-  printf "Date\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms(%%)\t50-99ms(%%)\t100-199ms(%%)\t200-999ms(%%)\t>=1000ms(%%)\tCount\n"
+  printf "Date\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms\t50-99ms\t100-199ms\t200-999ms\t>=1000ms\tCount\n"
 
   m=asorti(days,sorted_d)
   grand_sum=0

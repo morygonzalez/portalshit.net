@@ -15,7 +15,7 @@ BEGIN { FS="\t" }
   hours[hour]
 }
 END{
-  printf "Hour\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms(%%)\t50-99ms(%%)\t100-199ms(%%)\t200-999ms(%%)\t>=1000ms(%%)\tCount\n"
+  printf "Hour\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms\t50-99ms\t100-199ms\t200-999ms\t>=1000ms\tCount\n"
 
   m=asorti(hours,sorted_h)
   grand_sum=0
