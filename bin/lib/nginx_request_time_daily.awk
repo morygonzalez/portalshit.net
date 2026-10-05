@@ -15,7 +15,7 @@ BEGIN { FS="\t" }
   days[day]
 }
 END{
-  printf "Date\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms\t50-99ms\t100-199ms\t200-999ms\t>=1000ms\tCount\n"
+  printf "Date\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms(%%)\t50-99ms(%%)\t100-199ms(%%)\t200-999ms(%%)\t>=1000ms(%%)\tCount\n"
 
   m=asorti(days,sorted_d)
   grand_sum=0
@@ -27,7 +27,7 @@ END{
     if(n%2==1) med=vals[d][int(n/2)+1]
     else med=(vals[d][n/2]+vals[d][n/2+1])/2
     max_val=vals[d][n]
-    printf "%s\t%.0f\t%.0f\t%.0f\t%d\t%d\t%d\t%d\t%d\t%d\n",d,avg*1000,med*1000,max_val*1000,buckets[d]["<50ms"],buckets[d]["50-99ms"],buckets[d]["100-199ms"],buckets[d]["200-999ms"],buckets[d][">=1000ms"],count[d]
+    printf "%s\t%.0f\t%.0f\t%.0f\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%d\n",d,avg*1000,med*1000,max_val*1000,buckets[d]["<50ms"] / count[d] * 100,buckets[d]["50-99ms"] / count[d] * 100,buckets[d]["100-199ms"] / count[d] * 100,buckets[d]["200-999ms"] / count[d] * 100,buckets[d][">=1000ms"] / count[d] * 100,count[d]
     grand_sum+=sum[d]
     grand_count+=count[d]
     for(bucket in buckets[d]) grand_buckets[bucket]+=buckets[d][bucket]
@@ -40,5 +40,5 @@ END{
   if(n%2==1) grand_med=all[int(n/2)+1]
   else grand_med=(all[n/2]+all[n/2+1])/2
   grand_max=all[n]
-  printf "%s\t%.0f\t%.0f\t%.0f\t%d\t%d\t%d\t%d\t%d\t%d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_buckets["<50ms"],grand_buckets["50-99ms"],grand_buckets["100-199ms"],grand_buckets["200-999ms"],grand_buckets[">=1000ms"],grand_count
+  printf "%s\t%.0f\t%.0f\t%.0f\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_buckets["<50ms"] / grand_count * 100,grand_buckets["50-99ms"] / grand_count * 100,grand_buckets["100-199ms"] / grand_count * 100,grand_buckets["200-999ms"] / grand_count * 100,grand_buckets[">=1000ms"] / grand_count * 100,grand_count
 }

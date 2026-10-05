@@ -15,7 +15,7 @@ BEGIN { FS="\t" }
   hours[hour]
 }
 END{
-  printf "Hour\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms\t50-99ms\t100-199ms\t200-999ms\t>=1000ms\tCount\n"
+  printf "Hour\tAvg(ms)\tMed(ms)\tMax(ms)\t<50ms(%%)\t50-99ms(%%)\t100-199ms(%%)\t200-999ms(%%)\t>=1000ms(%%)\tCount\n"
 
   m=asorti(hours,sorted_h)
   grand_sum=0
@@ -27,7 +27,7 @@ END{
     if(n%2==1) med=vals[h][int(n/2)+1]
     else med=(vals[h][n/2]+vals[h][n/2+1])/2
     max_val=vals[h][n]
-    printf "%s\t%.0f\t%.0f\t%.0f\t%d\t%d\t%d\t%d\t%d\t%d\n",h,avg*1000,med*1000,max_val*1000,buckets[h]["<50ms"],buckets[h]["50-99ms"],buckets[h]["100-199ms"],buckets[h]["200-999ms"],buckets[h][">=1000ms"],count[h]
+    printf "%s\t%.0f\t%.0f\t%.0f\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%d\n",h,avg*1000,med*1000,max_val*1000,buckets[h]["<50ms"] / count[h] * 100,buckets[h]["50-99ms"] / count[h] * 100,buckets[h]["100-199ms"] / count[h] * 100,buckets[h]["200-999ms"] / count[h] * 100,buckets[h][">=1000ms"] / count[h] * 100,count[h]
     grand_sum+=sum[h]
     grand_count+=count[h]
     for(bucket in buckets[h]) grand_buckets[bucket]+=buckets[h][bucket]
@@ -40,5 +40,5 @@ END{
   if(n%2==1) grand_med=all[int(n/2)+1]
   else grand_med=(all[n/2]+all[n/2+1])/2
   grand_max=all[n]
-  printf "%s\t%.0f\t%.0f\t%.0f\t%d\t%d\t%d\t%d\t%d\t%d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_buckets["<50ms"],grand_buckets["50-99ms"],grand_buckets["100-199ms"],grand_buckets["200-999ms"],grand_buckets[">=1000ms"],grand_count
+  printf "%s\t%.0f\t%.0f\t%.0f\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%.1f%%\t%d\n","ALL",grand_avg*1000,grand_med*1000,grand_max*1000,grand_buckets["<50ms"] / grand_count * 100,grand_buckets["50-99ms"] / grand_count * 100,grand_buckets["100-199ms"] / grand_count * 100,grand_buckets["200-999ms"] / grand_count * 100,grand_buckets[">=1000ms"] / grand_count * 100,grand_count
 }
