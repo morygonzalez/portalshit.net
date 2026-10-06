@@ -1,0 +1,41 @@
+# 特定クローラーが短時間に記事を並列取得したとき、Puma への到達量を抑える設定。
+#
+# 2026-10-05 19:55-19:56 に Hatena-Favicon が 177 リクエストを送信し、
+# そのうち 95 リクエストが 200ms 以上かかった。送信元 IP が複数だったため、
+# IP 単位の puma_flood 制限だけではこの集中を抑えられない。
+#
+# この設定は Hatena-Favicon の UA 全体を1つのキーにまとめ、IPをまたいで
+# 毎秒1リクエストに整流する。burst の8件までは nginx で待機させ、超過分だけを
+# 429 で返す。Puma の最大8スレッドを同時に占有させないため、nodelay は付けない。
+#
+# ## 反映方法
+#
+# 1. このファイルの http {} 用の設定を
+#    /etc/nginx/conf.d/crawler-rate-limit.conf として配置する。
+# 2. /etc/nginx/sites-available/portalshit.conf の location @puma {} に、
+#    下記の server {} 用の2行を追加する。
+# 3. sudo nginx -t && sudo systemctl reload nginx
+#
+# `limit_req` で返した 429 は access.log に残る。Nginx Status Codes と
+# 4xx IP Ranking で件数を確認すること。UA は偽装できるため、これは悪意のある
+# 攻撃者への対策ではなく、既知クローラーの急な並列巡回から Puma を守るための設定。
+
+# --- http {} コンテキスト ---------------------------------------------------
+
+# 空のキーは limit_req_zone に計上されないため、Hatena-Favicon 以外には影響しない。
+# 将来クローラーを追加するときは、識別できる固定文字列を返す。UAそのものを返すと、
+# UAのバージョン違いごとに別枠となり、全体の流量を抑えられない。
+map $http_user_agent $crawler_rate_limit_key {
+    default                 "";
+    ~*^Hatena-Favicon/      "hatena_favicon";
+}
+
+limit_req_zone $crawler_rate_limit_key zone=crawler_rate_limit:10m rate=1r/s;
+
+# --- server {} コンテキスト -------------------------------------------------
+#
+# portalshit.conf の location @puma {} に追加する。静的ファイル、imageproxy、
+# Atom、sitemap、チャット API は専用 location で処理されるため、この制限の対象外。
+
+# limit_req zone=crawler_rate_limit burst=8;
+# limit_req_status 429;
