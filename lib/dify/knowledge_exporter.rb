@@ -115,6 +115,7 @@ module Dify
       end
 
       update_metadata_in_batches!(payloads, label: 'touch', batch_size: batch_size)
+      touch_popular_documents!(batch_size: batch_size)
     end
 
     def update_year!(year:, sleep_secs: nil, retries: nil, chunk_size: nil, chunk_delimiter: nil)
@@ -187,6 +188,45 @@ module Dify
     end
 
     private
+
+    def touch_popular_documents!(batch_size: nil)
+      popular_dataset_client.ensure_credentials!
+
+      documents = popular_dataset_client.list_all_documents
+      periods = {
+        'popular' => 'recent_30d',
+        'hatena_bookmark' => 'all_time'
+      }
+      target_documents = documents.select { |document| periods.key?(document['name'].to_s) }
+
+      disabled_ids = target_documents.reject { |document| document['enabled'] }.map { |document| document['id'] }
+      unless disabled_ids.empty?
+        popular_dataset_client.enable_documents!(disabled_ids)
+        puts "[touch/popular] re-enabled #{disabled_ids.size}/#{target_documents.size} documents"
+        sleep 1.0
+      end
+
+      payloads = target_documents.filter_map do |document|
+        name = document['name'].to_s
+        count = document.fetch('doc_metadata', []).find { |metadata| metadata['name'] == 'count' }&.[]('value')
+        unless count
+          warn "[touch/popular] skip #{name} (count metadata not found)"
+          next
+        end
+
+        {
+          document_id: document['id'],
+          metadata: { 'period' => periods.fetch(name), 'count' => count }
+        }
+      end
+
+      update_metadata_in_batches!(
+        payloads,
+        label: 'touch/popular',
+        batch_size: batch_size,
+        client: popular_dataset_client
+      )
+    end
 
     # ランキングの並び順がそのまま重要度として誤読されるのを防ぐため、
     # 個別記事ごとに分割せず常に1ドキュメント=1チャンクとして送る。
@@ -315,7 +355,7 @@ module Dify
       @summarizer.summarize_all(articles, label: label)
     end
 
-    def update_metadata_in_batches!(payloads, label:, batch_size: nil)
+    def update_metadata_in_batches!(payloads, label:, batch_size: nil, client: dataset_client)
       batch_size = (batch_size || 20).to_i
 
       if payloads.empty?
@@ -324,7 +364,7 @@ module Dify
       end
 
       payloads.each_slice(batch_size) do |slice|
-        res = dataset_client.update_documents_metadata!(slice)
+        res = client.update_documents_metadata!(slice)
         puts "[#{label}] updated #{slice.size} docs (status=#{res.code})"
         sleep 1.0
       rescue StandardError => e
