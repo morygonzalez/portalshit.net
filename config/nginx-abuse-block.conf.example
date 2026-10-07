@@ -59,6 +59,13 @@ limit_req_log_level warn;
 #     203.0.113.9     1;
 #     198.51.100.0/24 1;
 #
+#   自動更新を有効にする場合は、config/portalshit-apply-abuse-blocks を
+#   /usr/local/sbin/portalshit-apply-abuse-blocks として root:root / 0755 で置き、
+#   app ALL=(root) NOPASSWD: /usr/local/sbin/portalshit-apply-abuse-blocks を
+#   /etc/sudoers.d/portalshit-abuse-blocks に設定する。app 側の
+#   bin/update_abuse_blocks が直近5分に429を100回以上返したIPを24時間追加し、
+#   root ヘルパーが値を検証してから nginx -t と reload を実行する。
+#
 #   置き場所を conf.d/ にしないこと。conf.d/*.conf は nginx.conf 側の include で
 #   http {} に読み込まれてしまい、geo の中身が http コンテキストの命令として
 #   解釈されて起動に失敗する。

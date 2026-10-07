@@ -4,6 +4,10 @@ BIN=/var/www/deploys/portalshit/current/bin
 # today (hourly)
 */5 * * * * $BIN/hourly_stats
 
+# Automatically add IPs that trigger the site-wide 429 limiter 100 times in five
+# minutes to the temporary Nginx block list (default: 24 hours).
+* * * * * $BIN/update_abuse_blocks >> /var/www/app/portalshit/log/update_abuse_blocks.log 2>&1
+
 # daily (0:05〜)
 5 0 * * * $BIN/daily_stats_yesterday
 6 0 * * * $BIN/daily_stats_all

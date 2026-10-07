@@ -1,0 +1,53 @@
+#!/bin/sh
+# root 専用。app が生成した遮断リストを検証してから Nginx に反映する。
+set -eu
+
+source=/var/www/deploys/portalshit/shared/nginx-abuse-blocks/blocked_ips.conf
+destination=/etc/nginx/blocked_ips.conf
+input=$(mktemp /etc/nginx/blocked_ips.conf.input.XXXXXX)
+temporary=$(mktemp /etc/nginx/blocked_ips.conf.XXXXXX)
+backup=$(mktemp /etc/nginx/blocked_ips.conf.backup.XXXXXX)
+had_destination=false
+
+cleanup() {
+  rm -f "$input" "$temporary" "$backup"
+}
+trap cleanup EXIT HUP INT TERM
+
+[ -f "$source" ] || { echo "Missing generated block list: $source" >&2; exit 1; }
+
+# app が書ける source は一度 root 所有の一時ファイルにコピーする。検証後に
+# source を差し替えられても、反映する内容はこのコピーから変わらない。
+install -o root -g root -m 0644 "$source" "$input"
+
+# 許可するのは空行、コメント、IPv4 の geo 値 "1;" だけ。app ユーザーが
+# source を書き換えられても任意の nginx 設定を root で反映できないようにする。
+awk '
+  /^#/ || /^[[:space:]]*$/ { next }
+  {
+    if (NF != 2 || $2 != "1;") exit 1
+    n = split($1, octets, ".")
+    if (n != 4) exit 1
+    for (i = 1; i <= 4; i++) {
+      if (octets[i] !~ /^[0-9][0-9]?[0-9]?$/ || octets[i] > 255) exit 1
+    }
+  }
+' "$input" || { echo "Unsafe block list: $source" >&2; exit 1; }
+
+install -o root -g root -m 0644 "$input" "$temporary"
+if [ -e "$destination" ]; then
+  cp -p "$destination" "$backup"
+  had_destination=true
+fi
+mv "$temporary" "$destination"
+
+if ! nginx -t; then
+  if [ "$had_destination" = true ]; then
+    mv "$backup" "$destination"
+  else
+    rm -f "$destination"
+  fi
+  exit 1
+fi
+
+systemctl reload nginx

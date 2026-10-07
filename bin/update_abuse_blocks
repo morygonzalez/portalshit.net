@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+# Nginx の 429 を短時間に繰り返す送信元を、期限付きで遮断リストに追加する。
+#
+# このスクリプトは app ユーザーで動かす。/etc/nginx への反映と reload は、
+# sudo で許可した config/portalshit-apply-abuse-blocks のみが行う。
+set -euo pipefail
+
+readonly APP_DIR="${APP_DIR:-/var/www/app/portalshit}"
+readonly LOG_DIR="${LOG_DIR:-${APP_DIR}/log}"
+readonly SHARED_DIR="${ABUSE_BLOCK_SHARED_DIR:-/var/www/deploys/portalshit/shared/nginx-abuse-blocks}"
+readonly STATE_FILE="${SHARED_DIR}/blocks.tsv"
+readonly GENERATED_FILE="${SHARED_DIR}/blocked_ips.conf"
+readonly HISTORY_FILE="${SHARED_DIR}/history.tsv"
+readonly STATUS_FILE="${SHARED_DIR}/status.txt"
+readonly APPLIER="${ABUSE_BLOCK_APPLIER:-/usr/local/sbin/portalshit-apply-abuse-blocks}"
+readonly WINDOW_SECONDS="${ABUSE_BLOCK_WINDOW_SECONDS:-300}"
+readonly THRESHOLD="${ABUSE_BLOCK_THRESHOLD:-100}"
+readonly TTL_SECONDS="${ABUSE_BLOCK_TTL_SECONDS:-86400}"
+
+usage() {
+  echo "Usage: $0 [--block IP]" >&2
+}
+
+valid_ip() {
+  local ip=$1 octet
+  local -a octets
+  IFS=. read -r -a octets <<< "$ip"
+  [ "${#octets[@]}" -eq 4 ] || return 1
+  for octet in "${octets[@]}"; do
+    [[ "$octet" =~ ^[0-9]{1,3}$ ]] || return 1
+    (( 10#$octet <= 255 )) || return 1
+  done
+}
+
+manual_ip=""
+if [ "$#" -gt 0 ]; then
+  [ "$#" -eq 2 ] && [ "$1" = "--block" ] || { usage; exit 2; }
+  manual_ip=$2
+  valid_ip "$manual_ip" || { echo "Invalid IP address: ${manual_ip}" >&2; exit 2; }
+fi
+
+mkdir -p "$SHARED_DIR"
+chmod 0755 "$SHARED_DIR"
+
+readonly now_epoch=$(date +%s)
+readonly expires_at=$((now_epoch + TTL_SECONDS))
+readonly work_dir=$(mktemp -d)
+trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
+
+# 今この瞬間に有効なブロックだけを引き継ぐ。state は IP, expiry, 最後に観測した
+# 429 件数の TSV であり、生成する nginx include は IP のみになる。
+declare -A active_expiry=()
+declare -A active_count=()
+if [ -f "$STATE_FILE" ]; then
+  while IFS=$'\t' read -r ip expiry count; do
+    valid_ip "$ip" || continue
+    [[ "$expiry" =~ ^[0-9]+$ && "$count" =~ ^[0-9]+$ ]] || continue
+    if (( expiry > now_epoch )); then
+      active_expiry["$ip"]=$expiry
+      active_count["$ip"]=$count
+    fi
+  done < "$STATE_FILE"
+fi
+
+if [ -n "$manual_ip" ]; then
+  active_expiry["$manual_ip"]=$expires_at
+  active_count["$manual_ip"]=0
+  printf '%s\tmanual\t%s\t%s\n' "$(date --iso-8601=seconds)" "$manual_ip" "$expires_at" >> "$HISTORY_FILE"
+else
+  # access.log は当日分のアクティブなログだけを対象にする。ローテート済みログを
+  # 毎分読み直さず、直近 WINDOW_SECONDS の 429 だけを集計する。
+  if [ -f "${LOG_DIR}/access.log" ]; then
+    /usr/bin/gawk -F '\t' -v cutoff="$((now_epoch - WINDOW_SECONDS))" -v threshold="$THRESHOLD" '
+      function epoch(value, date_part, time_part, parts) {
+        split(value, parts, "T")
+        date_part = parts[1]
+        time_part = substr(parts[2], 1, 8)
+        gsub(/-/, " ", date_part)
+        gsub(/:/, " ", time_part)
+        return mktime(date_part " " time_part)
+      }
+      {
+        ip = ""; status = ""; timestamp = ""
+        for (i = 1; i <= NF; i++) {
+          if ($i ~ /^remote_addr:/) { ip = $i; sub(/^remote_addr:/, "", ip) }
+          else if ($i ~ /^status:/) { status = $i; sub(/^status:/, "", status) }
+          else if ($i ~ /^time:/) { timestamp = $i; sub(/^time:/, "", timestamp) }
+        }
+        if (status == "429" && ip != "" && timestamp != "" && epoch(timestamp) >= cutoff) count[ip]++
+      }
+      END { for (ip in count) if (count[ip] >= threshold) print ip "\t" count[ip] }
+    ' "${LOG_DIR}/access.log" > "${work_dir}/candidates"
+  fi
+
+  while IFS=$'\t' read -r ip count; do
+    valid_ip "$ip" || continue
+    [[ "$count" =~ ^[0-9]+$ ]] || continue
+    was_active=${active_expiry["$ip"]+yes}
+    active_expiry["$ip"]=$expires_at
+    active_count["$ip"]=$count
+    if [ -z "$was_active" ]; then
+      printf '%s\tauto\t%s\t%s\t429=%s\n' "$(date --iso-8601=seconds)" "$ip" "$expires_at" "$count" >> "$HISTORY_FILE"
+    fi
+  done < "${work_dir}/candidates"
+fi
+
+{
+  for ip in "${!active_expiry[@]}"; do
+    printf '%s\t%s\t%s\n' "$ip" "${active_expiry[$ip]}" "${active_count[$ip]}"
+  done
+} | LC_ALL=C sort > "${work_dir}/state"
+mv "${work_dir}/state" "$STATE_FILE"
+
+{
+  echo '# Managed by update_abuse_blocks. Do not edit.'
+  for ip in "${!active_expiry[@]}"; do
+    printf '%s 1;\n' "$ip"
+  done | LC_ALL=C sort
+} > "${work_dir}/nginx"
+
+changed=false
+if ! cmp -s "${work_dir}/nginx" "$GENERATED_FILE" 2>/dev/null; then
+  mv "${work_dir}/nginx" "$GENERATED_FILE"
+  changed=true
+fi
+
+if [ "$changed" = true ]; then
+  if [ -x "$APPLIER" ] && sudo -n "$APPLIER"; then
+    printf '%s applied %s active blocks\n' "$(date --iso-8601=seconds)" "${#active_expiry[@]}" > "$STATUS_FILE"
+  else
+    printf '%s pending: install or authorize %s\n' "$(date --iso-8601=seconds)" "$APPLIER" > "$STATUS_FILE"
+    echo "Nginx update pending: ${APPLIER} is not available through passwordless sudo" >&2
+  fi
+fi
+
+printf 'active_blocks=%s changed=%s\n' "${#active_expiry[@]}" "$changed"
