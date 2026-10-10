@@ -2,7 +2,11 @@
 
 BIN="$(dirname "$0")"
 
-/usr/bin/docker start -a ga-data-fetch-30d | tee /var/www/app/portalshit/public/log-aggregation/access-ranking-all.txt
+# GA supplies at most 30 rows; filtering them can leave fewer than 30 articles.
+/usr/bin/docker start -a ga-data-fetch-30d \
+  | awk -v input_format=ranking -f "$BIN/lib/access_ranking.awk" \
+  | sort -nr \
+  | tee /var/www/app/portalshit/public/log-aggregation/access-ranking-all.txt
 "$BIN/referer_ranking" all
 "$BIN/client_error_ranking" all
 "$BIN/cache_hit_rate" all

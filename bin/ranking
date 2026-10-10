@@ -19,8 +19,8 @@ function access_ranking() {
     | grep 'status:200' \
     | cut -f5 | sed -e 's/request_uri://' \
     | grep -vP ${REQUEST_PATH_TO_IGNORE} \
-    | sed -e 's/\?.*//' | grep -vP '^/$' \
-    | sort | uniq -c | sort -nr | head -100 | sed -r 's/^[ \t]+//g' \
+    | awk -v input_format=paths -f "$(dirname "$0")/lib/access_ranking.awk" \
+    | sort -nr | head -100 \
     | tee ${LOG_AGGREGATION_DIR}/access-ranking-${target_date}.txt
 }
 

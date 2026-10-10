@@ -9,10 +9,9 @@ process_access_ranking() {
 
   echo "Processing Access Ranking ($period)"
   filter_logs "$period" "200" \
-    | awk -F'\t' 'NF {uri=$5; sub(/\?.*/, "", uri); count[uri]++} END {for (word in count) print count[word], word}' \
+    | awk -f "$(dirname "$0")/lib/access_ranking.awk" \
     | sort -nr \
     | awk 'NR<=100' \
-    | sed -e 's/request_uri://' -e '/^[0-9].$/d' \
     | tee "${output}"
 
   echo "Access ranking saved to: ${output}"
