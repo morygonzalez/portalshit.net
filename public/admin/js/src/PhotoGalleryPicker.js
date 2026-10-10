@@ -1,11 +1,14 @@
 // Photo Gallery 用の一括アップロード。FileUploader が 1 枚ずつ即座に本文へ
 // 挿入するのに対し、こちらは全枚数をためてレビューさせ、まとめて 1 つの
 // ギャラリーブロックとして挿入する。
+import sortImages from './PhotoGalleryOrdering';
+
 class PhotoGalleryPicker {
   constructor(editor) {
     this.editor = editor;
     this.images = [];
     this.coverId = null;
+    this.sortBy = 'filename';
     this.root = document.querySelector('.photo-gallery-picker');
     if (!this.root) {
       return;
@@ -13,6 +16,7 @@ class PhotoGalleryPicker {
     this.status = this.root.querySelector('.photo-gallery-picker__status');
     this.panel = document.querySelector('.gallery-review');
     this.list = this.panel && this.panel.querySelector('.gallery-review__list');
+    this.sortSelect = this.panel && this.panel.querySelector('.gallery-review__sort');
     this.observeFilePicker();
     this.observePanel();
   }
@@ -37,6 +41,11 @@ class PhotoGalleryPicker {
 
     this.panel.querySelector('.gallery-review__insert').onclick = () => this.insert();
     this.panel.querySelector('.gallery-review__cancel').onclick = () => this.close();
+    this.sortSelect.onchange = () => {
+      this.sortBy = this.sortSelect.value;
+      this.images = sortImages(this.images, this.sortBy);
+      this.renderList();
+    };
   }
 
   async collect(files) {
@@ -47,11 +56,16 @@ class PhotoGalleryPicker {
 
     this.images = [];
     this.coverId = null;
+    this.sortBy = 'filename';
+    this.sortSelect.value = this.sortBy;
 
     for (const [index, file] of images.entries()) {
       this.setStatus(`処理中… (${index + 1}/${images.length})`);
       try {
-        this.images.push(await this.upload(file));
+        const image = await this.upload(file);
+        image.title = image.title || this.baseName(image.filename);
+        image.alt = image.title;
+        this.images.push(image);
       } catch (error) {
         this.setStatus(`失敗しました: ${file.name} (${error.message})`);
         return;
@@ -59,7 +73,7 @@ class PhotoGalleryPicker {
     }
 
     this.setStatus('');
-    this.images.sort((a, b) => String(a.filename).localeCompare(String(b.filename), undefined, { numeric: true }));
+    this.images = sortImages(this.images, this.sortBy);
     this.coverId = this.images[0].s3_filename;
     this.open();
   }
@@ -101,17 +115,11 @@ class PhotoGalleryPicker {
       thumb.src = image.thumb_url;
       thumb.alt = image.filename;
 
-      // EXIF にタイトルがなければファイル名で埋める。入力欄に出すだけでなく
-      // image 側にも入れておかないと、編集されなかったときに空のまま送られる。
-      const defaultTitle = image.title || this.baseName(image.filename);
-      image.title = defaultTitle;
-      image.alt = defaultTitle;
-
       const title = document.createElement('input');
       title.type = 'text';
       title.className = 'gallery-review__title';
       title.placeholder = 'タイトル';
-      title.value = defaultTitle;
+      title.value = image.title;
       title.oninput = () => {
         image.title = title.value;
         image.alt = title.value;
@@ -139,6 +147,7 @@ class PhotoGalleryPicker {
     const formData = new FormData();
     formData.append('images', JSON.stringify(this.images));
     formData.append('cover_id', this.coverId || '');
+    formData.append('sort_by', this.sortBy);
 
     try {
       const response = await fetch('/admin/photo_gallery/render', {

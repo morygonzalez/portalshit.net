@@ -1349,6 +1349,17 @@ textarea#category_description
     color: #666;
 }
 
+.gallery-review__ordering {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#entry .gallery-review__sort {
+    width: auto;
+}
+
 .gallery-review__list {
     margin: 0 0 15px;
     padding: 0;

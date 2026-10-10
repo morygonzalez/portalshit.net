@@ -10,8 +10,8 @@ namespace :photo_gallery do
     Lokka::PhotoGallery::MetadataGenerator.new(folder, do_upload: do_upload).generate
   end
 
-  desc 'metadata.jsonからHTMLを生成'
-  task :render, [:folder] do |_, args|
+  desc 'metadata.jsonからHTMLを生成（sort_by: filename［既定］ / taken_at）'
+  task :render, [:folder, :sort_by] do |_, args|
     folder = args[:folder]
     metadata_file = File.join(folder, 'metadata.json')
 
@@ -19,7 +19,13 @@ namespace :photo_gallery do
       abort "#{metadata_file} が存在しません。先に rake photo_gallery:import を実行してください。"
     end
 
-    images = Lokka::PhotoGallery.sort_by_filename(JSON.parse(File.read(metadata_file), symbolize_names: true))
+    begin
+      images = Lokka::PhotoGallery.sort_images(
+        JSON.parse(File.read(metadata_file), symbolize_names: true), sort_by: args[:sort_by]
+      )
+    rescue ArgumentError => e
+      abort e.message
+    end
     renderer = Lokka::PhotoGallery::Renderer.new(images)
     puts renderer.render
   end

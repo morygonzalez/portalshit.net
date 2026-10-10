@@ -1,3 +1,5 @@
+require 'date'
+
 module Lokka
   module PhotoGallery
     RESOURCE_BASE_URL   = 'https://resources.portalshit.net'.freeze
@@ -17,6 +19,32 @@ module Lokka
       images.sort_by.with_index do |item, index|
         [filename_sort_key(item[:filename]), index]
       end
+    end
+
+    def self.sort_images(images, sort_by: nil)
+      case sort_by.to_s
+      when '', 'filename'
+        sort_by_filename(images)
+      when 'taken_at'
+        images.sort_by.with_index do |item, index|
+          time = capture_time(item[:taken_at])
+          [time ? 0 : 1, time || 0, filename_sort_key(item[:filename]), index]
+        end
+      else
+        raise ArgumentError, '並び順は filename または taken_at を指定してください'
+      end
+    end
+
+    def self.capture_time(value)
+      # EXIF の YYYY:MM:DD と従来の ISO 形式を扱う。時差のない値は日本時間。
+      normalized = value.to_s.strip.sub(/\A(\d{4}):(\d{2}):(\d{2})/, '\\1-\\2-\\3')
+      match = normalized.match(/\A(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}:\d{2}:\d{2}(?:\.\d+)?))?(?:\s*(Z|[+-]\d{2}:?\d{2}))?\z/)
+      return nil unless match
+      return nil if match[2] && (match[2][0, 2].to_i > 23 || match[2][6, 2].to_i > 59)
+
+      DateTime.iso8601("#{match[1]}T#{match[2] || '00:00:00'}#{match[3] || '+09:00'}").ajd
+    rescue ArgumentError
+      nil
     end
 
     def self.filename_sort_key(filename)
@@ -52,7 +80,11 @@ module Lokka
       app.post '/admin/photo_gallery/render' do
         content_type :json
 
-        images = parse_gallery_images(params[:images])
+        begin
+          images = parse_gallery_images(params[:images], sort_by: params[:sort_by])
+        rescue ArgumentError => e
+          halt 400, { message: e.message }.to_json
+        end
         halt 400, { message: '画像がありません' }.to_json if images.empty?
 
         { body: PhotoGallery::Renderer.new(images, cover_id: params[:cover_id]).render }.to_json
@@ -61,14 +93,14 @@ module Lokka
   end
 
   module Helpers
-    def parse_gallery_images(raw)
+    def parse_gallery_images(raw, sort_by: nil)
       parsed = JSON.parse(raw.to_s, symbolize_names: true)
       return [] unless parsed.is_a?(Array)
 
       images = parsed.filter_map do |item|
         item.slice(*PhotoGallery::RENDERABLE_KEYS) if item.is_a?(Hash)
       end
-      PhotoGallery.sort_by_filename(images)
+      PhotoGallery.sort_images(images, sort_by: sort_by)
     rescue JSON::ParserError
       []
     end

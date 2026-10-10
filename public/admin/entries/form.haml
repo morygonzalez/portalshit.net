@@ -33,6 +33,11 @@
         .gallery-review__inner
           %h3.gallery-review__heading= t('gallery_review.heading')
           %p.gallery-review__description= t('gallery_review.description')
+          .gallery-review__ordering
+            %label{ for: 'gallery-review-sort' }= t('gallery_review.sort_label')
+            %select.gallery-review__sort{ id: 'gallery-review-sort' }
+              %option{ value: 'filename' }= t('gallery_review.sort_filename')
+              %option{ value: 'taken_at' }= t('gallery_review.sort_taken_at')
           %ul.gallery-review__list
           .gallery-review__actions
             %button.button.gallery-review__insert{ type: :button }= t('gallery_review.insert')

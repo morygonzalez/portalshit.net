@@ -45,7 +45,10 @@ en:
   photo_gallery_picker_label: Create gallery
   gallery_review:
     heading: Review gallery
-    description: Enter titles and choose a cover photo. Photos are ordered by capture time.
+    description: Review titles and ordering, then choose a cover photo. The cover is displayed first. Photos without a capture time are placed last when sorting by capture time.
+    sort_label: Sort by
+    sort_filename: Filename
+    sort_taken_at: Capture time (oldest first)
     insert: Insert into body
     cancel: Cancel
   about: About this site
