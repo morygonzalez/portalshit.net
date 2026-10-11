@@ -3,6 +3,9 @@
 require 'net/http'
 
 class Entry < ActiveRecord::Base
+  # SQLite does not expose a TEXT byte limit; match the production MEDIUMTEXT capacity.
+  DEFAULT_BODY_BYTE_LIMIT = 16_777_215
+
   has_many :comments
   has_many :public_comments, -> { publicly_visible }, class_name: 'Comment'
   has_many :approved_comments, -> { publicly_visible }, class_name: 'Comment'
@@ -21,6 +24,7 @@ class Entry < ActiveRecord::Base
                    format: %r{\A[_/0-9a-zA-Z-]+\z}, allow_blank: true
 
   validate :validate_confliction
+  validate :validate_body_byte_length
 
   attr_accessor :tag_collection, :generate_or_update_summary, :auto_generate_tags
 
@@ -83,6 +87,10 @@ class Entry < ActiveRecord::Base
             end
           end
         }
+
+  def self.body_byte_limit
+    columns_hash.fetch('body').limit || DEFAULT_BODY_BYTE_LIMIT
+  end
 
   def self.get_by_fuzzy_slug(id_or_slug)
     where(slug: id_or_slug).first || where(id: id_or_slug).first
@@ -206,6 +214,14 @@ class Entry < ActiveRecord::Base
   end
 
   private
+
+  def validate_body_byte_length
+    limit = self.class.body_byte_limit
+    bytes = raw_body.to_s.bytesize
+    return if bytes <= limit
+
+    errors.add(:body, I18n.t('entry.errors.body_too_large', limit: limit, bytes: bytes))
+  end
 
   def send_ping_to_pubsubhubbub
     if Lokka.production? && published?

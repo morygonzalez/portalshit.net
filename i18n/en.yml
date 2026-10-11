@@ -146,6 +146,8 @@ en:
   asc: Ascending
   desc: Descending
   entry:
+    errors:
+      body_too_large: "exceeds the maximum size of %{limit} bytes (input: %{bytes} bytes). Shorten the body or split it into multiple pages."
     id: ID
     slug: Slug
     title: Title

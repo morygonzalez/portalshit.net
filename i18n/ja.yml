@@ -1,4 +1,8 @@
 ja:
+  activerecord:
+    attributes:
+      entry:
+        body: 本文
   all: 全て
   option: オプション
   demo: デモ
@@ -146,6 +150,8 @@ ja:
   asc: 昇順
   desc: 降順
   entry:
+    errors:
+      body_too_large: "のサイズが保存上限の%{limit}バイトを超えています（入力は%{bytes}バイト）。本文を短くするか、ページを分割してください。"
     id: ID
     slug: スラッグ
     title: タイトル

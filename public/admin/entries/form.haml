@@ -6,8 +6,8 @@
       #error
         .title= t('error')
         %ul
-          - @entry.errors.each do |error|
-            %li= error
+          - @entry.errors.full_messages.each do |error|
+            %li= escape_html(error)
     .field.title
       = f.label :title, caption: t("#{@name}.title")
       %br/
@@ -28,7 +28,7 @@
             = radio_button_tag :ipreview, value: 'preview', id: 'preview-preview'
         %button.editor-fullscreen-toggle{ type: :button, 'aria-pressed': 'false' } 全画面で編集
       #editor
-        %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", cols: 50 }= @entry.raw_body
+        %textarea.editor{ id: "#{@name}_body", name: "#{@name}[body]", cols: 50 }= escape_html(@entry.raw_body.to_s)
       .gallery-review{ hidden: true }
         .gallery-review__inner
           %h3.gallery-review__heading= t('gallery_review.heading')

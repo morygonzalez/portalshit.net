@@ -79,6 +79,7 @@ module Lokka
         flash[:notice] = t("#{@name}_was_successfully_created")
         redirect_after_edit(@entry)
       else
+        status 422
         @field_names = FieldName.order('name ASC')
         @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
         haml :'admin/entries/new', layout: :'admin/layout'
@@ -94,6 +95,7 @@ module Lokka
         flash[:notice] = t("#{@name}_was_successfully_updated")
         redirect_after_edit(@entry)
       else
+        status 422
         @categories = Category.all.map {|c| [c.id, c.title] }.unshift([nil, t('not_select')])
         @field_names = FieldName.order('name ASC')
         haml :'admin/entries/edit', layout: :'admin/layout'
