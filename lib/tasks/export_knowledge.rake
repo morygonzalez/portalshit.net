@@ -45,8 +45,8 @@ namespace :knowledge do
 
   # メタデータを再適用してドキュメントの無効化を防止
   # 使い方:
-  #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake knowledge:touch
-  desc 'Touch all documents to prevent auto-archiving'
+  #   DATASET_ID=... DATASET_API_KEY=... POPULAR_DATASET_ID=... bundle exec rake knowledge:touch
+  desc 'Touch yearly and popular documents to prevent auto-archiving'
   task :touch do
     exporter = Dify::KnowledgeExporter.new
     exporter.touch_all!
