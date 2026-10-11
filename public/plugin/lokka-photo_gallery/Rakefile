@@ -10,19 +10,24 @@ namespace :photo_gallery do
     Lokka::PhotoGallery::MetadataGenerator.new(folder, do_upload: do_upload).generate
   end
 
-  desc 'metadata.jsonからHTMLを生成（sort_by: filename［既定］ / taken_at）'
+  desc 'フォルダ内のmetadata.jsonまたは指定したJSONからHTMLを生成（sort_by: filename［既定］ / taken_at）'
   task :render, [:folder, :sort_by] do |_, args|
-    folder = args[:folder]
-    metadata_file = File.join(folder, 'metadata.json')
+    input = args[:folder].to_s
+    abort 'フォルダまたはJSONファイルのパスを指定してください。' if input.empty?
+    metadata_file = File.directory?(input) ? File.join(input, 'metadata.json') : input
 
-    unless File.exist?(metadata_file)
-      abort "#{metadata_file} が存在しません。先に rake photo_gallery:import を実行してください。"
+    unless File.file?(metadata_file)
+      abort "#{metadata_file} が見つかりません。metadata.jsonを含むフォルダ、またはJSONファイルを指定してください。"
     end
 
     begin
-      images = Lokka::PhotoGallery.sort_images(
-        JSON.parse(File.read(metadata_file), symbolize_names: true), sort_by: args[:sort_by]
-      )
+      images = JSON.parse(File.read(metadata_file), symbolize_names: true)
+      unless images.is_a?(Array) && images.all? { |image| image.is_a?(Hash) }
+        abort "#{metadata_file} は写真オブジェクトの配列である必要があります。"
+      end
+      images = Lokka::PhotoGallery.sort_images(images, sort_by: args[:sort_by])
+    rescue JSON::ParserError
+      abort "#{metadata_file} は正しいJSONではありません。"
     rescue ArgumentError => e
       abort e.message
     end
