@@ -42,6 +42,15 @@ describe '/admin/pages' do
       last_response.should be_redirect
       Page.where(slug: 'dekitate').first.should_not be_nil
     end
+
+    it 'preserves a gallery body larger than the old TEXT byte limit' do
+      body = "<div class=\"photo-gallery pswp-gallery\">#{'<p>山の写真と撮影情報</p>' * 5_000}</div>"
+      expect(body.bytesize).to be > 65_535
+      sample = attributes_for(:page, slug: 'large-gallery', markup: 'redcarpet', body: body)
+      post '/admin/pages', page: sample
+      expect(last_response).to be_redirect
+      expect(Page.find_by!(slug: 'large-gallery').raw_body).to eq(body)
+    end
   end
 
   context '/admin/pages/:id/edit' do

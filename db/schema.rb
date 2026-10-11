@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_13_000001) do
+ActiveRecord::Schema.define(version: 2026_10_11_000000) do
 
   create_table "activities", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -87,7 +87,7 @@ ActiveRecord::Schema.define(version: 2026_09_13_000001) do
     t.integer "category_id"
     t.string "slug", collation: "utf8mb3_general_ci"
     t.string "title"
-    t.text "body"
+    t.text "body", size: :medium
     t.string "type", limit: 50, default: "", null: false, collation: "utf8mb3_general_ci"
     t.datetime "created_at"
     t.datetime "updated_at"
