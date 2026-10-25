@@ -56,6 +56,10 @@ html.light-mode {
   }
 
   #header {
+    #global-nav a {
+      text-shadow: none;
+    }
+
     // dark images
     &[data-bg-dark-image="dark-amaguri"] {
       @include gradient-background('dark-amaguri');
