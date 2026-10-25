@@ -36,14 +36,14 @@ html.light-mode {
 
   body {
     color: $dark-font-color;
-    text-shadow: -1px -1px -1px #1d1a1a;
+    text-shadow: -1px -1px 1px #1d1a1a;
     background: transparent;
   }
 
   a {
     &:link {
       color: $dark-link-color;
-      text-shadow: -1px -1px 3px #0d0015;
+      text-shadow: #{$dark-text-shadow-color} -0.5px -0.5px 1px;
     }
 
     &:visited {
@@ -56,6 +56,10 @@ html.light-mode {
   }
 
   #header {
+    #global-nav a {
+      text-shadow: none;
+    }
+
     // dark images
     &[data-bg-dark-image="dark-amaguri"] {
       @include gradient-background('dark-amaguri');
