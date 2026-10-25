@@ -43,6 +43,7 @@ html.light-mode {
   a {
     &:link {
       color: $dark-link-color;
+      text-shadow: -1px -1px 3px #0d0015;
     }
 
     &:visited {
