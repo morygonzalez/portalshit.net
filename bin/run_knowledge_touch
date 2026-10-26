@@ -19,6 +19,10 @@ docker run --rm \
   -e RUBYOPT="-EUTF-8" \
   -e DATASET_ID \
   -e DATASET_API_KEY \
+  -e POPULAR_DATASET_ID \
+  -e POPULAR_DATASET_API_KEY \
+  -e POPULAR_PERIOD_ID \
+  -e POPULAR_COUNT_ID \
   -e DIFY_API_BASE \
   -e BASE_URL \
   -e PERIOD_ID \
