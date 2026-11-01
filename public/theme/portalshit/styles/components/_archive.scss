@@ -5,6 +5,7 @@
 #content {
   .archive-filter {
     display: flex;
+    text-shadow: none;
 
     .year-list, .category-list, .search-field, .entry-length {
       margin: .25em;
