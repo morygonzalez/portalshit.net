@@ -3,9 +3,20 @@
 // =============================================================================
 
 #content {
+  // archives はチャート・フォーム・一覧を同じ React ルートに描画する。
+  // UI へはシャドウを継承させず、読むための一覧にだけ再適用する。
+  @include dark-mode {
+    #root {
+      text-shadow: none;
+    }
+
+    .archive-by-month {
+      text-shadow: -1px -1px 1px #1d1a1a;
+    }
+  }
+
   .archive-filter {
     display: flex;
-    text-shadow: none;
 
     .year-list, .category-list, .search-field, .entry-length {
       margin: .25em;
@@ -48,10 +59,6 @@
         margin: auto .3em;
       }
     }
-  }
-
-  .recharts-default-tooltip {
-    text-shadow: none;
   }
 
   .archive-by-month {

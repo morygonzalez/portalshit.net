@@ -36,8 +36,15 @@ html.light-mode {
 
   body {
     color: $dark-font-color;
-    text-shadow: -1px -1px 1px #1d1a1a;
     background: transparent;
+  }
+
+  // 可読性が必要なコンテンツ領域にだけシャドウを与える。body に指定すると
+  // モーダルやフォームなどの UI にまで継承されてしまうため、適用範囲を限定する。
+  #content,
+  #footer,
+  #header #header-inner #header-bottom {
+    text-shadow: -1px -1px 1px #1d1a1a;
   }
 
   a {
