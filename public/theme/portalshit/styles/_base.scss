@@ -184,12 +184,15 @@ table {
     }
     th {
       background-color: rgba(192, 192, 192, 0.5);
+      text-shadow: none;
       text-align: center;
+      font-family: sans-serif;
       font-weight: bold;
       font-size: 1.2em;
       color: #000;
     }
     th, td {
+      min-width: 100px;
       padding: 0 .5em;
       border: solid 1px #fff;
     }
@@ -316,5 +319,11 @@ kbd {
   img {
     max-width: 100%;
     height: auto;
+  }
+
+  table tr {
+    td, th {
+      min-width: 30px;
+    }
   }
 }
