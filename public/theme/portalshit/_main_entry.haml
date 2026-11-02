@@ -1,4 +1,4 @@
-.entry
+.entry{ class: ('has-photo' if post.images.present?) }
   %h3.title{ itemprop: 'name' }
     = link_to post.title, post.link, itemprop: 'url'
   .meta
@@ -19,11 +19,12 @@
       %meta{ itemprop: :width, content: 350 }
       %meta{ itemprop: :height, content: 255 }
   .content
-    .image
-      - if post.images.present?
-        = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}"), post.link
-      - else
-        = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
+    - if post.images.present?
+      .image
+        = link_to post.link do
+          %picture
+            %source{ media: '(max-width: 640px)', srcset: "https://portalshit.net/imageproxy/640x/#{post.cover_image}" }
+            = image_tag "https://portalshit.net/imageproxy/1200x/#{post.cover_image}", alt: post.title, fetchpriority: 'high', decoding: 'async', width: 1200
     .summary
       .body{ itemprop: 'articleBody' }
         = post.summary_or_description
