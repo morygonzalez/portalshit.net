@@ -1,5 +1,10 @@
 require 'spec_helper'
-require 'active_record/connection_adapters/mysql2_adapter'
+MYSQL2_AVAILABLE = begin
+  require 'active_record/connection_adapters/mysql2_adapter'
+  true
+rescue Gem::LoadError, LoadError
+  false
+end
 require_relative '../../../db/migration/20261011000000_expand_entry_body_limit' unless defined?(ExpandEntryBodyLimit)
 
 describe ExpandEntryBodyLimit do
@@ -11,6 +16,7 @@ describe ExpandEntryBodyLimit do
   end
 
   it 'maps the expanded limit to MEDIUMTEXT on MySQL' do
+    skip 'mysql2 gem not available' unless MYSQL2_AVAILABLE
     adapter = ActiveRecord::ConnectionAdapters::Mysql2Adapter.new(adapter: 'mysql2')
     expect(adapter.type_to_sql(:text, limit: described_class::MEDIUMTEXT_LIMIT)).to eq('mediumtext')
     expect(adapter.type_to_sql(:text, limit: described_class::TEXT_LIMIT)).to eq('text')
