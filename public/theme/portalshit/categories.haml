@@ -14,11 +14,11 @@
     %section
       - post = entries.delete_if {|item| entries.index(0) == item }.first
       .new-entry
-        = partial :_main_entry, locals: { post: post }
+        = partial :_entry_cards_featured, locals: { post: post }
       .past-entries
         - entries.each_with_index do |post, index|
           - next if index == 0
-          = partial :_other_entries, locals: { post: post }
+          = partial :_entry_cards_item, locals: { post: post }
     %footer
       - category_link = %(<span class="#{category.slug}">#{category.title}</span>)
       - title = %Q(<q>#{t('theme.read_more_in_category', category: category_link)}</q>).html_safe

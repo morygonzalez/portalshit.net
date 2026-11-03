@@ -11,10 +11,10 @@
     %section.recent
       .new-entry
         - if post = @entries.first
-          = partial :_main_entry, locals: { post: post }
+          = partial :_entry_cards_featured, locals: { post: post }
       .past-entries
         - @entries.each_with_index do |post, index|
           - next if index == 0
-          = partial :_other_entries, locals: { post: post }
+          = partial :_entry_cards_item, locals: { post: post }
 
 %script(src="#{asset_path('plugin/lokka-popular_entries/src/index.js')}")

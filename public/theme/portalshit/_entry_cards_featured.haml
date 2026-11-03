@@ -21,9 +21,9 @@
   .content
     .image
       - if post.images.present?
-        = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}"), post.link
+        = link_to image_tag("https://portalshit.net/imageproxy/x400/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/x400/#{post.cover_image} 1x, https://portalshit.net/imageproxy/x800/#{post.cover_image} 2x"), post.link
       - else
-        = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", class: 'default'), post.link
+        = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/330/#{post.cover_image} 1x, https://portalshit.net/imageproxy/660/#{post.cover_image} 2x", class: 'default'), post.link
     .summary
       .body{ itemprop: 'articleBody' }
         = post.summary_or_description
