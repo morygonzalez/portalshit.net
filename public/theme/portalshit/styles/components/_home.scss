@@ -9,12 +9,21 @@
     .title { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.45; overflow-wrap: anywhere; }
     .meta { text-align: left; }
     .content .body { max-height: none; }
+    .summary {
+      max-width: 48rem;
+      align-self: center;
+    }
   }
   .past-entries {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2.5rem 2rem;
-    .entry { margin: 0; min-width: 0; }
+    .entry {
+      margin: 0;
+      min-width: 0;
+      border-top: 1px solid currentColor;
+      padding-top: 1rem;
+    }
     .title {
       font-size: 1.15rem;
       line-height: 1.55;
@@ -30,7 +39,6 @@
     }
     .body { min-height: 0; margin-top: .6rem; }
     .meta { text-align: left; }
-    .entry:not(.has-photo) { border-top: 1px solid currentColor; padding-top: 1rem; }
   }
   @media (max-width: 640px) {
     .new-entry { margin-bottom: 2.5rem; }
@@ -40,6 +48,7 @@
       .entry {
         margin: 0 0 1.5rem;
         padding: 0 0 1.5rem;
+        border-top: 0;
         border-bottom: 1px solid currentColor;
       }
       .entry.has-photo .content {
@@ -49,9 +58,8 @@
         align-items: start;
       }
       .entry.has-photo .image { grid-column: 2; grid-row: 1; margin: 0; min-width: 0; }
-      .entry.has-photo .body { grid-column: 1; grid-row: 1; margin: 0; }
+      .entry.has-photo .body { grid-column: 1; grid-row: 1; margin: 0; min-width: 0; }
       .entry.has-photo .image img { width: 112px; height: 112px; aspect-ratio: 1; }
-      .entry:not(.has-photo) { border-top: 0; padding-top: 0; }
       .title { max-width: none; white-space: normal; }
     }
   }
