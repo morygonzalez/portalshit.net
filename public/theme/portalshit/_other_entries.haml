@@ -21,8 +21,10 @@
   .content
     - if post.images.present?
       .image
-        = link_to post.link do
-          = image_tag "https://portalshit.net/imageproxy/400x300/#{post.cover_image}", alt: post.title, loading: 'lazy', decoding: 'async', width: 400, height: 300
+        %a{ href: post.link }
+          %picture
+            %source{ media: '(max-width: 640px)', srcset: "https://portalshit.net/imageproxy/400x300/#{post.cover_image}" }
+            = image_tag "https://portalshit.net/imageproxy/400x300/#{post.cover_image}", alt: post.title, loading: 'lazy', decoding: 'async', width: 400, height: 300
 
     .body{ itemprop: 'articleBody' }
       = post.summary_or_description

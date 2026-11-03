@@ -21,7 +21,7 @@
   .content
     - if post.images.present?
       .image
-        = link_to post.link do
+        %a{ href: post.link }
           %picture
             %source{ media: '(max-width: 640px)', srcset: "https://portalshit.net/imageproxy/640x/#{post.cover_image}" }
             = image_tag "https://portalshit.net/imageproxy/1200x/#{post.cover_image}", alt: post.title, fetchpriority: 'high', decoding: 'async', width: 1200
