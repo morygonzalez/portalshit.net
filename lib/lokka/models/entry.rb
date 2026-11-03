@@ -121,7 +121,7 @@ class Entry < ActiveRecord::Base
 
   def summary_or_description
     if summary.present?
-      return '%s...' % summary[0..120] if summary.length > 120
+      return '%s...' % summary[0..200] if summary.length > 200
       summary
     else
       long_description
