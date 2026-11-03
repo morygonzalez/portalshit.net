@@ -34,7 +34,7 @@
     }
     .image { width: 100%; margin: 0 0 .7rem; }
     .image img, .image img.desktop, .image img.mobile {
-      display: block; width: 100%; max-width: 100%; height: auto;
+      display: block; width: 400px; max-width: 100%; height: auto; margin: 0;
       aspect-ratio: 4 / 3; object-fit: cover;
     }
     .body { min-height: 0; margin-top: .6rem; }
