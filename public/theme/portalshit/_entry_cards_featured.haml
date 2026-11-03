@@ -23,9 +23,9 @@
       - if post.images.present?
         %a{ href: post.link }
           %picture
-            %source{ media: '(max-width: 400px)', srcset: "https://portalshit.net/imageproxy/400/#{post.cover_image} 1x, https://portalshit.net/imageproxy/800/#{post.cover_image} 2x" }
-            %source{ media: '(max-width: 640px)', srcset: "https://portalshit.net/imageproxy/640/#{post.cover_image} 1x, https://portalshit.net/imageproxy/1000/#{post.cover_image} 2x" }
-            = image_tag "https://portalshit.net/imageproxy/1000/#{post.cover_image}"
+            %source{ media: '(max-width: 400px)', srcset: "https://portalshit.net/imageproxy/400x400,fit/#{post.cover_image} 1x, https://portalshit.net/imageproxy/800x800,fit/#{post.cover_image} 2x" }
+            %source{ media: '(max-width: 640px)', srcset: "https://portalshit.net/imageproxy/640x640,fit/#{post.cover_image} 1x, https://portalshit.net/imageproxy/1000x1000,fit/#{post.cover_image} 1.5625x" }
+            = image_tag "https://portalshit.net/imageproxy/1000x1000,fit/#{post.cover_image}"
       - else
         = link_to image_tag("https://portalshit.net/imageproxy/330/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/330/#{post.cover_image} 1x, https://portalshit.net/imageproxy/660/#{post.cover_image} 2x", class: 'default'), post.link
     .summary
