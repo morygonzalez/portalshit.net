@@ -1,4 +1,4 @@
-.entry{ class: ('has-photo' if post.images.present?) }
+.entry
   %h3.title{ itemprop: 'name' }
     = link_to post.title, post.link, itemprop: 'url'
   .meta
@@ -19,10 +19,12 @@
       %meta{ itemprop: :width, content: 350 }
       %meta{ itemprop: :height, content: 255 }
   .content
-    - if post.images.present?
-      .image
-        %a{ href: post.link }
-          = image_tag "https://portalshit.net/imageproxy/800x/#{post.cover_image}", srcset: [224, 400, 800, 1200].map { |width| "https://portalshit.net/imageproxy/#{width}x/#{post.cover_image} #{width}w" }.join(', '), sizes: '(max-width: 640px) 112px, (max-width: 900px) 45vw, 400px', alt: post.title, loading: 'lazy', decoding: 'async'
+    .image
+      - if post.images.present?
+        = link_to image_tag("https://portalshit.net/imageproxy/400x300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/400x300/#{post.cover_image} 1x, https://portalshit.net/imageproxy/800x600/#{post.cover_image} 2x", class: 'desktop'), post.link
+        = link_to image_tag("https://portalshit.net/imageproxy/300x300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/300x300/#{post.cover_image} 1x, https://portalshit.net/imageproxy/600x600/#{post.cover_image} 2x", class: 'mobile'), post.link
+      - else
+        = link_to image_tag("https://portalshit.net/imageproxy/300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/300/#{post.cover_image} 1x, https://portalshit.net/imageproxy/600/#{post.cover_image} 2x", class: 'default'), post.link
 
     .body{ itemprop: 'articleBody' }
       = post.summary_or_description
