@@ -36,23 +36,18 @@
       }
 
       .content {
-        display: flex;
-        align-items: flex-start;
-
         .body {
-          max-height: 400px;
+          margin: auto;
           text-overflow: ellipsis;
           overflow: hidden;
         }
 
         .summary {
           min-width: 0;
-          margin: 0 2rem 2rem 2rem;
+          margin: 2rem;
         }
 
         .image, .summary {
-          width: 50%;
-
           .default {
             margin: auto 25%;
           }
