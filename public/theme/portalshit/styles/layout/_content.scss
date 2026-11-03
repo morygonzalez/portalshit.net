@@ -69,8 +69,8 @@
   }
 
   #recent_entries, .category, .popular {
-      @include entry-cards-layout;
-    }
+    @include entry-cards-layout;
+  }
 
   section.more {
     display: flex;
