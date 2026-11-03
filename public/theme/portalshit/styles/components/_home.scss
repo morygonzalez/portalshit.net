@@ -5,7 +5,7 @@
     margin-bottom: 3.5rem;
     .content { display: flex; flex-direction: column; gap: 1rem; }
     .content .image, .content .summary { width: 100%; margin: 0; }
-    .content .image img { width: 100%; height: auto; max-height: 680px; aspect-ratio: 16 / 9; object-fit: cover; }
+    .content .image img { width: 100%; height: auto; max-height: 680px; object-fit: contain; }
     .title { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.45; overflow-wrap: anywhere; }
     .meta { text-align: left; }
     .content .body { max-height: none; }
@@ -33,14 +33,12 @@
     .image { width: 100%; margin: 0 0 .7rem; }
     .image img, .image img.desktop, .image img.mobile {
       display: block; width: 400px; max-width: 100%; height: auto; margin: 0;
-      aspect-ratio: 4 / 3; object-fit: cover;
     }
     .body { min-height: 0; margin-top: .6rem; }
     .meta { text-align: left; }
   }
   @media (max-width: 640px) {
     .new-entry { margin-bottom: 2.5rem; }
-    .new-entry .content .image img { aspect-ratio: 4 / 3; }
     .past-entries {
       display: block;
       .entry {
@@ -54,7 +52,7 @@
       }
       .entry.has-photo .image { grid-column: 2; grid-row: 1; margin: 0; min-width: 0; }
       .entry.has-photo .body { grid-column: 1; grid-row: 1; margin: 0; min-width: 0; }
-      .entry.has-photo .image img { width: 112px; height: 112px; aspect-ratio: 1; }
+      .entry.has-photo .image img { width: 112px; height: auto; }
       .title { max-width: none; white-space: normal; }
     }
   }

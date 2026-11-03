@@ -22,9 +22,7 @@
     - if post.images.present?
       .image
         %a{ href: post.link }
-          %picture
-            %source{ media: '(max-width: 640px)', srcset: "https://portalshit.net/imageproxy/400x300/#{post.cover_image}" }
-            = image_tag "https://portalshit.net/imageproxy/400x300/#{post.cover_image}", alt: post.title, loading: 'lazy', decoding: 'async', width: 400, height: 300
+          = image_tag "https://portalshit.net/imageproxy/800x/#{post.cover_image}", srcset: [224, 400, 800, 1200].map { |width| "https://portalshit.net/imageproxy/#{width}x/#{post.cover_image} #{width}w" }.join(', '), sizes: '(max-width: 640px) 112px, (max-width: 900px) 45vw, 400px', alt: post.title, loading: 'lazy', decoding: 'async'
 
     .body{ itemprop: 'articleBody' }
       = post.summary_or_description
