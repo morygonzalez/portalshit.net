@@ -69,7 +69,7 @@
   }
 
   #recent_entries, .category, .popular {
-      @include home-entry-layout;
+      @include entry-cards-layout;
     }
 
   section.more {
@@ -297,7 +297,7 @@
 @media screen and (max-width: 1279px) {
   #content {
     #recent_entries, .category, .popular {
-      @include home-entry-tablet;
+      @include entry-cards-tablet;
     }
   }
 }
@@ -310,7 +310,7 @@
     padding: .5em 0;
 
     #recent_entries, .category, .popular {
-      @include home-entry-mobile;
+      @include entry-cards-mobile;
     }
 
     section.more {

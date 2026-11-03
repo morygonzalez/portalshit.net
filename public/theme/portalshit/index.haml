@@ -7,11 +7,11 @@
   %section.recent
     - if post = @posts.first
       .new-entry
-        = partial :_main_entry, locals: { post: post }
+        = partial :_entry_cards_featured, locals: { post: post }
       .past-entries
         - @posts.each_with_index do |post, index|
           - next if index == 0
-          = partial :_other_entries, locals: { post: post }
+          = partial :_entry_cards_item, locals: { post: post }
 
 - if @on_this_day_post
   %section#on_this_day.popular
@@ -20,7 +20,7 @@
       %span.years-ago= "#{Date.current.year - @on_this_day_post.created_at.year}年前"
     %section.recent
       .new-entry
-        = partial :_main_entry, locals: { post: @on_this_day_post }
+        = partial :_entry_cards_featured, locals: { post: @on_this_day_post }
 
 %section#popular_entries
   %h2= link_to t('popular_entries'), '/popular'

@@ -18,11 +18,11 @@
       - post = entries.delete_if {|item| entries.index(0) == item }.first
       - if post
         .new-entry
-          = partial :_main_entry, locals: { post: post }
+          = partial :_entry_cards_featured, locals: { post: post }
       .past-entries
         - entries.each_with_index do |post, index|
           - next if index == 0
-          = partial :_other_entries, locals: { post: post }
+          = partial :_entry_cards_item, locals: { post: post }
     %footer
       %p.read-more= link_to "<q>#{title}</q>をもっと読む".html_safe, %(/popular/#{key})
 

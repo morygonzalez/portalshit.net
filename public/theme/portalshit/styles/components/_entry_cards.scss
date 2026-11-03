@@ -1,5 +1,5 @@
-// Entry listing styles shared by the home, category and popular pages.
-@mixin home-entry-layout {
+// Styles for _entry_cards_featured.haml and _entry_cards_item.haml.
+@mixin entry-cards-layout {
     header {
       .description {
         margin: 1rem 0 .5rem;
@@ -188,7 +188,7 @@
     }
   }
 
-@mixin home-entry-tablet {
+@mixin entry-cards-tablet {
       section {
         .new-entry {
           .content {
@@ -235,7 +235,7 @@
       }
     }
 
-@mixin home-entry-mobile {
+@mixin entry-cards-mobile {
       header {
         .meta {
           display: block;
