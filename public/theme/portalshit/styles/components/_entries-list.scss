@@ -24,7 +24,9 @@
   }
 
   &.frequently-read-articles,
-  &.hotentry {
+  &.hotentry,
+  &.referrers,
+  &.similar {
     .items .item {
       margin-top: 0;
     }
