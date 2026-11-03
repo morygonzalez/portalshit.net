@@ -128,15 +128,17 @@ class FormObserver {
   }
 
   adjustTextareaHeight() {
-    if (window.innerWidth > 640 && document.querySelector('.field.body').classList.contains('is-fullscreen')) {
+    const bodyField = document.querySelector('.field.body');
+    if (window.innerWidth > 640 && bodyField.classList.contains('is-fullscreen')) {
       this.setFullscreen(false);
       return;
     }
-    if (document.querySelector('.field.body').classList.contains('is-fullscreen')) {
+    if (bodyField.classList.contains('is-fullscreen')) {
       return;
     }
     const editor = document.querySelector('#editor');
-    if (editor.dataset.mobile === "true") {
+    if (window.innerWidth <= 640) {
+      editor.style.removeProperty('height');
       return;
     }
     const attachments = document.querySelector('#form-main > .field.attachments');
