@@ -226,11 +226,12 @@ ul.preview-edit li > input[type='radio'] {
     margin: -3px 0 0;
     border-radius: 6px;
     border-color: transparent;
-    border-style:solid;
-    border-width:1px;
+    border-style: solid;
+    border-width: 1px;
     min-height: 445px;
     width: 100%;
     min-width: 550px;
+    padding: 3px 2px;
 }
 
 #preview h1, h2, h3, h4, h5, h6 {

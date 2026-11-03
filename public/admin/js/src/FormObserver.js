@@ -258,7 +258,25 @@ class FormObserver {
       const preview_body = await this.getPreview({markup, raw_body});
       const iframe = document.createElement('iframe');
       preview.appendChild(iframe);
-      const doc = iframe.contentWindow.document;
+      const darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const previewThemeStyles = darkMode
+        ? `
+html, body {
+  color-scheme: dark;
+  background: #444;
+  color: #CBCBCC;
+}
+a:link, a:visited {
+  color: #728dd3;
+}
+a:hover {
+  color: #f0d9e1;
+}`
+        : `
+html, body {
+  background: #eee;
+  color: #222;
+}`;
       const style = `<style>
 img { max-width: 100%; }
 img { height: auto; }
@@ -271,21 +289,21 @@ html, body {
 figure {
   margin: 0;
 }
+body > :first-child {
+  margin-top: 0;
+}
+body > :last-child {
+  margin-bottom: 0;
+}
+${previewThemeStyles}
 </style>`;
-      const result = new Promise(resolve => resolve(iframe));
-      const renderIframe = () => {
-        doc.open();
-        doc.write(style + preview_body);
-        doc.close();
-      }
       const resizeIframe = () => {
         iframe.style.width = '100%';
         iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
       }
-      result
-        .then(renderIframe)
-        .then(resizeIframe)
-        .finally(setTimeout(resizeIframe, 300));
+      iframe.addEventListener('load', resizeIframe, { once: true });
+      iframe.srcdoc = `<!doctype html><html><head>${style}</head><body>${preview_body}</body></html>`;
+      setTimeout(resizeIframe, 300);
       editor.style.display = 'none';
       preview.style.display = 'block';
       this.toggleImagePicker(false);
