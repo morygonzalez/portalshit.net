@@ -123,12 +123,8 @@
           border-radius: $radius;
         }
 
-        img.desktop {
+        picture img {
           display: block;
-        }
-
-        img.mobile {
-          display: none;
         }
       }
 
@@ -298,7 +294,7 @@
             flex-grow: 3;
             min-width: 100px;
 
-            img.mobile {
+            picture img {
               max-width: 100px;
               display: block;
             }
@@ -307,9 +303,6 @@
               max-width: 100px;
             }
 
-            img.desktop {
-              display: none;
-            }
           }
         }
       }

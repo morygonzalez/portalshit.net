@@ -21,8 +21,10 @@
   .content
     .image
       - if post.images.present?
-        = link_to image_tag("https://portalshit.net/imageproxy/400x300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/400x300/#{post.cover_image} 1x, https://portalshit.net/imageproxy/800x600/#{post.cover_image} 2x", class: 'desktop'), post.link
-        = link_to image_tag("https://portalshit.net/imageproxy/300x300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/300x300/#{post.cover_image} 1x, https://portalshit.net/imageproxy/600x600/#{post.cover_image} 2x", class: 'mobile'), post.link
+        %a{ href: post.link }
+          %picture
+            %source{ media: '(max-width: 640px)', sizes: '100px', srcset: "https://portalshit.net/imageproxy/100x100/#{post.cover_image} 100w, https://portalshit.net/imageproxy/200x200/#{post.cover_image} 200w, https://portalshit.net/imageproxy/300x300/#{post.cover_image} 300w" }
+            = image_tag "https://portalshit.net/imageproxy/400x300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/400x300/#{post.cover_image} 400w, https://portalshit.net/imageproxy/800x600/#{post.cover_image} 800w, https://portalshit.net/imageproxy/1200x900/#{post.cover_image} 1200w", sizes: '(max-width: 1279px) calc(45vw - 2rem), 400px'
       - else
         = link_to image_tag("https://portalshit.net/imageproxy/300/#{post.cover_image}", srcset: "https://portalshit.net/imageproxy/300/#{post.cover_image} 1x, https://portalshit.net/imageproxy/600/#{post.cover_image} 2x", class: 'default'), post.link
 
