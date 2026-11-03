@@ -21,8 +21,6 @@
     .entry {
       margin: 0;
       min-width: 0;
-      border-top: 1px solid currentColor;
-      padding-top: 1rem;
     }
     .title {
       font-size: 1.15rem;
@@ -47,9 +45,6 @@
       display: block;
       .entry {
         margin: 0 0 1.5rem;
-        padding: 0 0 1.5rem;
-        border-top: 0;
-        border-bottom: 1px solid currentColor;
       }
       .entry.has-photo .content {
         display: grid;
