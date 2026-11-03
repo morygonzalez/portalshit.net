@@ -23,6 +23,13 @@
     }
   }
 
+  &.frequently-read-articles,
+  &.hotentry {
+    .items .item {
+      margin-top: 0;
+    }
+  }
+
   // Keep the newer post on the left and the older post on the right even when
   // only one of them exists (latest / oldest post), matching the header nav.
   &.prevnext-articles .items {
