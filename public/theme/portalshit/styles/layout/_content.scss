@@ -338,6 +338,16 @@
           margin-bottom: 1em;
         }
 
+        // 単一の本文画像だけを本文の余白からはみ出させる。キャプションは本文幅を保ち、
+        // 複数列の画像グループは従来どおり本文幅に収める。
+        figure:not(.one-column):not(.two-column):not(.three-column) > img {
+          display: block;
+          width: 100vw;
+          max-width: none;
+          margin-left: calc(50% - 50vw);
+          margin-right: calc(50% - 50vw);
+        }
+
         blockquote {
           padding-left: 1em;
           padding-right: 1em;
