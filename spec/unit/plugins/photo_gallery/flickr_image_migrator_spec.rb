@@ -6,7 +6,7 @@ require 'tmpdir'
 require_relative '../../../../public/plugin/lokka-photo_gallery/lib/lokka/photo_gallery/flickr_image_migrator'
 
 RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
-  FakeEntry = Struct.new(:id, :title, :raw_body) do
+  FlickrImageMigratorEntry = Struct.new(:id, :title, :raw_body) do
     attr_reader :updated_columns
 
     def update_columns(columns)
@@ -16,7 +16,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
   end
 
   let(:entry) do
-    FakeEntry.new(
+    FlickrImageMigratorEntry.new(
       10,
       'Flickr entry',
       <<~HTML
@@ -64,7 +64,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
   it 'reports missing and ambiguous local images without guessing' do
     write_image('first_45408683155_o.jpg')
     write_image('second_45408683155_o.jpg')
-    missing_entry = FakeEntry.new(
+    missing_entry = FlickrImageMigratorEntry.new(
       11,
       'Missing',
       '<img src="http://static.flickr.com/73/173515132_0b7472d273.jpg">'
@@ -117,7 +117,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
 
 
   it 'removes an explicitly selected Flickr embed and its unused script' do
-    removable_entry = FakeEntry.new(
+    removable_entry = FlickrImageMigratorEntry.new(
       12,
       'Third-party Flickr photo',
       <<~HTML
@@ -144,7 +144,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
 
   it 'removes Flickr embed markup and link while preserving another migrated image' do
     other_url = 'https://live.staticflickr.com/4844/45408683155_5c0a8b4dc5_b.jpg'
-    removable_entry = FakeEntry.new(
+    removable_entry = FlickrImageMigratorEntry.new(
       13,
       'Two Flickr photos',
       <<~HTML
@@ -173,7 +173,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
   end
 
   it 'can clean up stale Flickr embed markup after image URLs have already migrated' do
-    migrated_entry = FakeEntry.new(
+    migrated_entry = FlickrImageMigratorEntry.new(
       14,
       'Already migrated',
       <<~HTML
@@ -208,7 +208,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
 
       Text
     HTML
-    migrated_entry = FakeEntry.new(15, 'Broken heading', body)
+    migrated_entry = FlickrImageMigratorEntry.new(15, 'Broken heading', body)
     migrator = described_class.new(entries: [migrated_entry], image_directory: @directory)
 
     plan = migrator.build_plan
@@ -233,7 +233,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
 
       ## Heading
     HTML
-    migrated_entry = FakeEntry.new(16, 'Heading after script', body)
+    migrated_entry = FlickrImageMigratorEntry.new(16, 'Heading after script', body)
     migrator = described_class.new(entries: [migrated_entry], image_directory: @directory)
 
     migrator.apply!(
@@ -250,7 +250,7 @@ RSpec.describe Lokka::PhotoGallery::FlickrImageMigrator do
   it 'wraps direct URLs from an existing manifest without nesting proxy URLs' do
     resource_url = 'https://resources.portalshit.net/0123456789abcdef0123456789abcdef.jpg'
     display_url = "https://portalshit.net/imageproxy/1680x1000,fit/#{resource_url}"
-    migrated_entry = FakeEntry.new(
+    migrated_entry = FlickrImageMigratorEntry.new(
       17,
       'Direct and already proxied images',
       <<~HTML
