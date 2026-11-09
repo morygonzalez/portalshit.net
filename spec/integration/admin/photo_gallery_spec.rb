@@ -25,6 +25,23 @@ describe '/admin/photo_gallery/render' do
       to eq(%w[2 10 1])
   end
 
+  it 'renders the EXIF description in the PhotoSwipe caption' do
+    images.first[:description] = "夕景 <script>\n港の風景"
+
+    post '/admin/photo_gallery/render', images: images.to_json
+
+    expect(last_response).to be_successful
+    body = JSON.parse(last_response.body)['body']
+    expect(body).to include('<li class="description">夕景 &lt;script&gt;<br>港の風景</li>')
+  end
+
+  it 'omits the description element when no description is present' do
+    post '/admin/photo_gallery/render', images: images.to_json
+
+    expect(last_response).to be_successful
+    expect(JSON.parse(last_response.body)['body']).not_to include('class="description"')
+  end
+
   it 'returns an actionable error for an unsupported order' do
     post '/admin/photo_gallery/render', images: images.to_json, sort_by: 'unknown'
     expect(last_response.status).to eq(400)

@@ -99,6 +99,7 @@ module Lokka
           filename: filename,
           s3_filename: s3_filename,
           title: exif[:title],
+          description: exif[:description],
           width: exif[:width],
           height: exif[:height],
           alt: exif[:title],

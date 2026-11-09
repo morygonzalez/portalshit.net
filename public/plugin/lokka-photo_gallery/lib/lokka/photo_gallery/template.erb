@@ -7,6 +7,9 @@
     </a>
     <ul class="pswp-caption-content">
       <li class="title"><%= h item[:title] %></li>
+    <%- if item[:description].present? -%>
+      <li class="description"><%= h(item[:description]).gsub(/\r?\n/, '<br>') %></li>
+    <%- end -%>
       <li class="meta">カメラ: <%= h item[:camera] %></li>
       <li class="meta">レンズ: <%= h item[:lens] %></li>
       <li class="meta">F値: <%= h item[:f_number] %></li>

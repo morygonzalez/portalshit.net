@@ -10,7 +10,7 @@ module Lokka
 
     # クライアントから返ってくるメタデータのうち、テンプレートが読むキーだけを通す。
     RENDERABLE_KEYS = %i[
-      filename s3_filename title width height alt taken_at url thumb_url
+      filename s3_filename title description width height alt taken_at url thumb_url
       camera lens f_number shutter_speed iso focal_length
       location licence_text licence_url keywords
     ].freeze

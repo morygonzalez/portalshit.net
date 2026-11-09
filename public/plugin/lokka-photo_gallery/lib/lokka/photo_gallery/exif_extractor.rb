@@ -10,6 +10,7 @@ module Lokka
       def to_hash
         {
           title: @exif[:title],
+          description: @exif[:description],
           camera: "#{@exif[:make]} #{@exif[:model]}",
           lens: @exif[:lens_model],
           f_number: "ƒ/#{@exif[:f_number]}",

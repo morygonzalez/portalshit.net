@@ -67,6 +67,10 @@
       font-size: 1.2em;
       padding-bottom: .4em;
     }
+    &.description {
+      line-height: 1.5;
+      white-space: normal;
+    }
     &.meta {
       font-size: .9em;
       .licence {
