@@ -8,11 +8,11 @@
   justify-content: flex-start;
 
   .pswp-gallery__item {
-    margin-right: .82em;
-    line-height: 2.4em;
+    margin: 1px 1px 1px 0;
+    line-height: 1px;
 
     @media screen and (max-width: 640px) {
-      line-height: 2dvh !important;
+      line-height: 1px !important;
 
       &.cover {
         margin-right: 0;
@@ -30,14 +30,24 @@
   }
 
   @media screen and (max-width: 640px) {
-    // Cover なし: 通常画像の 3n 番目が行末
-    &:not(:has(.cover)) .pswp-gallery__item:nth-child(3n) {
-      margin-right: 0;
-    }
+    // 親要素の本文余白に依存せず、ギャラリーをビューポート幅にする。
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    gap: 1px;
 
-    // Cover あり: Cover 分 1 つずれるので、2 番目以降の 3n+1 番目が行末
-    &:has(.cover) .pswp-gallery__item:nth-child(3n+1):not(:first-child) {
-      margin-right: 0;
+    // Cover なし: 通常画像の 3n 番目が行末
+    .pswp-gallery__item {
+      margin: 0;
+
+      &:not(.cover) {
+        width: calc((100dvw - 2px) / 3);
+        margin-right: 0;
+
+        img {
+          width: 100%;
+        }
+      }
     }
   }
 }

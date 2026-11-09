@@ -1,6 +1,7 @@
 require 'json'
 require_relative 'lib/lokka/photo_gallery/metadata_generator'
 require_relative 'lib/lokka/photo_gallery/renderer'
+require_relative 'lib/lokka/photo_gallery/thumbnail_url_migrator'
 
 namespace :photo_gallery do
   desc '画像からmetadata.jsonを生成'
@@ -33,5 +34,13 @@ namespace :photo_gallery do
     end
     renderer = Lokka::PhotoGallery::Renderer.new(images)
     puts renderer.render
+  end
+
+  desc '既存 Photo Gallery のサムネイル URL を 259x388 に更新'
+  task :migrate_thumbnail_urls do
+    old_prefix = Lokka::PhotoGallery::ThumbnailUrlMigrator::OLD_URL_PREFIX
+    entries = Entry.unscoped.where('body LIKE ?', "%#{old_prefix}%")
+    updated_entries = Lokka::PhotoGallery::ThumbnailUrlMigrator.new(entries: entries).apply!
+    puts "#{updated_entries} 件の記事のサムネイル URL を更新しました。"
   end
 end

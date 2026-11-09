@@ -5,7 +5,7 @@ module Lokka
     RESOURCE_BASE_URL   = 'https://resources.portalshit.net'.freeze
     IMAGEPROXY_BASE_URL = 'https://portalshit.net/imageproxy'.freeze
     IMAGE_EXTENSIONS    = %w[jpg jpeg png gif].freeze
-    THUMBNAIL_SIZE      = '115'.freeze
+    THUMBNAIL_SIZE      = '259x388'.freeze
     COVER_SIZE          = '1280x'.freeze
 
     # クライアントから返ってくるメタデータのうち、テンプレートが読むキーだけを通す。
