@@ -34,7 +34,7 @@ module Lokka
         if cover
           "#{IMAGEPROXY_BASE_URL}/#{COVER_SIZE}/#{item[:url]}"
         else
-          item[:thumb_url]
+          "#{IMAGEPROXY_BASE_URL}/#{THUMBNAIL_SIZE}/#{item[:url]}"
         end
       end
 

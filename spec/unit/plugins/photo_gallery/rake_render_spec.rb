@@ -50,6 +50,20 @@ describe 'photo_gallery:render' do
     expect(File.read(json_path)).to eq(@metadata)
   end
 
+  it 'uses the configured thumbnail size instead of a legacy thumb_url in metadata' do
+    legacy_url = 'https://portalshit.net/imageproxy/115/https://resources.portalshit.net/1.jpg'
+    metadata = [{
+      filename: '1.jpg',
+      url: 'https://resources.portalshit.net/1.jpg',
+      thumb_url: legacy_url
+    }].to_json
+    File.write(File.join(@folder, 'metadata.json'), metadata)
+
+    expect { Rake::Task['photo_gallery:render'].invoke(@folder) }.
+      to output(/imageproxy\/259x388\/https:\/\/resources\.portalshit\.net\/1\.jpg/).to_stdout
+    expect(File.read(File.join(@folder, 'metadata.json'))).to eq(metadata)
+  end
+
   it 'reports a missing input argument' do
     expect do
       expect { Rake::Task['photo_gallery:render'].invoke }.to raise_error(SystemExit)
