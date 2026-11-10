@@ -292,7 +292,7 @@ GEM
       get_process_mem (>= 0.2)
       puma (>= 2.7)
     racc (1.8.1)
-    rack (3.2.7)
+    rack (3.2.8)
     rack-flash (0.1.2)
       rack
     rack-protection (4.2.1)
