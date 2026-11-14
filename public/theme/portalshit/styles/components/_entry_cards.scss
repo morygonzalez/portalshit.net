@@ -47,13 +47,20 @@
           margin: 2rem;
         }
 
-        .image, .summary {
-          .default {
-            margin: auto;
-          }
-        }
-
         .image {
+          display: flex;
+          justify-content: center;
+
+          > a {
+            display: block;
+            width: fit-content;
+            max-width: 100%;
+          }
+
+          picture {
+            display: block;
+          }
+
           picture img {
             width: auto;
             height: auto;
@@ -63,7 +70,7 @@
 
           img {
             display: block;
-            margin: auto;
+            margin: 0;
           }
         }
       }
@@ -198,11 +205,8 @@
         }
 
         .image {
-          text-align: center;
-
           .default {
             max-width: 200px;
-            margin: auto;
           }
         }
       }
@@ -260,11 +264,8 @@
         }
 
         .image {
-          text-align: center;
-
           .default {
             max-width: 200px;
-            margin: auto;
           }
         }
       }
