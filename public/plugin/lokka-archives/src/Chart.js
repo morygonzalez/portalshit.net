@@ -64,6 +64,11 @@ export default class Chart extends PureComponent {
 
   render() {
     const categories = this.categories()
+
+    if (categories.length === 0 || this.state.data.length === 0) {
+      return null
+    }
+
     const periods = this.periods()
     const countsByPeriod = this.state.data.reduce((counts, item) => {
       const key = this.props.year !== null ? item.duration.slice(-3) : item.duration
@@ -75,7 +80,7 @@ export default class Chart extends PureComponent {
     ))
     const labelInterval = Math.ceil(periods.length / 12)
 
-    if (categories.length === 0 || periods.length === 0) {
+    if (periods.length === 0) {
       return null
     }
 
