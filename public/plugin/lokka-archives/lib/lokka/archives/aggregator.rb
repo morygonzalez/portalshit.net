@@ -14,6 +14,14 @@ module Lokka
           created_at.month.to_s.rjust(2, '0')
         end
 
+        def quarter
+          "#{year}-Q#{((created_at.month - 1) / 3) + 1}"
+        end
+
+        def week
+          created_at.strftime('%G-W%V')
+        end
+
         def day
           created_at.day.to_s.rjust(2, '0')
         end

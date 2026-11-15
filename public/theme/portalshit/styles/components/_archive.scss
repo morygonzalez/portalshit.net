@@ -3,6 +3,20 @@
 // =============================================================================
 
 #content {
+  .archive-heatmap {
+    margin: 1rem 0 1.5rem;
+    --heatmap-label: #6e7781;
+
+    .heatmap__tooltip {
+      color: #fff;
+      text-shadow: none;
+
+      strong {
+        color: inherit;
+      }
+    }
+  }
+
   // archives はチャート・フォーム・一覧を同じ React ルートに描画する。
   // UI へはシャドウを継承させず、読むための一覧にだけ再適用する。
   @include dark-mode {

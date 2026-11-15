@@ -1,106 +1,166 @@
 import React, { PureComponent } from 'react'
-import {
-  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer
-} from 'recharts'
+import { Heatmap } from '@thilakbhat/heatmap-ui'
+import '@thilakbhat/heatmap-ui/styles.css'
+
+const locale = window.navigator.userLanguage || window.navigator.language
 
 export default class Chart extends PureComponent {
   constructor(props) {
     super(props)
-    this.state = {
-      data: [],
-      selectedOption: null
-    }
-    this.colors = [
-      '#E53935', '#D81B60', '#8E24AA', '#5E35B1', '#3949AB', '#1E88E5', '#039BE5',
-      '#00ACC1', '#00897B', '#43A047', '#7CB342', '#C0CA33', '#FDD835', '#FFB300'
-    ]
-    this.selectBar = this.selectBar.bind(this)
-    this.formatTooltipLabel = this.formatTooltipLabel.bind(this)
+    this.state = { data: [], dataYear: null, loading: false }
+    this.requestId = 0
   }
 
   async loadChartFromServer() {
-    let request
-    if (this.props.year !== null) {
-      request = await fetch(`/archives/chart.json?year=${this.props.year}`)
-    } else {
-      request = await fetch('/archives/chart.json')
-    }
-    const response = await request.json()
-    const data = response.map((item) => {
-      const label = item['duration']
-      if (this.props.year !== null) {
-        const date = new Date(`${label}-01`)
-        const month = date.toLocaleDateString('default', { month: 'short' })
-        item['key'] = month
-      } else {
-        const date = new Date(`${label}-01-01`)
-        const year = date.toLocaleDateString('default', { year: 'numeric' })
-        item['key'] = year
+    const requestId = ++this.requestId
+    const year = this.props.year
+    const path = year !== null
+      ? `/archives/chart.json?year=${year}`
+      : '/archives/chart.json'
+    this.setState({ data: [], loading: true })
+
+    try {
+      const request = await fetch(path)
+      const response = await request.json()
+      if (requestId === this.requestId) {
+        this.setState({ data: response, dataYear: year, loading: false })
       }
-      return item
-    })
-    this.setState({ data: data })
+    } catch (error) {
+      if (requestId === this.requestId) {
+        this.setState({ loading: false })
+      }
+    }
   }
 
   componentDidMount() {
     this.loadChartFromServer()
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.year !== this.props.year) {
       this.loadChartFromServer()
     }
   }
 
-  selectBar(selectedOption) {
-    let dataKey = selectedOption.dataKey.trim()
-    let disabledCategories = this.props.disabledCategories
-    if (disabledCategories.includes(dataKey)) {
-      disabledCategories = disabledCategories.filter(item => item !== dataKey)
-    } else {
-      disabledCategories = disabledCategories.concat([dataKey])
+  periods() {
+    if (this.props.year !== null) {
+      return Array.from({ length: 53 }, (_, index) => {
+        const week = `W${String(index + 1).padStart(2, '0')}`
+        return { key: week, label: week }
+      })
     }
-    this.setState(
-      { selectedOption },
-      () => {
-        this.props.update(disabledCategories)
+
+    const durations = this.state.data.map(item => item.duration).sort()
+    const first = durations[0]
+    const last = durations[durations.length - 1]
+    const firstYear = Number(first.slice(0, 4))
+    const lastYear = Number(last.slice(0, 4))
+    const firstQuarter = Number(first.slice(-1))
+    const lastQuarter = Number(last.slice(-1))
+    const periods = []
+
+    for (let year = firstYear; year <= lastYear; year += 1) {
+      const startQuarter = year === firstYear ? firstQuarter : 1
+      const endQuarter = year === lastYear ? lastQuarter : 4
+      for (let quarter = startQuarter; quarter <= endQuarter; quarter += 1) {
+        const key = `${year}-Q${quarter}`
+        periods.push({ key, label: key })
       }
+    }
+
+    return periods
+  }
+
+  categories() {
+    return this.props.categories.filter(
+      category => !this.props.disabledCategories.includes(category)
     )
   }
 
-  formatTooltipLabel(label, payload) {
-    const total = payload.reduce((sum, item) => { return sum = sum + item.value }, 0);
-    return `${label} : ${total}`
+  isoWeekNumber(date) {
+    const target = new Date(date.getTime())
+    const day = (target.getUTCDay() + 6) % 7
+    target.setUTCDate(target.getUTCDate() - day + 3)
+    const firstThursday = new Date(Date.UTC(target.getUTCFullYear(), 0, 4))
+    return 1 + Math.round((target - firstThursday) / 604800000)
+  }
+
+  columnLabels(periods) {
+    if (this.props.year !== null) {
+      const year = Number(this.props.year)
+      const formatter = new Intl.DateTimeFormat(locale, { month: 'short' })
+      return Array.from({ length: 12 }, (_, month) => {
+        const date = new Date(Date.UTC(year, month, 7))
+        return {
+          column: this.isoWeekNumber(date) - 1,
+          text: formatter.format(date),
+        }
+      })
+    }
+
+    return periods.map(({ key }, column) => ({
+      column,
+      text: key.slice(0, 4),
+    })).filter(({ column }) => periods[column].key.endsWith('-Q1'))
   }
 
   render() {
+    const categories = this.categories()
+
+    if (
+      this.state.loading || this.state.dataYear !== this.props.year ||
+      categories.length === 0 || this.state.data.length === 0
+    ) {
+      return null
+    }
+
+    const periods = this.periods()
+    const countsByPeriod = this.state.data.reduce((counts, item) => {
+      const key = this.props.year !== null ? item.duration.slice(-3) : item.duration
+      counts[key] = item
+      return counts
+    }, {})
+    const values = categories.map(category => periods.map(
+      ({ key }) => Number(countsByPeriod[key] && countsByPeriod[key][category]) || 0
+    ))
+    if (periods.length === 0) {
+      return null
+    }
+
     return (
-      <ResponsiveContainer height={500}>
-        <BarChart
-          data={this.state.data}
-          margin={{
-            top: 20, right: 20, left: 0, bottom: 20,
-          }}
-          style={{ fontSize: '14px' }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="key" />
-          <YAxis />
-          <Tooltip
-            labelStyle={{ color: '#000', fontWeight: 'bold' }}
-            itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
-            labelFormatter={this.formatTooltipLabel}
-          />
-          <Legend onClick={this.selectBar} />
-          {this.props.categories.map((category, index) => {
-            let disabledCategories = this.props.disabledCategories.includes(category)
-            let color = this.colors[index % this.colors.length]
-            return(<Bar key={index} dataKey={category} stackId="a" fill={color} hide={disabledCategories} />)
-          })}
-        </BarChart>
-      </ResponsiveContainer>
-    );
+      <Heatmap
+        key={`${this.props.year || 'all'}-${periods.length}`}
+        className="archive-heatmap"
+        rows={categories.length}
+        columns={periods.length}
+        values={values}
+        rowLabels={categories}
+        columnLabels={this.columnLabels(periods)}
+        cellSize={14}
+        gap={3}
+        radius={2}
+        levels={8}
+        colors={[
+          '#ffefd5', '#ffdbab', '#ffc27a', '#ffa451',
+          '#ff842f', '#f5670c', '#d94a05', '#9f2a0b',
+        ]}
+        emptyColor="transparent"
+        tooltip={({ row, column, value }) => (
+          <>
+            <strong>{categories[row]}</strong><br />
+            {periods[column].label}: {value} 件
+          </>
+        )}
+        cellLabel={({ row, column, value }) => (
+          `${categories[row]}、${periods[column].label}、${value} 件`
+        )}
+        showLegend={false}
+        overflow="scroll"
+        scrollAnchor="end"
+        ariaLabel="カテゴリーと期間ごとの公開記事数を表すヒートマップ"
+        scale="quantile"
+      />
+    )
   }
 }
 
