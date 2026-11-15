@@ -1,7 +1,7 @@
 require 'openai'
 
 class EntryTagGenerator
-  MODEL = 'gpt-5-mini'
+  MODEL = 'gpt-6.1-terra'
   PROMPT = <<~EOF
 添付のブログ記事に関して、文章の内容を反映したタグを付与してください。ただし、以下の条件を遵守してください。
 
@@ -50,7 +50,7 @@ EOF
                       parameters: {
                         model: MODEL,
                         input: input,
-                        reasoning: { effort: 'minimal' }
+                        reasoning: { effort: 'low' }
                       }
                     )
                     JSON.parse(request.dig("output", 1, "content", 0, "text").strip)

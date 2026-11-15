@@ -5,7 +5,7 @@ require 'openai'
 
 module Dify
   class ArticleSummarizer
-    MODEL = 'gpt-5-mini'
+    MODEL = 'gpt-6.1-terra'
     DEFAULT_MAX_CHARS = 800
 
     PROMPT = <<~PROMPT
@@ -79,7 +79,7 @@ module Dify
         parameters: {
           model: MODEL,
           input: format(PROMPT, @max_chars, content),
-          reasoning: { effort: 'minimal' }
+          reasoning: { effort: 'low' }
         }
       )
       text = response.dig('output', 1, 'content', 0, 'text').to_s.strip

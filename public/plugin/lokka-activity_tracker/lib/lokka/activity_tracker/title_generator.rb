@@ -7,7 +7,7 @@ require 'json'
 module Lokka
   module ActivityTracker
     class TitleGenerator
-      MODEL = 'gpt-5-mini'
+      MODEL = 'gpt-6.1-terra'
       JST_OFFSET = 9 * 3600 # 9 hours in seconds
 
       PROMPT = <<~PROMPT
@@ -67,7 +67,7 @@ module Lokka
           parameters: {
             model: MODEL,
             input: build_prompt,
-            reasoning: { effort: 'minimal' }
+            reasoning: { effort: 'low' }
           }
         )
         result = JSON.parse(response.dig('output', 1, 'content', 0, 'text').strip)
