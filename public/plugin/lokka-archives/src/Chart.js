@@ -1,106 +1,111 @@
 import React, { PureComponent } from 'react'
-import {
-  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer
-} from 'recharts'
+import { ResponsiveHeatMap } from '@nivo/heatmap'
+
+const locale = window.navigator.userLanguage || window.navigator.language
+
+function HeatMapTooltip({ cell }) {
+  return (
+    <div className="archive-heatmap-tooltip">
+      <strong>{cell.serieId}</strong>
+      <span>{cell.data.x}</span>
+      <span>{cell.value || 0} 件</span>
+    </div>
+  )
+}
 
 export default class Chart extends PureComponent {
   constructor(props) {
     super(props)
-    this.state = {
-      data: [],
-      selectedOption: null
-    }
-    this.colors = [
-      '#E53935', '#D81B60', '#8E24AA', '#5E35B1', '#3949AB', '#1E88E5', '#039BE5',
-      '#00ACC1', '#00897B', '#43A047', '#7CB342', '#C0CA33', '#FDD835', '#FFB300'
-    ]
-    this.selectBar = this.selectBar.bind(this)
-    this.formatTooltipLabel = this.formatTooltipLabel.bind(this)
+    this.state = { data: [] }
   }
 
   async loadChartFromServer() {
-    let request
-    if (this.props.year !== null) {
-      request = await fetch(`/archives/chart.json?year=${this.props.year}`)
-    } else {
-      request = await fetch('/archives/chart.json')
-    }
+    const path = this.props.year !== null
+      ? `/archives/chart.json?year=${this.props.year}`
+      : '/archives/chart.json'
+    const request = await fetch(path)
     const response = await request.json()
-    const data = response.map((item) => {
-      const label = item['duration']
-      if (this.props.year !== null) {
-        const date = new Date(`${label}-01`)
-        const month = date.toLocaleDateString('default', { month: 'short' })
-        item['key'] = month
-      } else {
-        const date = new Date(`${label}-01-01`)
-        const year = date.toLocaleDateString('default', { year: 'numeric' })
-        item['key'] = year
-      }
-      return item
-    })
-    this.setState({ data: data })
+    this.setState({ data: response })
   }
 
   componentDidMount() {
     this.loadChartFromServer()
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.year !== this.props.year) {
       this.loadChartFromServer()
     }
   }
 
-  selectBar(selectedOption) {
-    let dataKey = selectedOption.dataKey.trim()
-    let disabledCategories = this.props.disabledCategories
-    if (disabledCategories.includes(dataKey)) {
-      disabledCategories = disabledCategories.filter(item => item !== dataKey)
-    } else {
-      disabledCategories = disabledCategories.concat([dataKey])
+  periodLabel(duration) {
+    if (this.props.year === null) {
+      return duration
     }
-    this.setState(
-      { selectedOption },
-      () => {
-        this.props.update(disabledCategories)
-      }
+
+    return new Intl.DateTimeFormat(locale, { month: 'short' }).format(
+      new Date(2020, Number(duration) - 1, 1)
     )
   }
 
-  formatTooltipLabel(label, payload) {
-    const total = payload.reduce((sum, item) => { return sum = sum + item.value }, 0);
-    return `${label} : ${total}`
+  heatMapData() {
+    const categories = this.props.categories.filter(
+      category => !this.props.disabledCategories.includes(category)
+    )
+
+    return categories.map(category => ({
+      id: category,
+      data: this.state.data.map(item => ({
+        x: this.periodLabel(item.duration),
+        y: item[category] || null,
+      })),
+    }))
   }
 
   render() {
+    const data = this.heatMapData()
+    const height = Math.max(260, data.length * 38 + 100)
+
+    if (data.length === 0 || this.state.data.length === 0) {
+      return null
+    }
+
     return (
-      <ResponsiveContainer height={500}>
-        <BarChart
-          data={this.state.data}
-          margin={{
-            top: 20, right: 20, left: 0, bottom: 20,
+      <section
+        className="archive-heatmap"
+        aria-label="カテゴリー別の記事数"
+        style={{ height }}
+      >
+        <ResponsiveHeatMap
+          data={data}
+          margin={{ top: 36, right: 20, bottom: 20, left: 150 }}
+          forceSquare={true}
+          xInnerPadding={0.18}
+          yInnerPadding={0.18}
+          borderRadius={2}
+          borderWidth={1}
+          borderColor="#ffffff"
+          emptyColor="#ebedf0"
+          colors={{ type: 'sequential', scheme: 'greens' }}
+          enableLabels={false}
+          axisTop={{ tickSize: 0, tickPadding: 8 }}
+          axisRight={null}
+          axisBottom={null}
+          axisLeft={{ tickSize: 0, tickPadding: 8 }}
+          tooltip={HeatMapTooltip}
+          animate={false}
+          role="img"
+          ariaLabel="カテゴリーと期間ごとの公開記事数を表すヒートマップ"
+          theme={{
+            axis: {
+              ticks: {
+                text: { fill: '#666', fontSize: 12 },
+              },
+            },
           }}
-          style={{ fontSize: '14px' }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="key" />
-          <YAxis />
-          <Tooltip
-            labelStyle={{ color: '#000', fontWeight: 'bold' }}
-            itemStyle={{ margin: '0 2px 0 4px', padding: '0' }}
-            labelFormatter={this.formatTooltipLabel}
-          />
-          <Legend onClick={this.selectBar} />
-          {this.props.categories.map((category, index) => {
-            let disabledCategories = this.props.disabledCategories.includes(category)
-            let color = this.colors[index % this.colors.length]
-            return(<Bar key={index} dataKey={category} stackId="a" fill={color} hide={disabledCategories} />)
-          })}
-        </BarChart>
-      </ResponsiveContainer>
-    );
+        />
+      </section>
+    )
   }
 }
 
