@@ -96,8 +96,12 @@ export default class Chart extends PureComponent {
         cellSize={14}
         gap={3}
         radius={2}
-        colors={['#9be9a8', '#40c463', '#30a14e', '#216e39']}
-        emptyColor="#ebedf0"
+        levels={8}
+        colors={[
+          '#ffefd5', '#ffdbab', '#ffc27a', '#ffa451',
+          '#ff842f', '#f5670c', '#d94a05', '#9f2a0b',
+        ]}
+        emptyColor="#f0f1f3"
         tooltip={({ row, column, value }) => (
           <>
             <strong>{categories[row]}</strong><br />
