@@ -144,7 +144,7 @@ export default class Chart extends PureComponent {
           '#ffefd5', '#ffdbab', '#ffc27a', '#ffa451',
           '#ff842f', '#f5670c', '#d94a05', '#9f2a0b',
         ]}
-        emptyColor="#f0f1f3"
+        emptyColor="transparent"
         tooltip={({ row, column, value }) => (
           <>
             <strong>{categories[row]}</strong><br />
