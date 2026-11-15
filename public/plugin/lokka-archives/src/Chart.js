@@ -114,6 +114,7 @@ export default class Chart extends PureComponent {
         showLegend={true}
         legendLabels={{ less: '少ない', more: '多い' }}
         overflow="scroll"
+        scrollAnchor="end"
         ariaLabel="カテゴリーと期間ごとの公開記事数を表すヒートマップ"
         scale="quantile"
       />
