@@ -6,6 +6,10 @@
   .archive-heatmap {
     margin: 1rem 0 1.5rem;
     --heatmap-label: #6e7781;
+    --heatmap-tooltip-bg: rgba(18, 18, 18, .97);
+    --heatmap-tooltip-text: #fff;
+    --heatmap-tooltip-border: rgba(255, 255, 255, .22);
+    --heatmap-tooltip-shadow: 0 12px 28px rgba(0, 0, 0, .45);
 
     .heatmap__tooltip {
       color: #fff;
