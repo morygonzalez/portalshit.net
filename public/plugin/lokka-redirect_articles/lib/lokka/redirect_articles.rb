@@ -25,6 +25,10 @@ module Lokka
       app.get '/2023/01/15/internet-is-becomming-inconvenient' do
         redirect '/2023/01/15/internet-becomes-inconvenient', 301
       end
+
+      app.get '/2026/11/15/grow-wee-like-on-github' do
+        redirect '/2026/11/15/grow-weeds-like-on-github'
+      end
     end
   end
 end
