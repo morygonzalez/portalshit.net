@@ -124,8 +124,7 @@ module Dify
       params = resolve_params(sleep_secs: sleep_secs, retries: retries, chunk_size: chunk_size, chunk_delimiter: chunk_delimiter)
 
       name2id = build_name_to_docid_map
-      doc_id  = name2id[year]
-      raise "[update_year] document not found for year=#{year} (name must be exactly '#{year}')" unless doc_id
+      doc_id = name2id[year]
 
       rows = article_collector.collect_for_year(year: year, label: 'update_year')
 
@@ -136,14 +135,25 @@ module Dify
       rows = maybe_summarize(rows, label: "update_year/#{year}")
       new_text = article_collector.compose_year_text(rows, delimiter: params[:chunking].delimiter)
 
-      with_retry(params[:retries]) do
-        dataset_client.update_document_by_text!(
-          document_id: doc_id,
-          name: year,
-          text: new_text,
-          process_rule: params[:chunking].process_rule
-        )
-        puts "[update_year] updated body for #{year} (#{doc_id}) items=#{rows.size}"
+      if doc_id
+        with_retry(params[:retries]) do
+          dataset_client.update_document_by_text!(
+            document_id: doc_id,
+            name: year,
+            text: new_text,
+            process_rule: params[:chunking].process_rule
+          )
+          puts "[update_year] updated body for #{year} (#{doc_id}) items=#{rows.size}"
+        end
+      else
+        doc_id = with_retry(params[:retries]) do
+          dataset_client.create_document_by_text!(
+            name: year,
+            text: new_text,
+            process_rule: params[:chunking].process_rule
+          )
+        end
+        puts "[update_year] created #{year} (#{doc_id}) items=#{rows.size}"
       end
 
       payload = [build_metadata_entry(doc_id, year, rows.size)]

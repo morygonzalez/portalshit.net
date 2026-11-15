@@ -28,10 +28,10 @@ namespace :knowledge do
     exporter.repair_year_metadata!(batch_size: args[:batch_size])
   end
 
-  # 年指定で1件だけ更新（本文置換＋メタ再付与）
+  # 年指定で1件だけ更新（本文置換＋メタ再付与。未作成なら新規作成）
   # 使い方:
   #   DATASET_ID=... DATASET_API_KEY=... bundle exec rake "knowledge:update_year[2025,1.2,6]"
-  desc '年指定で1件だけドキュメントを更新'
+  desc '年指定で1件だけドキュメントを更新（未作成なら新規作成）'
   task :update_year, [:year, :sleep_secs, :retries, :chunk_size, :chunk_delimiter] do |_, args|
     exporter = Dify::KnowledgeExporter.new
     exporter.update_year!(
