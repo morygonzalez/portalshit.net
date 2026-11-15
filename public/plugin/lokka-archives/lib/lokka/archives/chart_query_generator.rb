@@ -43,7 +43,7 @@ module Lokka
       end
 
       def identifier
-        @identifier ||= @year.present? ? :month : :year
+        @identifier ||= @year.present? ? :week : :quarter
       end
 
       def query
@@ -54,7 +54,7 @@ module Lokka
         duration = identifier
         posts = Post.unscoped.published.select(%i[id category_id created_at]).includes(:category)
         if year
-          posts.where(year: year)
+          posts = posts.where(created_at: Time.new(year)...Time.new(year + 1))
         end
         grouped = posts.group_by {|post| [post.created_at.send(duration), post.category&.title] }
         group_by_duration = grouped.group_by {|(duration, category), entries| duration }
@@ -69,19 +69,19 @@ module Lokka
 
       def postgres_query
         case identifier
-        when :month
-          postgres_monthly_query
-        when :year
-          postgres_yearly_query
+        when :week
+          postgres_weekly_query
+        when :quarter
+          postgres_quarterly_query
         else
           raise 'NoDurationSpecified'
         end
       end
 
-      def postgres_yearly_query
+      def postgres_quarterly_query
         <<~SQL
           SELECT
-            TO_CHAR(entries.created_at, 'YYYY') AS duration,
+            TO_CHAR(entries.created_at, 'YYYY') || '-Q' || EXTRACT(QUARTER FROM entries.created_at) AS duration,
             categories.title AS category,
             COUNT(1) AS count
           FROM entries
@@ -93,25 +93,18 @@ module Lokka
         SQL
       end
 
-      def postgres_monthly_query
+      def postgres_weekly_query
         <<~SQL
-          WITH date_series AS (
-            SELECT
-              generate_series(
-                date_trunc('month', date('#{year}-01-01')),
-                date('#{year}-12-31'),
-                '1 month'
-              ) AS month
-          )
           SELECT
-            date_series.yearmonth AS duration,
+            TO_CHAR(entries.created_at, 'IYYY-"W"IW') AS duration,
             categories.title AS category,
             COUNT(1) AS count
-          FROM date_series
-          LEFT JOIN entries
-            ON to_char(entries.created_at, 'YYYY-MM') = date_series.yearmonth
-            AND entries.draft = FALSE AND entries.type = 'Post'
-          LEFT JOIN categories ON categories.id = entries.category_id
+          FROM entries
+          INNER JOIN categories ON categories.id = entries.category_id
+          WHERE entries.draft = FALSE
+            AND entries.type = 'Post'
+            AND entries.created_at >= '#{year}-01-01'
+            AND entries.created_at < '#{year.to_i + 1}-01-01'
           GROUP BY duration, category
           ORDER BY duration
         SQL
@@ -119,19 +112,19 @@ module Lokka
 
       def mysql_query
         case identifier
-        when :month
-          mysql_monthly_query
-        when :year
-          mysql_yearly_query
+        when :week
+          mysql_weekly_query
+        when :quarter
+          mysql_quarterly_query
         else
           raise 'NoDurationSpecified'
         end
       end
 
-      def mysql_yearly_query
+      def mysql_quarterly_query
         <<~SQL
           SELECT
-            DATE_FORMAT(entries.created_at, '%Y') AS duration,
+            CONCAT(YEAR(entries.created_at), '-Q', QUARTER(entries.created_at)) AS duration,
             categories.title as category,
             COUNT(1) AS count
           FROM entries
@@ -142,35 +135,34 @@ module Lokka
         SQL
       end
 
-      def mysql_monthly_query
+      def mysql_weekly_query
         <<~SQL
           SELECT
-            date_series.yearmonth AS duration,
+            DATE_FORMAT(entries.created_at, '%x-W%v') AS duration,
             categories.title as category,
             COUNT(1) AS count
-          FROM (
-            SELECT 0 row_no, 1 yearmonth
-            WHERE (@num:=1-1)*0
-            UNION ALL
-            SELECT @num:=@num+1 row_no, concat('#{@year}-', LPAD(@num, 2, '0')) AS yearmonth
-            FROM information_schema.COLUMNS
-            LIMIT 12
-          ) AS date_series
-          LEFT JOIN entries
-            ON DATE_FORMAT(entries.created_at, '%Y-%m') = date_series.yearmonth
-            AND entries.draft = FALSE AND entries.type = 'Post'
-          LEFT JOIN categories ON categories.id = entries.category_id
+          FROM entries
+          INNER JOIN categories ON categories.id = entries.category_id
+          WHERE entries.draft = FALSE
+            AND entries.type = 'Post'
+            AND entries.created_at >= '#{year}-01-01'
+            AND entries.created_at < '#{year.to_i + 1}-01-01'
           GROUP BY duration, category
           ORDER BY duration
         SQL
       end
 
       def sqlite_query
-        duration = identifier == :month ? '%m' : '%Y'
+        duration = identifier == :week ? '%Y-W%W' : '%Y-Q'
         year_filter = @year.present? ? %Q(AND entries.created_at BETWEEN '#{@year}-01-01' AND '#{@year}-12-31') : nil
+        duration_sql = if identifier == :quarter
+                         %Q(strftime('%Y', entries.created_at) || '-Q' || ((CAST(strftime('%m', entries.created_at) AS INTEGER) - 1) / 3 + 1))
+                       else
+                         %Q(strftime('#{duration}', entries.created_at))
+                       end
         <<~SQL
           SELECT
-            strftime('#{duration}', entries.created_at) AS duration,
+            #{duration_sql} AS duration,
             categories.title as category,
             COUNT(1) AS count
           FROM entries
