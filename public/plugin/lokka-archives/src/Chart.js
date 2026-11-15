@@ -78,8 +78,6 @@ export default class Chart extends PureComponent {
     const values = categories.map(category => periods.map(
       ({ key }) => Number(countsByPeriod[key] && countsByPeriod[key][category]) || 0
     ))
-    const labelInterval = Math.ceil(periods.length / 12)
-
     if (periods.length === 0) {
       return null
     }
@@ -91,9 +89,10 @@ export default class Chart extends PureComponent {
         columns={periods.length}
         values={values}
         rowLabels={categories}
-        columnLabels={periods.map(({ label }, column) => ({ column, text: label })).filter(
-          ({ column }) => column % labelInterval === 0
-        )}
+        columnLabels={periods.map(({ key }, column) => ({
+          column,
+          text: key.slice(0, 4),
+        })).filter(({ column }) => periods[column].key.endsWith('-Q1'))}
         cellSize={14}
         gap={3}
         radius={2}
