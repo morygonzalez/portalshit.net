@@ -123,8 +123,8 @@ module Dify
       year = (year || Time.now.year.to_s).to_s
       params = resolve_params(sleep_secs: sleep_secs, retries: retries, chunk_size: chunk_size, chunk_delimiter: chunk_delimiter)
 
-      name2id = build_name_to_docid_map
-      doc_id = name2id[year]
+      document = dataset_client.list_all_documents.find { |item| item['name'].to_s == year }
+      doc_id = document && document['id']
 
       rows = article_collector.collect_for_year(year: year, label: 'update_year')
 
@@ -136,6 +136,8 @@ module Dify
       new_text = article_collector.compose_year_text(rows, delimiter: params[:chunking].delimiter)
 
       if doc_id
+        ensure_document_available!(document, params)
+
         with_retry(params[:retries]) do
           dataset_client.update_document_by_text!(
             document_id: doc_id,
@@ -396,6 +398,33 @@ module Dify
       client.list_all_documents.each_with_object({}) do |document, map|
         map[document['name'].to_s] = document['id']
       end
+    end
+
+    # Dify Cloud can disable inactive documents. update_by_text rejects those
+    # documents, so enable and verify the target before updating its content.
+    def ensure_document_available!(document, params)
+      return if document_available?(document)
+
+      document_id = document.fetch('id')
+      with_retry(params[:retries]) do
+        dataset_client.enable_documents!([document_id])
+        sleep 1.0
+
+        refreshed = dataset_client.list_all_documents.find { |item| item['id'] == document_id }
+        unless document_available?(refreshed)
+          status = refreshed && refreshed['display_status']
+          raise "[update_year] document is not available after enabling id=#{document_id} status=#{status || 'missing'}"
+        end
+      end
+
+      puts "[update_year] re-enabled #{document_id}"
+    end
+
+    def document_available?(document)
+      return false unless document && document['enabled']
+
+      status = document['display_status']
+      status.nil? || status == 'available'
     end
 
     def with_retry(retries)

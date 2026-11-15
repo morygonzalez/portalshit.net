@@ -25,8 +25,8 @@ BIN=/var/www/deploys/portalshit/current/bin
 0 4 * * 0 $BIN/run_update_similarity true
 0 5 * * 0 $BIN/run_update_search_index true
 
-# knowledge touch (every 5 days)
-0 3 */5 * * $BIN/run_knowledge_touch >> /var/www/app/portalshit/log/knowledge_touch.log 2>&1
+# knowledge touch (daily; re-enable documents disabled by Dify Cloud)
+0 3 * * * $BIN/run_knowledge_touch >> /var/www/app/portalshit/log/knowledge_touch.log 2>&1
 
 # knowledge popular sync (daily)
 10 2 * * * $BIN/run_knowledge_popular >> /var/www/app/portalshit/log/knowledge_popular.log 2>&1
