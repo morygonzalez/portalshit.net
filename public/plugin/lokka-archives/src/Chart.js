@@ -2,19 +2,34 @@ import React, { PureComponent } from 'react'
 import { Heatmap } from '@thilakbhat/heatmap-ui'
 import '@thilakbhat/heatmap-ui/styles.css'
 
+const locale = window.navigator.userLanguage || window.navigator.language
+
 export default class Chart extends PureComponent {
   constructor(props) {
     super(props)
-    this.state = { data: [] }
+    this.state = { data: [], dataYear: null, loading: false }
+    this.requestId = 0
   }
 
   async loadChartFromServer() {
-    const path = this.props.year !== null
-      ? `/archives/chart.json?year=${this.props.year}`
+    const requestId = ++this.requestId
+    const year = this.props.year
+    const path = year !== null
+      ? `/archives/chart.json?year=${year}`
       : '/archives/chart.json'
-    const request = await fetch(path)
-    const response = await request.json()
-    this.setState({ data: response })
+    this.setState({ data: [], loading: true })
+
+    try {
+      const request = await fetch(path)
+      const response = await request.json()
+      if (requestId === this.requestId) {
+        this.setState({ data: response, dataYear: year, loading: false })
+      }
+    } catch (error) {
+      if (requestId === this.requestId) {
+        this.setState({ loading: false })
+      }
+    }
   }
 
   componentDidMount() {
@@ -62,10 +77,40 @@ export default class Chart extends PureComponent {
     )
   }
 
+  isoWeekNumber(date) {
+    const target = new Date(date.getTime())
+    const day = (target.getUTCDay() + 6) % 7
+    target.setUTCDate(target.getUTCDate() - day + 3)
+    const firstThursday = new Date(Date.UTC(target.getUTCFullYear(), 0, 4))
+    return 1 + Math.round((target - firstThursday) / 604800000)
+  }
+
+  columnLabels(periods) {
+    if (this.props.year !== null) {
+      const year = Number(this.props.year)
+      const formatter = new Intl.DateTimeFormat(locale, { month: 'short' })
+      return Array.from({ length: 12 }, (_, month) => {
+        const date = new Date(Date.UTC(year, month, 7))
+        return {
+          column: this.isoWeekNumber(date) - 1,
+          text: formatter.format(date),
+        }
+      })
+    }
+
+    return periods.map(({ key }, column) => ({
+      column,
+      text: key.slice(0, 4),
+    })).filter(({ column }) => periods[column].key.endsWith('-Q1'))
+  }
+
   render() {
     const categories = this.categories()
 
-    if (categories.length === 0 || this.state.data.length === 0) {
+    if (
+      this.state.loading || this.state.dataYear !== this.props.year ||
+      categories.length === 0 || this.state.data.length === 0
+    ) {
       return null
     }
 
@@ -84,15 +129,13 @@ export default class Chart extends PureComponent {
 
     return (
       <Heatmap
+        key={`${this.props.year || 'all'}-${periods.length}`}
         className="archive-heatmap"
         rows={categories.length}
         columns={periods.length}
         values={values}
         rowLabels={categories}
-        columnLabels={periods.map(({ key }, column) => ({
-          column,
-          text: key.slice(0, 4),
-        })).filter(({ column }) => periods[column].key.endsWith('-Q1'))}
+        columnLabels={this.columnLabels(periods)}
         cellSize={14}
         gap={3}
         radius={2}
