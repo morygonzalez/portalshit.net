@@ -154,8 +154,7 @@ export default class Chart extends PureComponent {
         cellLabel={({ row, column, value }) => (
           `${categories[row]}、${periods[column].label}、${value} 件`
         )}
-        showLegend={true}
-        legendLabels={{ less: '少ない', more: '多い' }}
+        showLegend={false}
         overflow="scroll"
         scrollAnchor="end"
         ariaLabel="カテゴリーと期間ごとの公開記事数を表すヒートマップ"
