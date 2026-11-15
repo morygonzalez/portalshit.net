@@ -103,8 +103,8 @@ module Lokka
           INNER JOIN categories ON categories.id = entries.category_id
           WHERE entries.draft = FALSE
             AND entries.type = 'Post'
-            AND entries.created_at >= '#{year}-01-01'
-            AND entries.created_at < '#{year.to_i + 1}-01-01'
+            AND entries.created_at >= '#{@year}-01-01'
+            AND entries.created_at < '#{@year.to_i + 1}-01-01'
           GROUP BY duration, category
           ORDER BY duration
         SQL
@@ -145,8 +145,8 @@ module Lokka
           INNER JOIN categories ON categories.id = entries.category_id
           WHERE entries.draft = FALSE
             AND entries.type = 'Post'
-            AND entries.created_at >= '#{year}-01-01'
-            AND entries.created_at < '#{year.to_i + 1}-01-01'
+            AND entries.created_at >= '#{@year}-01-01'
+            AND entries.created_at < '#{@year.to_i + 1}-01-01'
           GROUP BY duration, category
           ORDER BY duration
         SQL
