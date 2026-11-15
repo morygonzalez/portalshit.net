@@ -1,17 +1,8 @@
 import React, { PureComponent } from 'react'
-import { ResponsiveHeatMap } from '@nivo/heatmap'
+import { Heatmap } from '@thilakbhat/heatmap-ui'
+import '@thilakbhat/heatmap-ui/styles.css'
 
 const locale = window.navigator.userLanguage || window.navigator.language
-
-function HeatMapTooltip({ cell }) {
-  return (
-    <div className="archive-heatmap-tooltip">
-      <strong>{cell.serieId}</strong>
-      <span>{cell.data.x}</span>
-      <span>{cell.value || 0} 件</span>
-    </div>
-  )
-}
 
 export default class Chart extends PureComponent {
   constructor(props) {
@@ -48,63 +39,53 @@ export default class Chart extends PureComponent {
     )
   }
 
-  heatMapData() {
-    const categories = this.props.categories.filter(
+  categories() {
+    return this.props.categories.filter(
       category => !this.props.disabledCategories.includes(category)
     )
-
-    return categories.map(category => ({
-      id: category,
-      data: this.state.data.map(item => ({
-        x: this.periodLabel(item.duration),
-        y: item[category] || null,
-      })),
-    }))
   }
 
   render() {
-    const data = this.heatMapData()
-    const height = Math.max(260, data.length * 38 + 100)
+    const categories = this.categories()
+    const periods = this.state.data.map(item => this.periodLabel(item.duration))
+    const values = categories.map(category => (
+      this.state.data.map(item => item[category] || 0)
+    ))
+    const labelInterval = Math.ceil(periods.length / 12)
 
-    if (data.length === 0 || this.state.data.length === 0) {
+    if (categories.length === 0 || periods.length === 0) {
       return null
     }
 
     return (
-      <section
+      <Heatmap
         className="archive-heatmap"
-        aria-label="カテゴリー別の記事数"
-        style={{ height }}
-      >
-        <ResponsiveHeatMap
-          data={data}
-          margin={{ top: 36, right: 20, bottom: 20, left: 150 }}
-          forceSquare={true}
-          xInnerPadding={0.18}
-          yInnerPadding={0.18}
-          borderRadius={2}
-          borderWidth={1}
-          borderColor="#ffffff"
-          emptyColor="#ebedf0"
-          colors={{ type: 'sequential', scheme: 'greens' }}
-          enableLabels={false}
-          axisTop={{ tickSize: 0, tickPadding: 8 }}
-          axisRight={null}
-          axisBottom={null}
-          axisLeft={{ tickSize: 0, tickPadding: 8 }}
-          tooltip={HeatMapTooltip}
-          animate={false}
-          role="img"
-          ariaLabel="カテゴリーと期間ごとの公開記事数を表すヒートマップ"
-          theme={{
-            axis: {
-              ticks: {
-                text: { fill: '#666', fontSize: 12 },
-              },
-            },
-          }}
-        />
-      </section>
+        rows={categories.length}
+        columns={periods.length}
+        values={values}
+        rowLabels={categories}
+        columnLabels={periods.map((period, column) => ({ column, text: period })).filter(
+          ({ column }) => column % labelInterval === 0
+        )}
+        cellSize={11}
+        gap={3}
+        radius={2}
+        colors={['#9be9a8', '#40c463', '#30a14e', '#216e39']}
+        emptyColor="#ebedf0"
+        tooltip={({ row, column, value }) => (
+          <>
+            <strong>{categories[row]}</strong><br />
+            {periods[column]}: {value} 件
+          </>
+        )}
+        cellLabel={({ row, column, value }) => (
+          `${categories[row]}、${periods[column]}、${value} 件`
+        )}
+        showLegend={true}
+        legendLabels={{ less: '少ない', more: '多い' }}
+        overflow="scroll"
+        ariaLabel="カテゴリーと期間ごとの公開記事数を表すヒートマップ"
+      />
     )
   }
 }

@@ -31,6 +31,10 @@ module.exports = {
             plugins: ['@babel/plugin-proposal-class-properties', '@emotion']
           }
         }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
