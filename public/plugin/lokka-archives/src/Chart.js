@@ -76,7 +76,7 @@ export default class Chart extends PureComponent {
       return counts
     }, {})
     const values = categories.map(category => periods.map(
-      ({ key }) => (countsByPeriod[key] && countsByPeriod[key][category]) || 0
+      ({ key }) => Number(countsByPeriod[key] && countsByPeriod[key][category]) || 0
     ))
     const labelInterval = Math.ceil(periods.length / 12)
 
