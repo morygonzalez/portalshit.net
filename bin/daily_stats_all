@@ -13,4 +13,3 @@ BIN="$(dirname "$0")"
 "$BIN/request_time" all
 "$BIN/status_code" all
 "$BIN/chat_api_count" all
-"$BIN/ip_to_ignore"

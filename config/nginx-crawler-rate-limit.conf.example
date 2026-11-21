@@ -17,7 +17,7 @@
 # 3. sudo nginx -t && sudo systemctl reload nginx
 #
 # `limit_req` で返した 429 は access.log に残る。Nginx Status Codes と
-# 4xx IP Ranking で件数を確認すること。UA は偽装できるため、これは悪意のある
+# などで件数を確認すること。UA は偽装できるため、これは悪意のある
 # 攻撃者への対策ではなく、既知クローラーの急な並列巡回から Puma を守るための設定。
 
 # --- http {} コンテキスト ---------------------------------------------------

@@ -5,14 +5,12 @@ UA_TO_IGNORE=`cat ${APP_DIR}/bin/conf/ua_to_ignore.txt`
 REFERER_TO_IGNORE=`cat ${APP_DIR}/bin/conf/referer_to_ignore.txt`
 REQUEST_PATH_TO_IGNORE=`cat ${APP_DIR}/bin/conf/request_path_to_ignore.txt`
 LOG_AGGREGATION_DIR="${APP_DIR}/public/log-aggregation"
-IP_TO_IGNORE=`cat ${LOG_AGGREGATION_DIR}/ip-to-ignore.txt`
 
 function access_ranking() {
   target_date=$1
   echo "Access Ranking ${target_date}"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
-    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:${target_date}" \
@@ -29,7 +27,6 @@ function referer_ranking() {
   echo "Referer Ranking ${target_date}"
   find ${APP_DIR}/log/access.log* \
     | xargs zcat -f \
-    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP ${UA_TO_IGNORE} \
     | grep -viP ${REFERER_TO_IGNORE} \
     | grep "time:${target_date}" \

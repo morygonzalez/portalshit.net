@@ -17,29 +17,16 @@
 
 # --- http {} コンテキスト ---------------------------------------------------
 
-# OGP カードはチャットの 1 応答につき数件まとめて飛ぶのでやや緩め。
-limit_req_zone $binary_remote_addr zone=chat_api:10m rate=60r/m;
-
-# メッセージ送信は Dify / OpenAI のクレジットを消費するので厳しめ。
-limit_req_zone $binary_remote_addr zone=chat_messages:10m rate=10r/m;
-
-# SSE の同時接続数（IP ごと）。1 人が大量に張るのを防ぐ。
-limit_conn_zone $binary_remote_addr zone=chat_conn:10m;
-
-# SSE の同時接続数（サイト全体）。上の IP ごとの制限では総量を抑えられない
-# ため（別 IP から 4 人来れば 8 スレッドが埋まる）、サイト全体の上限も置く。
+# SSE の同時接続数（サイト全体）を制限する。
 # Puma の 8 スレッドのうち半分までをチャットに許し、残りを記事ページ用に残す。
 limit_conn_zone $server_name zone=chat_conn_global:10m;
 
-limit_req_status 429;
 limit_conn_status 429;
 
 # --- server {} コンテキスト -------------------------------------------------
 # proxy_pass / proxy_set_header の行は既存の location の設定に合わせること。
 
 location = /api/chat/messages {
-    limit_req zone=chat_messages burst=5 nodelay;
-    limit_conn chat_conn 2;
     limit_conn chat_conn_global 4;
 
     # SSE なのでバッファリングとタイムアウトの設定が必要（既存設定があれば流用）
@@ -54,8 +41,6 @@ location = /api/chat/messages {
 }
 
 location ^~ /api/chat/ {
-    limit_req zone=chat_api burst=20 nodelay;
-    limit_conn chat_conn 4;
 
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;

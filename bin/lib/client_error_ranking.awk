@@ -1,14 +1,10 @@
 BEGIN { FS = "\t" }
 
 {
-  ip = ""
   path = ""
   status = ""
   for (i = 1; i <= NF; i++) {
-    if ($i ~ /^remote_addr:/) {
-      ip = $i
-      sub(/^remote_addr:/, "", ip)
-    } else if ($i ~ /^request_uri:/) {
+    if ($i ~ /^request_uri:/) {
       path = $i
       sub(/^request_uri:/, "", path)
     } else if ($i ~ /^status:/) {
@@ -21,8 +17,6 @@ BEGIN { FS = "\t" }
     next
   }
 
-  if (ip != "") ip_total[ip]++
-
   if (status == "404") {
     if (path != "") not_found_path_total[path]++
   } else {
@@ -31,7 +25,6 @@ BEGIN { FS = "\t" }
 }
 
 END {
-  dump_simple(ip_total, ip_file)
   dump_simple(not_found_path_total, not_found_path_file)
   dump_simple(other_path_total, other_path_file)
 }

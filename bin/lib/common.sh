@@ -8,7 +8,6 @@ readonly CONFIG_DIR="${APP_DIR}/bin/conf"
 readonly UA_TO_IGNORE=$(cat "${CONFIG_DIR}/ua_to_ignore.txt" 2>/dev/null || echo "")
 readonly REFERER_TO_IGNORE=$(cat "${CONFIG_DIR}/referer_to_ignore.txt" 2>/dev/null || echo "")
 readonly REQUEST_PATH_TO_IGNORE=$(cat "${CONFIG_DIR}/request_path_to_ignore.txt" 2>/dev/null || echo "")
-readonly IP_TO_IGNORE=$(cat "${LOG_AGGREGATION_DIR}/ip-to-ignore.txt")
 
 # ディレクトリ確認と作成
 mkdir -p "${LOG_AGGREGATION_DIR}"
@@ -21,7 +20,6 @@ filter_logs() {
   find "${LOG_DIR}" -name "access.log*" \
     | xargs zcat -f \
     | grep -P "status:${status}" \
-    | grep -vP "remote_addr:\(${IP_TO_IGNORE}\)" \
     | grep -viP "${UA_TO_IGNORE}" \
     | grep -viP "${REFERER_TO_IGNORE}" \
     | grep -vP "request_uri:${REQUEST_PATH_TO_IGNORE}" \
