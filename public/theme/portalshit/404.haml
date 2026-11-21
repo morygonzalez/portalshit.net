@@ -8,12 +8,6 @@
       %code= request.path_info
     %p= link_to 'トップページへ戻る', '/', class: 'not-found-home'
 
-- if not_found_candidates.any?
-  %section#not_found_candidates
-    %h2 こちらの記事をお探しですか？
-    - not_found_candidates.each do |candidate|
-      = Lokka::OGP::LocalEntry.card_for_entry(candidate)
-
 %section#not_found_search
   %h2= t('search')
   .search-field

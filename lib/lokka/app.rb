@@ -116,6 +116,9 @@ module Lokka
         status 404
       end
 
+      candidate = not_found_candidate
+      return redirect(candidate.link, 302) if candidate && candidate.link != request.path_info
+
       render404 = render_any(:'404', layout: 'layout')
       return render404 if render404.present?
 

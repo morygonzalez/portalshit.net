@@ -79,16 +79,17 @@ module Lokka
       "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
     end
 
-    def not_found_candidates
-      @not_found_candidates ||=
-        begin
-          all_slugs = Entry.published.where.not(slug: [nil, '']).pluck(:slug)
-          slugs = all_slugs.reject { |s| s.match?(/\A\d+\z/) }
-          spell_checker = DidYouMean::SpellChecker.new(dictionary: slugs)
-          current_slug = request.path_info.split('/').last
-          slug_candidate = spell_checker.correct(current_slug)
-          Entry.published.where(slug: slug_candidate)
-        end
+    def not_found_candidate
+      all_slugs = Entry.published.where.not(slug: [nil, '']).pluck(:slug)
+      slugs = all_slugs.reject { |slug| slug.match?(/\A\d+\z/) }
+      current_slug = request.path_info.split('/').last
+      return if current_slug.blank?
+
+      candidates = DidYouMean::SpellChecker.new(dictionary: slugs).correct(current_slug)
+      return unless candidates.one?
+
+      entries = Entry.published.where(slug: candidates).limit(2).to_a
+      entries.first if entries.one?
     end
 
     def popular_keywords
