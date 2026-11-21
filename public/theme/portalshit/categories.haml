@@ -1,25 +1,4 @@
-%section
+%section.category-cards
   %h2= t('listing_categories')
   %p= t('theme.categories.description')
-
-- @entries_group_by_category.each do |category, entries|
-  %article.category{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting', class: category.slug }
-    %header
-      %h2{ class: category.slug }
-        = link_to category.title, category.link
-      .description= category.description
-      %ul.meta
-        %li.last_updated_at== #{t('theme.last_updated')} #{l entries.map(&:created_at).max, format: :long}
-        %li== #{t('theme.entry_count')} #{@entry_lengths[category.id]}
-    %section
-      - post = entries.delete_if {|item| entries.index(0) == item }.first
-      .new-entry
-        = partial :_entry_cards_featured, locals: { post: post }
-      .past-entries
-        - entries.each_with_index do |post, index|
-          - next if index == 0
-          = partial :_entry_cards_item, locals: { post: post }
-    %footer
-      - category_link = %(<span class="#{category.slug}">#{category.title}</span>)
-      - title = %Q(<q>#{t('theme.read_more_in_category', category: category_link)}</q>).html_safe
-      %p.read-more= link_to title, category.link
+  = partial :_category_cards, locals: { categories: @category_cards, latest_posts: @latest_posts, entry_lengths: @entry_lengths }

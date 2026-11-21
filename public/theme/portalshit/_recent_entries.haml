@@ -1,0 +1,10 @@
+%article#recent_entries
+  %h2= t('recent_entries')
+  %section.recent
+    - if post = posts.first
+      .new-entry
+        = partial :_entry_cards_featured, locals: { post: post }
+      .past-entries
+        - posts.each_with_index do |post, index|
+          - next if index == 0
+          = partial :_entry_cards_item, locals: { post: post }

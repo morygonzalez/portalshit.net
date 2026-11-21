@@ -13,13 +13,42 @@
   padding: 20px 30px;
   min-height: 500px;
 
+  #not_found_description {
+    .not-found-code {
+      margin: 0 0 .5rem;
+      color: $light-link-color;
+      font-size: .85em;
+      font-weight: bold;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h2 { margin-bottom: 1rem; }
+    .description { margin: 0; }
+    .description p { margin: .75em 0; }
+    .not-found-path {
+      font-size: .85em;
+      overflow-wrap: anywhere;
+      span { margin-right: .5em; }
+    }
+    .not-found-home { font-weight: bold; }
+  }
+
   #not_found_search {
     .search-field {
-      margin: 1em 1em 2em;
+      margin: 0;
+
+      label { display: block; margin-bottom: .5em; }
+      .not-found-search-controls {
+        display: flex;
+        gap: .5em;
+        max-width: 500px;
+      }
 
       input {
+        box-sizing: border-box;
         width: 100%;
-        max-width: 350px;
+        min-width: 0;
         height: 40px;
         border: solid 1px hsl(0, 0%, 80%);
         padding-left: 10px;
@@ -29,12 +58,55 @@
         // 背景がモードによらず白なので、文字色やクリアボタンなどブラウザ既定の
         // 描画も明るい配色で固定する（html 側の `color-scheme` を打ち消す）。
         color-scheme: light;
+        color: #16160e;
       }
+
+      button {
+        flex: none;
+        padding: 0 1.2em;
+        border: 0;
+        border-radius: 4px;
+        background: #a60000;
+        color: #fff;
+        font-size: .9em;
+        cursor: pointer;
+      }
+
+      p { font-size: .85em; line-height: 1.8; }
 
       span.keyword {
         margin: auto .3em;
       }
     }
+  }
+
+  .category-cards {
+    h2 { margin-bottom: 1em; }
+
+    .category-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .category-card {
+      min-width: 0;
+      padding: 1rem;
+      border: 1px solid rgba($meta-text-color, .3);
+      border-radius: $radius;
+      background: rgba($meta-text-color, .06);
+
+      h3 { margin: 0 0 .75rem; font-size: 1em; }
+      h4 { margin: 0 0 .4rem; font-size: .95em; line-height: 1.5; overflow-wrap: anywhere; }
+    }
+
+    .category-card-entry { display: flex; gap: 1rem; align-items: flex-start; }
+    .category-card-image { flex: 0 0 90px; }
+    .category-card-image img { display: block; width: 90px; height: 90px; object-fit: cover; border-radius: $radius; }
+    .category-card-details { min-width: 0; }
+    .category-card-description { margin: 0 0 .75rem; font-size: .85em; line-height: 1.6; overflow-wrap: anywhere; }
+    .category-card-meta { margin: 0 0 .75rem; font-size: .8em; opacity: .75; }
+    .category-card-meta-separator { margin: 0 .35em; }
   }
 
   > section, > article, > aside {
@@ -49,7 +121,7 @@
     }
   }
 
-  #site_description, #not_found_description {
+  #site_description {
     h2 {
       margin-bottom: 2rem;
     }
@@ -309,6 +381,8 @@
     margin: 0;
     width: 100%;
     padding: .5em 0;
+
+    .category-cards .category-card-grid { grid-template-columns: 1fr; }
 
     #recent_entries, .category, .popular {
       @include entry-cards-mobile;

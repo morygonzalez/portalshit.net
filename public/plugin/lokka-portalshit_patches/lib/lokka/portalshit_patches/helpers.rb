@@ -8,6 +8,22 @@ module Lokka
       )
     end
 
+    def latest_posts_by_category(categories)
+      Post.published.includes(:category).where(category_id: categories.map(&:id)).where(<<~SQL, 'Post', false).index_by(&:category_id)
+        NOT EXISTS (
+          SELECT 1 FROM entries newer
+          WHERE newer.category_id = entries.category_id
+            AND newer.type = ? AND newer.draft = ?
+            AND (newer.created_at > entries.created_at
+              OR (newer.created_at = entries.created_at AND newer.id > entries.id))
+        )
+      SQL
+    end
+
+    def published_post_counts_by_category
+      Post.published.reorder(nil).group(:category_id).count
+    end
+
     def bread_crumb
       return '' if @bread_crumbs.nil? || @bread_crumbs.empty?
 

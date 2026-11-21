@@ -86,30 +86,11 @@ module Lokka
     get '/categories' do
       @theme_types << :entries
 
-      query = <<~SQL
-        select entries.id
-        from entries
-        inner join (
-          select
-          category_id,
-            group_concat(id order by created_at desc) as entry_ids,
-            count(id) as entry_count,
-            max(created_at) as last_created_at
-          from entries
-          where entries.draft = false
-          group by category_id
-        ) as grouped_entries
-        on grouped_entries.category_id = entries.category_id and find_in_set(id, entry_ids) between 1 and 4
-        inner join categories on categories.id = entries.category_id
-        order by last_created_at desc, entries.id desc;
-      SQL
-      entry_ids = ActiveRecord::Base.connection.select_all(query).rows.flatten
-      entries = Entry.includes(:category, :user, :tags, :public_comments).where(id: entry_ids)
-      @entries_group_by_category = entries.each_with_object({}) {|entry, result|
-        result[entry.category] ||= []
-        result[entry.category] << entry
-      }
-      @entry_lengths = Entry.unscoped.published.group(:category_id).count
+      categories = sorted_categories
+      @latest_posts = latest_posts_by_category(categories)
+      @category_cards = categories.select { |category| @latest_posts.key?(category.id) }.
+        sort_by { |category| [@latest_posts[category.id].created_at, @latest_posts[category.id].id] }.reverse
+      @entry_lengths = published_post_counts_by_category
 
       @title = %Q(#{t('categories')} - #{@site.title})
 

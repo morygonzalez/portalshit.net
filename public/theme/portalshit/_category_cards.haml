@@ -1,0 +1,17 @@
+.category-card-grid
+  - categories.each do |category|
+    - if post = latest_posts[category.id]
+      %article.category-card
+        %h3= link_to category.title, category.link
+        - if category.description.present?
+          %p.category-card-description= category.description
+        %p.category-card-meta
+          %span
+            = t('theme.last_updated')
+            %time{ datetime: post.created_at.iso8601 }= l(post.created_at.to_date, format: :long)
+          %span.category-card-meta-separator{ 'aria-hidden': 'true' } /
+          %span= "#{t('theme.entry_count')} #{entry_lengths.fetch(category.id, 0)}"
+        .category-card-entry
+          = link_to image_tag("https://portalshit.net/imageproxy/200x200/#{post.cover_image}", alt: ''), post.link, class: 'category-card-image', tabindex: '-1', 'aria-hidden': 'true'
+          .category-card-details
+            %h4= link_to post.title, post.link
