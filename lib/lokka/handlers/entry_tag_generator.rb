@@ -1,4 +1,5 @@
 require 'openai'
+require_relative 'openai_response_text'
 
 class EntryTagGenerator
   MODEL = 'gpt-6.1-terra'
@@ -53,7 +54,7 @@ EOF
                         reasoning: { effort: 'low' }
                       }
                     )
-                    JSON.parse(request.dig("output", 1, "content", 0, "text").strip)
+                    JSON.parse(OpenAIResponseText.extract(request).strip)
                   rescue => e
                     puts "タグ生成エラー: #{e.message}"
                     nil
