@@ -3,7 +3,7 @@
 ## ページ構造と画像
 
 - 共通構造は [`layout.haml`](../../public/theme/portalshit/layout.haml) のヘッダー、`main#content`、フッター。ヘッダーは写真を `cover`、上中央に配置し下から暗いグラデーションを重ねる。内側は幅 90%・最大 1280px・最小高 350px。サイト名は太字 3em/62px の Helvetica 系。背景画像はモードと `data-bg-*` により変わる。640px 以下は内側幅 95%・高さ 200px。根拠: [`_header.scss`](../../public/theme/portalshit/styles/layout/_header.scss)、`_theme.scss`、`_mixins.scss`。
-- ヘッダーナビは Theme / About / Archives / Search、Font Awesome アイコンと半透明の明色背景。Theme は OS / light / dark のメニュー、Search はモーダル。パンくずと写真の説明はヘッダー下部。フッターはデスクトップで3列、640px 以下は縦並び。具体的な構造・hover・モバイルの詳細は `layout.haml`、`_header.scss`、`_footer.scss` を参照。
+- ヘッダーナビは Theme / About / Archives / Search、Font Awesome アイコンと半透明の明色背景。Theme は OS / light / dark のメニュー、Search はモーダル。検索モーダルはライトモードでは背景 `#212121`・文字とリンク `#e8ecef`・検索結果の hover／キーボード選択背景 `#444439`、ダークモードでは背景 `#eaeaea`・文字とリンク `#16160e`・検索結果の hover／選択背景 `rgba(93,94,73,.4)` を使う。モーダルの角は 1rem、内側の余白は上下と右が .5rem、左が .3rem。入力欄は両モードとも白背景。Theme メニューの背景は `#eaeaea` のまま。パンくずと写真の説明はヘッダー下部。フッターはデスクトップで3列、640px 以下は縦並び。具体的な構造・hover・モバイルの詳細は `layout.haml`、`_header.scss`、`_footer.scss` を参照。
 - 基本画像は `max-width: 100%; height: auto`。記事本文の `figure.one-column` は中央揃え、`two-column` / `three-column` は画像最大幅を各々 `100% / 2 - .3rem` / `100% / 3 - .3rem` にする。640px 以下では、`one-column`、`two-column`、`three-column` のいずれも付いていない figure 直下の img が画面幅まで広がる（画像の数はセレクターで判定していない）が、キャプションは本文幅に残る。1422px 以上では記事の `.large` 画像等が本文カラムから 1280px 幅にはみ出す。iframe の Google Maps、Slideshare、YouTube はコンテナごとに縦横比が異なる。根拠: `_base.scss`、`_content.scss`。
 
 ## 画面ごとの繰り返しパターン
