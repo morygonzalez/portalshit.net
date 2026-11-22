@@ -10,17 +10,8 @@
 
 %section#not_found_search
   %h2= t('search')
-  .search-field
-    %form{ action: '/search/', method: 'get', role: 'search' }
-      %label{ for: 'not-found-query' } キーワードから記事を探す
-      .not-found-search-controls
-        %input#not-found-query{ type: 'search', name: 'query', placeholder: 'キーワードを入力', value: params[:query] }
-        %button{ type: 'submit' } 検索
-    %p
-      よく検索されているキーワード:
-      = cache_fragment :not_found_frequently_search_term, shared: true, expires_in: 2.hours do
-        - popular_keywords.each do |keyword|
-          %span.keyword= link_to keyword, %(/search/?query=#{keyword})
+  %p.not-found-search-label キーワードから記事を探す
+  #not-found-search-inline
 
 = partial :_recent_entries, locals: { posts: Entry.includes(:category).published.recent(7).to_a }
 

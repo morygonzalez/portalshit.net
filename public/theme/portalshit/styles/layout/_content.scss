@@ -35,17 +35,19 @@
   }
 
   #not_found_search {
-    .search-field {
-      margin: 0;
+    .not-found-search-label { margin: 0 0 .5em; }
 
-      label { display: block; margin-bottom: .5em; }
-      .not-found-search-controls {
+    #not-found-search-inline {
+      max-width: 700px;
+
+      .search-field {
         display: flex;
-        gap: .5em;
-        max-width: 500px;
+        align-items: center;
+        gap: .75em;
+        margin: 0;
       }
 
-      input {
+      input[type='search'] {
         box-sizing: border-box;
         width: 100%;
         min-width: 0;
@@ -55,27 +57,19 @@
         border-radius: 4px;
         font-size: 16px;
         background: #ffffff;
-        // 背景がモードによらず白なので、文字色やクリアボタンなどブラウザ既定の
-        // 描画も明るい配色で固定する（html 側の `color-scheme` を打ち消す）。
-        color-scheme: light;
         color: #16160e;
+        color-scheme: light;
       }
 
-      button {
-        flex: none;
-        padding: 0 1.2em;
-        border: 0;
-        border-radius: 4px;
-        background: #a60000;
-        color: #fff;
-        font-size: .9em;
-        cursor: pointer;
-      }
-
-      p { font-size: .85em; line-height: 1.8; }
-
-      span.keyword {
-        margin: auto .3em;
+      .popular-keywords { font-size: .85em; line-height: 1.8; }
+      .keyword { margin: auto .3em; }
+      .search-result {
+        list-style: none;
+        padding: 0;
+        margin: .5em 0;
+        li { padding: .5em; overflow-wrap: anywhere; }
+        li:hover, li.hovered { background: rgba($meta-text-color, .15); }
+        a { display: block; }
       }
     }
   }

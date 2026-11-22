@@ -12,6 +12,8 @@ import ThemeObserver from './theme-observer'
 const container = document.getElementById('search_form');
 const root = createRoot(container);
 root.render(<SearchApp />);
+const inlineSearch = document.getElementById('not-found-search-inline');
+if (inlineSearch) createRoot(inlineSearch).render(<SearchApp inline />);
 
 const checkTableWidth = node => {
   node.querySelectorAll('table').forEach(target => {
@@ -98,12 +100,14 @@ const observeCloseModal = () => {
 
 const observeSearchMenu = () => {
   const searchFormModal = document.querySelector('#search_form');
+  const searchButton = document.querySelector('#global-nav ul li.search button');
 
-  document.querySelector('#global-nav ul li.search button').onclick = () => {
+  searchButton.onclick = () => {
     document.querySelectorAll('.modal.active').forEach(modal => modal.classList.toggle('active'));
     searchFormModal.classList.toggle('active');
     searchFormModal.querySelector('input').focus();
   }
+
 }
 
 const observeLinkClick = (node) => {

@@ -20,6 +20,7 @@ class SearchApp extends Component {
   }
 
   componentDidMount() {
+    if (this.props.inline) return;
     this.onKeyword = (event) => {
       this.updateQuery(event.detail.keyword);
 
@@ -35,7 +36,7 @@ class SearchApp extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('search:keyword', this.onKeyword);
+    if (this.onKeyword) document.removeEventListener('search:keyword', this.onKeyword);
   }
 
   updateQuery(query) {
@@ -77,9 +78,10 @@ class SearchApp extends Component {
   }
 
   keydown(e) {
+    if (this.props.inline ? !this.modal.current.contains(e.target) : !this.modal.current.parentNode.classList.contains('active') || e.target.closest?.('#not-found-search-inline')) return;
     switch (e.keyCode) {
       case 27: // Escape
-        this.closeModal()
+        if (!this.props.inline) this.closeModal()
         break
       case 38: // Arrow Up
         if (this.state.query) {
@@ -108,9 +110,11 @@ class SearchApp extends Component {
         <Entries
           query={this.state.query}
           focus={this.state.focus}
+          searchRoot={this.modal}
           updateEntryLength={this.updateEntryLength} />
         <PopularKeywords
           updateQuery={this.updateQuery}
+          searchRoot={this.modal}
           query={this.state.query} />
       </div>
     )
@@ -131,6 +135,7 @@ const SearchField = (props) => {
     <p className="search-field">
       <input
         type="search"
+        aria-label="キーワードから記事を探す"
         value={props.query}
         placeholder="Search"
         onChange={handleChange}
@@ -150,7 +155,7 @@ class PopularKeywords extends Component {
     if (attrKeywords !== undefined && (this.props.query === '' || this.props.query === null)) {
       const keywords = JSON.parse(attrKeywords)
       const popularKeywords = keywords.map(keyword => {
-        return <Keyword keyword={keyword} updateQuery={this.props.updateQuery} />
+        return <Keyword key={keyword} keyword={keyword} updateQuery={this.props.updateQuery} searchRoot={this.props.searchRoot} />
       })
       return (
         <p className="popular-keywords">よく検索されているキーワード: {popularKeywords}</p>
@@ -170,7 +175,7 @@ class Keyword extends Component {
   onClick(event) {
     event.preventDefault();
     this.props.updateQuery(this.props.keyword)
-    const input = document.querySelector('.search-field input')
+    const input = this.props.searchRoot.current.querySelector('.search-field input')
     input && input.focus();
   }
 
@@ -237,16 +242,18 @@ class Entries extends Component {
     if (prevProps.focus !== this.props.focus) {
       let focused
       if (this.props.focus > 0) {
-        focused = document.querySelector(`li a[tabindex="${this.props.focus}"]`)
+        focused = this.props.searchRoot.current.querySelector(`li a[tabindex="${this.props.focus}"]`)
       } else {
-        focused = document.querySelector('input[type="search"]')
+        focused = this.props.searchRoot.current.querySelector('input[type="search"]')
       }
-      const hoveredItems = document.querySelectorAll('li.hovered')
+      const hoveredItems = this.props.searchRoot.current.querySelectorAll('li.hovered')
       Array.from(hoveredItems).forEach(hovered => {
         hovered.classList.remove('hovered')
       })
-      focused.parentNode.classList.add('hovered')
-      focused.focus()
+      if (focused) {
+        focused.parentNode.classList.add('hovered')
+        focused.focus()
+      }
     }
   }
 
