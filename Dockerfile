@@ -3,7 +3,7 @@
 # ============================================================
 # Stage 1: builder — ビルド専用ステージ
 # ============================================================
-FROM ruby:3.4.13-slim AS builder
+FROM ruby:4.0.10-slim AS builder
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -51,7 +51,7 @@ ENV BUNDLE_PATH=/usr/local/bundle \
 COPY Gemfile.docker /app/Gemfile
 COPY Gemfile.lock /app/
 
-RUN bash -lc 'gem install bundler:2.6.3 && \
+RUN bash -lc 'gem install bundler:4.0.20 && \
               bundle config set path /usr/local/bundle && \
               bundle config set without postgresql && \
               cd /app && bundle install -j4' \
@@ -61,7 +61,7 @@ RUN bash -lc 'gem install bundler:2.6.3 && \
 # ============================================================
 # Stage 2: runtime — 実行用ステージ
 # ============================================================
-FROM ruby:3.4.13-slim AS runtime
+FROM ruby:4.0.10-slim AS runtime
 
 ENV TZ=Asia/Tokyo
 ENV MECAB_PATH=/usr/lib/x86_64-linux-gnu/libmecab.so.2

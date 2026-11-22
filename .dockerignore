@@ -16,3 +16,8 @@ coverage
 spec
 .github
 *.md
+db/*.sql*
+db/*.sqlite3*
+config/filtered_locations.yml
+lib/tokenizer/userdic.dic
+public/log-aggregation

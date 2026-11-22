@@ -49,7 +49,9 @@ end
 
 desc 'Install gems'
 task :bundle do
-  `bundle install --path vendor/bundle --without production test`
+  sh 'bundle', 'config', 'set', '--local', 'path', 'vendor/bundle'
+  sh 'bundle', 'config', 'set', '--local', 'without', 'production test'
+  sh 'bundle', 'install'
 end
 
 desc 'Install'

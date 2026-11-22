@@ -3,18 +3,31 @@ jobs:
   build:
     working_directory: ~/app
     docker:
-      - image: morygonzalez/portalshit:latest
+      - image: morygonzalez/portalshit:ruby-4.0.10
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
         environment:
           RAILS_ENV: test
-          BUNDLE_GEMFILE: /app/app/Gemfile
     steps:
       - checkout
       - run:
+          name: Build theme assets
+          command: |
+            node_archive="node-v$(cat .node-version)-linux-x64.tar.gz"
+            node_release="https://nodejs.org/dist/v$(cat .node-version)"
+            ruby -ropen-uri -e 'IO.copy_stream(URI.open(ARGV.fetch(0)), ARGV.fetch(1))' "$node_release/$node_archive" "/tmp/$node_archive"
+            ruby -ropen-uri -e 'puts URI.open(ARGV.fetch(0), &:read)' "$node_release/SHASUMS256.txt" > /tmp/node-shasums.txt
+            (cd /tmp && grep -F "  $node_archive" node-shasums.txt | sha256sum --check)
+            mkdir -p /tmp/portalshit-node
+            tar -xzf "/tmp/$node_archive" -C /tmp/portalshit-node --strip-components=1
+            export PATH="/tmp/portalshit-node/bin:$PATH"
+            npm ci
+            npm run build:theme
+      - run:
           name: Bundle install
           command: |
+            ruby -v
             bundle config set path /usr/local/bundle
             bundle config set without 'mysql postgresql'
             bundle install -j1

@@ -549,7 +549,7 @@ DEPENDENCIES
   yard-sinatra
 
 RUBY VERSION
-   ruby 3.4.13p195
+   ruby 4.0.10
 
 BUNDLED WITH
-   2.6.3
+   4.0.20

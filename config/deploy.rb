@@ -73,7 +73,7 @@ namespace :deploy do
       within release_path do
         execute :docker, 'run', '--rm',
           '-v', "#{release_path}/lib/tokenizer:/work",
-          'morygonzalez/portalshit:latest',
+          'morygonzalez/portalshit:ruby-4.0.10',
           'cp', '/app/lib/tokenizer/userdic.dic', '/work/userdic.dic'
       end
     end

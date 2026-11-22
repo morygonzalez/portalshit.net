@@ -9,7 +9,7 @@ services:
     volumes:
       - data-volume:/var/lib/mysql
   app:
-    image: morygonzalez/portalshit
+    image: morygonzalez/portalshit:ruby-4.0.10
     platform: linux/amd64
     environment:
       DB_HOST: db

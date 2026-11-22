@@ -36,5 +36,5 @@ docker run --rm \
   -v "$DEPLOY_PATH/shared/tmp/popular_entries:/app/tmp/popular_entries" \
   -v "$ENV_FILE:/app/.env" \
   --workdir /app \
-  morygonzalez/portalshit:latest \
+  morygonzalez/portalshit:ruby-4.0.10 \
   bundle exec rake knowledge:popular knowledge:hatena_bookmark

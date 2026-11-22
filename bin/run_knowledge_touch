@@ -30,5 +30,5 @@ docker run --rm \
   -v "$DEPLOY_PATH/shared/tmp/index:/app/tmp/index" \
   -v "$ENV_FILE:/app/.env" \
   --workdir /app \
-  morygonzalez/portalshit:latest \
+  morygonzalez/portalshit:ruby-4.0.10 \
   bundle exec rake knowledge:touch

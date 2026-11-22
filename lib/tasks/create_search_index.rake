@@ -5,7 +5,7 @@ desc "Create full text search index"
 task :create_search_index, :force do |task, arguments|
   entries = Entry.includes(:category, :tags).published
   index_path = Lokka::App.search_index_path
-  index = Lokka::App.search_index
+  Search.index
   index_last_modified = File.mtime(index_path)
   entry_last_updated_at = entries.maximum(:updated_at)
 
@@ -23,7 +23,7 @@ end
 
 task :create_new_index do
   entries = Entry.includes(:category, :tags).published
-  index = Lokka::App.search_index
+  index = Search.index
 
   entries.find_each(batch_size: 200) do |entry|
     tags_splitted = entry.tag_list.join(' ')
@@ -47,7 +47,7 @@ task :create_new_index do
 end
 
 task :delete_old_index do
-  index = Lokka::App.search_index
+  Search.index
   index_path = Lokka::App.search_index_path
   index_keys = Dir.glob(File.join(index_path, '*.idx')).each_with_object({}) do |item, files|
     ctime = File.ctime(item)
