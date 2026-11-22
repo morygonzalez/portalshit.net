@@ -3,7 +3,6 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 3.2
   Exclude:
-    - 'lokka.gemspec'
     - 'db/seeds.rb'
     - 'db/schema.rb'
     - 'vendor/**/*'
@@ -55,7 +54,6 @@ Style/HashTransformValues:
 
 Layout/LineLength:
   Exclude:
-    - 'lokka.gemspec'
     - 'Gemfile'
     - 'public/**/*'
   IgnoredPatterns:
@@ -111,7 +109,6 @@ Metrics/BlockLength:
   ExcludedMethods:
     - refine
   Exclude:
-    - 'lokka.gemspec'
     - 'spec/**/*'
     - 'lib/lokka/before.rb'
     - 'lib/lokka/app.rb'
