@@ -10,9 +10,10 @@
   "author": "morygonzalez",
   "license": "ISC",
   "dependencies": {
+    "dompurify": "3.4.18",
     "extend": "^3.0.2",
     "lodash": "^4.17.19",
-    "quill": "^1.3.7"
+    "quill": "2.0.3"
   },
   "devDependencies": {
     "@babel/core": "7.29.13",

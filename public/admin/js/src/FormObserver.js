@@ -1,5 +1,39 @@
 import Quill from 'quill'
 import FileUploader from './FileUploader'
+import { sanitizeEditorHTML, serializeEditorHTML } from './editorHTML'
+
+const Clipboard = Quill.import('modules/clipboard');
+
+class SanitizedClipboard extends Clipboard {
+  convert({ html, text }, formats) {
+    return super.convert({ html: html && sanitizeEditorHTML(html), text }, formats);
+  }
+
+  onCopy(range) {
+    const root = this.quill.root;
+    const document = root.ownerDocument;
+    const selection = document.getSelection();
+    const fragment = document.createElement('div');
+    if (selection?.rangeCount) {
+      const selected = selection.getRangeAt(0);
+      if (root.contains(selected.commonAncestorContainer)) {
+        let content = selected.cloneContents();
+        let ancestor = selected.commonAncestorContainer;
+        if (ancestor.nodeType !== 1) ancestor = ancestor.parentElement;
+        while (ancestor !== root) {
+          const wrapper = ancestor.cloneNode(false);
+          wrapper.append(content);
+          content = wrapper;
+          ancestor = ancestor.parentElement;
+        }
+        fragment.append(content);
+      }
+    }
+    return { html: serializeEditorHTML(fragment), text: this.quill.getText(range) };
+  }
+}
+
+Quill.register('modules/clipboard', SanitizedClipboard, true);
 
 class FormObserver {
   constructor(textarea) {
@@ -44,7 +78,6 @@ class FormObserver {
     const markup = this.previousMarkup;
     const preview_body = await this.getPreview({raw_body, markup});
     const previewTab = document.querySelector('ul.preview-edit');
-    console.log(preview_body)
     previewTab.style.display = 'none';
     this.toggleImagePicker(false);
     this.quill = new Quill('#editor', {
@@ -74,7 +107,7 @@ class FormObserver {
     if (this.quill) {
       const qlToolbar = document.querySelector('.ql-toolbar');
       const qlContainer = document.querySelector('.ql-container');
-      const content = this.quill.root.innerHTML;
+      const content = serializeEditorHTML(this.quill.root);
       textarea.value = content;
       qlContainer.remove();
       qlToolbar.remove();
