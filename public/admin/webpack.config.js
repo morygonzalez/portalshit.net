@@ -19,8 +19,9 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }]
-            ]
+              '@babel/preset-env'
+            ],
+            plugins: [['babel-plugin-polyfill-corejs3', { method: 'usage-global', version: require('core-js/package.json').version }]]
           },
         }
       }

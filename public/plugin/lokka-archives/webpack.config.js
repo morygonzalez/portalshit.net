@@ -25,10 +25,10 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-react'],
-              ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }]
+              ['@babel/preset-react', { runtime: 'classic' }],
+              '@babel/preset-env'
             ],
-            plugins: ['@babel/plugin-proposal-class-properties', '@emotion']
+            plugins: [['babel-plugin-polyfill-corejs3', { method: 'usage-global', version: require('core-js/package.json').version }], '@emotion']
           }
         }
       },

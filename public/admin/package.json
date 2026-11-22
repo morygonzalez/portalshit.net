@@ -16,9 +16,10 @@
     "quill": "2.0.3"
   },
   "devDependencies": {
-    "@babel/core": "7.29.13",
-    "@babel/preset-env": "7.18.0",
-    "babel-loader": "^8.2.5",
+    "@babel/core": "^8.0.0",
+    "@babel/preset-env": "^8.0.0",
+    "babel-loader": "^10.0.0",
+    "babel-plugin-polyfill-corejs3": "^1.0.0",
     "core-js": "3.22.7",
     "jquery-ujs": "1.2.2",
     "webpack": "^5.98.0",
