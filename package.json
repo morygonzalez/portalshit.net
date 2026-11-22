@@ -16,6 +16,6 @@
     "build:admin": "npm run build -w lokka-admin"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   }
 }
