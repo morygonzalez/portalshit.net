@@ -3,6 +3,24 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe 'Category cards' do
+  it 'renders layouts after switching between ERB and Haml themes' do
+    site = create(:site, theme: 'jarvi')
+
+    get '/'
+    expect(last_response.status).to eq(200)
+
+    site.update!(theme: 'portalshit')
+    get '/categories'
+    expect(last_response.status).to eq(200)
+
+    get '/missing-page-for-theme-switch'
+    expect(last_response.status).to eq(404)
+
+    site.update!(theme: 'jarvi')
+    get '/'
+    expect(last_response.status).to eq(200)
+  end
+
   it 'shows the latest published post and published post count for each category' do
     create(:site, theme: 'portalshit')
     category = create(:category, description: 'Category description example')

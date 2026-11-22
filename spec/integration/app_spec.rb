@@ -210,7 +210,7 @@ describe 'App' do
       end
 
       it 'should return status code 404 if entry not found' do
-        get '/2011/01/09/welcome-wordpress'
+        get '/2011/01/09/unrelated-path'
         last_response.status.should eq(404)
       end
 

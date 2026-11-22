@@ -49,5 +49,22 @@ module Lokka
 
       send(ext.to_sym, name.to_sym, **options) if File.exist?("#{path}.#{ext}")
     end
+
+    private
+
+    def resolve_layout(layout, options = {})
+      views = options[:views]
+      return super unless layout == 'layout' && views == "#{settings.views}/theme/#{@theme&.name}"
+
+      # Padrino's layout cache omits the views directory, so themes with
+      # different template engines can otherwise reuse each other's layout.
+      rendering_options = [layout, content_type || :html, locale]
+      settings.cache_template_path([views, *rendering_options]) do
+        selected = select_template(glob_templates(views, layout), *rendering_options)
+        raise Padrino::Rendering::TemplateNotFound, "Layout '#{layout}' not found in '#{views}'" unless selected
+
+        selected
+      end
+    end
   end
 end
