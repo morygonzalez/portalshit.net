@@ -29,8 +29,10 @@ class Entry < ActiveRecord::Base
   attr_accessor :tag_collection, :generate_or_update_summary, :auto_generate_tags
 
   after_save :update_fields
-  after_save :send_ping_to_pubsubhubbub
-  after_commit :purge_atom_cache
+  after_save :mark_atom_feed_changed
+  after_destroy :mark_atom_feed_changed
+  after_commit :refresh_atom_cache_and_notify
+  after_rollback { @atom_feed_changed = false }
 
   default_scope { order('entries.created_at DESC') }
   scope :published,   -> { where(draft: false) }
@@ -224,20 +226,29 @@ class Entry < ActiveRecord::Base
   end
 
   def send_ping_to_pubsubhubbub
-    if Lokka.production? && published?
+    if Lokka.production?
       system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
     end
   end
 
-  def purge_atom_cache
-    return unless published?
+  def mark_atom_feed_changed
+    return unless is_a?(Post)
 
-    Net::HTTP.start('localhost', 80) do |http|
-      req = Net::HTTP::Get.new('/index.atom')
-      req['Cache-Purge'] = 'true'
-      http.request(req)
+    @atom_feed_changed ||= published? || saved_change_to_draft? && draft_before_last_save == false
+  end
+
+  def refresh_atom_cache_and_notify
+    changed = @atom_feed_changed
+    @atom_feed_changed = false
+    return unless Lokka.production? && changed
+
+    response = Net::HTTP.start('127.0.0.1', 18081, open_timeout: 2, read_timeout: 15) do |http|
+      http.get('/index.atom')
     end
+    raise "HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+
+    send_ping_to_pubsubhubbub
   rescue StandardError => e
-    ActiveRecord::Base.logger&.warn "Failed to purge atom cache: #{e.message}"
+    ActiveRecord::Base.logger&.warn "Failed to refresh atom cache; notification skipped: #{e.message}"
   end
 end

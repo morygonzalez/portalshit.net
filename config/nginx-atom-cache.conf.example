@@ -1,0 +1,39 @@
+# Replace the existing HTTPS location = /index.atom with this block.
+# Explicitly use the same key in the loopback listener below.
+location = /index.atom {
+    proxy_pass http://puma;
+    proxy_cache portalshit_cache;
+    proxy_cache_key "atom:$request_uri";
+    proxy_cache_valid 200 10m;
+    proxy_ignore_headers Set-Cookie;
+    proxy_hide_header Set-Cookie;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    add_header X-Cache-Status $upstream_cache_status;
+}
+
+# Add at http scope. Install this listener and validate nginx -t before
+# deploying the application callback. Do not expose this port externally.
+server {
+    listen 127.0.0.1:18081;
+    server_name localhost;
+
+    location = /index.atom {
+        proxy_pass http://puma;
+        proxy_cache portalshit_cache;
+        proxy_cache_key "atom:$request_uri";
+        proxy_cache_valid 200 10m;
+        proxy_cache_bypass 1;
+        proxy_ignore_headers Set-Cookie;
+        proxy_hide_header Set-Cookie;
+        proxy_set_header Host portalshit.net;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_redirect off;
+        add_header X-Cache-Status $upstream_cache_status;
+    }
+}
+
+# The callback refreshes the unparameterized feed only; ?page= variants
+# expire after up to 10 minutes. Cloudflare caches are not refreshed here.
