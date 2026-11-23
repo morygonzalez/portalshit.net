@@ -9,7 +9,7 @@ module.exports = {
     chat: './src/chat/index.js',
   },
   output: {
-    filename: '[name]-[hash].js',
+    filename: '[name]-[fullhash].js',
     path: path.resolve(__dirname, 'scripts'),
     clean: { keep: '.gitkeep' }
   },
