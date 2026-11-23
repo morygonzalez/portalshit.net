@@ -140,7 +140,7 @@ $article-body-max-width: 780px;
     @include entry-cards-layout;
   }
 
-  #site_description + #recent_entries, #on_this_day {
+  #site_description + #recent_entries, #recent_entries.popular-ranking, #on_this_day {
     .new-entry .content .image {
       max-width: $article-body-max-width;
       margin-inline: auto;

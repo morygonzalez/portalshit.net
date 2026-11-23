@@ -6,7 +6,7 @@
       他の日に読まれた記事を見る。
       %input{ type: 'date', name: 'date', min: '2022-06-13', max: 2.days.ago.to_date, value: defined?(@date) ? @date : 2.days.ago.to_date }
 
-%article#recent_entries
+%article#recent_entries{ class: ('popular-ranking' if %w[/popular/recent /popular/hatena-bookmark].include?(request_path)) }
   = cache_fragment %(popular-#{I18n.locale}), expires_in: 1.hour do
     %section.recent
       .new-entry
