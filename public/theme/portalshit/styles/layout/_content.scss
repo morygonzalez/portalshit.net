@@ -2,6 +2,8 @@
 // Main content (#content) — articles, sections, listings
 // =============================================================================
 
+$article-body-max-width: 780px;
+
 #content {
   box-sizing: border-box;
   width: 90%;
@@ -138,6 +140,13 @@
     @include entry-cards-layout;
   }
 
+  #site_description + #recent_entries, #on_this_day {
+    .new-entry .content .image {
+      max-width: $article-body-max-width;
+      margin-inline: auto;
+    }
+  }
+
   section.more {
     display: flex;
 
@@ -218,7 +227,7 @@
       margin: auto;
       margin-bottom: 2em;
       line-height: 180%;
-      max-width: 780px;
+      max-width: $article-body-max-width;
 
       h2 {
         font-size: 1.12em;
