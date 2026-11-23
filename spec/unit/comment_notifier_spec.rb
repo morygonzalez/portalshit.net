@@ -12,6 +12,13 @@ describe Lokka::CommentNotifier do
     allow(Aws::SESV2::Client).to receive(:new).and_return(client)
   end
 
+  def expect_article_link_on_separate_line(params, entry)
+    body = params[:content][:simple][:body]
+    url = "https://portalshit.net#{entry.link}"
+    expect(body[:text][:data]).to include("記事: #{entry.title}\nURL: #{url}")
+    expect(body[:html][:data]).to include("記事: #{entry.title}<br>\nURL: <a href=\"#{url}\">#{url}</a>")
+  end
+
   it 'never sends real mail in the test environment' do
     expect(Aws::SESV2::Client).not_to receive(:new)
     notifier.notify_author
@@ -29,6 +36,7 @@ describe Lokka::CommentNotifier do
         expect(mail[:subject][:data]).to include('メッセージ送信の控え', comment.entry.title)
         expect(mail[:body][:text][:data]).to include('公開されません', comment.body)
         expect(mail[:body][:text][:data]).not_to include('/admin/comments/')
+        expect_article_link_on_separate_line(params, comment.entry)
       end
       notifier.notify_sender_receipt
     end
@@ -39,6 +47,7 @@ describe Lokka::CommentNotifier do
         expect(params[:destination][:to_addresses]).to eq([ordinary.email])
         expect(params[:content][:simple][:subject][:data]).to include('コメント送信の控え')
         expect(params[:content][:simple][:body][:text][:data]).to include('管理者の確認後')
+        expect_article_link_on_separate_line(params, ordinary.entry)
       end
       described_class.new(ordinary).notify_sender_receipt
     end
@@ -66,6 +75,7 @@ describe Lokka::CommentNotifier do
       expect(client).to receive(:send_email) do |params|
         expect(params[:destination][:to_addresses]).to eq([ordinary.email])
         expect(params[:reply_to_addresses]).to eq(['morygonzalez@gmail.com'])
+        expect_article_link_on_separate_line(params, ordinary.entry)
       end
       described_class.new(ordinary).notify_commenter
       described_class.new(ordinary).notify_author

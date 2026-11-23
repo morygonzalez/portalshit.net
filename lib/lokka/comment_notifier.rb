@@ -51,7 +51,7 @@ module Lokka
             subject: { data: subject },
             body: {
               text: { data: body },
-              html: { data: Markup.use_engine('redcarpet', body) }
+              html: { data: render_html(body) }
             }
           }
         }
@@ -135,6 +135,13 @@ module Lokka
       "https://portalshit.net#{entry.link}"
     end
 
+    def render_html(body)
+      article = "記事: #{entry.title}"
+      url = "URL: #{entry_url}"
+      markdown = body.sub("#{article}\n#{url}") { "#{article}  \n#{url}" }
+      Markup.use_engine('redcarpet', markdown)
+    end
+
     def subject_data
       subject = "コメントが承認されました - #{entry.title}"
       subject = "[#{Lokka.env}] #{subject}" unless Lokka.production?
@@ -155,6 +162,7 @@ module Lokka
     end
 
     def email_params
+      body = body_data
       {
         from_email_address: from,
         reply_to_addresses: reply_to_addresses,
@@ -163,8 +171,8 @@ module Lokka
           simple: {
             subject: { data: subject_data },
             body: {
-              text: { data: body_data },
-              html: { data: Markup.use_engine('redcarpet', body_data) }
+              text: { data: body },
+              html: { data: render_html(body) }
             }
           }
         }
