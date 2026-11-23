@@ -50,6 +50,14 @@ module Lokka
         @title = %(#{I18n.t('archives.title')} - #{@site.title})
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('archives.title'), link: '/archives' }
+        if markdown_requested?
+          oldest = Post.published.minimum(:created_at)
+          newest = Post.published.maximum(:created_at)
+          years = oldest && newest ? newest.year.downto(oldest.year) : []
+          links = years.map { |year| [year, "/archives/#{year}"] }
+          return render_markdown_archive_links(links)
+        end
+
         haml :"plugin/lokka-archives/views/index", layout: :"theme/#{@theme.name}/layout"
       end
 
@@ -58,6 +66,14 @@ module Lokka
         @bread_crumbs = [{ name: t('home'), link: '/' }]
         @bread_crumbs << { name: t('archives.title'), link: '/archives' }
         @bread_crumbs << { name: year, link: "/archives/#{year}" }
+        if markdown_requested? && year.match?(/\A[0-9]{4}\z/)
+          links = 1.upto(12).map do |month|
+            label = format('%s/%02d', year, month)
+            [label, "/#{label}/"]
+          end
+          return render_markdown_archive_links(links)
+        end
+
         haml :"plugin/lokka-archives/views/index", layout: :"theme/#{@theme.name}/layout"
       end
     end

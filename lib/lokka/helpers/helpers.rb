@@ -150,6 +150,10 @@ module Lokka
       @bread_crumbs << { name: @entry.category.title, link: @entry.category.link } if @entry.category
       @bread_crumbs << { name: @entry.title, link: @entry.link }
 
+      if (request.get? || request.head?) && @entry.published? && markdown_requested?
+        return render_markdown("<h1>#{h(@entry.title)}</h1>\n#{@entry.body}")
+      end
+
       render_detect_with_options type, :entry
     end
 

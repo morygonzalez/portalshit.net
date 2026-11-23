@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'lokka'
+require 'lokka/helpers/markdown_helper'
 require 'lokka/middleware/force_utf8'
 require 'lokka/middleware/reject_invalid_query_keys'
 
@@ -45,6 +46,7 @@ module Lokka
       helpers Lokka::Helpers
       helpers Lokka::PermalinkHelper
       helpers Lokka::RenderHelper
+      helpers Lokka::MarkdownHelper
       Lokka.load_plugin(self)
       Lokka::Database.connect
       Haml::Template.options[:escape_html] = false

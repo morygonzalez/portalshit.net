@@ -20,6 +20,8 @@ module Lokka
 
       @bread_crumbs = [{ name: t('home'), link: '/' }]
 
+      return render_markdown_entries(@posts) if markdown_requested?
+
       render_detect :index, :entries
     end
 
@@ -77,6 +79,8 @@ module Lokka
 
       @bread_crumbs << { name: @category.title, link: @category.link }
 
+      return render_markdown_entries(@posts) if markdown_requested?
+
       render_detect :category, :entries
     end
 
@@ -96,6 +100,8 @@ module Lokka
 
       @bread_crumbs = [{ name: t('home'), link: '/' },
                        { name: @tag.name, link: @tag.link }]
+
+      return render_markdown_entries(@posts) if markdown_requested?
 
       render_detect :tag, :entries
     end
@@ -121,6 +127,8 @@ module Lokka
                        { name: year.to_s, link: "/#{year}/" },
                        { name: "#{year}/#{month}", link: "/#{year}/#{month}/" }]
 
+      return render_markdown_entries(@posts) if markdown_requested?
+
       render_detect :monthly, :entries
     end
 
@@ -142,6 +150,8 @@ module Lokka
 
       @bread_crumbs = [{ name: t('home'), link: '/' },
                        { name: year.to_s, link: "/#{year}/" }]
+
+      return render_markdown_entries(@posts) if markdown_requested?
 
       render_detect :yearly, :entries
     end
