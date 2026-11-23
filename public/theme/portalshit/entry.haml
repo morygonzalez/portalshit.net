@@ -1,4 +1,4 @@
-%article{ itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
+%article{ id: ('author-page' if @entry.link == '/morygonzalez'), itemprop: 'blogPosts', itemscope: true, itemtype: 'https://schema.org/BlogPosting' }
   %header
     - if @entry.type == 'Post'
       %nav.prevnext

@@ -473,6 +473,19 @@ $article-body-max-width: 780px;
       }
     }
 
+    #author-page .body figure:has(> img[alt="morygonzalez.svg"]) {
+      // 記事本文の figure に指定された回り込みと余白をモバイルで上書きする。
+      float: none !important;
+      margin: 0 auto 1em !important;
+      width: 300px;
+      max-width: 100%;
+
+      > img {
+        width: 100%;
+        margin: 0;
+      }
+    }
+
     .pagination {
       -webkit-padding-start: 0 !important;
 
