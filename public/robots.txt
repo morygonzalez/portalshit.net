@@ -3,4 +3,5 @@ disallow: /ogp
 disallow: /amazon
 disallow: /search
 disallow: /tags
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Sitemap: https://portalshit.net/sitemap.xml
