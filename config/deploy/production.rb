@@ -8,6 +8,10 @@ role :app, %w{app@portalshit.net}
 role :web, %w{app@portalshit.net}
 role :db,  %w{app@portalshit.net}
 
+# Keep the shared Unix socket listening while the Puma service restarts.
+set :puma_enable_socket_service, true
+set :puma_service_unit_type, 'simple'
+
 # Extended Server Syntax
 # ======================
 # This can be used to drop a more detailed server
