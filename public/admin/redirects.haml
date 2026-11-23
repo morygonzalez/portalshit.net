@@ -1,0 +1,21 @@
+%h2= t('manual_redirects.title')
+%p= t('manual_redirects.instructions')
+- if @redirect_error
+  #error
+    %p= @redirect_error
+%form{ action: url('/admin/redirects'), method: :post }
+  %input{ type: :hidden, name: :_method, value: 'put' }
+  %table
+    %thead
+      %tr
+        %th{ scope: :col }= t('manual_redirects.from')
+        %th{ scope: :col }= t('manual_redirects.to')
+    %tbody
+      - (@redirect_rows + [['', '']]).each_with_index do |(from, to), index|
+        %tr
+          %td
+            %input{ type: :text, name: "redirects[#{index}][from]", value: from, 'aria-label': t('manual_redirects.from') }
+          %td
+            %input{ type: :text, name: "redirects[#{index}][to]", value: to, 'aria-label': t('manual_redirects.to') }
+  .field
+    %input{ type: :submit, value: t('save') }

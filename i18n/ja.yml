@@ -349,3 +349,15 @@ ja:
       latest: この記事が最新の記事です
       oldest: この記事が最初の記事です
     bookmark_users: "%{count} users"
+
+  manual_redirects:
+    title: リダイレクト
+    instructions: /から始まるパスを入力してください。削除する行は両方の欄を空にして保存してください。
+    from: 転送元パス
+    to: 転送先パス
+    saved: リダイレクトを保存しました。
+    invalid_path: 両方の欄に、/から始まるサイト内のパスを入力してください。英数字と / . _ ~ - が使えます。
+    duplicate: 同じ転送元パスが複数あります。
+    cycle: 同じパスに戻る転送は登録できません。
+    too_large: リダイレクト一覧が保存できる容量を超えています。
+    save_failed: リダイレクトを保存できませんでした。

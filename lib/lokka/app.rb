@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'lokka'
+require 'lokka/manual_redirects'
 require 'lokka/helpers/markdown_helper'
 require 'lokka/middleware/force_utf8'
 require 'lokka/middleware/reject_invalid_query_keys'
@@ -97,6 +98,14 @@ module Lokka
       # 「キャッシュが無ければ 404」を日常的に返す経路では無駄が大きい。
       # halt が入れた JSON のボディをそのまま返す。
       return body if request.path_info.start_with?('/api/')
+
+      if (request.get? || request.head?) && !request.path_info.match?(%r{\A/(?:admin|api)(?:/|\z)})
+        destination = ManualRedirects.load[request.path_info]
+        if destination
+          query = request.query_string
+          return redirect(query.empty? ? destination : "#{destination}?#{query}", 302)
+        end
+      end
 
       if custom_permalink?
         return redirect(request.path.sub(%r{/$}, '')) if %r{/$}.match?(request.path)

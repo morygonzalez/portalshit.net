@@ -78,6 +78,50 @@ module Lokka
         end
       end
 
+      get '/redirects' do
+        login_required
+        @redirect_rows = ManualRedirects.load.to_a
+        haml :'admin/redirects', layout: :'admin/layout'
+      end
+
+      put '/redirects' do
+        login_required
+        rows = params['redirects']
+        halt 400 unless rows.is_a?(Hash) && rows.values.all? { |row|
+          row.is_a?(Hash) && row['from'].is_a?(String) && row['to'].is_a?(String)
+        }
+
+        @redirect_rows = rows.values.map { |row| [row['from'].strip, row['to'].strip] }
+                             .reject { |from, to| from.empty? && to.empty? }
+        rules = @redirect_rows.to_h
+        json = JSON.generate(rules)
+        error = if @redirect_rows.any? { |from, to| !ManualRedirects.valid_path?(from) || !ManualRedirects.valid_path?(to) }
+                  'invalid_path'
+                elsif rules.size != @redirect_rows.size
+                  'duplicate'
+                elsif ManualRedirects.cyclic?(rules)
+                  'cycle'
+                elsif json.bytesize > ManualRedirects::MAX_BYTES
+                  'too_large'
+                end
+
+        unless error
+          begin
+            option = Option.find_or_initialize_by(name: ManualRedirects::OPTION_NAME)
+            option.update!(value: json)
+            flash[:notice] = t('manual_redirects.saved')
+            redirect to('/admin/redirects')
+          rescue ActiveRecord::ActiveRecordError => e
+            logger.error("Failed to save manual redirects: #{e.class}")
+            error = 'save_failed'
+          end
+        end
+
+        @redirect_error = t("manual_redirects.#{error}")
+        status(error == 'save_failed' ? 500 : 422)
+        haml :'admin/redirects', layout: :'admin/layout'
+      end
+
       # permalink
       get '/permalink' do
         @enabled = (Option.permalink_enabled == 'true')

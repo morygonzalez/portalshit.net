@@ -345,3 +345,15 @@ en:
       latest: This is the latest article
       oldest: This is the earliest article
     bookmark_users: "%{count} users"
+
+  manual_redirects:
+    title: Redirects
+    instructions: Enter paths starting with /. To delete a redirect, clear both fields in its row and save.
+    from: Source path
+    to: Destination path
+    saved: Redirects saved.
+    invalid_path: Enter a path starting with / in both fields. Use letters, numbers, or / . _ ~ -.
+    duplicate: A source path appears more than once.
+    cycle: Redirects must not lead back to their source.
+    too_large: The redirect list is too large to save.
+    save_failed: Could not save the redirects.

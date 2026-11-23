@@ -85,6 +85,7 @@
             %ul
               %li.list= link_to t('sites'), url('/admin/site/edit')
               %li.list= link_to t('permalink.title'), url('/admin/permalink')
+              %li.list= link_to t('manual_redirects.title'), url('/admin/redirects')
               %li.list= link_to t('import'), url('/admin/import')
               %li.list= link_to t('file_upload.name'), url('/admin/file_upload')
           - admin_aside = yield_content :admin_aside
