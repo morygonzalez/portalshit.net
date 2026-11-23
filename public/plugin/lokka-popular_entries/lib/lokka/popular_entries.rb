@@ -25,6 +25,16 @@ module Lokka
           'hatena-bookmark': hatena
         }
 
+        if markdown_requested?
+          sections = @popular_entries.map do |key, entries|
+            links = entries.map { |entry| [entry.title, entry.link] }
+            title = t("popular_entries_#{key}")
+            heading = %i[recent hatena-bookmark].include?(key) ? markdown_link(title, "/popular/#{key}") : h(title)
+            "<h2>#{heading}</h2>\n#{markdown_link_list(links)}"
+          end
+          return render_markdown(["<h1>#{h(@page_title)}</h1>", "<p>#{h(@page_description)}</p>", *sections].join("\n"))
+        end
+
         haml :"plugin/lokka-popular_entries/views/index", layout: :"theme/#{@theme.name}/layout"
       end
 
@@ -74,6 +84,8 @@ module Lokka
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).popular(target: 'all', limit: 25)
+        return render_markdown_ranking(@entries) if markdown_requested?
+
         haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
 
@@ -86,8 +98,19 @@ module Lokka
                          { name: @page_title }]
         @title = %Q(#{@page_title} - #{@site.title})
         @entries = Post.includes(:category, :tags).hotentry(limit: 25)
+        return render_markdown_ranking(@entries) if markdown_requested?
+
         haml :"plugin/lokka-popular_entries/views/show", layout: :"theme/#{@theme.name}/layout"
       end
+    end
+  end
+
+  module Helpers
+    private
+
+    def render_markdown_ranking(entries)
+      links = entries.map { |entry| [entry.title, entry.link] }
+      render_markdown("<h1>#{h(@page_title)}</h1>\n<p>#{h(@page_description)}</p>\n#{markdown_link_list(links)}")
     end
   end
 end

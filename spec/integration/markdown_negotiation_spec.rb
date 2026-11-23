@@ -50,6 +50,10 @@ describe 'Markdown content negotiation' do
       expect(last_response.body).not_to include('未公開記事')
     end
 
+    get '/', {}, 'HTTP_ACCEPT' => 'text/markdown'
+    expect(last_response.body).to match(/\]\(\/popular\)/)
+    expect(last_response.body).to match(/\]\(\/archives\)/)
+
     get '/archives', {}, 'HTTP_ACCEPT' => 'text/markdown'
     expect(last_response.content_type).to start_with('text/markdown')
     expect(last_response.body).to include('[2011](/archives/2011)')
@@ -85,6 +89,48 @@ describe 'Markdown content negotiation' do
       expect(last_response).to be_ok
       expect(last_response.content_type).to start_with('text/markdown')
       expect(last_response.body).to include("[#{article.title}](#{article.link})", 'page=2')
+    end
+  end
+
+  it 'serves the popular rankings as Markdown and defaults to HTML' do
+    ranking = Post.includes(:category, :tags)
+    allow(Post).to receive(:includes).and_call_original
+    allow(Post).to receive(:includes).with(:category, :tags).and_return(ranking)
+    allow(ranking).to receive(:popular).with(target: 'today', limit: 4).and_return([article])
+    allow(ranking).to receive(:popular).with(target: 'yesterday', limit: 4).and_return([])
+    allow(ranking).to receive(:popular).with(target: 'all', limit: 4).and_return([])
+    allow(ranking).to receive(:hotentry).with(limit: 4).and_return([])
+    allow(ranking).to receive(:popular).with(target: 'all', limit: 25).and_return([article])
+    allow(ranking).to receive(:hotentry).with(limit: 25).and_return([article])
+
+    get '/popular', {}, 'HTTP_ACCEPT' => 'text/markdown'
+
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to start_with('text/markdown')
+    expect(last_response.headers['vary']).to include('Accept')
+    expect(last_response.body.scan(/^## /).size).to eq(4)
+    expect(last_response.body).to include("[#{article.title}](#{article.link})")
+    expect(last_response.body).to include('](/popular/recent)', '](/popular/hatena-bookmark)')
+
+    get '/popular'
+
+    expect(last_response).to be_ok
+    expect(last_response.content_type).to start_with('text/html')
+    expect(last_response.headers['vary']).to include('Accept')
+
+    %w[/popular/recent /popular/hatena-bookmark].each do |path|
+      get path, {}, 'HTTP_ACCEPT' => 'text/markdown'
+
+      expect(last_response).to be_ok
+      expect(last_response.content_type).to start_with('text/markdown')
+      expect(last_response.headers['vary']).to include('Accept')
+      expect(last_response.body).to include("[#{article.title}](#{article.link})")
+
+      get path
+
+      expect(last_response).to be_ok
+      expect(last_response.content_type).to start_with('text/html')
+      expect(last_response.headers['vary']).to include('Accept')
     end
   end
 

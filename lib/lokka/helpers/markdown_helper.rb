@@ -32,19 +32,24 @@ module Lokka
       ReverseMarkdown.convert(fragment, github_flavored: true, unknown_tags: :bypass).strip + "\n"
     end
 
-    def render_markdown_entries(posts)
+    def render_markdown_entries(posts, links: [])
       articles = posts.map do |post|
         "<h2>#{markdown_link(post.title, post.link)}</h2>\n#{post.body}"
       end
       pagination = paginate(posts)
       # Only keep the links from the pagination controls.
-      links = Nokogiri::HTML5.fragment(pagination.to_s).css('a').map(&:to_html).join(' ')
-      render_markdown(["<h1>#{h(@title)}</h1>", *articles, "<p>#{links}</p>"].join("\n"))
+      page_links = Nokogiri::HTML5.fragment(pagination.to_s).css('a').map(&:to_html).join(' ')
+      navigation = markdown_link_list(links) if links.any?
+      render_markdown(["<h1>#{h(@title)}</h1>", navigation, *articles, "<p>#{page_links}</p>"].compact.join("\n"))
     end
 
     def render_markdown_archive_links(links)
+      render_markdown("<h1>#{h(@title)}</h1>\n#{markdown_link_list(links)}")
+    end
+
+    def markdown_link_list(links)
       items = links.map { |title, path| "<li>#{markdown_link(title, path)}</li>" }.join
-      render_markdown("<h1>#{h(@title)}</h1>\n<ul>#{items}</ul>")
+      "<ul>#{items}</ul>"
     end
 
     def markdown_link(title, path)

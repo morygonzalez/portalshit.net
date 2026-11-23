@@ -20,7 +20,12 @@ module Lokka
 
       @bread_crumbs = [{ name: t('home'), link: '/' }]
 
-      return render_markdown_entries(@posts) if markdown_requested?
+      if markdown_requested?
+        return render_markdown_entries(@posts, links: [
+          [t('archives.title'), '/archives'],
+          [t('popular_entries'), '/popular']
+        ])
+      end
 
       render_detect :index, :entries
     end

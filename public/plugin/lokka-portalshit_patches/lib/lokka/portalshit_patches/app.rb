@@ -55,6 +55,11 @@ module Lokka
       builder :'plugin/lokka-portalshit_patches/public/lokka/sitemap'
     end
 
+    get '/sitemap/pages.xml' do
+      content_type 'application/xml', charset: 'utf-8'
+      builder :'plugin/lokka-portalshit_patches/public/lokka/pages/sitemap'
+    end
+
     get '/sitemap/categories/:slug' do
       category = Category.get_by_fuzzy_slug(params[:slug]) || halt(404)
       @posts = category.entries.published.
