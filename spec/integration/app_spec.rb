@@ -291,8 +291,8 @@ describe 'App' do
 
   context 'when theme has i18n dir' do
     before do
-      Theme.any_instance.stub(:exist_i18n?).and_return(true)
-      Theme.any_instance.stub(:i18n_dir).and_return(
+      allow_any_instance_of(Theme).to receive(:exist_i18n?).and_return(true)
+      allow_any_instance_of(Theme).to receive(:i18n_dir).and_return(
         File.expand_path('.', 'public/theme/foo/i18n')
       )
     end

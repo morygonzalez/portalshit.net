@@ -6,13 +6,13 @@ ENV['LOKKA_ENV'] = 'test'
 require 'simplecov'
 
 SimpleCov.start do
-  add_filter 'spec/'
-  add_filter 'public/'
-  add_filter 'i18n/'
-  add_filter 'db/'
-  add_filter 'coverage/'
-  add_filter 'tmp/'
-  add_filter 'log/'
+  skip 'spec/'
+  skip 'public/'
+  skip 'i18n/'
+  skip 'db/'
+  skip 'coverage/'
+  skip 'tmp/'
+  skip 'log/'
 end
 
 require File.join(File.dirname(__FILE__), '..', 'init.rb')

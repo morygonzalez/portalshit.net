@@ -125,30 +125,22 @@ describe Post do
     context 'Assign new tags' do
       let(:entry) { create(:entry) }
 
-      subject do
-        -> {
+      it 'should update tags' do
+        expect {
           entry.tag_collection = 'foo,bar'
           entry.save
-        }
-      end
-
-      it 'should update tags' do
-        is_expected.to change { entry.reload.tags.length }.from(0).to(2)
+        }.to change { entry.reload.tags.length }.from(0).to(2)
       end
     end
 
     context 'Update tag assignment' do
       let(:entry) { create(:entry, tag_collection: 'a, b, c') }
 
-      subject do
-        -> {
+      it 'should update tags' do
+        expect {
           entry.tag_collection = 'foo,bar'
           entry.save
-        }
-      end
-
-      it 'should update tags' do
-        is_expected.to change { entry.reload.tags.length }.from(3).to(2)
+        }.to change { entry.reload.tags.length }.from(3).to(2)
       end
     end
   end
