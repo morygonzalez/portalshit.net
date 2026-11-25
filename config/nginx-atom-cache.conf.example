@@ -5,6 +5,10 @@ location = /index.atom {
     proxy_cache portalshit_cache;
     proxy_cache_key "atom:$request_uri";
     proxy_cache_valid 200 10m;
+    gzip on;
+    gzip_types application/atom+xml;
+    gzip_proxied any;
+    gzip_vary on;
     proxy_ignore_headers Set-Cookie;
     proxy_hide_header Set-Cookie;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
