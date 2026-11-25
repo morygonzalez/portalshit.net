@@ -1,8 +1,15 @@
+- header_bg = settings.header_bg_params
+- scheme = color_scheme
 !!! 5
 %html{ itemscope: true, itemtype: 'https://schema.org/Blog', lang: :ja, class: color_mode, 'data-logged-in': logged_in?.to_s }
   %head
     %meta{ charset: 'utf-8' }
-    %meta{ name: 'color-scheme', content: color_scheme }
+    %meta{ name: 'color-scheme', content: scheme }
+    - %w[light dark].each do |mode|
+      - next unless scheme == mode || scheme == 'light dark'
+      - preload = { rel: 'preload', as: 'image', href: header_bg.fetch(:"data-bg-#{mode}-url") }
+      - preload[:media] = "(prefers-color-scheme: #{mode})" if scheme == 'light dark'
+      %link{preload}
     - if @robots
       %meta{ name: 'robots', content: @robots }
     - if entry?
@@ -20,7 +27,6 @@
     %link{ rel: 'author', href: 'http://www.hatena.ne.jp/morygonzalez/' }
     = header
   %body
-    - header_bg = settings.header_bg_params
     %header#header{header_bg}
       #header-inner
         - if entry?

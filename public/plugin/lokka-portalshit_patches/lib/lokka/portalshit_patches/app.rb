@@ -10,12 +10,14 @@ module Lokka
         bg_images = startup_bg_images || load_bg_images.call
         dark_image = bg_images['dark'].sample
         light_image = bg_images['light'].sample
-        image_styles = { dark: dark_image, light: light_image }.map do |mode, image|
+        image_urls = { dark: dark_image, light: light_image }.to_h do |mode, image|
           name = CGI.escapeURIComponent(image.fetch('name'))
-          "--header-bg-#{mode}: url(https://resources.portalshit.net/theme-images/header-bg-#{mode}-#{name}.jpg)"
+          [mode, "https://resources.portalshit.net/theme-images/header-bg-#{mode}-#{name}.jpg"]
         end
         {
-          style: image_styles.join('; '),
+          style: image_urls.map { |mode, url| "--header-bg-#{mode}: url(#{url})" }.join('; '),
+          'data-bg-dark-url': image_urls.fetch(:dark),
+          'data-bg-light-url': image_urls.fetch(:light),
           'data-bg-dark-image': "dark-#{dark_image['name']}",
           'data-bg-dark-description': dark_image['description'],
           'data-bg-dark-coord': dark_image['coord'],
