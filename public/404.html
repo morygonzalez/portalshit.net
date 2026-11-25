@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <title>ページが見つかりませんでした - portal shit!</title>
+  <link rel="icon" href="/theme/portalshit/favicon.ico">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; margin: 0; background: #fff; color: #000; font: 18px/26px メイリオ, "Lucida Sans Unicode", "Lucida Grande", Arial, Helvetica, sans-serif; }
+    a { color: #a60000; text-decoration: none; }
+    a:visited { color: #a3a3a2; }
+    a:hover { color: #f60; }
+    #header { background: linear-gradient(to top, rgba(33,33,33,.8), transparent, transparent), url('https://resources.portalshit.net/theme-images/header-bg-light-jizou.jpg') top center / cover; }
+    #header-inner { width: 90%; max-width: 1280px; min-height: 350px; margin: auto; }
+    #header-title { margin: 0; font: bold 3em/62px "Helvetica Neue", Arial, Helvetica, sans-serif; text-shadow: 1px 1px 2px #212121; }
+    #header-title a { color: #e8ecef; }
+    #header-title a:hover { color: #f60; }
+    #content { flex: 1; width: 90%; max-width: 1280px; min-height: 500px; margin: auto; padding: 20px 30px; background: #e8ecef; }
+    #not_found_description { margin: 1rem .5rem 2rem; }
+    .not-found-code { margin: 0 0 .5rem; color: #ce5242; font-size: .85em; font-weight: bold; letter-spacing: .08em; text-transform: uppercase; }
+    h2 { margin: 0 0 1rem; font: bold 1.45em/115% "Lucida Grande", Lucida, Verdana, sans-serif; }
+    .description p { margin: .75em 0; }
+    .not-found-home { font-weight: bold; }
+    #not_found_search { margin: 1rem .5rem 2rem; }
+    .not-found-search-label { margin: 0 0 .5em; }
+    #not-found-search-inline { max-width: 700px; }
+    .search-field { display: flex; align-items: center; gap: .75em; margin: 0; }
+    input[type="search"] { width: 100%; min-width: 0; height: 40px; border: 1px solid hsl(0,0%,80%); padding-left: 10px; border-radius: 4px; font-size: 16px; background: #fff; color: #16160e; color-scheme: light; }
+    .search-result { list-style: none; padding: 0; margin: .5em 0; }
+    .search-result li { padding: .5em; overflow-wrap: anywhere; }
+    .search-result li:hover, .search-result li.hovered { background: rgba(89,88,87,.15); }
+    .search-result a { display: block; }
+    #footer { width: 100%; display: grid; padding: 1em 0 2em; background: #630101 linear-gradient(to bottom, rgba(183,28,28,.1), rgba(183,28,28,.4), transparent); color: #e8ecef; }
+    #footer aside { width: 90%; max-width: 1280px; margin: 0 auto; text-align: left; display: flex; justify-content: space-around; font-size: 88%; }
+    #footer section { width: 33%; }
+    #footer h3 { font-size: 1.17em; }
+    #footer ul { margin: auto .5rem; padding: 0; list-style: none; }
+    #footer li { margin: 5px 0; padding: .25em 0; }
+    #footer img { vertical-align: middle; }
+    #footer .poweredby { text-align: center; margin-top: 2em; font-size: 88%; }
+    #footer a, #footer a:visited { color: #eaeaea; }
+    #footer a:hover { color: #f60; }
+    @media (prefers-color-scheme: dark) {
+      #header { background-image: linear-gradient(to top, rgba(33,33,33,.8), transparent, transparent), url('/theme/portalshit/images/header-bg.jpeg'); }
+      body { background: #000 url('/theme/portalshit/images/background.jpg') center / cover fixed; color: #e8ecef; }
+      #content { background: rgba(33,33,33,.85); }
+    }
+    @media (max-width: 640px) {
+      body { font-size: 15px; }
+      #footer { margin: 0; padding: 0; }
+      #footer aside { display: block; margin: 0; padding: .7em .6em; }
+      #footer section { width: 100%; }
+      #header-inner { width: 95%; min-height: 200px; }
+      #content { width: 100%; padding: .5em 0; }
+    }
+  </style>
+</head>
+<body>
+  <header id="header">
+    <div id="header-inner"><h1 id="header-title"><a href="/">portal shit!</a></h1></div>
+  </header>
+  <main id="content">
+    <section id="not_found_description" aria-labelledby="not-found-title">
+      <p class="not-found-code">404 Not Found</p>
+      <h2 id="not-found-title">ページが見つかりませんでした</h2>
+      <div class="description">
+        <p>お探しのページは移動または削除された可能性があります。</p>
+        <p><a class="not-found-home" href="/">トップページへ戻る</a></p>
+        <p><a href="/archives">アーカイブから記事を探す</a></p>
+      </div>
+    </section>
+    <section id="not_found_search" aria-labelledby="search-title">
+      <h2 id="search-title">検索</h2>
+      <p class="not-found-search-label">キーワードから記事を探す</p>
+      <div id="not-found-search-inline"></div>
+      <noscript><p>検索には JavaScript を有効にしてください。</p></noscript>
+    </section>
+  </main>
+  <footer id="footer">
+    <aside>
+      <section class="popular-entries">
+        <h3><a href="/popular">人気の記事</a></h3>
+        <ul class="entry-list">
+          <li><i class="fas fa-calendar" aria-hidden="true"></i> <a href="/popular/today">今日よく読まれている記事</a></li>
+          <li><i class="fas fa-calendar-day" aria-hidden="true"></i> <a href="/popular/yesterday">昨日よく読まれた記事</a></li>
+          <li><i class="fas fa-calendar-alt" aria-hidden="true"></i> <a href="/popular/recent">最近よく読まれている記事</a></li>
+          <li><i class="fas fa-bookmark" aria-hidden="true"></i> <a href="/popular/hatena-bookmark">はてなブックマークで注目を集めた記事</a></li>
+        </ul>
+      </section>
+      <section class="archives">
+        <h3>過去記事・カテゴリー</h3>
+        <ul>
+          <li><i class="fas fa-archive" aria-hidden="true"></i> <a href="/archives">アーカイブ</a></li>
+          <li><i class="fas fa-object-group" aria-hidden="true"></i> <a href="/categories">カテゴリー一覧</a></li>
+        </ul>
+      </section>
+      <section class="about">
+        <h3>このサイトについて</h3>
+        <ul>
+          <li class="about"><img src="https://portalshit.net/imageproxy/24/https://portalshit.net/theme/portalshit/ogp_image.png" width="24" alt=""> <a href="/about">このサイトについて</a></li>
+          <li class="profile"><img src="https://1.gravatar.com/avatar/aca7b71389633fab164383ed343f080f?size=128" width="24" alt=""> <a href="/morygonzalez">著者について</a></li>
+        </ul>
+      </section>
+    </aside>
+    <div class="poweredby">powered by <a href="http://lokka.org/">Lokka</a></div>
+  </footer>
+  <script defer src="/theme/portalshit/scripts/not-found-search.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# 対象サイトの server ブロック内に追加する。
+# root は既存の設定でアプリケーションの public ディレクトリを指すこと。
+# upstream の Lokka が返す 404 はそのまま表示する（proxy_intercept_errors は off）。
+error_page 404 /404.html;
+
+location = /404.html {
+    internal;
+    # 通常のアプリ転送用 location を経由せず、静的ファイルを返す。
+    try_files /404.html =404;
+}

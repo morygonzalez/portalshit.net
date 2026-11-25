@@ -7,6 +7,7 @@ module.exports = {
   entry: {
     index: './src/index.js',
     chat: './src/chat/index.js',
+    'not-found-search': { import: './src/not-found-search.js', filename: 'not-found-search.js' },
   },
   output: {
     filename: '[name]-[fullhash].js',

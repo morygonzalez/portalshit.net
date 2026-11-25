@@ -151,7 +151,7 @@ class PopularKeywords extends Component {
   }
 
   render() {
-    const attrKeywords = document.querySelector('#search_form').dataset.popularKeywords
+    const attrKeywords = document.querySelector('#search_form')?.dataset.popularKeywords
     if (attrKeywords !== undefined && (this.props.query === '' || this.props.query === null)) {
       const keywords = JSON.parse(attrKeywords)
       const popularKeywords = keywords.map(keyword => {
@@ -196,20 +196,28 @@ class Entries extends Component {
     this.state = {
       response: [],
       entries: [],
+      error: false,
     }
   }
 
   async loadEntriesFromServer() {
     let response
     if (this.props.query && this.props.query.length > 0) {
-      const searchPath = `/search.json?query=${this.props.query}`
-      const request = await fetch(searchPath)
-      response = await request.json()
+      try {
+        const searchPath = `/search.json?query=${encodeURIComponent(this.props.query)}`
+        const request = await fetch(searchPath)
+        if (!request.ok) throw new Error('Search failed')
+        response = await request.json()
+      } catch (_) {
+        this.setState({ error: true, entries: [] })
+        this.props.updateEntryLength(0)
+        return
+      }
     } else {
       response = []
     }
     this.setState(
-      { response },
+      { response, error: false },
       () => {
         this.setEntries()
         this.props.updateEntryLength(response.length)
@@ -235,7 +243,7 @@ class Entries extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.query !== this.props.query) {
-      this.setState({ entries: [] })
+      this.setState({ entries: [], error: false })
       this.loadEntriesFromServer()
     }
 
@@ -261,9 +269,10 @@ class Entries extends Component {
     if (this.props.query) {
       return(
         <ul className="search-result">
+          {this.state.error && <li role="status">検索できませんでした。時間をおいて再度お試しください。</li>}
           {this.state.entries}
           <li className="fulltext-search">
-            <a href={`/search/?query=${this.props.query}`} tabIndex={this.state.entries.length + 1}>全文検索する</a>
+            <a href={`/search/?query=${encodeURIComponent(this.props.query)}`} tabIndex={this.state.entries.length + 1}>全文検索する</a>
           </li>
         </ul>
       )
