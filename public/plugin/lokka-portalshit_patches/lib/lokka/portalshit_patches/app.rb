@@ -3,11 +3,19 @@ require 'cgi'
 module Lokka
   class App
     configure do
-      bg_images = YAML.load_file(File.join(File.dirname(__FILE__), '../../../', 'config.yml'))['header_bg']
+      bg_config_path = File.expand_path('../../../config.yml', __dir__)
+      load_bg_images = -> { YAML.load_file(bg_config_path).fetch('header_bg') }
+      startup_bg_images = load_bg_images.call unless development?
       set :header_bg_params, -> {
+        bg_images = startup_bg_images || load_bg_images.call
         dark_image = bg_images['dark'].sample
         light_image = bg_images['light'].sample
+        image_styles = { dark: dark_image, light: light_image }.map do |mode, image|
+          name = CGI.escapeURIComponent(image.fetch('name'))
+          "--header-bg-#{mode}: url(https://resources.portalshit.net/theme-images/header-bg-#{mode}-#{name}.jpg)"
+        end
         {
+          style: image_styles.join('; '),
           'data-bg-dark-image': "dark-#{dark_image['name']}",
           'data-bg-dark-description': dark_image['description'],
           'data-bg-dark-coord': dark_image['coord'],

@@ -33,6 +33,15 @@ header_bg:
     - name: kitsune
       description: 博多どんたくの屋台
       coord: 33.59047529738211,130.40296495196966
+    - name: dejima
+      description: 長崎出島の和傘
+      coord: 32.74402385644032, 129.87319421509366
+    - name: hakodate
+      description: 函館のレンガ倉庫街
+      coord: 41.76656466419398, 140.71632405851875
+    - name: nagatabe
+      description: 長田部海床路
+      coord: 32.70417766414349, 130.5813385057088
   light:
     - name: aso
       description: 熊本地震前の阿蘇山

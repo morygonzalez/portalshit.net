@@ -132,8 +132,8 @@
   hyphens: auto;
 }
 
-@mixin gradient-background($image) {
-  background-image: linear-gradient(to top, rgba(33,33,33,0.50), transparent, transparent), url("https://resources.portalshit.net/theme-images/header-bg-#{$image}.jpg");
+@mixin gradient-background($image-url) {
+  background-image: linear-gradient(to top, rgba(33,33,33,0.50), transparent, transparent), $image-url;
 }
 
 @mixin article-title {
