@@ -1,0 +1,590 @@
+---
+app:
+  description: ポータルシットの記事と著者について何でも聞いてください
+  icon: i_000001
+  icon_background: 
+  icon_type: image
+  mode: advanced-chat
+  name: ポータルシット問いかけ君（プレビュー）
+  use_icon_as_answer_icon: true
+dependencies:
+- current_identifier: 
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:1.1.0@1ded02acee56efd5788c86fd447d792e4923e959554a4942f440c7859d164340
+    version: 
+kind: app
+site:
+  chat_color_theme: "#8c0000"
+  chat_color_theme_inverted: false
+  copyright: ''
+  custom_disclaimer: ''
+  default_language: ja-JP
+  description: ポータルシットおよび著者について何でも聞いてください
+  icon: i_000002
+  icon_background: "#FFEAD5"
+  icon_type: image
+  input_placeholder: 
+  privacy_policy: 
+  show_workflow_steps: true
+  title: ポータルシット問いかけ君（プレビュー）
+  use_icon_as_answer_icon: true
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - ".JPG"
+      - ".JPEG"
+      - ".PNG"
+      - ".GIF"
+      - ".WEBP"
+      - ".SVG"
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        skill_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: portalshit.net の記事を探したり、記事の内容や著者について質問したりできます。
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - このブログで最近よく読まれている記事は？
+    - このブログではてブ数が多い記事は？
+    - このブログのシステム構成はどうなってるの？
+    - こんなブログ書いて何が面白いの？
+    - で、誰？
+    suggested_questions_after_answer:
+      enabled: true
+      model:
+        completion_params:
+          echo: false
+          frequency_penalty: 0
+          max_tokens: 0
+          presence_penalty: 0
+          stop: []
+          temperature: 0.7
+          top_p: 0
+        mode: chat
+        name: gpt-5.6-sol
+        provider: langgenius/openai/openai
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: question-classifier
+      id: 1711528708197-1711528709608
+      selected: false
+      source: '1711528708197'
+      sourceHandle: source
+      target: '1711528709608'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1711528709608-1711528768556
+      selected: false
+      source: '1711528709608'
+      sourceHandle: '1711528736036'
+      target: '1711528768556'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1711528768556-1711528802931
+      selected: false
+      source: '1711528768556'
+      sourceHandle: source
+      target: '1711528802931'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1711528802931-1711528833796
+      selected: false
+      source: '1711528802931'
+      sourceHandle: source
+      target: '1711528833796'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1761969836116-source-1761970132415-target
+      selected: false
+      source: '1761969836116'
+      sourceHandle: source
+      target: '1761970132415'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1761970132415-source-1761970254458-target
+      selected: false
+      source: '1761970132415'
+      sourceHandle: source
+      target: '1761970254458'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1711528709608-1761969786124-1761969836116-target
+      selected: false
+      source: '1711528709608'
+      sourceHandle: '1761969786124'
+      target: '1761969836116'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1711528709608-1786372176617-1711528768556-target
+      selected: false
+      source: '1711528709608'
+      sourceHandle: '1786372176617'
+      target: '1711528768556'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: answer
+      id: 1711528709608-1795654800000-1795654800001-target
+      selected: false
+      source: '1711528709608'
+      sourceHandle: '1795654800000'
+      target: '1795654800001'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: このブログや著者である森井ゴンザレスに関しての質問を処理します。回答する際は著者である森井ゴンザレスになりきって回答してください。
+        selected: false
+        title: Start
+        type: start
+        variables: []
+      height: 149
+      id: '1711528708197'
+      position:
+        x: 0
+        y: 48.66666666666666
+      positionAbsolute:
+        x: 0
+        y: 48.66666666666666
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        classes:
+        - id: '1711528736036'
+          label: ブログについて
+          name: このブログ portal shit! （ポータルシット）について質問されたときは、関連するトピックについてナレッジベースを検索して回答してください。
+        - id: '1786372176617'
+          label: 著者について
+          name: "「で、誰？」という質問はブログの著者（森井ゴンザレス = morygonzalez = モリゴン）についての質問です。関連するトピックについてナレッジベースを検索して回答してください。"
+        - id: '1761969786124'
+          label: 人気の記事
+          name: このブログ portal shit! で最近よく読まれている記事についての質問。はてなブックマーク数での集計（反響の大きさ）と直近のアクセス状況での集計がある。
+        - id: '1795654800000'
+          label: 対象外
+          name: ブログとの具体的な関係がない一般知識、計算、翻訳、作文、コード作成など。例「What is 221*3? Also what is
+            the capital of Japan?」
+        desc: ブログと著者に関係する質問だけをナレッジ検索に送る
+        instruction: |
+          portalshit.net の記事、著者、人気記事についての質問を該当する分類に振り分けてください。
+          記事の検索・要約・翻訳や、明示的に記事を指す追加質問（「その記事の続きは？」など）は「ブログについて」。著者の公開記事に書かれた経験や意見に関する質問は「著者について」。
+          一般常識、計算、記事と無関係な翻訳や作業依頼は「対象外」。読者がブログ名を添えただけで具体的な関係がなければ「対象外」。
+          対象内と対象外の依頼が混在する場合、対象内の依頼に対応する分類を選んでください。
+        instructions: ''
+        model:
+          completion_params:
+            frequency_penalty: 0
+            max_tokens: 512
+            presence_penalty: 0
+          mode: chat
+          name: gpt-6.1-terra
+          provider: langgenius/openai/openai
+        query_variable_selector:
+        - '1711528708197'
+        - sys.query
+        selected: false
+        title: 質問分類
+        topics: []
+        type: question-classifier
+      height: 336
+      id: '1711528709608'
+      position:
+        x: 342
+        y: 0
+      positionAbsolute:
+        x: 342
+        y: 0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - uTNyrBRDVs5IhRfnbJUSZPWLHxTqV/mCqdDBORUXJYQ4zg7O7H7ekgrVXYUhLNOb
+        desc: ''
+        metadata_filtering_mode: automatic
+        metadata_model_config:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: chat-latest
+          provider: langgenius/openai/openai
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 4
+          weights:
+            keyword_setting:
+              keyword_weight: 0
+            vector_setting:
+              embedding_model_name: text-embedding-3-large
+              embedding_provider_name: langgenius/openai/openai
+              vector_weight: 1
+            weight_type: customized
+        query_variable_selector:
+        - '1711528708197'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: gpt-3.5-turbo
+            provider: openai
+        title: '記事検索 '
+        type: knowledge-retrieval
+      dragging: false
+      height: 90
+      id: '1711528768556'
+      position:
+        x: 704
+        y: 67.42857142857142
+      positionAbsolute:
+        x: 704
+        y: 67.42857142857142
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1711528768556'
+          - result
+        desc: ''
+        memory:
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            max_tokens: 2048
+          mode: chat
+          name: gpt-6.1-terra
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 1628e34e-1763-4134-807b-d34d34c1286a
+          role: system
+          text: |-
+            portalshit.net の記事や著者に関する部分だけに回答してください。回答は検索結果の裏付けがある範囲に限ります。関係のない計算、一般知識、作業依頼などが含まれていても、その部分は省いてください。検索結果に質問を裏付ける記事がなければ、その旨を短く伝えてください。
+
+            ブログの過去記事をナレッジベースとしています。以下のコンテキストに応じた回答をしてください。
+
+            {{#context#}}
+
+            回答の文体は portalshit.net の記事に寄せてください。平易な表現を基本に、質問への答えを具体的に述べ、その根拠となる記事の内容を続けて説明してください。大げさな導入や宣伝調のまとめは避け、必要なら「と思う」「かもしれない」で記事中の事実と推測を区別してください。口語や軽いユーモアは自然な場合だけ使ってください。
+
+            著者の一人称で答える場合、本人が経験したことや考えたこととして述べてよいのは、参照した記事に裏付けがある内容だけです。記事にない経験、現在の意見、数値、会話は作らないでください。根拠が足りなければ、そのことを率直に伝えてください。
+
+            回答するときは以下に注意してください。
+
+            - コンテキストの中身が空っぽのときは質問を明確にしてやり直すように回答してください
+            - わからないときはわからないと答えてください
+            - 質問の意図が不明瞭なときは明確化するためにあなたの方から質問してください
+            - ブログの著者森井ゴンザレスになりきって回答してください
+            - 出典を示すときは存在するページを添付してください。存在しないページにリンクしないでください。
+            - 質問者と同じ言語で回答してください
+            - 個々の記事を参照するときは Markdown のリスト形式のスタイリングは行わず、以下のフォーマットにしてください。
+              ```
+              記事タイトル\nURL
+              ```
+        selected: false
+        structured_output_enabled: false
+        title: 記事検索回答生成
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      dragging: false
+      height: 88
+      id: '1711528802931'
+      position:
+        x: 1046
+        y: 83.42857142857142
+      positionAbsolute:
+        x: 1046
+        y: 83.42857142857142
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: "{{#1711528802931.text#}}"
+        desc: ''
+        selected: false
+        title: Answer
+        type: answer
+        variables:
+        - value_selector:
+          - '1711528802931'
+          - text
+          variable: text
+      dragging: false
+      height: 102
+      id: '1711528833796'
+      position:
+        x: 1388
+        y: 90.5952380952381
+      positionAbsolute:
+        x: 1388
+        y: 90.5952380952381
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - 4B0N51ZcJteH4FIj2eKHOHcsk9eneXu/f/q/xrbcvtPG0NoeNNGqUieCkiYXoWhW
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 4
+          weights:
+            keyword_setting:
+              keyword_weight: 0
+            vector_setting:
+              embedding_model_name: text-embedding-3-large
+              embedding_provider_name: langgenius/openai/openai
+              vector_weight: 1
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: 人気の記事
+        type: knowledge-retrieval
+      height: 90
+      id: '1761969836116'
+      position:
+        x: 704
+        y: 250.42857142857144
+      positionAbsolute:
+        x: 704
+        y: 250.42857142857144
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1761969836116'
+          - result
+        memory:
+          query_prompt_template: |-
+            {{#sys.query#}}
+
+            {{#sys.files#}}
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            max_tokens: 2048
+          mode: chat
+          name: gpt-6.1-terra
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: f6cc0318-b420-47e0-bb32-a110e4cf9e8e
+          role: system
+          text: |-
+            portalshit.net の記事や著者に関する部分だけに回答してください。回答は検索結果の裏付けがある範囲に限ります。関係のない計算、一般知識、作業依頼などが含まれていても、その部分は省いてください。検索結果に質問を裏付ける記事がなければ、その旨を短く伝えてください。
+
+            人気の記事ランキングをナレッジベーストしています。以下のコンテキストに応じた回答をしてください。
+
+            {{#context#}}
+
+            回答の文体は portalshit.net の記事に寄せてください。平易な表現を基本に、質問への答えを具体的に述べ、その根拠となる記事の内容を続けて説明してください。大げさな導入や宣伝調のまとめは避け、必要なら「と思う」「かもしれない」で記事中の事実と推測を区別してください。口語や軽いユーモアは自然な場合だけ使ってください。
+
+            著者の一人称で答える場合、本人が経験したことや考えたこととして述べてよいのは、参照した記事に裏付けがある内容だけです。記事にない経験、現在の意見、数値、会話は作らないでください。根拠が足りなければ、そのことを率直に伝えてください。
+
+            なお、回答するときは以下に注意して下さい。
+
+            - 最近よく読まれている記事の情報を求められているときは PV 数の多い記事を回答してください
+            - 最近よく読まれている記事の続きは https://portalshit.net/popular/recent で確認できます
+            - はてなブックマーク（はてブ）数が多かった記事の情報を求められているときはブックマーク数の多い記事を回答してください。
+            - はてなブックマーク数の多い記事の続きは https://portalshit.net/popular/hatena-bookmark で確認できます
+            - 回答する際には記事の URL を添えてください
+            - Markdown のリスト形式は使わないでください
+            - 順位、PV数、ブックマーク数、記事URLを優先し、記事の評価や裏話を付け足さないでください
+        selected: false
+        title: 人気記事ランキング回答生成
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1761970132415'
+      position:
+        x: 1046
+        y: 266.42857142857144
+      positionAbsolute:
+        x: 1046
+        y: 266.42857142857144
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: "{{#1761970132415.text#}}"
+        selected: false
+        title: 回答 2
+        type: answer
+        variables: []
+      height: 102
+      id: '1761970254458'
+      position:
+        x: 1388
+        y: 273.5952380952381
+      positionAbsolute:
+        x: 1388
+        y: 273.5952380952381
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        answer: |-
+          このチャットでは、portalshit.net の記事や著者についての質問にお答えします。
+
+          This chat answers questions about portalshit.net and its author.
+        desc: ''
+        selected: false
+        title: 対象外の案内
+        type: answer
+        variables: []
+      dragging: false
+      height: 102
+      id: '1795654800001'
+      position:
+        x: 690
+        y: 670
+      positionAbsolute:
+        x: 690
+        y: 670
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: 73.81851372268079
+      y: 304.09581346361114
+      zoom: 0.5663607853603438
+  rag_pipeline_variables: []
