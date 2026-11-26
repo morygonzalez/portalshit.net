@@ -148,4 +148,24 @@ describe 'Markdown content negotiation' do
     expect(last_response).to be_ok
     expect(last_response.content_type).to start_with('application/atom+xml')
   end
+
+  it 'returns an Atom body only when the feed has changed for a conditional GET' do
+    get '/index.atom'
+
+    expect(last_response).to be_ok
+    original_etag = last_response.headers['etag']
+    expect(original_etag).to match(/\AW\/"[0-9a-f]{64}"\z/)
+
+    get '/index.atom', {}, 'HTTP_IF_NONE_MATCH' => original_etag
+
+    expect(last_response.status).to eq(304)
+    expect(last_response.body).to be_empty
+
+    article.update!(body: '<p>Updated Atom content</p>')
+    get '/index.atom', {}, 'HTTP_IF_NONE_MATCH' => original_etag
+
+    expect(last_response).to be_ok
+    expect(last_response.headers['etag']).not_to eq(original_etag)
+    expect(last_response.body).to include('Updated Atom content')
+  end
 end

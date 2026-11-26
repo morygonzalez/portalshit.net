@@ -1,4 +1,5 @@
 require 'cgi'
+require 'digest'
 
 module Lokka
   class App
@@ -56,7 +57,9 @@ module Lokka
       @posts = apply_continue_reading(@posts)
 
       content_type 'application/atom+xml', charset: 'utf-8'
-      builder :'plugin/lokka-portalshit_patches/public/lokka/index'
+      feed = builder :'plugin/lokka-portalshit_patches/public/lokka/index'
+      etag Digest::SHA256.hexdigest(feed), :weak
+      feed
     end
 
     get '/sitemap.xml' do
