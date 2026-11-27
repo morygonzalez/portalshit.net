@@ -1,0 +1,15 @@
+# Install in the HTTPS server. Remove the old Atom loopback listener.
+location = /index.atom {
+    proxy_pass http://puma;
+    proxy_cache off;
+    gzip on;
+    gzip_types application/atom+xml;
+    gzip_proxied any;
+    gzip_vary on;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    # The anonymous feed can be cached even if Rack emits a session cookie.
+    proxy_hide_header Set-Cookie;
+}

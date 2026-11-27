@@ -58,6 +58,12 @@ module Lokka
 
       content_type 'application/atom+xml', charset: 'utf-8'
       feed = builder :'plugin/lokka-portalshit_patches/public/lokka/index'
+      if !logged_in? && request.cookies.empty? && request.env['HTTP_AUTHORIZATION'].to_s.empty? &&
+         request.query_string.empty?
+        cache_control :public, max_age: 0, s_maxage: 3600
+      else
+        cache_control :private, :no_store
+      end
       etag Digest::SHA256.hexdigest(feed), :weak
       feed
     end

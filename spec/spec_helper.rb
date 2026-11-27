@@ -58,8 +58,10 @@ RSpec.configure do |config|
   end
 
   config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
+    if example.metadata[:real_commit]
+      DatabaseCleaner::ActiveRecord::Truncation.new.cleaning { example.run }
+    else
+      DatabaseCleaner.cleaning { example.run }
     end
   end
 end

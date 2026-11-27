@@ -149,6 +149,33 @@ describe 'Markdown content negotiation' do
     expect(last_response.content_type).to start_with('application/atom+xml')
   end
 
+  it 'sets the shared cache policy only on the public canonical Atom representation' do
+    get '/index.atom'
+    expect(last_response.headers['cache-control']).to eq('public, max-age=0, s-maxage=3600')
+
+    get '/index.atom?page=1'
+    expect(last_response).to be_ok
+    expect(last_response.headers['cache-control']).to eq('private, no-store')
+
+    get '/index.atom', {}, 'HTTP_AUTHORIZATION' => 'Basic dGVzdDp0ZXN0'
+    expect(last_response.headers['cache-control']).to eq('private, no-store')
+
+    get '/index.atom', {}, 'HTTP_COOKIE' => 'example=value'
+    expect(last_response.headers['cache-control']).to eq('private, no-store')
+
+    get article.link
+    expect(last_response.headers['cache-control'].to_s).not_to include('s-maxage=3600')
+  end
+
+  it 'serves an empty Atom feed after the last published post is removed' do
+    article.destroy!
+    get '/index.atom'
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to include('<feed', '<updated>')
+    expect(last_response.body).not_to include('<entry>')
+  end
+
   it 'returns an Atom body only when the feed has changed for a conditional GET' do
     get '/index.atom'
 
@@ -156,12 +183,15 @@ describe 'Markdown content negotiation' do
     original_etag = last_response.headers['etag']
     expect(original_etag).to match(/\AW\/"[0-9a-f]{64}"\z/)
 
+    clear_cookies
     get '/index.atom', {}, 'HTTP_IF_NONE_MATCH' => original_etag
 
     expect(last_response.status).to eq(304)
+    expect(last_response.headers['cache-control']).to eq('public, max-age=0, s-maxage=3600')
     expect(last_response.body).to be_empty
 
     article.update!(body: '<p>Updated Atom content</p>')
+    clear_cookies
     get '/index.atom', {}, 'HTTP_IF_NONE_MATCH' => original_etag
 
     expect(last_response).to be_ok

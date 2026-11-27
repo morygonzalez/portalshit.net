@@ -7,7 +7,7 @@ xml.instruct! :xml, version: '1.0'
 xml.feed(xmlns: 'http://www.w3.org/2005/Atom') do
   xml.id      base_url + '/'
   xml.title   @site.title
-  xml.updated @posts.first.updated_at.to_s
+  xml.updated (@posts.first&.updated_at || @site.updated_at).to_s
   xml.link    type: 'text/html', rel: 'alternate', href: base_url + '/'
   xml.link    type: 'application/atom+xml', ref: 'self', href: base_url + '/index.atom'
   xml.link    rel: 'hub', href: 'https://pubsubhubbub.appspot.com/'

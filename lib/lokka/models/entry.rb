@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'net/http'
 
 class Entry < ActiveRecord::Base
   # SQLite does not expose a TEXT byte limit; match the production MEDIUMTEXT capacity.
   DEFAULT_BODY_BYTE_LIMIT = 16_777_215
+
+  ATOM_FEED_URL = 'https://portalshit.net/index.atom'
+  class FeedRequestError < StandardError; end
+  private_constant :ATOM_FEED_URL, :FeedRequestError
 
   has_many :comments
   has_many :public_comments, -> { publicly_visible }, class_name: 'Comment'
@@ -30,8 +35,8 @@ class Entry < ActiveRecord::Base
 
   after_save :update_fields
   after_save :mark_atom_feed_changed
-  after_destroy :mark_atom_feed_changed
-  after_commit :refresh_atom_cache_and_notify
+  after_destroy :mark_atom_feed_removed
+  after_commit :purge_atom_cache_and_notify
   after_rollback { @atom_feed_changed = false }
 
   default_scope { order('entries.created_at DESC') }
@@ -226,29 +231,62 @@ class Entry < ActiveRecord::Base
   end
 
   def send_ping_to_pubsubhubbub
-    if Lokka.production?
-      system("curl -s https://pubsubhubbub.appspot.com/ -d 'hub.mode=publish&hub.url=https://portalshit.net/index.atom' -X POST")
+    uri = URI('https://pubsubhubbub.appspot.com/')
+    request = Net::HTTP::Post.new(uri)
+    request.set_form_data('hub.mode' => 'publish', 'hub.url' => ATOM_FEED_URL)
+    response = send_feed_request(uri, request)
+    raise FeedRequestError, "HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+  end
+
+  def purge_cloudflare_atom_cache
+    zone_id = ENV['CLOUDFLARE_ZONE_ID'].presence
+    token = ENV['CLOUDFLARE_API_TOKEN'].presence
+    return unless zone_id && token
+
+    uri = URI("https://api.cloudflare.com/client/v4/zones/#{zone_id}/purge_cache")
+    request = Net::HTTP::Post.new(uri)
+    request['Authorization'] = "Bearer #{token}"
+    request.content_type = 'application/json'
+    request.body = JSON.generate(files: [ATOM_FEED_URL])
+
+    response = send_feed_request(uri, request)
+    raise FeedRequestError, "HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+
+    result = JSON.parse(response.body)
+    raise FeedRequestError, 'API success was not true' unless result.is_a?(Hash) && result['success'] == true
+  end
+
+  def send_feed_request(uri, request)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 2, read_timeout: 5, write_timeout: 5) do |http|
+      http.request(request)
     end
   end
 
   def mark_atom_feed_changed
     return unless is_a?(Post)
 
-    @atom_feed_changed ||= published? || saved_change_to_draft? && draft_before_last_save == false
+    @atom_feed_changed ||= (draft == false && saved_changes?) ||
+                           (!previously_new_record? && saved_change_to_draft? && draft_before_last_save == false)
   end
 
-  def refresh_atom_cache_and_notify
+  def mark_atom_feed_removed
+    @atom_feed_changed = true if is_a?(Post) && attribute_in_database('draft') == false
+  end
+
+  def purge_atom_cache_and_notify
     changed = @atom_feed_changed
     @atom_feed_changed = false
     return unless Lokka.production? && changed
 
-    response = Net::HTTP.start('127.0.0.1', 18081, open_timeout: 2, read_timeout: 15) do |http|
-      http.get('/index.atom')
-    end
-    raise "HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
-
+    operation = 'Cloudflare Atom cache purge'
+    purge_cloudflare_atom_cache
+    operation = 'PubSubHubbub Atom notification'
     send_ping_to_pubsubhubbub
   rescue StandardError => e
-    ActiveRecord::Base.logger&.warn "Failed to refresh atom cache; notification skipped: #{e.message}"
+    # Exception messages and API bodies may contain request credentials.
+    detail = e.is_a?(FeedRequestError) ? e.message : e.class
+    message = "#{operation} failed for entry #{id} (#{detail})"
+    logger = ActiveRecord::Base.logger
+    logger ? logger.warn(message) : warn(message)
   end
 end
