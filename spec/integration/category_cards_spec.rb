@@ -34,15 +34,4 @@ describe 'Category cards' do
     expect(last_response.body).to include('Category description example', 'Latest category post', latest.reload.created_at.iso8601, "#{I18n.t('theme.entry_count')} 2")
     expect(last_response.body).not_to include('Older category post', 'Draft category post')
   end
-
-  it 'renders category cards on a missing page' do
-    create(:site, theme: 'portalshit')
-    category = create(:category, description: 'Another category description')
-    create(:post, category: category, title: 'Category post')
-
-    get '/missing-page-for-category-cards'
-
-    expect(last_response.status).to eq(404)
-    expect(last_response.body).to include('Another category description', 'Category post', "#{I18n.t('theme.entry_count')} 1")
-  end
 end

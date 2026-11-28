@@ -93,10 +93,7 @@ module Lokka
     end
 
     not_found do
-      # JSON API の 404 でテーマの 404 ページを描画しない。パーマリンクの
-      # 探索と全ページのレンダリングはどちらも重く、/api/chat/ogp のように
-      # 「キャッシュが無ければ 404」を日常的に返す経路では無駄が大きい。
-      # halt が入れた JSON のボディをそのまま返す。
+      # API のハンドラーが返した 404 のボディを維持する。
       return body if request.path_info.start_with?('/api/')
 
       if (request.get? || request.head?) && !request.path_info.match?(%r{\A/(?:admin|api)(?:/|\z)})
@@ -127,13 +124,13 @@ module Lokka
         status 404
       end
 
-      candidate = not_found_candidate
-      return redirect(candidate.link, 302) if candidate && candidate.link != request.path_info
+      if (request.get? || request.head?) && article_slug_suggestion_path?(request.path_info)
+        candidate = not_found_candidate
+        return redirect(candidate.link, 302) if candidate && candidate.link != request.path_info
+      end
 
-      render404 = render_any(:'404', layout: 'layout')
-      return render404 if render404.present?
-
-      haml :'404', views: 'public/lokka', layout: false
+      content_type 'text/html', charset: 'utf-8'
+      File.binread(File.join(settings.public_folder, '404.html'))
     end
 
     error do

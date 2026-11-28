@@ -84,17 +84,18 @@ describe 'App' do
       end
     end
 
-    context '/tags/lokka/' do
+    context '/tags/lokka' do
       before { create(:tag, name: 'lokka') }
       after { Tag.delete_all }
 
       it 'should show tag index' do
-        get '/tags/lokka/'
+        get '/tags/lokka'
+        expect(last_response).to be_ok
         last_response.body.should match('Test Site')
       end
     end
 
-    context '/category/:id/' do
+    context '/category/:slug' do
       before do
         @category = create(:category)
         @category_child = create(:category_child, parent_id: @category.id)
@@ -105,12 +106,14 @@ describe 'App' do
       end
 
       it 'should show category index' do
-        get "/category/#{@category.id}/"
+        get @category.link
+        expect(last_response).to be_ok
         last_response.body.should match('Test Site')
       end
 
       it 'should show child category index' do
-        get "/category/#{@category.id}/#{@category_child.id}/"
+        get @category_child.link
+        expect(last_response).to be_ok
         last_response.body.should match('Test Site')
       end
     end

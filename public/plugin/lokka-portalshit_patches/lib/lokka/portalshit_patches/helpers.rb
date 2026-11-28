@@ -79,6 +79,23 @@ module Lokka
       "#{@theme.path}/scripts/#{portalshit_manifest[file_name]}"
     end
 
+    def article_slug_suggestion_path?(path)
+      return false if path.match?(%r{\A/(?:admin|api)(?:/|\z)})
+
+      slug = path.delete_prefix('/')
+      if slug.include?('/') || slug.include?('.')
+        permalink = custom_permalink_parse(path) if custom_permalink?
+        return false unless permalink
+
+        date_parts = permalink.slice(:year, :monthnum, :month, :day, :hour, :minute, :min, :second, :sec).values
+        return false unless date_parts.all? { |part| part.match?(/\A[0-9]+\z/) }
+
+        slug = permalink[:slug]
+      end
+
+      slug&.match?(/\A[a-zA-Z0-9_-]+\z/) && !slug.match?(/\A[0-9]+\z/)
+    end
+
     def not_found_candidate
       all_slugs = Entry.published.where.not(slug: [nil, '']).pluck(:slug)
       slugs = all_slugs.reject { |slug| slug.match?(/\A\d+\z/) }
