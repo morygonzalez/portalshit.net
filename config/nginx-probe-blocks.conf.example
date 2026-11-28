@@ -1,0 +1,102 @@
+# Include from the portalshit.net HTTPS server, after legacy redirects.
+# Requires the existing $banned_ua map in the http context.
+
+if ($banned_ua) { return 400; }
+
+# WordPress directories at any path depth
+location ~* (?:^|/)(?:wp-admin|wp-content|wp-includes|wp-json)(?:/|$) {
+    return 404;
+}
+
+# Common WordPress installation directory names
+location ~* ^/(?:wp|wordpress|blog|cms|site)/(?:.*)?$ {
+    return 404;
+}
+
+location ~* (?:^|/)\.(?:env(?:\.[^/]*)?|git|svn|hg|ssh|aws|docker)(?:/|$) {
+    return 404;
+}
+
+# 隠しファイル・ディレクトリへのアクセス全般（.gitconfig .git-credentials
+# .gitlab-ci.yml .github/* .vscode/* .kube/* .netrc .bash_history 等）。
+# 上の個別ルールで拾いきれない亜種をまとめて塞ぐ。.well-known/ は将来
+# 正規に使う可能性があるため除外。
+location ~* /\.(?!well-known/) {
+    return 404;
+}
+
+# バックアップ/シークレット系の定番拡張子
+location ~* \.(bak|old|orig|save|swp|tmp|backup|sql|pem|key|tfstate|tfvars|js\.map)$ {
+    return 404;
+}
+
+location ~* \.(zip|rar|7z|tar\.gz)$ {
+    return 404;
+}
+location ~* ^/(credentials|secrets|aws|smtp|backup|config)\.(json|zip|env) {
+    return 404;
+}
+
+# クラウドメタデータ/ローカルファイルを窃取しようとする SSRF クエリ
+if ($args ~* "169\.254\.169\.254|169\.254\.170\.2|metadata\.google\.internal|file://|/proc/self/environ") {
+    return 404;
+}
+
+# Admin/DB probes
+location ~* ^/(phpmyadmin|pma|adminer|admin\.php|wp-login|xmlrpc\.php) {
+    return 404;
+}
+
+# Java/enterprise app probes
+location ~* ^/(solr|actuator|console|debug|jasperserver|owa|WebInterface|webfig|Dockerfile) {
+    return 404;
+}
+
+# .well-known paths that don't exist (keep actual ones above this)
+location ~* ^/\.well-known/(traffic-advice|pki-validation|admin\.php) {
+    return 404;
+}
+
+# CGI probes
+location ~* ^/cgi-bin/ {
+    return 404;
+}
+
+# /?rest_route=/ and similar WordPress REST API probes
+if ($args ~* "(^|&)rest_route(=|&|$)") {
+    return 404;
+}
+
+location = /graphql     { return 404; }
+location = /api/graphql { return 404; }
+location = /v1/graphql  { return 404; }
+
+location ~* ^/(?:@fs|_debugbar|server-status|server-info)(?:/|$) {
+    return 404;
+}
+
+location = /ogp {
+    if ($arg_url) {
+        return 404;
+    }
+}
+
+# Ruby(Sinatra)アプリのため .php 等のスクリプト系拡張子へのリクエストは
+# 常にスキャナー。IPやファイル名を変えられても拡張子ベースなら塞げる。
+location ~* \.(?:php[0-9]*|phtml|phar|pl|cgi|asp|aspx|jsp)$ {
+    return 404;
+}
+
+# API and debugging endpoints for software this site does not run.
+location ~* ^/(?:_all_dbs|opcache-status|php-opcache-status|_debug_toolbar|v2/keys|api/(?:postman\.json|requestlogs|frontend/settings|datasources|v1/(?:status/(?:flags|config)|targets|canal/config/1/1)))/?$ {
+    return 404;
+}
+
+location ~* ^/(?:actions/debug/default|__clockwork|storage/(?:framework/)?sessions)(?:/|$) {
+    return 404;
+}
+
+# Known configuration, credentials and deployment probes.
+location ~* ^/(?:app/config/pimcore/google-api-private-key\.json|google-api-private-key\.json|backup(?:/ovh-backups\.json)?|backup\.sh|aws\.sh|awsconfiguration\.json|ansible\.cfg|azuredeploy\.json|client_secrets\.json|cloud-config\.(?:txt|yml)|collections/postman\.json|composer\.(?:json|lock)|config/initializers/secret_token\.rb|config/ovh-backups\.json)/?$ {
+    return 404;
+}
